@@ -1,0 +1,22 @@
+<UI version="4.0" >
+ <class>GTSControllerWidgetsClass</class>
+ <widget class="QWidget" name="GTSControllerWidgetsClass" >
+  <property name="objectName" >
+   <string notr="true">GTSControllerWidgetsClass</string>
+  </property>
+  <property name="geometry" >
+   <rect>
+	<x>0</x>
+	<y>0</y>
+	<width>600</width>
+	<height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>GTSControllerWidgets</string>
+  </property>$centralwidget$
+ </widget>
+ <layoutDefault spacing="6" margin="11" />
+ <pixmapfunction></pixmapfunction>
+ <connections/>
+</UI>

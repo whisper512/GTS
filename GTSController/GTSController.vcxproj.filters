@@ -21,6 +21,18 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
+    <Filter Include="Header Files\GTS">
+      <UniqueIdentifier>{107ff0d9-25be-4f6e-8a9d-1ab932ee8fca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Widget">
+      <UniqueIdentifier>{12ac96aa-393f-46b4-87c3-6ca15b94c901}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Widget">
+      <UniqueIdentifier>{1652285b-6c7e-437a-bb24-0e6e6bba7576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GTS">
+      <UniqueIdentifier>{e0f0fe3b-c11c-4ff3-afe7-cd569d93349a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="MainWnd.qrc">
@@ -29,16 +41,43 @@
     <QtUic Include="MainWnd.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="MainWnd.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <ClCompile Include="MainWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GTSControllerWidgets.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWnd.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\GTSLib\config.h">
+      <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GTSLib\gts.h">
+      <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GTSLib\LookAheadEx.h">
+      <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+    <ClInclude Include="GtsHal.h">
+      <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="GTSControllerWidgets.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="GTSControllerWidgets.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="MainWnd.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>
