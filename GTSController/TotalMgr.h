@@ -39,7 +39,7 @@ signals:
     void initialized();
     // 已关闭
     void shutdowned();
-    // 发生错误 (错误描述)
+    // 发生错误
     void errorOccurred(const QString& errorMsg);
 
 
