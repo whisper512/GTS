@@ -1,8 +1,5 @@
 ﻿#include "BoardMgr.h"
 
-// ============================================================
-// 构造/析构
-// ============================================================
 BoardMgr::BoardMgr(QObject* parent)
     : QObject(parent)
 {
@@ -14,9 +11,6 @@ BoardMgr::~BoardMgr() {
     }
 }
 
-// ============================================================
-// 1. 板卡生命周期
-// ============================================================
 bool BoardMgr::open(short channel, short param)
 {
     if (m_isOpen) {
@@ -56,7 +50,7 @@ bool BoardMgr::close()
 bool BoardMgr::reset() {
     m_lastError = GtsHal::reset();
     if (m_lastError == 0) {
-        m_isOpen = false;  // 复位后需要重新 open
+        m_isOpen = false; 
         return true;
     }
     else {
@@ -65,9 +59,6 @@ bool BoardMgr::reset() {
     }
 }
 
-// ============================================================
-// 2. 板卡选择
-// ============================================================
 bool BoardMgr::setCardNo(short index) {
     m_lastError = GtsHal::setCardNo(index);
     if (m_lastError == 0) {
@@ -86,9 +77,6 @@ short BoardMgr::cardNo() {
     return index;
 }
 
-// ============================================================
-// 3. 配置加载/保存
-// ============================================================
 bool BoardMgr::loadConfig(const QString& filePath) {
     m_lastError = GtsHal::loadConfig(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
@@ -125,9 +113,6 @@ bool BoardMgr::downloadConfig() {
     return true;
 }
 
-// ============================================================
-// 4. 版本/信息查询
-// ============================================================
 QString BoardMgr::dllVersion() const {
     char* pVer = nullptr;
     short ret = GtsHal::getDllVersion(&pVer);
@@ -173,9 +158,6 @@ bool BoardMgr::setInterfaceBoardStatus(short type) {
     return true;
 }
 
-// ============================================================
-// 5. 时钟与延时
-// ============================================================
 unsigned long BoardMgr::clock() const {
     unsigned long clk = 0;
     GtsHal::getClock(&clk, nullptr);
@@ -198,9 +180,6 @@ bool BoardMgr::delayHighPrecision(unsigned short microseconds) {
     return m_lastError == 0;
 }
 
-// ============================================================
-// 6. 中断控制
-// ============================================================
 bool BoardMgr::interruptOn(TInterruptCallback pCallback) {
     m_lastError = GtsHal::interruptOn(pCallback);
     if (m_lastError != 0) {
@@ -231,9 +210,6 @@ bool BoardMgr::triggerInterrupt(short param) {
     return m_lastError == 0;
 }
 
-// ============================================================
-// 7. UUID
-// ============================================================
 QString BoardMgr::uuid() const {
     char code[64] = { 0 };
     short ret = GtsHal::getUuid(code, 64);
@@ -253,9 +229,6 @@ bool BoardMgr::setUuid(const QString& code) {
     return true;
 }
 
-// ============================================================
-// 8. 杂项
-// ============================================================
 short BoardMgr::displayDip() const {
     short mode = 0;
     GtsHal::getDisplayDip(&mode);
