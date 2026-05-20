@@ -30,7 +30,6 @@ public:
 
 
     void emergencyStop();
-
     // 获取最近一次错误字符串
     QString lastErrorString() const;
 

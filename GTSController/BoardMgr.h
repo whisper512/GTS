@@ -21,7 +21,8 @@ struct DriverVersion {
 // 职责;开/关/复位卡/配置加载/保存/版本信息/时钟/中断
 // ============================================================
 
-class BoardMgr : public QObject {
+class BoardMgr : public QObject 
+{
     Q_OBJECT
 public:
     explicit BoardMgr(QObject* parent = nullptr);
@@ -42,7 +43,7 @@ public:
 
     // 设置当前操作的板卡编号
     bool setCardNo(short index);
-    /// 获取当前板卡编号
+    // 获取当前板卡编号
     short cardNo();
 
 
@@ -72,16 +73,15 @@ public:
 
     // 获取系统时钟计数值
     unsigned long clock() const;
-
     // 获取高精度时钟计数值
     unsigned long clockHighPrecision() const;
-    // 延时（毫秒级）
+    // 延时(毫秒级)
     bool delay(unsigned short milliseconds);
     // 高精度延时（微秒级）
     bool delayHighPrecision(unsigned short microseconds);
 
 
-    // 开启中断（注册回调）
+    // 开启中断(注册回调)
     bool interruptOn(short (*pCallback)(TInterrupt));
     // 关闭中断
     bool interruptOff();
