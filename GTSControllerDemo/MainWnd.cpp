@@ -5,6 +5,7 @@ MainWnd::MainWnd(QWidget *parent)
 {
     ui.setupUi(this);
     this->setWindowIcon(QIcon(":/MainWnd/res/owl.png"));
+    this->setWindowTitle("GTSControllerDemoMainWnd");
 }
 
 MainWnd::~MainWnd()

@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "gts.h"
+#include "../GTSLib/gts.h"
 
 // ============================================================
 // ´íÎóÂë×ª»»Îª×Ö·û´®(µ÷ÊÔ¸¨Öú)

@@ -21,24 +21,12 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
-    <Filter Include="Header Files\GTS">
-      <UniqueIdentifier>{f643dd7d-6d9f-4172-8db1-91dee066f3ef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Widget">
-      <UniqueIdentifier>{1f5a6507-e9b3-4dcf-a335-4e1cc4511054}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GTS">
-      <UniqueIdentifier>{8d217063-a388-42df-bdf2-153c512ad1e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Widget">
-      <UniqueIdentifier>{70f02c45-ae8f-45b2-aea1-6eaeb453366a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="GTSControllerWidget.qrc">
+    <QtRcc Include="MainWnd.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="GTSControllerWidget.ui">
+    <QtUic Include="MainWnd.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -46,27 +34,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GTSControllerWidget.cpp">
-      <Filter>Source Files\Widget</Filter>
+    <ClCompile Include="MainWnd.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="GTSControllerWidget.h">
-      <Filter>Header Files\Widget</Filter>
+    <QtMoc Include="MainWnd.h">
+      <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\GTSLib\config.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTSLib\gts.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTSLib\LookAheadEx.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
-    <ClInclude Include="GtsHal.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

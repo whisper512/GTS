@@ -1,10 +1,10 @@
-#include "GTSControllerWidget.h"
+#include "MainWnd.h"
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    GTSControllerWidget window;
+    MainWnd window;
     window.show();
     return app.exec();
 }
