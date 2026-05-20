@@ -1,4 +1,4 @@
-#include "GTSControllerWidget.h"
+﻿#include "GTSControllerWidget.h"
 
 GTSControllerWidget::GTSControllerWidget(QWidget *parent)
     : QWidget(parent)

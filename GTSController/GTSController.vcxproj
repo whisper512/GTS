@@ -63,6 +63,15 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>D:\GTSController\GTSController\GTSLib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\GTSController\GTSController\GTSLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gts.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -92,9 +101,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigMgr.cpp" />
+    <ClCompile Include="FeedbackMgr.cpp" />
+    <ClCompile Include="InterpolationMgr.cpp" />
+    <ClCompile Include="IOMgr.cpp" />
+    <ClCompile Include="MotionMgr.cpp" />
+    <ClCompile Include="TotalMgr.cpp" />
     <QtRcc Include="GTSControllerWidget.qrc" />
     <QtUic Include="GTSControllerWidget.ui" />
     <QtMoc Include="GTSControllerWidget.h" />
+    <ClCompile Include="AxisMgr.cpp" />
+    <ClCompile Include="BoardMgr.cpp" />
     <ClCompile Include="GTSControllerWidget.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -102,7 +119,15 @@
     <ClInclude Include="..\..\GTSLib\config.h" />
     <ClInclude Include="..\..\GTSLib\gts.h" />
     <ClInclude Include="..\..\GTSLib\LookAheadEx.h" />
+    <ClInclude Include="AxisMgr.h" />
+    <ClInclude Include="ConfigMgr.h" />
+    <ClInclude Include="FeedbackMgr.h" />
     <ClInclude Include="GtsHal.h" />
+    <QtMoc Include="BoardMgr.h" />
+    <ClInclude Include="InterpolationMgr.h" />
+    <ClInclude Include="IOMgr.h" />
+    <ClInclude Include="MotionMgr.h" />
+    <QtMoc Include="TotalMgr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

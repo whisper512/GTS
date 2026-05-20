@@ -33,6 +33,12 @@
     <Filter Include="Source Files\Widget">
       <UniqueIdentifier>{70f02c45-ae8f-45b2-aea1-6eaeb453366a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{d4c95d2f-d82b-4915-91b7-dcefb20c5e66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{35f11c62-c72a-4bf1-a338-35477d8ce16c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="GTSControllerWidget.qrc">
@@ -49,10 +55,40 @@
     <ClCompile Include="GTSControllerWidget.cpp">
       <Filter>Source Files\Widget</Filter>
     </ClCompile>
+    <ClCompile Include="AxisMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="FeedbackMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="InterpolationMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="IOMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MotionMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TotalMgr.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GTSControllerWidget.h">
       <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="BoardMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </QtMoc>
+    <QtMoc Include="TotalMgr.h">
+      <Filter>Header Files\Manager</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +103,24 @@
     </ClInclude>
     <ClInclude Include="GtsHal.h">
       <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+    <ClInclude Include="AxisMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="FeedbackMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="InterpolationMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="IOMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MotionMgr.h">
+      <Filter>Source Files\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

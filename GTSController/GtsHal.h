@@ -1,6 +1,6 @@
-// ============================================================
-// GtsHal.h °™ πÃ∏ﬂ GTS-400 œµ¡–‘À∂Øøÿ÷∆ø®”≤º˛≥ÈœÛ≤„
-// ¡¥Ω”“™«Û: gts.lib (ªÚ gts_x64.lib) + gts.dll (‘À–– ±)
+Ôªø// ============================================================
+// GtsHal.h ‚Äî Âõ∫È´ò GTS-400 Á≥ªÂàóËøêÂä®ÊéßÂà∂Âç°Á°¨‰ª∂ÊäΩË±°Â±Ç
+// ÈìæÊé•Ë¶ÅÊ±Ç: gts.lib (Êàñ gts_x64.lib) + gts.dll (ËøêË°åÊó∂)
 // ============================================================
 #ifndef GTSHAL_H
 #define GTSHAL_H
@@ -11,7 +11,7 @@
 #include "../GTSLib/gts.h"
 
 // ============================================================
-// ¥ÌŒÛ¬Î◊™ªªŒ™◊÷∑˚¥Æ(µ˜ ‘∏®÷˙)
+// ÈîôËØØÁ†ÅËΩ¨Êç¢‰∏∫Â≠óÁ¨¶‰∏≤(Ë∞ÉËØïËæÖÂä©)
 // ============================================================
 inline const char* GtsErrorToString(short errCode) {
     switch (errCode) {
@@ -35,13 +35,13 @@ inline const char* GtsErrorToString(short errCode) {
 }
 
 // ============================================================
-// GtsHal°™À˘”–GT_XXX∫Ø ˝µƒC++ æ≤Ã¨∑‚◊∞
+// GtsHal‚ÄîÊâÄÊúâGT_XXXÂáΩÊï∞ÁöÑC++ ÈùôÊÄÅÂ∞ÅË£Ö
 // ============================================================
 
 class GtsHal {
 public:
     // ====================================================================
-    // 1.∞Âø®π‹¿Ì(Board Management)
+    // 1.ÊùøÂç°ÁÆ°ÁêÜ(Board Management)
     // ====================================================================
     static short getDllVersion(char** ppVersion) { return GT_GetDllVersion(ppVersion); }
     static short getVersion(char** ppVersion) { return GT_GetVersion(ppVersion); }
@@ -66,49 +66,49 @@ public:
     static short setDeviceShareMax(short count) { return GT_SetDeviceShareMax(count); }
 
     // ====================================================================
-    // 2. ÷·øÿ÷∆ (Axis Control)
+    // 2. ËΩ¥ÊéßÂà∂ (Axis Control)
     // ====================================================================
-    //  πƒ‹/Ω˚÷π
+    // ‰ΩøËÉΩ/Á¶ÅÊ≠¢
     static short axisOn(short axis) { return GT_AxisOn(axis); }
     static short axisOff(short axis) { return GT_AxisOff(axis); }
     static short multiAxisOn(unsigned long mask) { return GT_MultiAxisOn(mask); }
     static short multiAxisOff(unsigned long mask) { return GT_MultiAxisOff(mask); }
     static short setAxisOnDelayTime(unsigned short ms) { return GT_SetAxisOnDelayTime(ms); }
     static short getAxisOnDelayTime(unsigned short* pMs) { return GT_GetAxisOnDelayTime(pMs); }
-    // Õ£÷π
+    // ÂÅúÊ≠¢
     static short stop(long mask, long option) { return GT_Stop(mask, option); }
     static short stopEx(long mask, long option) { return GT_StopEx(mask, option); }
-    // ±®æØ
+    // Êä•Ë≠¶
     static short alarmOn(short axis) { return GT_AlarmOn(axis); }
     static short alarmOff(short axis) { return GT_AlarmOff(axis); }
-    // œﬁŒª
+    // Èôê‰Ωç
     static short lmtsOn(short axis, short limitType = -1) { return GT_LmtsOn(axis, limitType); }
     static short lmtsOff(short axis, short limitType = -1) { return GT_LmtsOff(axis, limitType); }
     static short lmtSns(unsigned short sense) { return GT_LmtSns(sense); }
-    // ◊¥Ã¨
+    // Áä∂ÊÄÅ
     static short getSts(short axis, long* pSts, short count = 1, unsigned long* pClock = nullptr) { return GT_GetSts(axis, pSts, count, pClock); }
     static short clrSts(short axis, short count = 1) { return GT_ClrSts(axis, count); }
     static short zeroPos(short axis, short count = 1) { return GT_ZeroPos(axis, count); }
     static short synchAxisPos(long mask) { return GT_SynchAxisPos(mask); }
-    // ÷·ƒ£ Ω
+    // ËΩ¥Ê®°Âºè
     static short ctrlMode(short axis, short mode) { return GT_CtrlMode(axis, mode); }
     static short setAxisMode(short axis, short mode) { return GT_SetAxisMode(axis, mode); }
     static short getAxisMode(short axis, short* pMode) { return GT_GetAxisMode(axis, pMode); }
-    // ∏˙ÀÊŒÛ≤Ó
+    // Ë∑üÈöèËØØÂ∑Æ
     static short setPosErr(short control, long error) { return GT_SetPosErr(control, error); }
     static short getPosErr(short control, long* pError) { return GT_GetPosErr(control, pError); }
     static short setAxisFollowErrorMode(short axis, short mode) { return GT_SetAxisFollowErrorMode(axis, mode); }
     static short getAxisFollowErrorMode(short axis, short* pMode) { return GT_GetAxisFollowErrorMode(axis, pMode); }
-    // »ÌœﬁŒª
+    // ËΩØÈôê‰Ωç
     static short setSoftLimit(short axis, long positive, long negative) { return GT_SetSoftLimit(axis, positive, negative); }
     static short getSoftLimit(short axis, long* pPositive, long* pNegative) { return GT_GetSoftLimit(axis, pPositive, pNegative); }
-    // Õ£÷πºıÀŸ
+    // ÂÅúÊ≠¢ÂáèÈÄü
     static short setStopDec(short profile, double decSmooth, double decAbrupt) { return GT_SetStopDec(profile, decSmooth, decAbrupt); }
     static short getStopDec(short profile, double* pDecSmooth, double* pDecAbrupt) { return GT_GetStopDec(profile, pDecSmooth, pDecAbrupt); }
     static short setStopIo(short axis, short stopType, short inputType, short inputIndex) { return GT_SetStopIo(axis, stopType, inputType, inputIndex); }
 
     // ====================================================================
-    // 3. ‘À∂Øƒ£ Ω…Ë÷√ (Profile Mode)
+    // 3. ËøêÂä®Ê®°ÂºèËÆæÁΩÆ (Profile Mode)
     // ====================================================================
     static short setPrfPos(short profile, long pos) { return GT_SetPrfPos(profile, pos); }
     static short getPrfPos(short profile, double* pValue, short count = 1, unsigned long* pClock = nullptr) { return GT_GetPrfPos(profile, pValue, count, pClock); }
@@ -127,7 +127,7 @@ public:
     static short getProfileScale(short axis, long* pAlpha, long* pBeta) { return GT_GetProfileScale(axis, pAlpha, pBeta); }
 
     // ====================================================================
-    // 4. Ã›–Œ/µ„Œª‘À∂Ø (Trapezoidal / Point-to-Point)
+    // 4. Ê¢ØÂΩ¢/ÁÇπ‰ΩçËøêÂä® (Trapezoidal / Point-to-Point)
     // ====================================================================
     static short prfTrap(short profile) { return GT_PrfTrap(profile); }
     static short setTrapPrm(short profile, const TTrapPrm& prm) { return GT_SetTrapPrm(profile, const_cast<TTrapPrm*>(&prm)); }
@@ -144,7 +144,7 @@ public:
     static short getMoveVelocity(short profile, TMoveVelocityPrm* pPrm) { return GT_GetMoveVelocity(profile, pPrm); }
 
     // ====================================================================
-    // 5. PT ‘À∂Ø (Position-Time)
+    // 5. PT ËøêÂä® (Position-Time)
     // ====================================================================
     static short prfPt(short profile, short mode = PT_MODE_STATIC) { return GT_PrfPt(profile, mode); }
     static short setPtLoop(short profile, long loop) { return GT_SetPtLoop(profile, loop); }
@@ -161,7 +161,7 @@ public:
     static short ptAo(short profile, short aoType, short index, double value, short fifo) { return GT_PtAo(profile, aoType, index, value, fifo); }
 
     // ====================================================================
-    // 6. Gear ‘À∂Ø (µÁ◊”≥›¬÷)
+    // 6. Gear ËøêÂä® (ÁîµÂ≠êÈΩøËΩÆ)
     // ====================================================================
     static short prfGear(short profile, short dir = 0) { return GT_PrfGear(profile, dir); }
     static short setGearMaster(short profile, short masterIndex, short masterType = GEAR_MASTER_PROFILE, short masterItem = 0) { return GT_SetGearMaster(profile, masterIndex, masterType, masterItem); }
@@ -173,7 +173,7 @@ public:
     static short getGearEvent(short profile, short* pEvent, long* pStartPara0, long* pStartPara1) { return GT_GetGearEvent(profile, pEvent, pStartPara0, pStartPara1); }
 
     // ====================================================================
-    // 7. Follow ‘À∂Ø (µÁ◊”Õπ¬÷)
+    // 7. Follow ËøêÂä® (ÁîµÂ≠êÂá∏ËΩÆ)
     // ====================================================================
     static short prfFollow(short profile, short dir = 0) { return GT_PrfFollow(profile, dir); }
     static short setFollowMaster(short profile, short masterIndex, short masterType = FOLLOW_MASTER_PROFILE, short masterItem = 0) { return GT_SetFollowMaster(profile, masterIndex, masterType, masterItem); }
@@ -192,7 +192,7 @@ public:
     static short getFollowStatus(short profile, short* pFifoNum, short* pSwitchStatus) { return GT_GetFollowStatus(profile, pFifoNum, pSwitchStatus); }
 
     // ====================================================================
-    // 8. PVT ‘À∂Ø
+    // 8. PVT ËøêÂä®
     // ====================================================================
     static short prfPvt(short profile) { return GT_PrfPvt(profile); }
     static short setPvtLoop(short profile, long loop) { return GT_SetPvtLoop(profile, loop); }
@@ -207,7 +207,7 @@ public:
     static short pvtTablePercent(short tableId, long count, double* pTime, double* pPos, double* pPercent, double velBegin = 0) { return GT_PvtTablePercent(tableId, count, pTime, pPos, pPercent, velBegin); }
 
     // ====================================================================
-    // 9. ≤Â≤π‘À∂Ø (Interpolation / Coordinate System)
+    // 9. ÊèíË°•ËøêÂä® (Interpolation / Coordinate System)
     // ====================================================================
     static short setCrdPrm(short crd, const TCrdPrm& prm) { return GT_SetCrdPrm(crd, const_cast<TCrdPrm*>(&prm)); }
     static short getCrdPrm(short crd, TCrdPrm* pPrm) { return GT_GetCrdPrm(crd, pPrm); }
@@ -222,7 +222,7 @@ public:
     static short crdData(short crd, const TCrdData& data, short fifo = 0) { return GT_CrdData(crd, const_cast<TCrdData*>(&data), fifo); }
     static short crdDataCircle(short crd, const TCrdData& data, short fifo = 0) { return GT_CrdDataCircle(crd, const_cast<TCrdData*>(&data), fifo); }
 
-    // ÷±œﬂ≤Â≤π
+    // Áõ¥Á∫øÊèíË°•
     static short lnXY(short crd, long x, long y, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_LnXY(crd, x, y, synVel, synAcc, velEnd, fifo); }
     static short lnXYZ(short crd, long x, long y, long z, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_LnXYZ(crd, x, y, z, synVel, synAcc, velEnd, fifo); }
     static short lnXYZA(short crd, long x, long y, long z, long a, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_LnXYZA(crd, x, y, z, a, synVel, synAcc, velEnd, fifo); }
@@ -230,7 +230,7 @@ public:
     static short lnXYZG0(short crd, long x, long y, long z, double synVel, double synAcc, short fifo = 0) { return GT_LnXYZG0(crd, x, y, z, synVel, synAcc, fifo); }
     static short lnXYZAG0(short crd, long x, long y, long z, long a, double synVel, double synAcc, short fifo = 0) { return GT_LnXYZAG0(crd, x, y, z, a, synVel, synAcc, fifo); }
 
-    // ‘≤ª°≤Â≤π
+    // ÂúÜÂºßÊèíË°•
     static short arcXYR(short crd, long x, long y, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_ArcXYR(crd, x, y, radius, circleDir, synVel, synAcc, velEnd, fifo); }
     static short arcXYC(short crd, long x, long y, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_ArcXYC(crd, x, y, xCenter, yCenter, circleDir, synVel, synAcc, velEnd, fifo); }
     static short arcYZR(short crd, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_ArcYZR(crd, y, z, radius, circleDir, synVel, synAcc, velEnd, fifo); }
@@ -239,14 +239,14 @@ public:
     static short arcZXC(short crd, long z, long x, double zCenter, double xCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_ArcZXC(crd, z, x, zCenter, xCenter, circleDir, synVel, synAcc, velEnd, fifo); }
     static short arcXYZ(short crd, long x, long y, long z, double interX, double interY, double interZ, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_ArcXYZ(crd, x, y, z, interX, interY, interZ, synVel, synAcc, velEnd, fifo); }
 
-    // ¬›–˝≤Â≤π
+    // Ëû∫ÊóãÊèíË°•
     static short helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_HelixXYRZ(crd, x, y, z, radius, circleDir, synVel, synAcc, velEnd, fifo); }
     static short helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_HelixXYCZ(crd, x, y, z, xCenter, yCenter, circleDir, synVel, synAcc, velEnd, fifo); }
 
-    // Õ®”√∂‡÷·
+    // ÈÄöÁî®Â§öËΩ¥
     static short lnXYZACUVW(short crd, long* pPos, short posMask, double synVel, double synAcc, double velEnd = 0, short fifo = 0) { return GT_LnXYZACUVW(crd, pPos, posMask, synVel, synAcc, velEnd, fifo); }
 
-    // ª∫≥Â«¯≤Ÿ◊˜ (≤Â≤π÷–µƒ IO/—” ±/º§π‚µ»)
+    // ÁºìÂÜ≤Âå∫Êìç‰Ωú (ÊèíË°•‰∏≠ÁöÑ IO/Âª∂Êó∂/ÊøÄÂÖâÁ≠â)
     static short bufIO(short crd, unsigned short doType, unsigned short doMask,unsigned short doValue, short fifo = 0) { return GT_BufIO(crd, doType, doMask, doValue, fifo); }
     static short bufDelay(short crd, unsigned short delayTime, short fifo = 0) {  return GT_BufDelay(crd, delayTime, fifo); }
     static short bufDA(short crd, short chn, short daValue, short fifo = 0) {   return GT_BufDA(crd, chn, daValue, fifo); }
@@ -273,7 +273,7 @@ public:
     static short getCrdBufferMode(short crd, short* pBufferMode, short fifo) { return GT_GetCrdBufferMode(crd, pBufferMode, fifo); }
 
     // ====================================================================
-    // 10. º§π‚øÿ÷∆ (Laser Control)
+    // 10. ÊøÄÂÖâÊéßÂà∂ (Laser Control)
     // ====================================================================
     static short laserPowerMode(short mode, double maxValue, double minValue,short channel = 0, short delayMode = 0) { return GT_LaserPowerMode(mode, maxValue, minValue, channel, delayMode); }
     static short laserPrfCmd(double outputCmd, short channel = 0) { return GT_LaserPrfCmd(outputCmd, channel); }
@@ -294,7 +294,7 @@ public:
     static short setLaserFollowSpline(short tableId, long n, double* pX, double* pY,  double beginValue, double endValue, short channel = 0) {  return GT_SetLaserFollowSpline(tableId, n, pX, pY, beginValue, endValue, channel); }
     static short getLaserFollowSpline(short tableId, long n, double* pX, double* pY, double* pA, double* pB, double* pC, long* pCount, short channel = 0) { return GT_GetLaserFollowSpline(tableId, n, pX, pY, pA, pB, pC, pCount, channel); }
 
-    // ª∫≥Â«¯º§π‚÷∏¡Ó£®‘⁄≤Â≤π÷–µ˜”√£©
+    // ÁºìÂÜ≤Âå∫ÊøÄÂÖâÊåá‰ª§ÔºàÂú®ÊèíË°•‰∏≠Ë∞ÉÁî®Ôºâ
     static short bufLaserOn(short crd, short fifo = 0, short channel = 0) { return GT_BufLaserOn(crd, fifo, channel); }
     static short bufLaserOff(short crd, short fifo = 0, short channel = 0) {  return GT_BufLaserOff(crd, fifo, channel);  }
     static short bufLaserPrfCmd(short crd, double laserPower, short fifo = 0, short channel = 0) {   return GT_BufLaserPrfCmd(crd, laserPower, fifo, channel); }
@@ -307,7 +307,7 @@ public:
     static short getCurrentLaserDisTable(short channel, short* pIndex) {    return GT_GetCurrentLaserDisTable(channel, pIndex); }
 
     // ====================================================================
-    // 11. IO øÿ÷∆ (Digital IO)
+    // 11. IO ÊéßÂà∂ (Digital IO)
     // ====================================================================
     static short setDo(short doType, long value) { return GT_SetDo(doType, value); }
     static short setDoBit(short doType, short doIndex, short value) {return GT_SetDoBit(doType, doIndex, value);  }
@@ -342,7 +342,7 @@ public:
     static short getMtrLmt(short dac, short* pLimit) { return GT_GetMtrLmt(dac, pLimit); }
 
     // ====================================================================
-    // 13. ±‡¬Î∆˜ (Encoder)
+    // 13. ÁºñÁ†ÅÂô® (Encoder)
     // ====================================================================
     static short encSns(unsigned short sense) { return GT_EncSns(sense); }
     static short encOn(short encoder) { return GT_EncOn(encoder); }
@@ -358,7 +358,7 @@ public:
     static short setEncoderScale(short encoder, long alpha, long beta) {  return GT_SetEncoderScale(encoder, alpha, beta);  }
     static short getEncoderScale(short encoder, long* pAlpha, long* pBeta) {   return GT_GetEncoderScale(encoder, pAlpha, pBeta); }
 
-    // ±‡¬Î∆˜œÏ”¶ºÏ≤È
+    // ÁºñÁ†ÅÂô®ÂìçÂ∫îÊ£ÄÊü•
     static short setEncResponseCheck(short control, short dacThreshold, double minEncVel, long time) {  return GT_SetEncResponseCheck(control, dacThreshold, minEncVel, time); }
     static short getEncResponseCheck(short control, short* pDacThreshold,  double* pMinEncVel, long* pTime) {return GT_GetEncResponseCheck(control, pDacThreshold, pMinEncVel, pTime); }
     static short enableEncResponseCheck(short control) { return GT_EnableEncResponseCheck(control); }
@@ -367,7 +367,7 @@ public:
     static short getEncoderOutSelect(short* pMode) { return GT_GetEncoderOutSelect(pMode); }
 
     // ====================================================================
-    // 14. ≤∂ªÒ (Capture)
+    // 14. ÊçïËé∑ (Capture)
     // ====================================================================
     static short setCaptureMode(short encoder, short mode) { return GT_SetCaptureMode(encoder, mode); }
     static short getCaptureMode(short encoder, short* pMode, short count = 1) {  return GT_GetCaptureMode(encoder, pMode, count);  }
@@ -383,7 +383,7 @@ public:
     static short getCaptureWidth(short trigger, short* pWidth, short count = 1) {   return GT_GetCaptureWidth(trigger, pWidth, count);  }
 
     // ====================================================================
-    // 15. ªÿ¡„ (Home)
+    // 15. ÂõûÈõ∂ (Home)
     // ====================================================================
     static short homeInit() { return GT_HomeInit(); }
     static short home(short axis, long pos, double vel, double acc, long offset) {  return GT_Home(axis, pos, vel, acc, offset);  }
@@ -398,7 +398,7 @@ public:
     static short getStandardHomeStatus(short axis, TStandardHomeStatus* pStatus) {  return GT_GetStandardHomeStatus(axis, pStatus);  }
 
     // ====================================================================
-    // 16. PID / øÿ÷∆¬À≤®
+    // 16. PID / ÊéßÂà∂Êª§Ê≥¢
     // ====================================================================
     static short setPid(short control, short index, const TPid& pid) {  return GT_SetPid(control, index, const_cast<TPid*>(&pid));   }
     static short getPid(short control, short index, TPid* pPid) {   return GT_GetPid(control, index, pPid);  }
@@ -416,7 +416,7 @@ public:
     static short getControlSuperimposed(short control, short* pType, short* pIndex) {   return GT_GetControlSuperimposed(control, pType, pIndex);  }
 
     // ====================================================================
-    // 17.  ÷¬÷ (Handwheel)
+    // 17. ÊâãËΩÆ (Handwheel)
     // ====================================================================
     static short handwheelInit() { return GT_HandwheelInit(); }
     static short setHandwheelStopDec(short slave, double decSmooth, double decAbrupt) {   return GT_SetHandwheelStopDec(slave, decSmooth, decAbrupt);  }
@@ -424,7 +424,7 @@ public:
     static short endHandwheel(short slave) { return GT_EndHandwheel(slave); }
 
     // ====================================================================
-    // 18. Œª÷√±»Ωœ (Position Compare)
+    // 18. ‰ΩçÁΩÆÊØîËæÉ (Position Compare)
     // ====================================================================
     static short setComparePort(short channel, short hsio0, short hsio1) { return GT_SetComparePort(channel, hsio0, hsio1); }
     static short comparePulse(short level, short outputType, short time) { return GT_ComparePulse(level, outputType, time); }
@@ -434,7 +434,7 @@ public:
     static short compareLinear(short encoder, short channel, long startPos, long repeatTimes,  long interval, short time, short source) { return GT_CompareLinear(encoder, channel, startPos, repeatTimes, interval, time, source); }
     static short compareContinuePulseMode(short mode, short count, short standTime) {  return GT_CompareContinuePulseMode(mode, count, standTime); }
 
-    // 2D Œª÷√±»Ωœ
+    // 2D ‰ΩçÁΩÆÊØîËæÉ
     static short compare2DMode(short chn, short mode) { return GT_2DCompareMode(chn, mode); }
     static short compare2DPulse(short chn, short level, short outputType, short time) {   return GT_2DComparePulse(chn, level, outputType, time);  }
     static short compare2DStop(short chn) { return GT_2DCompareStop(chn); }
@@ -447,7 +447,7 @@ public:
     static short compare2DSetPreOutTime(short chn, double preOutputTime) {   return GT_2DCompareSetPreOutTime(chn, preOutputTime);  }
 
     // ====================================================================
-    // 19. Trigger (ÃΩ’Î/¥•∑¢)
+    // 19. Trigger (Êé¢Èíà/Ëß¶Âèë)
     // ====================================================================
     static short setTrigger(short i, const TTrigger& trigger) {   return GT_SetTrigger(i, const_cast<TTrigger*>(&trigger));  }
     static short getTrigger(short i, TTrigger* pTrigger) { return GT_GetTrigger(i, pTrigger); }
@@ -457,7 +457,7 @@ public:
     static short getTriggerLatchValue(short i, long count, long* pValue,   long* pCount, TLatchValueInfo* pInfo) {   return GT_GetTriggerLatchValue(i, count, pValue, pCount, pInfo);  }
 
     // ====================================================================
-    // 20. ¡˙√≈ (Gantry)
+    // 20. ÈæôÈó® (Gantry)
     // ====================================================================
     static short enableGantry(short master, short slave, double masterKp, double slaveKp) {  return GT_EnableGantry(master, slave, masterKp, slaveKp);  }
     static short disableGantry() { return GT_DisableGantry(); }
@@ -472,7 +472,7 @@ public:
     static short gantryAxisOff(short group) { return GT_GantryAxisOff(group); }
 
     // ====================================================================
-    // 21. ¿©’πƒ£øÈ (Extension Module)
+    // 21. Êâ©Â±ïÊ®°Âùó (Extension Module)
     // ====================================================================
     static short openExtMdl(const char* pDllName = nullptr) { return GT_OpenExtMdl(const_cast<char*>(pDllName)); }
     static short closeExtMdl() { return GT_CloseExtMdl(); }
@@ -493,7 +493,7 @@ public:
     static short setConfig(short mdl, const TExtMdlCfgInfo& info) {    return GT_SetConfig(mdl, const_cast<TExtMdlCfgInfo*>(&info)); }
 
     // ====================================================================
-    // 22. ◊‘∂Ø∂‘Ωπ (AutoFocus)
+    // 22. Ëá™Âä®ÂØπÁÑ¶ (AutoFocus)
     // ====================================================================
     static short autoFocus(unsigned short mode, double kp, short reverse, short channel) {  return GT_AutoFocus(mode, kp, reverse, channel);  }
     static short setAutoFocusRefVol(double refVol, double maxVol, double minVol, short channel) {    return GT_SetAutoFocusRefVol(refVol, maxVol, minVol, channel); }
@@ -503,7 +503,7 @@ public:
     static short setAutoFocusDeadVoltage(double voltage, short channel) {  return GT_SetAutoFocusDeadVoltage(voltage, channel); }
 
     // ====================================================================
-    // 23. ◊¯±Í±‰ªª (Transform)
+    // 23. ÂùêÊ†áÂèòÊç¢ (Transform)
     // ====================================================================
     static short setTransformOrthogonal(short index, const TTransformOrthogonal& data) {   return GT_SetTransformOrthogonal(index, const_cast<TTransformOrthogonal*>(&data));  }
     static short getTransformOrthogonal(short index, TTransformOrthogonal* pData) {  return GT_GetTransformOrthogonal(index, pData);  }
@@ -524,7 +524,7 @@ public:
     static short smartCutterStart(short index) { return GT_SmartCutterStart(index); }
 
     // ====================================================================
-    // 25. Àø∏‹≤π≥• (Lead Screw Compensation)
+    // 25. ‰∏ùÊù†Ë°•ÂÅø (Lead Screw Compensation)
     // ====================================================================
     static short setLeadScrewComp(short axis, short n, long startPos, long lenPos,  long* pCompPos, long* pCompNeg) {   return GT_SetLeadScrewComp(axis, n, startPos, lenPos, pCompPos, pCompNeg); }
     static short enableLeadScrewComp(short axis, short mode) {  return GT_EnableLeadScrewComp(axis, mode);   }
@@ -534,7 +534,7 @@ public:
     static short setLeadScrewLink(short axis, short link) { return GT_SetLeadScrewLink(axis, link); }
     static short getLeadScrewLink(short axis, short* pLink) { return GT_GetLeadScrewLink(axis, pLink); }
 
-    // 2D ≤π≥•
+    // 2D Ë°•ÂÅø
     static short setCompensate2DTable(short idx, const TCompensate2DTable& tbl, long* pData,   short externComp = 0) {   return GT_SetCompensate2DTable(idx, const_cast<TCompensate2DTable*>(&tbl), pData, externComp); }
     static short getCompensate2DTable(short idx, TCompensate2DTable* pTbl, short* pExternComp = nullptr) {  return GT_GetCompensate2DTable(idx, pTbl, pExternComp);   }
     static short setCompensate2D(short axis, const TCompensate2D& comp) {  return GT_SetCompensate2D(axis, const_cast<TCompensate2D*>(&comp));  }
@@ -543,7 +543,7 @@ public:
     static short getCompensate(short axis, double* pPitchError, double* pCrossError,  double* pBacklashError, double* pEncPos, double* pPrfPos) {     return GT_GetCompensate(axis, pPitchError, pCrossError, pBacklashError, pEncPos, pPrfPos); }
 
     // ====================================================================
-    // 26. PCI ÷–∂œ
+    // 26. PCI ‰∏≠Êñ≠
     // ====================================================================
     static short interruptOn(TInterruptCallback pCallback) { return GT_InterruptOn(pCallback); }
     static short interruptOff() { return GT_InterruptOff(); }
@@ -552,7 +552,7 @@ public:
     static short interruptTrigger(short param) { return GT_InterruptTrigger(param); }
 
     // ====================================================================
-    // 27. Ω≈±æ/±‡“Î (Motion Program)
+    // 27. ËÑöÊú¨/ÁºñËØë (Motion Program)
     // ====================================================================
     static short compile(const char* pFileName, TCompileInfo* pWrongInfo) {   return GT_Compile(const_cast<char*>(pFileName), pWrongInfo);  }
     static short download(const char* pFileName) {  return GT_Download(const_cast<char*>(pFileName));  }
@@ -567,7 +567,7 @@ public:
     static short getVarValue(short page, const TVarInfo& varInfo, double* pValue, short count = 1) {    return GT_GetVarValue(page, const_cast<TVarInfo*>(&varInfo), pValue, count);  }
 
     // ====================================================================
-    // 28. ±‰¡ø (Long/Double Variable)
+    // 28. ÂèòÈáè (Long/Double Variable)
     // ====================================================================
     static short setLongVar(short index, long value) { return GT_SetLongVar(index, value); }
     static short getLongVar(short index, long* pValue) { return GT_GetLongVar(index, pValue); }
@@ -577,7 +577,7 @@ public:
     static short getFlagVar(short index, short* pMode, short* pValue) {     return GT_GetFlagVar(index, pMode, pValue);  }
 
     // ====================================================================
-    // 29. –≈∫≈ºÏ≤‚ (Signal Detect / Time Filter)
+    // 29. ‰ø°Âè∑Ê£ÄÊµã (Signal Detect / Time Filter)
     // ====================================================================
     static short setSignalTimeFilter(short type, short index, double filterWidth) {   return GT_SetSignalTimeFilter(type, index, filterWidth);  }
     static short getSignalTimeFilter(short type, short index, double* pFilterWidth) {   return GT_GetSignalTimeFilter(type, index, pFilterWidth); }
@@ -587,7 +587,7 @@ public:
     static short getSignalDetectStatus(short index, TSignalDetectStatus* pPrm) {   return GT_GetSignalDetectStatus(index, pPrm); }
 
     // ====================================================================
-    // 30. ◊È∫œ÷· / ‘À∂Ø∆Ωª¨
+    // 30. ÁªÑÂêàËΩ¥ / ËøêÂä®Âπ≥Êªë
     // ====================================================================
     static short setCombineAxes(short index, const TCombineAxes& data) {   return GT_SetCombineAxes(index, const_cast<TCombineAxes*>(&data));  }
     static short getCombineAxes(short index, TCombineAxes* pData) {   return GT_GetCombineAxes(index, pData); }
@@ -600,7 +600,7 @@ public:
     static short getMotionSmooth(short axis, TMotionSmooth* pSmooth) {     return GT_GetMotionSmooth(axis, pSmooth);  }
 
     // ====================================================================
-    // 31. “°∏À (Joystick)
+    // 31. ÊëáÊùÜ (Joystick)
     // ====================================================================
     static short setJoystickMapAxis(short idx, short* axis) { return GT_SetJoystickMapAxis(idx, axis); }
     static short getJoystickMapAxis(short idx, short* pAxis) { return GT_GetJoystickMapAxis(idx, pAxis); }
@@ -617,7 +617,7 @@ public:
     static short joystickReset(short idx) { return GT_JoystickReset(idx); }
 
     // ====================================================================
-    // 32. UUID / ∆‰À˚‘”œÓ
+    // 32. UUID / ÂÖ∂‰ªñÊùÇÈ°π
     // ====================================================================
     static short getUuid(char* pCode, short count) { return GT_GetUuid(pCode, count); }
     static short setUuid(char* pCode, short count) { return GT_SetUuid(pCode, count); }
@@ -646,7 +646,7 @@ public:
     static short bufFollowStart(short crd, long masterSegment, long slaveSegment, long masterFrameWidth, short fifo = 0) {   return GT_BufFollowStart(crd, masterSegment, slaveSegment, masterFrameWidth, fifo);  }
 
     // ====================================================================
-    // 33. PosCompare (–¬∞Ê±æŒª÷√±»Ωœ)
+    // 33. PosCompare (Êñ∞ÁâàÊú¨‰ΩçÁΩÆÊØîËæÉ)
     // ====================================================================
     static short setPosCompareMode(short index, const TPosCompareMode& mode) {   return GT_SetPosCompareMode(index, const_cast<TPosCompareMode*>(&mode));  }
     static short getPosCompareMode(short index, TPosCompareMode* pMode) {    return GT_GetPosCompareMode(index, pMode);  }
