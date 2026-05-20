@@ -90,6 +90,12 @@
     <QtMoc Include="TotalMgr.h">
       <Filter>Header Files\Manager</Filter>
     </QtMoc>
+    <QtMoc Include="AxisMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </QtMoc>
+    <QtMoc Include="MotionMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\GTSLib\config.h">
@@ -104,9 +110,6 @@
     <ClInclude Include="GtsHal.h">
       <Filter>Header Files\GTS</Filter>
     </ClInclude>
-    <ClInclude Include="AxisMgr.h">
-      <Filter>Header Files\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="ConfigMgr.h">
       <Filter>Header Files\Manager</Filter>
     </ClInclude>
@@ -118,9 +121,6 @@
     </ClInclude>
     <ClInclude Include="IOMgr.h">
       <Filter>Header Files\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="MotionMgr.h">
-      <Filter>Source Files\Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

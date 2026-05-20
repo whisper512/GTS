@@ -1,11 +1,14 @@
 ﻿#include "TotalMgr.h"
 #include "BoardMgr.h"
+#include "AxisMgr.h"
+#include "MotionMgr.h"
 
 TotalMgr::TotalMgr(QObject* parent)
     : QObject(parent)
-{
-    
+{   
     m_board = std::make_unique<BoardMgr>(this);
+    m_axis = std::make_unique<AxisMgr>(this);
+    m_motion = std::make_unique<MotionMgr>(this);
 }
 
 TotalMgr::~TotalMgr() {

@@ -119,14 +119,14 @@
     <ClInclude Include="..\..\GTSLib\config.h" />
     <ClInclude Include="..\..\GTSLib\gts.h" />
     <ClInclude Include="..\..\GTSLib\LookAheadEx.h" />
-    <ClInclude Include="AxisMgr.h" />
+    <QtMoc Include="AxisMgr.h" />
     <ClInclude Include="ConfigMgr.h" />
     <ClInclude Include="FeedbackMgr.h" />
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />
     <ClInclude Include="InterpolationMgr.h" />
     <ClInclude Include="IOMgr.h" />
-    <ClInclude Include="MotionMgr.h" />
+    <QtMoc Include="MotionMgr.h" />
     <QtMoc Include="TotalMgr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

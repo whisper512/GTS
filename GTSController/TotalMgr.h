@@ -6,7 +6,12 @@
 
 
 class BoardMgr;
-
+class AxisMgr;
+class ConfigMgr;
+class FeedbackMgr;
+class IntterpolationMgr;
+class IOMgr;
+class MotionMgr;
 
 // TotalMgr — 总管理器
 class TotalMgr : public QObject {
@@ -15,6 +20,8 @@ class TotalMgr : public QObject {
 private:
     bool m_initialized = false;
     std::unique_ptr<BoardMgr> m_board;
+    std::unique_ptr<AxisMgr> m_axis;
+    std::unique_ptr<MotionMgr> m_motion;
 
 public:
     explicit TotalMgr(QObject* parent = nullptr);
@@ -27,7 +34,10 @@ public:
 
     // 板卡管理器
     BoardMgr* board() const { return m_board.get(); }
-
+    // 轴管理器
+    AxisMgr* axis() const { return m_axis.get(); }
+    // 运动管理器
+    MotionMgr* motion() const { return m_motion.get(); }
 
     void emergencyStop();
     // 获取最近一次错误字符串

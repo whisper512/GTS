@@ -39,14 +39,10 @@ public:
     bool reset();
     // 是否已打开
     bool isOpen() const { return m_isOpen; }
-
-
     // 设置当前操作的板卡编号
     bool setCardNo(short index);
     // 获取当前板卡编号
     short cardNo();
-
-
     // 从文件加载配置
     bool loadConfig(const QString& filePath);
     // 保存当前配置到文件
@@ -55,13 +51,11 @@ public:
     bool uploadConfig();
     // 将主机内存配置下载到板卡
     bool downloadConfig();
-
-
     // 获取 DLL 版本号字符串
     QString dllVersion() const;
     // 获取固件版本号字符串
     QString firmwareVersion() const;
-    // 获取板卡信息（卡编号、卡类型）
+    // 获取板卡信息
     CardInfo cardInfo() const;
     // 获取驱动版本
     DriverVersion driverVersion() const;
@@ -69,8 +63,6 @@ public:
     short interfaceBoardStatus() const;
     // 设置接口板状态
     bool setInterfaceBoardStatus(short type);
-
-
     // 获取系统时钟计数值
     unsigned long clock() const;
     // 获取高精度时钟计数值
@@ -79,8 +71,6 @@ public:
     bool delay(unsigned short milliseconds);
     // 高精度延时（微秒级）
     bool delayHighPrecision(unsigned short microseconds);
-
-
     // 开启中断(注册回调)
     bool interruptOn(short (*pCallback)(TInterrupt));
     // 关闭中断
@@ -91,14 +81,10 @@ public:
     long interruptMask() const;
     // 触发软件中断
     bool triggerInterrupt(short param);
-
-
     // 获取板卡 UUID
     QString uuid() const;
     // 设置板卡 UUID
     bool setUuid(const QString& code);
-
-
     // 获取/设置 Display DIP 状态
     short displayDip() const;
     bool setDisplayDip(short mode);
@@ -114,7 +100,7 @@ signals:
     void opened();
     // 板卡已关闭
     void closed();
-    // 发生错误 (错误码, 错误描述)
+    // 发生错误
     void errorOccurred(short errorCode, const QString& errorMsg);
 
 private:
