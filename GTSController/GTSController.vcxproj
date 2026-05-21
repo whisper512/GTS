@@ -121,7 +121,7 @@
     <ClInclude Include="..\GTSLib\gts.h" />
     <ClInclude Include="..\GTSLib\LookAheadEx.h" />
     <ClInclude Include="ConfigMgr.h" />
-    <ClInclude Include="FeedbackMgr.h" />
+    <QtMoc Include="FeedbackMgr.h" />
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />
     <QtMoc Include="InterpolationMgr.h" />

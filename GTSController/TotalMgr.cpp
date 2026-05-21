@@ -4,6 +4,7 @@
 #include "MotionMgr.h"
 #include "InterpolationMgr.h"
 #include "IOMgr.h"
+#include "FeedbackMgr.h"
 
 TotalMgr::TotalMgr(QObject* parent)
     : QObject(parent)
@@ -13,6 +14,7 @@ TotalMgr::TotalMgr(QObject* parent)
     m_motion = std::make_unique<MotionMgr>(this);
     m_interpolation = std::make_unique<InterpolationMgr>(this);
     m_io = std::make_unique<IOMgr>(this);
+    m_feedback = std::make_unique<FeedbackMgr>(this);
 }
 
 TotalMgr::~TotalMgr() {
