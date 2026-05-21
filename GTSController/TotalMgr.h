@@ -9,7 +9,7 @@ class BoardMgr;
 class AxisMgr;
 class ConfigMgr;
 class FeedbackMgr;
-class IntterpolationMgr;
+class InterpolationMgr;
 class IOMgr;
 class MotionMgr;
 
@@ -22,6 +22,7 @@ private:
     std::unique_ptr<BoardMgr> m_board;
     std::unique_ptr<AxisMgr> m_axis;
     std::unique_ptr<MotionMgr> m_motion;
+    std::unique_ptr<InterpolationMgr> m_interpolation;
 
 public:
     explicit TotalMgr(QObject* parent = nullptr);
@@ -38,6 +39,8 @@ public:
     AxisMgr* axis() const { return m_axis.get(); }
     // 运动管理器
     MotionMgr* motion() const { return m_motion.get(); }
+    // 插补管理器
+    InterpolationMgr* interpolation() const { return m_interpolation.get(); }
 
     void emergencyStop();
     // 获取最近一次错误字符串

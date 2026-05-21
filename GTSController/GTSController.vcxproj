@@ -116,15 +116,15 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\GTSLib\config.h" />
-    <ClInclude Include="..\..\GTSLib\gts.h" />
-    <ClInclude Include="..\..\GTSLib\LookAheadEx.h" />
     <QtMoc Include="AxisMgr.h" />
+    <ClInclude Include="..\GTSLib\config.h" />
+    <ClInclude Include="..\GTSLib\gts.h" />
+    <ClInclude Include="..\GTSLib\LookAheadEx.h" />
     <ClInclude Include="ConfigMgr.h" />
     <ClInclude Include="FeedbackMgr.h" />
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />
-    <ClInclude Include="InterpolationMgr.h" />
+    <QtMoc Include="InterpolationMgr.h" />
     <ClInclude Include="IOMgr.h" />
     <QtMoc Include="MotionMgr.h" />
     <QtMoc Include="TotalMgr.h" />

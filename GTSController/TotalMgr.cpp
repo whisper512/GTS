@@ -2,6 +2,7 @@
 #include "BoardMgr.h"
 #include "AxisMgr.h"
 #include "MotionMgr.h"
+#include "InterpolationMgr.h"
 
 TotalMgr::TotalMgr(QObject* parent)
     : QObject(parent)
@@ -9,6 +10,7 @@ TotalMgr::TotalMgr(QObject* parent)
     m_board = std::make_unique<BoardMgr>(this);
     m_axis = std::make_unique<AxisMgr>(this);
     m_motion = std::make_unique<MotionMgr>(this);
+    m_interpolation = std::make_unique<InterpolationMgr>(this);
 }
 
 TotalMgr::~TotalMgr() {

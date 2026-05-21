@@ -96,17 +96,11 @@
     <QtMoc Include="MotionMgr.h">
       <Filter>Header Files\Manager</Filter>
     </QtMoc>
+    <QtMoc Include="InterpolationMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\GTSLib\config.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTSLib\gts.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\GTSLib\LookAheadEx.h">
-      <Filter>Header Files\GTS</Filter>
-    </ClInclude>
     <ClInclude Include="GtsHal.h">
       <Filter>Header Files\GTS</Filter>
     </ClInclude>
@@ -116,11 +110,17 @@
     <ClInclude Include="FeedbackMgr.h">
       <Filter>Header Files\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="InterpolationMgr.h">
-      <Filter>Header Files\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="IOMgr.h">
       <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GTSLib\config.h">
+      <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GTSLib\gts.h">
+      <Filter>Header Files\GTS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GTSLib\LookAheadEx.h">
+      <Filter>Header Files\GTS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
