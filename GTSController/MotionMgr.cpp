@@ -6,7 +6,7 @@ MotionMgr::MotionMgr(QObject* parent)
 }
 
 MotionMgr::~MotionMgr() {
-    //stopAll();
+    
 }
 
 bool MotionMgr::checkProfile(short profile) const
