@@ -24,7 +24,7 @@ private:
     std::unique_ptr<MotionMgr> m_motion;
     std::unique_ptr<InterpolationMgr> m_interpolation;
     std::unique_ptr<IOMgr> m_io;
-    //std::unique_ptr<ConfigMgr> m_config;
+    std::unique_ptr<ConfigMgr> m_config;
     std::unique_ptr<FeedbackMgr> m_feedback;
 
 public:
@@ -47,6 +47,8 @@ public:
     IOMgr* io() const { return m_io.get(); }
     // 反馈管理器
     FeedbackMgr* feedback() const { return m_feedback.get(); }
+    // 配置管理器
+    ConfigMgr* config() const { return m_config.get(); }
 
     void emergencyStop();
     // 获取最近一次错误字符串

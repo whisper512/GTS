@@ -120,7 +120,7 @@
     <ClInclude Include="..\GTSLib\config.h" />
     <ClInclude Include="..\GTSLib\gts.h" />
     <ClInclude Include="..\GTSLib\LookAheadEx.h" />
-    <ClInclude Include="ConfigMgr.h" />
+    <QtMoc Include="ConfigMgr.h" />
     <QtMoc Include="FeedbackMgr.h" />
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />

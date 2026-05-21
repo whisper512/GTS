@@ -5,6 +5,7 @@
 #include "InterpolationMgr.h"
 #include "IOMgr.h"
 #include "FeedbackMgr.h"
+#include "ConfigMgr.h"
 
 TotalMgr::TotalMgr(QObject* parent)
     : QObject(parent)
@@ -15,6 +16,7 @@ TotalMgr::TotalMgr(QObject* parent)
     m_interpolation = std::make_unique<InterpolationMgr>(this);
     m_io = std::make_unique<IOMgr>(this);
     m_feedback = std::make_unique<FeedbackMgr>(this);
+    m_config = std::make_unique<ConfigMgr>(this);
 }
 
 TotalMgr::~TotalMgr() {

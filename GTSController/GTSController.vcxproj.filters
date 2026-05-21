@@ -105,13 +105,13 @@
     <QtMoc Include="FeedbackMgr.h">
       <Filter>Header Files\Manager</Filter>
     </QtMoc>
+    <QtMoc Include="ConfigMgr.h">
+      <Filter>Header Files\Manager</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GtsHal.h">
       <Filter>Header Files\GTS</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigMgr.h">
-      <Filter>Header Files\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\GTSLib\config.h">
       <Filter>Header Files\GTS</Filter>
