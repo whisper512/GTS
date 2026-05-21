@@ -125,7 +125,7 @@
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />
     <QtMoc Include="InterpolationMgr.h" />
-    <ClInclude Include="IOMgr.h" />
+    <QtMoc Include="IOMgr.h" />
     <QtMoc Include="MotionMgr.h" />
     <QtMoc Include="TotalMgr.h" />
   </ItemGroup>

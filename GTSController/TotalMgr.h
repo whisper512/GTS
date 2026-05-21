@@ -23,6 +23,7 @@ private:
     std::unique_ptr<AxisMgr> m_axis;
     std::unique_ptr<MotionMgr> m_motion;
     std::unique_ptr<InterpolationMgr> m_interpolation;
+    std::unique_ptr<IOMgr> m_io;
 
 public:
     explicit TotalMgr(QObject* parent = nullptr);
@@ -41,6 +42,8 @@ public:
     MotionMgr* motion() const { return m_motion.get(); }
     // 插补管理器
     InterpolationMgr* interpolation() const { return m_interpolation.get(); }
+    // IO管理器
+    IOMgr* io() const { return m_io.get(); }
 
     void emergencyStop();
     // 获取最近一次错误字符串
