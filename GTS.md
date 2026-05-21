@@ -4,35 +4,50 @@
 ##lib改为相对位置
 
 
-BoardMgr			~25	板卡级别操作
-AxisMgr				~30	每根轴的状态控制
-MotionMgr			~55	所有单轴运动模式
-InterpolationMgr	~35	多轴插补
-IOMgr				~30	IO + 模拟量 + 扩展模块
-FeedbackMgr			~30	编码器 + 捕获 + 回零
-ConfigMgr 所有高级配置功能
+1. 主控面板 (MainPanel)
+对应 BoardMgr
+卡操作：开卡、关卡、复位
+整体状态：板卡状态灯、版本号、系统时钟
+紧急停止按钮（调用TotalMgr的emergencyStop()）
+轴全局使能/禁止快捷按钮可选
+2. 单轴操作面板 (AxisControlPanel)
+整合 AxisMgr + MotionMgr（单轴运动）+ FeedbackMgr（回零）
 
+轴选择下拉框（1~N）
+轴状态显示：使能、报警、限位、跟随误差
+位置显示：编码器实时值
+操作按钮：使能/禁止、停止、报警复位、回零（参数可设）
+运动控制：梯形运动（目标位置/速度/加速度）、Jog、PT点动
+3. 多轴插补面板 (InterpolationPanel)
+对应 InterpolationMgr
 
-┌─────────────────────────────────────────────┐
-│  GTSWidget (QWidget)                         │
-│  ├── QStackedWidget                          │
-│  ├── AxisPanel      → m_mgr->axis()          │
-│  ├── MotionPanel    → m_mgr->motion()        │
-│  ├── IOPanel        → m_mgr->io()            │
-│  ├── FeedbackPanel  → m_mgr->feedback()      │
-│  ├── InterpPanel    → m_mgr->interpolation() │
-│  └── ConfigPanel    → m_mgr->config()        │
-├─────────────────────────────────────────────┤
-│  TotalManager                                │
-│  ├── board()  → BoardMgr*                │
-│  ├── axis()   → AxisMgr*                 │
-│  ├── motion() → MotionMgr*               │
-│  ├── interpolation() → InterpolationMgr* │
-│  ├── io()     → IOMgr*                   │
-│  ├── feedback() → FeedbackMgr*           │
-│  └── config() → ConfigMgr*               │
-├─────────────────────────────────────────────┤
-│  GtsHal (静态转发层，保留不变)                 │
-├─────────────────────────────────────────────┤
-│  gts.dll                                     │
-└─────────────────────────────────────────────┘
+轴组选择（如XY、XYZ）
+直线插补：端点坐标、速度
+圆弧插补：圆心/半径或三点方式
+启动/停止/暂停按钮
+缓冲区状态显示
+4. I/O监控与设置面板 (IOPanel)
+对应 IOMgr
+
+输入监视：数字输入位指示灯（可按位或按字节显示）
+输出控制：数字输出位开关（点击切换）
+模拟量：DAC输出值滑块、ADC显示数值
+扩展模块状态（若有）
+5. 编码器与捕获面板 (FeedbackPanel)
+对应 FeedbackMgr
+
+各轴编码器位置显示（可多轴同显）
+位置捕获触发设置（硬件捕获或软件捕获）
+回零参数配置（若未在轴面板集成，可单独放在这里）
+6. 配置面板 (ConfigPanel)
+对应 ConfigMgr（功能最多）
+该部分内容较复杂，建议采用二级界面（如一个QTabWidget或对话框展开）：
+
+PID参数页：选择轴，修改P/I/D/死区等
+软限位页：正负限位值、使能开关
+补偿页：背隙补偿、螺距补偿
+龙门同步页：主从轴选择、参数
+手轮/触发/脚本等（可选）
+7. 状态总览面板 (可选)
+一个只读的Dashboard，显示所有轴的状态、报警、位置，快速巡检。
+可用QTableView或自定义Grid，定时刷新。

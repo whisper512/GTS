@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<UI version="4.0" >
+<ui version="4.0">
  <class>GTSControllerWidgetClass</class>
- <widget class="QWidget" name="GTSControllerWidgetClass" >
-  <property name="objectName" >
-   <string notr="true">GTSControllerWidgetClass</string>
-  </property>
-  <property name="geometry" >
+ <widget class="QWidget" name="GTSControllerWidgetClass">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -13,14 +10,120 @@
     <height>400</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>GTSControllerWidget</string>
-  </property>$centralwidget$
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QToolButton" name="toolButton_Board">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="autoRaise">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_Axis">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_Interpolation">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_IO">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_Feedback">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_Config">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolButton_Others">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>-1</number>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <resources>
-   <include location="GTSControllerWidget.qrc"/>
+  <include location="GTSControllerWidget.qrc"/>
  </resources>
  <connections/>
-</UI>
+</ui>
