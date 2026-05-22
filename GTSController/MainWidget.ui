@@ -13,34 +13,60 @@
   <property name="windowTitle">
    <string>CMainWidget</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="1">
     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,9">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="pushButton_openBoard">
          <property name="text">
           <string>打开板卡</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="pushButton_closeBoard">
          <property name="text">
           <string>关闭板卡</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="pushButton_resetBoard">
          <property name="text">
           <string>复位板卡</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="radioButton">
+        <widget class="QRadioButton" name="radioButton_boardState">
          <property name="text">
           <string/>
          </property>
@@ -51,138 +77,164 @@
      <item>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="label_boardID">
          <property name="text">
           <string>板卡编号:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit"/>
+        <widget class="QLineEdit" name="lineEdit_boardID"/>
        </item>
        <item row="0" column="2">
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="pushButton_getBoardID">
          <property name="text">
           <string>获取编号</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QPushButton" name="pushButton_5">
+        <widget class="QPushButton" name="pushButton_setBoardID">
          <property name="text">
           <string>设置编号</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_cfgFile">
          <property name="text">
           <string>配置文件:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_2"/>
-       </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="pushButton_7">
-         <property name="text">
-          <string>加载</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3">
-        <widget class="QPushButton" name="pushButton_6">
-         <property name="text">
-          <string>保存</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="pushButton_9">
-         <property name="text">
-          <string>从板卡上传</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="3">
-        <widget class="QPushButton" name="pushButton_8">
+        <widget class="QPushButton" name="pushButton_downloadCfgFile">
          <property name="text">
           <string>下载到板卡</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="label_hardwareVer">
          <property name="text">
           <string>固件版本:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEdit_3"/>
+        <widget class="QLineEdit" name="lineEdit_hardwareVer"/>
        </item>
        <item row="3" column="2">
-        <widget class="QPushButton" name="pushButton_10">
+        <widget class="QPushButton" name="pushButton_getHardwareVer">
          <property name="text">
-          <string>加载</string>
+          <string>获取版本</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="label_devicerVer">
          <property name="text">
           <string>驱动版本:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLineEdit" name="lineEdit_4"/>
+        <widget class="QLineEdit" name="lineEdit_devicerVer"/>
        </item>
        <item row="4" column="2">
-        <widget class="QPushButton" name="pushButton_11">
+        <widget class="QPushButton" name="pushButton_getDevicerVer">
          <property name="text">
-          <string>加载</string>
+          <string>获取版本</string>
          </property>
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="label_clock">
          <property name="text">
           <string>系统时钟:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="lineEdit_5"/>
+        <widget class="QLineEdit" name="lineEdit_clock"/>
        </item>
        <item row="5" column="2">
-        <widget class="QPushButton" name="pushButton_12">
+        <widget class="QPushButton" name="pushButton_getClock">
          <property name="text">
           <string>获取时钟</string>
          </property>
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="label_highPrecisionClock">
          <property name="text">
           <string>高精度时钟:</string>
          </property>
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLineEdit" name="lineEdit_6"/>
+        <widget class="QLineEdit" name="lineEdit_highPrecisionClock"/>
        </item>
        <item row="6" column="2" colspan="2">
-        <widget class="QPushButton" name="pushButton_13">
+        <widget class="QPushButton" name="pushButton_getHighPrecisionClock">
          <property name="text">
           <string>获取高精度时钟</string>
          </property>
         </widget>
        </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="pushButton_UploadcfgFile">
+         <property name="text">
+          <string>从板卡上传</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="pushButton_loadCfgFile">
+         <property name="text">
+          <string>加载</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="pushButton_saveCfgFile">
+         <property name="text">
+          <string>保存</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="3">
+        <widget class="QLineEdit" name="lineEdit_cfgFile"/>
+       </item>
       </layout>
      </item>
     </layout>
+   </item>
+   <item row="2" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <spacer name="verticalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
