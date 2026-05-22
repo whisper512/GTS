@@ -1,6 +1,6 @@
 ﻿#pragma once
-
 #include <QtWidgets/QWidget>
+
 #include "ui_GTSControllerWidget.h"
 
 class GTSControllerWidget : public QWidget
@@ -10,6 +10,11 @@ class GTSControllerWidget : public QWidget
 public:
     GTSControllerWidget(QWidget *parent = nullptr);
     ~GTSControllerWidget();
+
+private:
+    void Init();
+    void InitUI();
+    void InitSignalAndSlotConnect();
 
 private:
     Ui::GTSControllerWidgetClass ui;

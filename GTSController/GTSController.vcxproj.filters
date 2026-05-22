@@ -79,6 +79,9 @@
     <ClCompile Include="TotalMgr.cpp">
       <Filter>Source Files\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="MainWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="GTSControllerWidget.h">
@@ -108,6 +111,9 @@
     <QtMoc Include="ConfigMgr.h">
       <Filter>Header Files\Manager</Filter>
     </QtMoc>
+    <QtMoc Include="MainWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GtsHal.h">
@@ -122,5 +128,10 @@
     <ClInclude Include="..\GTSLib\LookAheadEx.h">
       <Filter>Header Files\GTS</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="MainWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

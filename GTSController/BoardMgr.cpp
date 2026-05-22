@@ -71,7 +71,7 @@ bool BoardMgr::setCardNo(short index) {
     }
 }
 
-short BoardMgr::cardNo() {
+short BoardMgr::getCardNo() {
     short index = 0;
     GtsHal::getCardNo(&index);
     return index;

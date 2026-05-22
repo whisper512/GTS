@@ -1,4 +1,10 @@
 <RCC>
-    <qresource prefix="GTSControllerWidget">
+    <qresource prefix="/GTSControllerWidget">
+        <file>res/Axis.png</file>
+        <file>res/Feedback.png</file>
+        <file>res/Interpolation.png</file>
+        <file>res/IO.png</file>
+        <file>res/Main.png</file>
+        <file>res/Other.png</file>
     </qresource>
 </RCC>

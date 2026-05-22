@@ -24,14 +24,20 @@ struct DriverVersion {
 class BoardMgr : public QObject 
 {
     Q_OBJECT
+
+private:
+    bool m_isOpen = false;
+    short m_cardNo = 0;
+    short m_lastError = 0;
+
 public:
     explicit BoardMgr(QObject* parent = nullptr);
     ~BoardMgr();
 
 
     // 打开板卡
-    // @param channel  板卡通道号 (0=PCI/PCIe 插槽索引)
-    // @param param    保留参数,默认 1
+    // @param channel  打开方式 0:支持 1:内部调用
+    // @param param    保留参数,默认1
     bool open(short channel = 0, short param = 1);
     // 关闭板卡
     bool close();
@@ -42,7 +48,7 @@ public:
     // 设置当前操作的板卡编号
     bool setCardNo(short index);
     // 获取当前板卡编号
-    short cardNo();
+    short getCardNo();
     // 从文件加载配置
     bool loadConfig(const QString& filePath);
     // 保存当前配置到文件
@@ -103,10 +109,6 @@ signals:
     // 发生错误
     void errorOccurred(short errorCode, const QString& errorMsg);
 
-private:
-    bool m_isOpen = false;
-    short m_cardNo = 0;
-    short m_lastError = 0;
 };
 
 #endif // BOARDMGR_H
