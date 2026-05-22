@@ -79,8 +79,8 @@
     <ClCompile Include="TotalMgr.cpp">
       <Filter>Source Files\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="MainWidget.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="BoardWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,8 +111,8 @@
     <QtMoc Include="ConfigMgr.h">
       <Filter>Header Files\Manager</Filter>
     </QtMoc>
-    <QtMoc Include="MainWidget.h">
-      <Filter>Header Files</Filter>
+    <QtMoc Include="BoardWidget.h">
+      <Filter>Header Files\Widget</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -130,7 +130,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="MainWidget.ui">
+    <QtUic Include="BoradWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

@@ -24,7 +24,7 @@ void GTSControllerWidget::Init()
 
 void GTSControllerWidget::InitUI()
 {
-    m_pMainWidget = new CMainWidget(this);
+    m_pMainWidget = new CBoardWidget(this);
     ui.stackedWidget->addWidget(m_pMainWidget);
 
 }

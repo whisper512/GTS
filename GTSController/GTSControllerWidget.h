@@ -2,7 +2,7 @@
 #include <QtWidgets/QWidget>
 
 #include "ui_GTSControllerWidget.h"
-#include "MainWidget.h"
+#include "BoardWidget.h"
 
 class GTSControllerWidget : public QWidget
 {
@@ -13,7 +13,7 @@ public:
     ~GTSControllerWidget();
 
 private:
-    CMainWidget *m_pMainWidget = nullptr;
+    CBoardWidget *m_pMainWidget = nullptr;
 
 private:
     void Init();

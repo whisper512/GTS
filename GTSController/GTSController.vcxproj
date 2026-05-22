@@ -105,7 +105,7 @@
     <ClCompile Include="FeedbackMgr.cpp" />
     <ClCompile Include="InterpolationMgr.cpp" />
     <ClCompile Include="IOMgr.cpp" />
-    <ClCompile Include="MainWidget.cpp" />
+    <ClCompile Include="BoardWidget.cpp" />
     <ClCompile Include="MotionMgr.cpp" />
     <ClCompile Include="TotalMgr.cpp" />
     <QtRcc Include="GTSControllerWidget.qrc" />
@@ -115,10 +115,10 @@
     <ClCompile Include="BoardMgr.cpp" />
     <ClCompile Include="GTSControllerWidget.cpp" />
     <ClCompile Include="main.cpp" />
-    <QtUic Include="MainWidget.ui" />
+    <QtUic Include="BoradWidget.ui" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="MainWidget.h" />
+    <QtMoc Include="BoardWidget.h" />
     <QtMoc Include="AxisMgr.h" />
     <ClInclude Include="..\GTSLib\config.h" />
     <ClInclude Include="..\GTSLib\gts.h" />
