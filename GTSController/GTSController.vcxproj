@@ -101,14 +101,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AxisWidget.cpp" />
     <ClCompile Include="ConfigMgr.cpp" />
+    <ClCompile Include="ConfigWidget.cpp" />
     <ClCompile Include="FeedbackMgr.cpp" />
+    <ClCompile Include="FeedbackWidget.cpp" />
     <ClCompile Include="InterpolationMgr.cpp" />
+    <ClCompile Include="InterpWidget.cpp" />
     <ClCompile Include="IOMgr.cpp" />
     <ClCompile Include="BoardWidget.cpp" />
+    <ClCompile Include="IOWidget.cpp" />
     <ClCompile Include="MotionMgr.cpp" />
+    <ClCompile Include="OthersWidget.cpp" />
     <ClCompile Include="TotalMgr.cpp" />
     <QtRcc Include="GTSControllerWidget.qrc" />
+    <QtUic Include="AxisWidget.ui" />
+    <QtUic Include="ConfigWidget.ui" />
+    <QtUic Include="FeedbackWidget.ui" />
     <QtUic Include="GTSControllerWidget.ui" />
     <QtMoc Include="GTSControllerWidget.h" />
     <ClCompile Include="AxisMgr.cpp" />
@@ -116,8 +125,14 @@
     <ClCompile Include="GTSControllerWidget.cpp" />
     <ClCompile Include="main.cpp" />
     <QtUic Include="BoradWidget.ui" />
+    <QtUic Include="InterpWidget.ui" />
+    <QtUic Include="IOWidget.ui" />
+    <QtUic Include="OthersWidget.ui" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="OthersWidget.h" />
+    <QtMoc Include="IOWidget.h" />
+    <QtMoc Include="InterpWidget.h" />
     <QtMoc Include="BoardWidget.h" />
     <QtMoc Include="AxisMgr.h" />
     <ClInclude Include="..\GTSLib\config.h" />
@@ -125,6 +140,9 @@
     <ClInclude Include="..\GTSLib\LookAheadEx.h" />
     <QtMoc Include="ConfigMgr.h" />
     <QtMoc Include="FeedbackMgr.h" />
+    <QtMoc Include="AxisWidget.h" />
+    <QtMoc Include="FeedbackWidget.h" />
+    <QtMoc Include="ConfigWidget.h" />
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />
     <QtMoc Include="InterpolationMgr.h" />

@@ -14,18 +14,19 @@ class IOMgr;
 class MotionMgr;
 
 // TotalMgr — 总管理器
-class TotalMgr : public QObject {
+class TotalMgr : public QObject 
+{
     Q_OBJECT
 
 private:
     bool m_initialized = false;
-    std::unique_ptr<BoardMgr> m_board;
-    std::unique_ptr<AxisMgr> m_axis;
-    std::unique_ptr<MotionMgr> m_motion;
-    std::unique_ptr<InterpolationMgr> m_interpolation;
-    std::unique_ptr<IOMgr> m_io;
-    std::unique_ptr<ConfigMgr> m_config;
-    std::unique_ptr<FeedbackMgr> m_feedback;
+    std::unique_ptr<BoardMgr> m_boardMgr;
+    std::unique_ptr<AxisMgr> m_axisMgr;
+    std::unique_ptr<MotionMgr> m_motionMgr;
+    std::unique_ptr<InterpolationMgr> m_interpolationMgr;
+    std::unique_ptr<IOMgr> m_ioMgr;
+    std::unique_ptr<ConfigMgr> m_configMgr;
+    std::unique_ptr<FeedbackMgr> m_feedbackMgr;
 
 public:
     explicit TotalMgr(QObject* parent = nullptr);
@@ -36,19 +37,19 @@ public:
 
     bool isInitialized() const { return m_initialized; }
     // 板卡管理器
-    BoardMgr* board() const { return m_board.get(); }
+    BoardMgr* board() const { return m_boardMgr.get(); }
     // 轴管理器
-    AxisMgr* axis() const { return m_axis.get(); }
+    AxisMgr* axis() const { return m_axisMgr.get(); }
     // 运动管理器
-    MotionMgr* motion() const { return m_motion.get(); }
+    MotionMgr* motion() const { return m_motionMgr.get(); }
     // 插补管理器
-    InterpolationMgr* interpolation() const { return m_interpolation.get(); }
+    InterpolationMgr* interpolation() const { return m_interpolationMgr.get(); }
     // IO管理器
-    IOMgr* io() const { return m_io.get(); }
+    IOMgr* io() const { return m_ioMgr.get(); }
     // 反馈管理器
-    FeedbackMgr* feedback() const { return m_feedback.get(); }
+    FeedbackMgr* feedback() const { return m_feedbackMgr.get(); }
     // 配置管理器
-    ConfigMgr* config() const { return m_config.get(); }
+    ConfigMgr* config() const { return m_configMgr.get(); }
 
     void emergencyStop();
     // 获取最近一次错误字符串

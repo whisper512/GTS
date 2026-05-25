@@ -10,13 +10,13 @@
 TotalMgr::TotalMgr(QObject* parent)
     : QObject(parent)
 {   
-    m_board = std::make_unique<BoardMgr>(this);
-    m_axis = std::make_unique<AxisMgr>(this);
-    m_motion = std::make_unique<MotionMgr>(this);
-    m_interpolation = std::make_unique<InterpolationMgr>(this);
-    m_io = std::make_unique<IOMgr>(this);
-    m_feedback = std::make_unique<FeedbackMgr>(this);
-    m_config = std::make_unique<ConfigMgr>(this);
+    m_boardMgr = std::make_unique<BoardMgr>(this);
+    m_axisMgr = std::make_unique<AxisMgr>(this);
+    m_motionMgr = std::make_unique<MotionMgr>(this);
+    m_interpolationMgr = std::make_unique<InterpolationMgr>(this);
+    m_ioMgr = std::make_unique<IOMgr>(this);
+    m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
+    m_configMgr = std::make_unique<ConfigMgr>(this);
 }
 
 TotalMgr::~TotalMgr() {
@@ -28,9 +28,9 @@ bool TotalMgr::initialize(short channel) {
         
         shutdown();
     }
-    if (!m_board->open(channel)) {
+    if (!m_boardMgr->open(channel)) {
         QString err = QStringLiteral("板卡打开失败: %1")
-            .arg(m_board->lastErrorString());
+            .arg(m_boardMgr->lastErrorString());
         emit errorOccurred(err);
         return false;
     }
@@ -44,7 +44,7 @@ void TotalMgr::shutdown() {
     if (!m_initialized) return;
 
     
-    m_board->close();
+    m_boardMgr->close();
 
     m_initialized = false;
     emit shutdowned();
@@ -52,14 +52,14 @@ void TotalMgr::shutdown() {
 
 void TotalMgr::emergencyStop() {
     if (!m_initialized) return;
-    m_board->reset();
+    m_boardMgr->reset();
 
     emit errorOccurred(QStringLiteral("紧急停止已触发"));
 }
 
 QString TotalMgr::lastErrorString() const {
-    if (m_board) {
-        return m_board->lastErrorString();
+    if (m_boardMgr) {
+        return m_boardMgr->lastErrorString();
     }
     return QStringLiteral("无错误");
 }
