@@ -33,12 +33,10 @@ bool CTotalMgr::initialize(short channel) {
     if (!m_boardMgr->open(channel)) {
         QString err = QStringLiteral("板卡打开失败: %1")
             .arg(m_boardMgr->lastErrorString());
-        emit errorOccurred(err);
         return false;
     }
 
     m_initialized = true;
-    emit initialized();
     return true;
 }
 
@@ -49,14 +47,11 @@ void CTotalMgr::shutdown() {
     m_boardMgr->close();
 
     m_initialized = false;
-    emit shutdowned();
 }
 
 void CTotalMgr::emergencyStop() {
     if (!m_initialized) return;
     m_boardMgr->reset();
-
-    emit errorOccurred(QStringLiteral("紧急停止已触发"));
 }
 
 QString CTotalMgr::lastErrorString() const {

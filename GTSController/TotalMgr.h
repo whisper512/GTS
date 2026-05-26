@@ -59,15 +59,7 @@ public:
     // 获取最近一次错误字符串
     QString lastErrorString() const;
 
-signals:
-    // 初始化完成
-    void initialized();
-    // 已关闭
-    void shutdowned();
-    // 发生错误
-    void errorOccurred(const QString& errorMsg);
-    //发送日志
-    void sendLog(const QString& log, QColor color);
+
 };
 
 #endif // TOTALMGR_H
