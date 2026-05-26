@@ -58,8 +58,6 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
     ui.toolButton_Feedback->setCheckable(true);
     ui.toolButton_Config->setCheckable(true);
     ui.toolButton_Others->setCheckable(true);
-
-    
     m_pBtnGroup = new QButtonGroup(this);
     m_pBtnGroup->addButton(ui.toolButton_Board, 0);
     m_pBtnGroup->addButton(ui.toolButton_Axis, 1);
