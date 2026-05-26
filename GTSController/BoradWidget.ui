@@ -6,16 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>380</height>
+    <width>442</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>CMainWidget</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,9">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,1,1,1">
+     <property name="spacing">
+      <number>15</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -81,104 +84,112 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="3">
-        <widget class="QPushButton" name="pushButton_downloadCfgFile">
-         <property name="text">
-          <string>下载到板卡</string>
-         </property>
-        </widget>
+       <item row="1" column="1" colspan="3">
+        <widget class="QLineEdit" name="lineEdit_cfgFile"/>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_hardwareVer">
-         <property name="text">
-          <string>固件版本:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEdit_hardwareVer"/>
-       </item>
-       <item row="3" column="2">
-        <widget class="QPushButton" name="pushButton_getHardwareVer">
-         <property name="text">
-          <string>获取版本</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_devicerVer">
-         <property name="text">
-          <string>驱动版本:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QLineEdit" name="lineEdit_devicerVer"/>
-       </item>
-       <item row="4" column="2">
-        <widget class="QPushButton" name="pushButton_getDevicerVer">
-         <property name="text">
-          <string>获取版本</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_clock">
-         <property name="text">
-          <string>系统时钟:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QLineEdit" name="lineEdit_clock"/>
-       </item>
-       <item row="5" column="2">
-        <widget class="QPushButton" name="pushButton_getClock">
-         <property name="text">
-          <string>获取时钟</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_highPrecisionClock">
-         <property name="text">
-          <string>高精度时钟:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QLineEdit" name="lineEdit_highPrecisionClock"/>
-       </item>
-       <item row="6" column="2" colspan="2">
-        <widget class="QPushButton" name="pushButton_getHighPrecisionClock">
-         <property name="text">
-          <string>获取高精度时钟</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2">
-        <widget class="QPushButton" name="pushButton_UploadcfgFile">
-         <property name="text">
-          <string>从板卡上传</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
         <widget class="QPushButton" name="pushButton_loadCfgFile">
          <property name="text">
           <string>加载</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item>
         <widget class="QPushButton" name="pushButton_saveCfgFile">
          <property name="text">
           <string>保存</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="3">
-        <widget class="QLineEdit" name="lineEdit_cfgFile"/>
+       <item>
+        <widget class="QPushButton" name="pushButton_UploadcfgFile">
+         <property name="text">
+          <string>从板卡上传</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_downloadCfgFile">
+         <property name="text">
+          <string>下载到板卡</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_hardwareVer">
+         <property name="text">
+          <string>固件版本:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEdit_hardwareVer"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="pushButton_getHardwareVer">
+         <property name="text">
+          <string>获取版本</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_devicerVer">
+         <property name="text">
+          <string>驱动版本:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEdit_devicerVer"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="pushButton_getDevicerVer">
+         <property name="text">
+          <string>获取版本</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_clock">
+         <property name="text">
+          <string>系统时钟:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="lineEdit_clock"/>
+       </item>
+       <item row="2" column="2">
+        <widget class="QPushButton" name="pushButton_getClock">
+         <property name="text">
+          <string>获取时钟</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_highPrecisionClock">
+         <property name="text">
+          <string>高精度时钟:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEdit_highPrecisionClock"/>
+       </item>
+       <item row="3" column="2">
+        <widget class="QPushButton" name="pushButton_getHighPrecisionClock">
+         <property name="text">
+          <string>获取高精度时钟</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
