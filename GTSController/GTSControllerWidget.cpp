@@ -1,6 +1,8 @@
 ﻿#include <QTimer>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QTextCursor>
+#include <QTime>
 
 #include "GTSControllerWidget.h"
 
@@ -19,15 +21,17 @@ GTSControllerWidget::~GTSControllerWidget()
 void GTSControllerWidget::Init()
 {
     QTimer::singleShot(100, this, [this]() {
+        m_pTotalMgr = new CTotalMgr(this);
+
         InitUI();
-        InitSignalAndSlotConnect();
+        InitUISignalAndSlotConnect();
+        InitMgrSignalAndSlotConnect();
         });
 }
 
 void GTSControllerWidget::InitUI()
 {
-    
-    m_pBoardWidget = new CBoardWidget(this);
+    m_pBoardWidget = new CBoardWidget(this,this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pBoardWidget);
     m_pAxisWidget = new CAxisWidget(this);
     ui.stackedWidget->addWidget(m_pAxisWidget);
@@ -45,7 +49,7 @@ void GTSControllerWidget::InitUI()
     ui.stackedWidget->setCurrentIndex(0);
 }
 
-void GTSControllerWidget::InitSignalAndSlotConnect()
+void GTSControllerWidget::InitUISignalAndSlotConnect()
 {
     ui.toolButton_Board->setCheckable(true);
     ui.toolButton_Axis->setCheckable(true);
@@ -68,6 +72,25 @@ void GTSControllerWidget::InitSignalAndSlotConnect()
     // 默认
     ui.toolButton_Board->setChecked(true);
     connect(m_pBtnGroup, &QButtonGroup::idClicked, this, &GTSControllerWidget::OnBtnClicked);
+}
+
+void GTSControllerWidget::InitMgrSignalAndSlotConnect()
+{
+    connect(m_pTotalMgr, &CTotalMgr::sendLog, this, &GTSControllerWidget::showLog);
+}
+
+void GTSControllerWidget::showLog(const QString& log, QColor color)
+{
+    ui.plainTextEdit->moveCursor(QTextCursor::End);
+    QTextCursor cursor = ui.plainTextEdit->textCursor();
+
+    QTextCharFormat fmt;
+    fmt.setForeground(color);
+    QString timeStr = QTime::currentTime().toString("hh:mm:ss.zzz");
+    QString fullLog = QString("[%1] %2").arg(timeStr, log);
+    cursor.insertText(fullLog + "\n", fmt);
+    ui.plainTextEdit->moveCursor(QTextCursor::End);
+    ui.plainTextEdit->ensureCursorVisible();
 }
 
 void GTSControllerWidget::OnBtnClicked(int id)

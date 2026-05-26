@@ -16,6 +16,8 @@ struct DriverVersion {
     unsigned short slaveVer;
 };
 
+class CTotalMgr;
+
 // ============================================================
 // BoardMgr — GTS 板卡管理器
 // 职责;开/关/复位卡/配置加载/保存/版本信息/时钟/中断
@@ -26,6 +28,8 @@ class BoardMgr : public QObject
     Q_OBJECT
 
 private:
+    CTotalMgr* m_pTotalMgr = nullptr;
+  
     bool m_isOpen = false;
     short m_cardNo = 0;
     short m_lastError = 0;
@@ -33,7 +37,7 @@ private:
 public:
     explicit BoardMgr(QObject* parent = nullptr);
     ~BoardMgr();
-
+    void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
     // 打开板卡
     // @param channel  打开方式 0:支持 1:内部调用

@@ -1,4 +1,5 @@
-﻿#include "BoardMgr.h"
+﻿#include "TotalMgr.h"
+#include "BoardMgr.h"
 
 BoardMgr::BoardMgr(QObject* parent)
     : QObject(parent)
@@ -22,10 +23,17 @@ bool BoardMgr::open(short channel, short param)
     m_lastError = GtsHal::open(channel, param);
     if (m_lastError == 0) {
         m_isOpen = true;
-        emit opened();
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("打开gts400板卡成功"),Qt::darkGreen);
+        }
         return true;
     }
     else {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("打开gts400板卡失败"), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
@@ -38,10 +46,17 @@ bool BoardMgr::close()
     m_lastError = GtsHal::close();
     m_isOpen = false;
     if (m_lastError == 0) {
-        emit closed();
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("关闭gts400板卡成功"), Qt::darkGreen);
+        }
         return true;
     }
     else {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("关闭gts400板卡失败"), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
@@ -50,10 +65,18 @@ bool BoardMgr::close()
 bool BoardMgr::reset() {
     m_lastError = GtsHal::reset();
     if (m_lastError == 0) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("重置gts400板卡成功"), Qt::darkGreen);
+        }
         m_isOpen = false; 
         return true;
     }
     else {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("重置gts400板卡失败"), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
@@ -63,6 +86,10 @@ bool BoardMgr::setCardNo(short index) {
     m_lastError = GtsHal::setCardNo(index);
     if (m_lastError == 0) {
         m_cardNo = index;
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("设置卡号为：%1").arg(index), Qt::darkGreen);
+        }
         return true;
     }
     else {
@@ -74,14 +101,27 @@ bool BoardMgr::setCardNo(short index) {
 short BoardMgr::getCardNo() {
     short index = 0;
     GtsHal::getCardNo(&index);
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("当前卡号：%1").arg(index), Qt::darkGreen);
+    }
     return index;
 }
 
 bool BoardMgr::loadConfig(const QString& filePath) {
     m_lastError = GtsHal::loadConfig(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("加载配置文件失败：%1").arg(filePath), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
+    }
+
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("加载配置文件成功：%1").arg(filePath), Qt::darkGreen);
     }
     return true;
 }
@@ -89,8 +129,16 @@ bool BoardMgr::loadConfig(const QString& filePath) {
 bool BoardMgr::saveConfig(const QString& filePath) {
     m_lastError = GtsHal::saveConfigToFile(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("保存配置文件失败：%1").arg(filePath), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
+    }
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("保存配置文件成功：%1").arg(filePath), Qt::darkGreen);
     }
     return true;
 }
@@ -98,8 +146,16 @@ bool BoardMgr::saveConfig(const QString& filePath) {
 bool BoardMgr::uploadConfig() {
     m_lastError = GtsHal::uploadConfig();
     if (m_lastError != 0) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("上传配置文件失败"), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
+    }
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("上传配置文件成功"), Qt::darkGreen);
     }
     return true;
 }
@@ -107,8 +163,16 @@ bool BoardMgr::uploadConfig() {
 bool BoardMgr::downloadConfig() {
     m_lastError = GtsHal::downloadConfig();
     if (m_lastError != 0) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("下载配置文件失败"), Qt::darkRed);
+        }
         emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
+    }
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("下载配置文件成功"), Qt::darkGreen);
     }
     return true;
 }
@@ -117,6 +181,10 @@ QString BoardMgr::dllVersion() const {
     char* pVer = nullptr;
     short ret = GtsHal::getDllVersion(&pVer);
     if (ret == 0 && pVer) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("gts400板卡版本：%1").arg(QString::fromLocal8Bit(pVer)), Qt::darkGreen);
+        }
         return QString::fromLocal8Bit(pVer);
     }
     return QString();
@@ -126,6 +194,10 @@ QString BoardMgr::firmwareVersion() const {
     char* pVer = nullptr;
     short ret = GtsHal::getVersion(&pVer);
     if (ret == 0 && pVer) {
+        if (m_pTotalMgr)
+        {
+            emit m_pTotalMgr->sendLog(QStringLiteral("固件版本：%1").arg(QString::fromLocal8Bit(pVer)), Qt::darkGreen);
+        }
         return QString::fromLocal8Bit(pVer);
     }
     return QString();
@@ -140,6 +212,10 @@ CardInfo BoardMgr::cardInfo() const {
 DriverVersion BoardMgr::driverVersion() const {
     DriverVersion dv = { 0, 0 };
     GtsHal::getDriverVersion(&dv.mainVer, &dv.slaveVer);
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("驱动版本：%1.%2").arg(dv.mainVer).arg(dv.slaveVer), Qt::darkGreen);
+    }
     return dv;
 }
 
@@ -161,12 +237,20 @@ bool BoardMgr::setInterfaceBoardStatus(short type) {
 unsigned long BoardMgr::clock() const {
     unsigned long clk = 0;
     GtsHal::getClock(&clk, nullptr);
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("时钟：%1").arg(clk), Qt::darkGreen);
+    }
     return clk;
 }
 
 unsigned long BoardMgr::clockHighPrecision() const {
     unsigned long clk = 0;
     GtsHal::getClockHighPrecision(&clk);
+    if (m_pTotalMgr)
+    {
+        emit m_pTotalMgr->sendLog(QStringLiteral("高精度时钟：%1").arg(clk), Qt::darkGreen);
+    }
     return clk;
 }
 

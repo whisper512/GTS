@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <memory>
+#include <QColor>
 
 
 class BoardMgr;
@@ -14,7 +15,7 @@ class IOMgr;
 class MotionMgr;
 
 // TotalMgr — 总管理器
-class TotalMgr : public QObject 
+class CTotalMgr : public QObject 
 {
     Q_OBJECT
 
@@ -29,11 +30,14 @@ private:
     std::unique_ptr<FeedbackMgr> m_feedbackMgr;
 
 public:
-    explicit TotalMgr(QObject* parent = nullptr);
-    ~TotalMgr();
+    explicit CTotalMgr(QObject* parent = nullptr);
+    ~CTotalMgr();
 
     bool initialize(short channel = 0);
     void shutdown();
+    
+    BoardMgr* boardMgr() const { return m_boardMgr.get(); }
+
 
     bool isInitialized() const { return m_initialized; }
     // 板卡管理器
@@ -62,8 +66,8 @@ signals:
     void shutdowned();
     // 发生错误
     void errorOccurred(const QString& errorMsg);
-
-
+    //发送日志
+    void sendLog(const QString& log, QColor color);
 };
 
 #endif // TOTALMGR_H

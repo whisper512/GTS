@@ -7,7 +7,7 @@
 #include "FeedbackMgr.h"
 #include "ConfigMgr.h"
 
-TotalMgr::TotalMgr(QObject* parent)
+CTotalMgr::CTotalMgr(QObject* parent)
     : QObject(parent)
 {   
     m_boardMgr = std::make_unique<BoardMgr>(this);
@@ -17,13 +17,15 @@ TotalMgr::TotalMgr(QObject* parent)
     m_ioMgr = std::make_unique<IOMgr>(this);
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
+
+    m_boardMgr->setTotalMgr(this);
 }
 
-TotalMgr::~TotalMgr() {
+CTotalMgr::~CTotalMgr() {
     shutdown();
 }
 
-bool TotalMgr::initialize(short channel) {
+bool CTotalMgr::initialize(short channel) {
     if (m_initialized) {
         
         shutdown();
@@ -40,7 +42,7 @@ bool TotalMgr::initialize(short channel) {
     return true;
 }
 
-void TotalMgr::shutdown() {
+void CTotalMgr::shutdown() {
     if (!m_initialized) return;
 
     
@@ -50,14 +52,14 @@ void TotalMgr::shutdown() {
     emit shutdowned();
 }
 
-void TotalMgr::emergencyStop() {
+void CTotalMgr::emergencyStop() {
     if (!m_initialized) return;
     m_boardMgr->reset();
 
     emit errorOccurred(QStringLiteral("紧急停止已触发"));
 }
 
-QString TotalMgr::lastErrorString() const {
+QString CTotalMgr::lastErrorString() const {
     if (m_boardMgr) {
         return m_boardMgr->lastErrorString();
     }

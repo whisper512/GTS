@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>CMainWidgetClass</class>
- <widget class="QWidget" name="CMainWidgetClass">
+ <class>BoardWidgetClass</class>
+ <widget class="QWidget" name="BoardWidgetClass">
   <property name="geometry">
    <rect>
     <x>0</x>
