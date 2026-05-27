@@ -12,6 +12,15 @@ BoardMgr::~BoardMgr() {
     }
 }
 
+stuClock BoardMgr::getClock()
+{
+    if (!m_isOpen) return stuClock();
+    stuClock clk;
+    clk.sysClock = clock();
+    clk.highPrecClock = clockHighPrecision();
+    return clk;
+}
+
 bool BoardMgr::open(short channel, short param)
 {
     if (m_isOpen) {
@@ -25,7 +34,6 @@ bool BoardMgr::open(short channel, short param)
         return true;
     }
     else {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
 }
@@ -40,7 +48,6 @@ bool BoardMgr::close()
         return true;
     }
     else {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
 }
@@ -52,7 +59,6 @@ bool BoardMgr::reset() {
         return true;
     }
     else {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
 }
@@ -64,7 +70,6 @@ bool BoardMgr::setCardNo(short index) {
         return true;
     }
     else {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
 }
@@ -78,7 +83,6 @@ short BoardMgr::getCardNo() {
 bool BoardMgr::loadConfig(const QString& filePath) {
     m_lastError = GtsHal::loadConfig(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;
@@ -87,7 +91,6 @@ bool BoardMgr::loadConfig(const QString& filePath) {
 bool BoardMgr::saveConfig(const QString& filePath) {
     m_lastError = GtsHal::saveConfigToFile(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;
@@ -96,7 +99,6 @@ bool BoardMgr::saveConfig(const QString& filePath) {
 bool BoardMgr::uploadConfig() {
     m_lastError = GtsHal::uploadConfig();
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;
@@ -105,7 +107,6 @@ bool BoardMgr::uploadConfig() {
 bool BoardMgr::downloadConfig() {
     m_lastError = GtsHal::downloadConfig();
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;
@@ -129,14 +130,14 @@ QString BoardMgr::firmwareVersion() const {
     return QString();
 }
 
-CardInfo BoardMgr::cardInfo() const {
-    CardInfo info = { -1, -1 };
+stuCardInfo BoardMgr::cardInfo() const {
+    stuCardInfo info = { -1, -1 };
     GtsHal::getCardInfo(&info.cardNum, &info.cardType);
     return info;
 }
 
-DriverVersion BoardMgr::driverVersion() const {
-    DriverVersion dv = { 0, 0 };
+stuDriverVersion BoardMgr::driverVersion() const {
+    stuDriverVersion dv = { 0, 0 };
     GtsHal::getDriverVersion(&dv.mainVer, &dv.slaveVer);
     return dv;
 }
@@ -150,7 +151,6 @@ short BoardMgr::interfaceBoardStatus() const {
 bool BoardMgr::setInterfaceBoardStatus(short type) {
     m_lastError = GtsHal::setInterfaceBoardSts(type);
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;
@@ -181,7 +181,6 @@ bool BoardMgr::delayHighPrecision(unsigned short microseconds) {
 bool BoardMgr::interruptOn(TInterruptCallback pCallback) {
     m_lastError = GtsHal::interruptOn(pCallback);
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;
@@ -221,7 +220,6 @@ bool BoardMgr::setUuid(const QString& code) {
     QByteArray ba = code.toLocal8Bit();
     m_lastError = GtsHal::setUuid(ba.data(), static_cast<short>(ba.size()));
     if (m_lastError != 0) {
-        emit errorOccurred(m_lastError, GtsErrorToString(m_lastError));
         return false;
     }
     return true;

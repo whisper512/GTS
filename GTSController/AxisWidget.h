@@ -23,8 +23,7 @@ private:
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 
-	int m_iAxisIndex = 1;     
-	short m_iAxisId = 0; 
+	short m_iAxisId = 1; 
 
 	void initWidget();
 	void connectPrivateSignal();

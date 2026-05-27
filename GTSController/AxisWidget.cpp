@@ -42,12 +42,21 @@ void CAxisWidget::initWidget()
 	ui.comboBox_axisID->addItem(QStringLiteral("Öá 2"));
 	ui.comboBox_axisID->addItem(QStringLiteral("Öá 3"));
 	ui.comboBox_axisID->addItem(QStringLiteral("Öá 4"));
+
+	ui.radioButton_servoEnable->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui.radioButton_sevorAlarm->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_nLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    ui.radioButton_pLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_motionErr->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_motionSts->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_eStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_smoothStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
 }
 
 void CAxisWidget::connectPrivateSignal()
 {
-	connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CAxisWidget::onComboBoxCurrentIndexChanged);
+	connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxCurrentIndexChanged);
 	connect(ui.pushButton_clearState, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
@@ -79,11 +88,11 @@ void CAxisWidget::onClearState()
 	bool ok = m_pTotalMgr->axisMgr()->clearStatus(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ×´Ì¬ÒÑÇå³ý").arg(m_iAxisIndex), Qt::darkGreen);
+			QStringLiteral("Öá%1 ×´Ì¬ÒÑÇå³ý").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ×´Ì¬Çå³ýÊ§°Ü").arg(m_iAxisIndex), Qt::red);
+			QStringLiteral("Öá%1 ×´Ì¬Çå³ýÊ§°Ü").arg(m_iAxisId), Qt::red);
 	}
 	onUpdateAxisInfo();
 }
@@ -94,11 +103,11 @@ void CAxisWidget::onServoOn()
 	bool ok = m_pTotalMgr->axisMgr()->enable(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Ê¹ÄÜ³É¹¦").arg(m_iAxisIndex), Qt::darkGreen);
+			QStringLiteral("Öá%1 Ê¹ÄÜ³É¹¦").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Ê¹ÄÜÊ§°Ü").arg(m_iAxisIndex), Qt::red);
+			QStringLiteral("Öá%1 Ê¹ÄÜÊ§°Ü").arg(m_iAxisId), Qt::red);
 	}
 	onUpdateAxisInfo();
 }
@@ -109,11 +118,11 @@ void CAxisWidget::onServoOff()
 	bool ok = m_pTotalMgr->axisMgr()->disable(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ÒÑ½ûÖ¹").arg(m_iAxisIndex), Qt::darkGreen);
+			QStringLiteral("Öá%1 ÒÑ½ûÖ¹").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ½ûÖ¹Ê§°Ü").arg(m_iAxisIndex), Qt::red);
+			QStringLiteral("Öá%1 ½ûÖ¹Ê§°Ü").arg(m_iAxisId), Qt::red);
 	}
 	onUpdateAxisInfo();
 }
@@ -124,11 +133,11 @@ void CAxisWidget::onClearPos()
 	bool ok = m_pTotalMgr->axisMgr()->zeroPosition(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Î»ÖÃÒÑÇåÁã").arg(m_iAxisIndex), Qt::darkGreen);
+			QStringLiteral("Öá%1 Î»ÖÃÒÑÇåÁã").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Î»ÖÃÇåÁãÊ§°Ü").arg(m_iAxisIndex), Qt::red);
+			QStringLiteral("Öá%1 Î»ÖÃÇåÁãÊ§°Ü").arg(m_iAxisId), Qt::red);
 	}
 	onUpdateAxisInfo();
 }
@@ -139,11 +148,11 @@ void CAxisWidget::onSmoothStop()
 	bool ok = m_pTotalMgr->axisMgr()->stop(axis, 1);  
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼õËÙÍ£Ö¹").arg(m_iAxisIndex), Qt::darkGreen);
+			QStringLiteral("Öá%1 ¼õËÙÍ£Ö¹").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼õËÙÍ£Ö¹Ê§°Ü").arg(m_iAxisIndex), Qt::red);
+			QStringLiteral("Öá%1 ¼õËÙÍ£Ö¹Ê§°Ü").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -153,11 +162,11 @@ void CAxisWidget::onEStop()
 	bool ok = m_pTotalMgr->axisMgr()->stop(axis, 0);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼±Í£ÒÑ´¥·¢").arg(m_iAxisIndex), Qt::darkGreen);
+			QStringLiteral("Öá%1 ¼±Í£ÒÑ´¥·¢").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼±Í£Ê§°Ü").arg(m_iAxisIndex), Qt::red);
+			QStringLiteral("Öá%1 ¼±Í£Ê§°Ü").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -165,7 +174,7 @@ void CAxisWidget::onActMotion()
 {
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("Öá%1 ÔË¶¯´¥·¢£¨´ýÊµÏÖ£©").arg(m_iAxisIndex), Qt::blue);
+		QStringLiteral("Öá%1 ÔË¶¯´¥·¢£¨´ýÊµÏÖ£©").arg(m_iAxisId), Qt::blue);
 }
 
 
@@ -204,8 +213,7 @@ void CAxisWidget::onBtnClick()
 
 void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 {
-	m_iAxisIndex = index + 1;  
-	m_iAxisId = index;   
+	m_iAxisId = index + 1;  
 
 	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
 		onUpdateAxisInfo();

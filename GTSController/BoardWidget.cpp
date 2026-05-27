@@ -8,11 +8,10 @@ CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
     , m_pTotalMgr(mgr)
 {
     ui.setupUi(this);
-
     m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
     m_pClockTimer = new QTimer(this);
-    connect(m_pClockTimer, &QTimer::timeout, this, &CBoardWidget::onUpdateClock);
 
+    connect(m_pClockTimer, &QTimer::timeout, this, &CBoardWidget::onUpdateClock);
     connectPrivateSignal();
     updateBoardState(false);
 }
@@ -110,15 +109,21 @@ void CBoardWidget::onReset()
 
 void CBoardWidget::onUpdateClock()
 {
+
     if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+    stuClock clock = m_pTotalMgr->boardMgr()->getClock();
+    ui.label_clockData->setText(QString::number(clock.sysClock));
+    ui.label_highPrecisionClockData->setText(QString::number(clock.highPrecClock));
 
-    // 系统时钟
-    unsigned long sysClock = m_pTotalMgr->boardMgr()->clock();
-    ui.label_clockData->setText(QString::number(sysClock));
+    //// 系统时钟
+    //unsigned long sysClock = m_pTotalMgr->boardMgr()->clock();
+    //ui.label_clockData->setText(QString::number(sysClock));
 
-    // 高精度时钟
-    unsigned long highPrecClock = m_pTotalMgr->boardMgr()->clockHighPrecision();
-    ui.label_highPrecisionClockData->setText(QString::number(highPrecClock));
+    //// 高精度时钟
+    //unsigned long highPrecClock = m_pTotalMgr->boardMgr()->clockHighPrecision();
+    //ui.label_highPrecisionClockData->setText(QString::number(highPrecClock));
+
+
 }
 
 void CBoardWidget::onBtnClick()

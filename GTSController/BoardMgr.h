@@ -6,22 +6,26 @@
 
 #include "GtsHal.h"
 
-struct CardInfo {
+class CTotalMgr;
+
+// 板卡信息
+struct stuCardInfo {
     short cardNum;
     short cardType;
 };
 
-struct DriverVersion {
+// 驱动版本
+struct stuDriverVersion {
     unsigned short mainVer;
     unsigned short slaveVer;
 };
 
-class CTotalMgr;
+struct stuClock {
+    unsigned long sysClock;            // 系统时钟
+    unsigned long highPrecClock;       // 高精度时钟
 
-// ============================================================
-// BoardMgr — GTS 板卡管理器
-// 职责;开/关/复位卡/配置加载/保存/版本信息/时钟/中断
-// ============================================================
+    stuClock() : sysClock(0), highPrecClock(0) {}
+};
 
 class BoardMgr : public QObject 
 {
@@ -29,26 +33,28 @@ class BoardMgr : public QObject
 
 private:
     CTotalMgr* m_pTotalMgr = nullptr;
-  
     bool m_isOpen = false;
     short m_cardNo = 0;
     short m_lastError = 0;
 
+
 public:
     explicit BoardMgr(QObject* parent = nullptr);
     ~BoardMgr();
-    void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
+    void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
+    bool isOpen() const { return m_isOpen; }
+    short getCardNo() const { return m_cardNo; }
+    short lastError() const { return m_lastError; }
+    stuClock getClock();
+
+public:
     // 打开板卡
-    // @param channel  打开方式 0:支持 1:内部调用
-    // @param param    保留参数,默认1
     bool open(short channel = 0, short param = 1);
     // 关闭板卡
     bool close();
     // 复位板卡软复位
     bool reset();
-    // 是否已打开
-    bool isOpen() const { return m_isOpen; }
     // 设置当前操作的板卡编号
     bool setCardNo(short index);
     // 获取当前板卡编号
@@ -66,9 +72,9 @@ public:
     // 获取固件版本号字符串
     QString firmwareVersion() const;
     // 获取板卡信息
-    CardInfo cardInfo() const;
+    stuCardInfo cardInfo() const;
     // 获取驱动版本
-    DriverVersion driverVersion() const;
+    stuDriverVersion driverVersion() const;
     // 获取接口板状态
     short interfaceBoardStatus() const;
     // 设置接口板状态
@@ -100,18 +106,8 @@ public:
     bool setDisplayDip(short mode);
     // 获取设备共享最大数
     bool setDeviceShareMax(short count);
-    // 获取最后一次错误码
-    short lastError() const { return m_lastError; }
     // 获取最后一次错误描述
     QString lastErrorString() const;
-
-signals:
-    // 板卡已打开
-    void opened();
-    // 板卡已关闭
-    void closed();
-    // 发生错误
-    void errorOccurred(short errorCode, const QString& errorMsg);
 
 };
 

@@ -1,4 +1,5 @@
 #include "AxisMgr.h"
+#include <QMessageBox>
 
 AxisMgr::AxisMgr(QObject* parent)
     : QObject(parent)
@@ -35,8 +36,8 @@ bool AxisMgr::disable(short axis) {
 
     m_lastError = GtsHal::axisOff(axis);
     if (m_lastError != 0) {
-        emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
+
     }
     return true;
 }
@@ -74,9 +75,7 @@ bool AxisMgr::isEnabled(short axis)  {
 
     long sts = 0;
     GtsHal::getSts(axis, &sts);
-    // 轴状态中某一位表示使能(具体位需参考固高文档，通常 bit 0 或 bit 1)
-    // 这里返回原始状态，由上层判断
-    return (sts != -1);  // -1 通常表示轴不存在或错误
+    return (sts != -1); 
 }
 
 bool AxisMgr::setOnDelayTime(unsigned short ms) {
