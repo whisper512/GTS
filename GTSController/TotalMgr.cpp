@@ -22,41 +22,5 @@ CTotalMgr::CTotalMgr(QObject* parent)
 }
 
 CTotalMgr::~CTotalMgr() {
-    shutdown();
-}
-
-bool CTotalMgr::initialize(short channel) {
-    if (m_initialized) {
-        
-        shutdown();
-    }
-    if (!m_boardMgr->open(channel)) {
-        QString err = QStringLiteral("板卡打开失败: %1")
-            .arg(m_boardMgr->lastErrorString());
-        return false;
-    }
-
-    m_initialized = true;
-    return true;
-}
-
-void CTotalMgr::shutdown() {
-    if (!m_initialized) return;
-
-    
-    m_boardMgr->close();
-
-    m_initialized = false;
-}
-
-void CTotalMgr::emergencyStop() {
-    if (!m_initialized) return;
-    m_boardMgr->reset();
-}
-
-QString CTotalMgr::lastErrorString() const {
-    if (m_boardMgr) {
-        return m_boardMgr->lastErrorString();
-    }
-    return QStringLiteral("无错误");
+   
 }

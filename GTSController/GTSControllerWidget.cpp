@@ -33,7 +33,7 @@ void GTSControllerWidget::InitUI()
 {
     m_pBoardWidget = new CBoardWidget(this,this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pBoardWidget);
-    m_pAxisWidget = new CAxisWidget(this);
+    m_pAxisWidget = new CAxisWidget(this, this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pAxisWidget);
     m_pInterpWidget = new CInterpWidget(this);
     ui.stackedWidget->addWidget(m_pInterpWidget);
@@ -73,7 +73,14 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
-    
+    // ===== 板卡打开/关闭 → 启停轴定时器 =====
+    connect(m_pBoardWidget, &CBoardWidget::boardOpened, this, [this]() {
+        m_pAxisWidget->startRefresh();    // 启动轴定时刷新（500ms）
+        });
+
+    connect(m_pBoardWidget, &CBoardWidget::boardClosed, this, [this]() {
+        m_pAxisWidget->stopRefresh();     // 停止轴定时刷新
+        });
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

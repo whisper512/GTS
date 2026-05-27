@@ -49,9 +49,6 @@
     </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GTSControllerWidget.cpp">
       <Filter>Source Files\Widget</Filter>
     </ClCompile>
@@ -83,22 +80,25 @@
       <Filter>Source Files\Widget</Filter>
     </ClCompile>
     <ClCompile Include="AxisWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InterpWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IOWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FeedbackWidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Widget</Filter>
     </ClCompile>
     <ClCompile Include="ConfigWidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="FeedbackWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="InterpWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="IOWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files\Widget</Filter>
     </ClCompile>
     <ClCompile Include="OthersWidget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -133,22 +133,22 @@
       <Filter>Header Files\Widget</Filter>
     </QtMoc>
     <QtMoc Include="AxisWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="InterpWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="IOWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="FeedbackWidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Widget</Filter>
     </QtMoc>
     <QtMoc Include="ConfigWidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="FeedbackWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="InterpWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="IOWidget.h">
+      <Filter>Header Files\Widget</Filter>
     </QtMoc>
     <QtMoc Include="OthersWidget.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Widget</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>

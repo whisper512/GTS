@@ -1,5 +1,3 @@
-#include <QTimer>
-
 #include "GTSControllerWidget.h"
 #include "BoardWidget.h"
 #include "TotalMgr.h"
@@ -25,6 +23,7 @@ CBoardWidget::~CBoardWidget()
         m_pClockTimer->stop();
     }
 }
+
 
 void CBoardWidget::connectPrivateSignal()
 {
@@ -76,6 +75,8 @@ void CBoardWidget::onOpen()
 
     onUpdateClock();
     m_pClockTimer->start(1000);
+
+    emit boardOpened();
 }
 
 void CBoardWidget::onClose()
@@ -85,6 +86,7 @@ void CBoardWidget::onClose()
         updateBoardState(false);
         m_pClockTimer->stop();
         m_pGTSControllerWidget->showLog(QStringLiteral("¹Ø±Õ°å¿¨³É¹¦"), Qt::darkGreen);
+        emit boardClosed();
     }
     else {
         m_pGTSControllerWidget->showLog(QStringLiteral("¹Ø±Õ°å¿¨Ê§°Ü"), Qt::red);
@@ -98,6 +100,7 @@ void CBoardWidget::onReset()
         updateBoardState(false);
         m_pClockTimer->stop();
         m_pGTSControllerWidget->showLog(QStringLiteral("¸´Î»°å¿¨³É¹¦"), Qt::darkGreen);
+        emit boardClosed();
     }
     else {
         m_pGTSControllerWidget->showLog(QStringLiteral("¸´Î»°å¿¨Ê§°Ü"), Qt::red);

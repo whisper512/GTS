@@ -24,7 +24,7 @@ public:
 private:
     CTotalMgr* m_pTotalMgr = nullptr;        // 总管理
     CBoardWidget* m_pBoardWidget = nullptr;  // 板卡
-    QWidget* m_pAxisWidget = nullptr;        // 单轴
+    CAxisWidget* m_pAxisWidget = nullptr;    // 单轴
     QWidget* m_pInterpWidget = nullptr;      // 插补
     QWidget* m_pIOWidget = nullptr;          // IO
     QWidget* m_pFeedbackWidget = nullptr;    // 编码器

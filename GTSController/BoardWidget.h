@@ -27,6 +27,10 @@ private:
 	void onReset();
 	void onUpdateClock(); 
 
+signals:
+	void boardOpened();
+	void boardClosed();
+
 public slots:
 
 private slots:

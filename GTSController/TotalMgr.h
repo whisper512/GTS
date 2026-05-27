@@ -5,7 +5,6 @@
 #include <memory>
 #include <QColor>
 
-
 class BoardMgr;
 class AxisMgr;
 class ConfigMgr;
@@ -33,31 +32,22 @@ public:
     explicit CTotalMgr(QObject* parent = nullptr);
     ~CTotalMgr();
 
-    bool initialize(short channel = 0);
-    void shutdown();
     
-    BoardMgr* boardMgr() const { return m_boardMgr.get(); }
-
-
-    bool isInitialized() const { return m_initialized; }
     // 板卡管理器
-    BoardMgr* board() const { return m_boardMgr.get(); }
+    BoardMgr* boardMgr() const { return m_boardMgr.get(); }
     // 轴管理器
-    AxisMgr* axis() const { return m_axisMgr.get(); }
+    AxisMgr* axisMgr() const { return m_axisMgr.get(); }
     // 运动管理器
-    MotionMgr* motion() const { return m_motionMgr.get(); }
+    MotionMgr* motionMgr() const { return m_motionMgr.get(); }
     // 插补管理器
-    InterpolationMgr* interpolation() const { return m_interpolationMgr.get(); }
+    InterpolationMgr* interpolationMgr() const { return m_interpolationMgr.get(); }
     // IO管理器
-    IOMgr* io() const { return m_ioMgr.get(); }
+    IOMgr* ioMgr() const { return m_ioMgr.get(); }
     // 反馈管理器
-    FeedbackMgr* feedback() const { return m_feedbackMgr.get(); }
+    FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器
-    ConfigMgr* config() const { return m_configMgr.get(); }
+    ConfigMgr* configMgr() const { return m_configMgr.get(); }
 
-    void emergencyStop();
-    // 获取最近一次错误字符串
-    QString lastErrorString() const;
 
 
 };

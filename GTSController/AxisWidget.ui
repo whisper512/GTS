@@ -145,20 +145,6 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton_clearState">
-            <property name="text">
-             <string>清除状态</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_sevorOff">
-            <property name="text">
-             <string>伺服关闭</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="2">
            <widget class="QPushButton" name="pushButton_clearPos">
             <property name="text">
@@ -170,6 +156,20 @@
            <widget class="QPushButton" name="pushButton_smoothStop">
             <property name="text">
              <string>平滑停止</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QPushButton" name="pushButton_sevorOn">
+            <property name="text">
+             <string>伺服开启</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_clearState">
+            <property name="text">
+             <string>清除状态</string>
             </property>
            </widget>
           </item>
