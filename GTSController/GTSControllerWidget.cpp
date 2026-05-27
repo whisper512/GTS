@@ -73,13 +73,12 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
-    // ===== 板卡打开/关闭 → 启停轴定时器 =====
     connect(m_pBoardWidget, &CBoardWidget::boardOpened, this, [this]() {
-        m_pAxisWidget->startRefresh();    // 启动轴定时刷新（500ms）
+        m_pAxisWidget->startRefresh();
         });
 
     connect(m_pBoardWidget, &CBoardWidget::boardClosed, this, [this]() {
-        m_pAxisWidget->stopRefresh();     // 停止轴定时刷新
+        m_pAxisWidget->stopRefresh();
         });
 }
 

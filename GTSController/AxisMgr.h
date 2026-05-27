@@ -3,13 +3,49 @@
 
 #include <QObject>
 #include <QString>
+#include <Vector>
 #include "GtsHal.h"
 
-// ============================================================
-// AxisMgr — 单轴管理器
-// 职责:单轴的使能/禁止、停止、报警/限位、状态、模式、软限位、跟随误差等
-// 支持最多 8 个轴（GTS-400 系列支持4轴,保留扩展）
-// ============================================================
+struct stuAxis
+{
+    short axisIndex;   // 轴号1-4；
+    bool bAlarm;       // 报警
+    bool bMError;      // 跟随误差越限
+    bool bPosLimit;    // 正限位触发
+    bool bNegLimit;    // 负限位触发
+    bool bSmoothStop;  // 平滑停止
+    bool bAbruptStop;  // 急停
+    bool bServoOn;     // 伺服使能
+    bool bMotion;      // 规划器运动
+    double dCurPos;    // 当前位置
+    double dPrfPos;    // 规划位置
+    double dCurVel;    // 当前速度
+    double dPrfVel;    // 规划速度
+    double dCurAcc;    // 当前加速度
+    double dPrfAcc;    // 规划加速度
+    long lPrfMode;     // 运动模式
+    long AxisStatus;   // 轴状态
+
+    stuAxis() {
+        axisIndex = 0;
+        bAlarm = false;
+        bMError = false;
+        bPosLimit = false;
+        bNegLimit = false;
+        bSmoothStop = false;
+        bAbruptStop = false;
+        bServoOn = false;
+        bMotion = false;
+        dCurPos = 0.0;
+        dPrfPos = 0.0;
+        dCurVel = 0.0;
+        dPrfVel = 0.0;
+        dCurAcc = 0.0;
+        dPrfAcc = 0.0;
+        lPrfMode = 0;
+        AxisStatus = 0;
+    }
+};
 
 class AxisMgr : public QObject {
     Q_OBJECT
@@ -17,16 +53,17 @@ class AxisMgr : public QObject {
 private:
     short m_axisCount = 4;
     mutable short m_lastError = 0;
+    std::vector<stuAxis> m_vecAxis[4];
 
 public:
     explicit AxisMgr(QObject* parent = nullptr);
     ~AxisMgr();
 
-    // 设置/获取轴总数
-    void setAxisCount(short count) { m_axisCount = count; }
-    short axisCount() const { return m_axisCount; }
+    // 获取轴状态
+    stuAxis getAxisStatus(short axis);
+    
 
-
+public:
     // 使能单个轴
     bool enable(short axis);
     // 禁止单个轴

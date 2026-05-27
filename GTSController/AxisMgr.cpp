@@ -11,6 +11,11 @@ AxisMgr::~AxisMgr() {
     disableAll();
 }
 
+stuAxis AxisMgr::getAxisStatus(short axis)
+{
+    return stuAxis();
+}
+
 bool AxisMgr::isValidAxis(short axis)  {
     bool valid = (axis >= 0 && axis < m_axisCount);
     if (!valid) {
@@ -210,7 +215,7 @@ long AxisMgr::status(short axis) {
 bool AxisMgr::clearStatus(short axis) {
     if (!isValidAxis(axis)) return false;
 
-    m_lastError = GtsHal::clrSts(axis);
+    m_lastError = GtsHal::clrSts(axis, axis);
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
