@@ -20,16 +20,16 @@ private:
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 
-	void ConnectPrivateSignal();
+	void connectPrivateSignal();
 	void updateBoardState(bool isOpen);
-	void OnOpen();
-	void OnClose();
-	void OnReset();
-	void OnUpdateClock(); 
+	void onOpen();
+	void onClose();
+	void onReset();
+	void onUpdateClock(); 
 
 public slots:
 
 private slots:
-	void OnBtnClick();
+	void onBtnClick();
 
 };

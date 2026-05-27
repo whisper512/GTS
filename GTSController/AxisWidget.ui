@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>601</width>
-    <height>478</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,14 +20,14 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_axisID">
        <property name="text">
         <string>轴号:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="comboBox_axisID"/>
      </item>
      <item>
       <spacer name="horizontalSpacer">
@@ -47,7 +47,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="groupBox_AxisState">
        <property name="title">
         <string>轴状态</string>
        </property>
@@ -58,84 +58,84 @@
         <item>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_24">
+           <widget class="QLabel" name="label_actPos">
             <property name="text">
              <string>实际位置(脉冲):</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="label_actPosData">
             <property name="text">
              <string>0.0</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="label_tgtPos">
             <property name="text">
              <string>规划位置(脉冲)</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_tgtPosData">
             <property name="text">
              <string>0.0</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="label_actVel">
             <property name="text">
              <string>实际速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_actVelData">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="label_tgtVel">
             <property name="text">
              <string>规划速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="label_tgtVelData">
             <property name="text">
              <string>0.000</string>
             </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="label_tgtAcc">
             <property name="text">
              <string>规划加速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="label_tgtAccData">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_26">
+           <widget class="QLabel" name="label_motionMode">
             <property name="text">
              <string>运动模式:</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLabel" name="label_25">
+           <widget class="QLabel" name="label_motionModeData">
             <property name="text">
              <string>点位运动</string>
             </property>
@@ -146,35 +146,35 @@
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pushButton_clearState">
             <property name="text">
              <string>清除状态</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="pushButton_sevorOff">
             <property name="text">
              <string>伺服关闭</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QPushButton" name="pushButton_3">
+           <widget class="QPushButton" name="pushButton_clearPos">
             <property name="text">
              <string>位置清零</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QPushButton" name="pushButton_4">
+           <widget class="QPushButton" name="pushButton_smoothStop">
             <property name="text">
              <string>平滑停止</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_5">
+           <widget class="QPushButton" name="pushButton_eStop">
             <property name="text">
              <string>紧急通知</string>
             </property>
@@ -185,58 +185,58 @@
         <item>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <widget class="QRadioButton" name="radioButton">
+           <widget class="QRadioButton" name="radioButton_sevorAlarm">
             <property name="text">
              <string>伺服报警</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QRadioButton" name="radioButton_2">
+           <widget class="QRadioButton" name="radioButton_servoEnable">
             <property name="text">
              <string>伺服使能</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QRadioButton" name="radioButton_3">
+           <widget class="QRadioButton" name="radioButton_nLimit">
             <property name="text">
              <string>负向限位</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QRadioButton" name="radioButton_4">
+           <widget class="QRadioButton" name="radioButton_motionSts">
             <property name="text">
              <string>运动状态</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QRadioButton" name="radioButton_5">
+           <widget class="QRadioButton" name="radioButton_pLimit">
             <property name="text">
              <string>正向限位</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QRadioButton" name="radioButton_6">
+           <widget class="QRadioButton" name="radioButton_smoothStop">
             <property name="text">
-             <string>IO平滑停止</string>
+             <string>平滑停止</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QRadioButton" name="radioButton_7">
+           <widget class="QRadioButton" name="radioButton_motionErr">
             <property name="text">
              <string>运动出错</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QRadioButton" name="radioButton_8">
+           <widget class="QRadioButton" name="radioButton_eStop">
             <property name="text">
-             <string>IO紧急停止</string>
+             <string>紧急停止</string>
             </property>
            </widget>
           </item>
@@ -246,7 +246,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="groupBox_pointMotion">
        <property name="title">
         <string>点位运动</string>
        </property>
@@ -254,79 +254,79 @@
         <item>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="label_vel">
             <property name="text">
              <string>速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBox"/>
+           <widget class="QSpinBox" name="spinBox_vel"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_12">
+           <widget class="QLabel" name="label_stepSize">
             <property name="text">
              <string>步长(脉冲):</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_2"/>
+           <widget class="QSpinBox" name="spinBox_stepSize"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_13">
+           <widget class="QLabel" name="label_acc">
             <property name="text">
              <string>加速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QSpinBox" name="spinBox_3"/>
+           <widget class="QSpinBox" name="spinBox_acc"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="label_dec">
             <property name="text">
              <string>减速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_4"/>
+           <widget class="QSpinBox" name="spinBox_dec"/>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_15">
+           <widget class="QLabel" name="label_smoothTime">
             <property name="text">
              <string>平滑时间(毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBox_5"/>
+           <widget class="QSpinBox" name="spinBox_smoothTime"/>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="label_cycleTime">
             <property name="text">
              <string>循环次数:</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QSpinBox" name="spinBox_6"/>
+           <widget class="QSpinBox" name="spinBox_cycleTime"/>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_23">
+           <widget class="QLabel" name="label_inPositionDelay">
             <property name="text">
              <string>到位延时(毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QSpinBox" name="spinBox_13"/>
+           <widget class="QSpinBox" name="spinBox_inPositionDelay"/>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_6">
+         <widget class="QPushButton" name="pushButton_ActMotion">
           <property name="text">
            <string>启动运动</string>
           </property>

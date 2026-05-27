@@ -10,13 +10,13 @@ CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
     , m_pTotalMgr(mgr)
 {
     ui.setupUi(this);
+
     m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
-
-    // 创建定时器
     m_pClockTimer = new QTimer(this);
-    connect(m_pClockTimer, &QTimer::timeout, this, &CBoardWidget::OnUpdateClock);
+    connect(m_pClockTimer, &QTimer::timeout, this, &CBoardWidget::onUpdateClock);
 
-    ConnectPrivateSignal();
+    connectPrivateSignal();
+    updateBoardState(false);
 }
 
 CBoardWidget::~CBoardWidget()
@@ -26,14 +26,14 @@ CBoardWidget::~CBoardWidget()
     }
 }
 
-void CBoardWidget::ConnectPrivateSignal()
+void CBoardWidget::connectPrivateSignal()
 {
     ui.radioButton_boardState->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     QTimer::singleShot(0, this, [this]() {
-        connect(ui.pushButton_openBoard, &QPushButton::clicked, this, &CBoardWidget::OnBtnClick);
-        connect(ui.pushButton_closeBoard, &QPushButton::clicked, this, &CBoardWidget::OnBtnClick);
-        connect(ui.pushButton_resetBoard, &QPushButton::clicked, this, &CBoardWidget::OnBtnClick);
+        connect(ui.pushButton_openBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
+        connect(ui.pushButton_closeBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
+        connect(ui.pushButton_resetBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
         });
 }
 
@@ -52,7 +52,7 @@ void CBoardWidget::updateBoardState(bool isOpen)
     }
 }
 
-void CBoardWidget::OnOpen()
+void CBoardWidget::onOpen()
 {
     bool ok = m_pTotalMgr->boardMgr()->open(0, 1);
     if (ok) {
@@ -74,12 +74,11 @@ void CBoardWidget::OnOpen()
     ui.label_hardwareVerData->setText(fwVersion);
     m_pGTSControllerWidget->showLog(QStringLiteral("固件版本: %1").arg(fwVersion), Qt::darkGreen);
 
-    
-    OnUpdateClock();
+    onUpdateClock();
     m_pClockTimer->start(1000);
 }
 
-void CBoardWidget::OnClose()
+void CBoardWidget::onClose()
 {
     bool ok = m_pTotalMgr->boardMgr()->close();
     if (ok) {
@@ -92,7 +91,7 @@ void CBoardWidget::OnClose()
     }
 }
 
-void CBoardWidget::OnReset()
+void CBoardWidget::onReset()
 {
     bool ok = m_pTotalMgr->boardMgr()->reset();
     if (ok) {
@@ -106,7 +105,7 @@ void CBoardWidget::OnReset()
 }
 
 
-void CBoardWidget::OnUpdateClock()
+void CBoardWidget::onUpdateClock()
 {
     if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -119,19 +118,19 @@ void CBoardWidget::OnUpdateClock()
     ui.label_highPrecisionClockData->setText(QString::number(highPrecClock));
 }
 
-void CBoardWidget::OnBtnClick()
+void CBoardWidget::onBtnClick()
 {
     if (!m_pTotalMgr) return;
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     if (!btn) return;
     QString objName = btn->objectName();
     if (objName == "pushButton_openBoard") {
-        OnOpen();
+        onOpen();
     }
     else if (objName == "pushButton_closeBoard") {
-        OnClose();
+        onClose();
     }
     else if (objName == "pushButton_resetBoard") {
-        OnReset();
+        onReset();
     }
 }

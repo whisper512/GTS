@@ -67,7 +67,6 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
     m_pBtnGroup->addButton(ui.toolButton_Config, 5);
     m_pBtnGroup->addButton(ui.toolButton_Others, 6);
 
-    // 默认
     ui.toolButton_Board->setChecked(true);
     connect(m_pBtnGroup, &QButtonGroup::idClicked, this, &GTSControllerWidget::OnBtnClicked);
 }
