@@ -21,8 +21,12 @@ class CTotalMgr : public QObject
     Q_OBJECT
 
 private:
+    // 是否初始化
     bool m_initialized = false;
+    // 刷新数据定时器
     QTimer* m_pRefreshTimer = nullptr;
+
+    
     std::unique_ptr<BoardMgr> m_boardMgr;
     std::unique_ptr<AxisMgr> m_axisMgr;
     std::unique_ptr<MotionMgr> m_motionMgr;

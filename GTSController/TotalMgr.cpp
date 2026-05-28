@@ -48,7 +48,7 @@ void CTotalMgr::onRefreshTimeout()
     if (!m_boardMgr->isOpen()) return;
 
     // 读取板卡时钟
+    
     stuClock clock = m_boardMgr->getClock();
-    //emit boardClockUpdated(clock);
-
+    emit boardClockUpdated(clock);
 }

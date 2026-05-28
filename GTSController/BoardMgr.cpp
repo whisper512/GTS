@@ -33,7 +33,7 @@ bool BoardMgr::open(short channel, short param)
     m_lastError = GtsHal::open(channel, param);
     if (m_lastError == 0) {
         m_isOpen = true;
-        // 实时获取数据
+        // 开始实时获取数据
         m_pTotalMgr->startRefresh();
         return true;
     }

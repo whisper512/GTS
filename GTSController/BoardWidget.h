@@ -6,7 +6,7 @@
 class CTotalMgr;
 class GTSControllerWidget;
 
-class CBoardWidget : public QWidget
+class CBoardWidget : public QWidget 
 {
 	Q_OBJECT
 
@@ -20,7 +20,7 @@ private:
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 
 	void connectPrivateSignal();
-	void updateBoardState(bool isOpen);
+	void upUIdateBoardState(bool isOpen);
 	void onOpen();
 	void onClose();
 	void onReset();

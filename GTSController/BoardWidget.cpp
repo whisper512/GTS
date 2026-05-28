@@ -12,7 +12,7 @@ CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
     m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
 
     connectPrivateSignal();
-    updateBoardState(false);
+    upUIdateBoardState(false);
 }
 
 CBoardWidget::~CBoardWidget()
@@ -32,7 +32,7 @@ void CBoardWidget::connectPrivateSignal()
         });
 }
 
-void CBoardWidget::updateBoardState(bool isOpen)
+void CBoardWidget::upUIdateBoardState(bool isOpen)
 {
     ui.radioButton_boardState->setChecked(isOpen);
     if (isOpen) {
@@ -51,7 +51,7 @@ void CBoardWidget::onOpen()
 {
     bool ok = m_pTotalMgr->boardMgr()->open(0, 1);
     if (ok) {
-        updateBoardState(true);
+        upUIdateBoardState(true);
         m_pGTSControllerWidget->showLog(QStringLiteral("打开板卡成功"), Qt::darkGreen);
     }
     else {
@@ -75,7 +75,7 @@ void CBoardWidget::onClose()
 {
     bool ok = m_pTotalMgr->boardMgr()->close();
     if (ok) {
-        updateBoardState(false);
+        upUIdateBoardState(false);
         m_pGTSControllerWidget->showLog(QStringLiteral("关闭板卡成功"), Qt::darkGreen);
     }
     else {
@@ -87,7 +87,7 @@ void CBoardWidget::onReset()
 {
     bool ok = m_pTotalMgr->boardMgr()->reset(); 
     if (ok) {
-        updateBoardState(false);
+        upUIdateBoardState(false);
         m_pGTSControllerWidget->showLog(QStringLiteral("复位板卡成功"), Qt::darkGreen);
     }
     else {
