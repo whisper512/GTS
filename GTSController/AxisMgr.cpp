@@ -12,18 +12,18 @@ AxisMgr::~AxisMgr() {
     disableAll();
 }
 
-stuAxis AxisMgr::getAxisInfo(short axis)
+std::vector<stuAxis>& AxisMgr::getAxisInfo()
 {
-    stuAxis info;
-    if (!isValidAxis(axis)) return info;
-
-    info.axisIndex = axis;
-
-    // 一次性读取轴状态
+    m_vecAxis.clear();
+    stuAxis axisInfo;
     long sts = 0;
-    GtsHal::getSts(axis, &sts);
-    info.parseStatus(sts);
-    return info;
+    for (short axis = 1; axis <= m_axisCount; axis++) {
+        axisInfo.axisIndex = axis;
+        GtsHal::getSts(axis, &sts);
+        axisInfo.parseStatus(sts);
+        m_vecAxis.push_back(axisInfo);
+    }
+    return m_vecAxis;
 }
 
 bool AxisMgr::isValidAxis(short axis)  {
@@ -90,7 +90,7 @@ bool AxisMgr::isEnabled(short axis)  {
 
     long sts = 0;
     GtsHal::getSts(axis, &sts);
-    return (sts != -1); 
+    return (sts & 0x200) != 0;
 }
 
 bool AxisMgr::setOnDelayTime(unsigned short ms) {

@@ -4,6 +4,8 @@
 #include "BoardMgr.h"
 #include "AxisMgr.h"
 
+#include <QMessageBox>
+
 CAxisWidget::CAxisWidget(QWidget* parent, CTotalMgr* mgr)
 	: QWidget(parent)
 	, m_pTotalMgr(mgr)
@@ -26,10 +28,19 @@ void CAxisWidget::initWidget()
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 3"));
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 4"));
 
+	ui.radioButton_servoEnable->setAutoExclusive(false);
+	ui.radioButton_sevorAlarm->setAutoExclusive(false);
+	ui.radioButton_nLimit->setAutoExclusive(false);
+	ui.radioButton_pLimit->setAutoExclusive(false);
+	ui.radioButton_motionErr->setAutoExclusive(false);
+	ui.radioButton_motionSts->setAutoExclusive(false);
+	ui.radioButton_eStop->setAutoExclusive(false);
+	ui.radioButton_smoothStop->setAutoExclusive(false);
+	// 禁止用户点击
 	ui.radioButton_servoEnable->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui.radioButton_sevorAlarm->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_sevorAlarm->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_nLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    ui.radioButton_pLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	ui.radioButton_pLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_motionErr->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_motionSts->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_eStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -48,21 +59,6 @@ void CAxisWidget::connectPrivateSignal()
 	connect(ui.pushButton_ActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 }
 
-void CAxisWidget::onUpdateAxisInfo()
-{
-	if (!m_pTotalMgr || !m_pTotalMgr->boardMgr()->isOpen()) return;
-
-	short axis = m_iAxisId;
-	
-	//bool enabled = m_pTotalMgr->axisMgr()->isEnabled(axis);
-	//if (enabled) {
-	//	ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
-	//}
-	//else {
-	//	ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
-	//	ui.pushButton_sevorOn->setStyleSheet("");
-	//}
-}
 
 
 void CAxisWidget::onClearState()
@@ -77,7 +73,6 @@ void CAxisWidget::onClearState()
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("轴%1 状态清除失败").arg(m_iAxisId), Qt::red);
 	}
-	onUpdateAxisInfo();
 }
 
 void CAxisWidget::onServoOn()
@@ -92,7 +87,6 @@ void CAxisWidget::onServoOn()
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("轴%1 使能失败").arg(m_iAxisId), Qt::red);
 	}
-	onUpdateAxisInfo();
 }
 
 void CAxisWidget::onServoOff()
@@ -107,7 +101,6 @@ void CAxisWidget::onServoOff()
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("轴%1 禁止失败").arg(m_iAxisId), Qt::red);
 	}
-	onUpdateAxisInfo();
 }
 
 void CAxisWidget::onClearPos()
@@ -122,7 +115,6 @@ void CAxisWidget::onClearPos()
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("轴%1 位置清零失败").arg(m_iAxisId), Qt::red);
 	}
-	onUpdateAxisInfo();
 }
 
 void CAxisWidget::onSmoothStop()
@@ -172,12 +164,12 @@ void CAxisWidget::onBtnClick()
 		onClearState();
 	}
 	else if (objName == "pushButton_sevorOn") {
-		// 根据当前按钮文字决定使能还是禁止
-		if (btn->text() == QStringLiteral("使能")) {
+		if (ui.pushButton_sevorOn->text() == QStringLiteral("使能")) {
 			onServoOn();
 		}
-		else {
-			onServoOff();
+		else
+		{
+            onServoOff();
 		}
 	}
 	else if (objName == "pushButton_clearPos") {
@@ -199,6 +191,49 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 	m_iAxisId = index + 1;  
 
 	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
-		onUpdateAxisInfo();
 	}
+}
+
+void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
+{
+	int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)axisInfo.size()) return;
+	stuAxis axis = axisInfo[index];
+
+	ui.radioButton_servoEnable->setChecked(axis.bServoOn);
+	ui.radioButton_nLimit->setChecked(axis.bNegLimit);
+    ui.radioButton_pLimit->setChecked(axis.bPosLimit);
+	ui.radioButton_motionErr->setChecked(axis.bMError);
+	ui.radioButton_sevorAlarm->setChecked(axis.bAlarm);
+	ui.radioButton_eStop->setChecked(axis.bAbruptStop);
+    ui.radioButton_smoothStop->setChecked(axis.bSmoothStop);
+	ui.radioButton_motionSts->setChecked(axis.bMotion);
+
+	if (axis.bServoOn)
+	{
+        ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
+	}
+	else 
+	{
+		ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
+	}
+
+
+	QString statusStr = QStringLiteral(
+		"轴%1 | 位置:%2 | 速度:%3 | 加速度:%4 | "
+		"使能:%5 | 报警:%6 | 运动:%7 | 正限位:%8 | 负限位:%9 | "
+		"误差:%10 | 急停:%11 | 平滑停止:%12")
+		.arg(axis.axisIndex)
+		.arg(axis.dCurPos, 0, 'f', 3)
+		.arg(axis.dCurVel, 0, 'f', 3)
+		.arg(axis.dCurAcc, 0, 'f', 3)
+		.arg(axis.bServoOn ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bAlarm ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bMotion ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bPosLimit ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bNegLimit ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bMError ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bAbruptStop ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bSmoothStop ? QStringLiteral("是") : QStringLiteral("否"));
+	m_pGTSControllerWidget->showLog(statusStr, Qt::darkCyan);
 }

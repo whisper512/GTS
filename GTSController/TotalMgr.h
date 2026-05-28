@@ -64,6 +64,7 @@ public:
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
+    void axisUpdated(const std::vector<stuAxis>& axisInfo);
 
 private slots:
     // 定时读取刷新数据

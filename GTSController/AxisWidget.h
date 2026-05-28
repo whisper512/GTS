@@ -1,5 +1,6 @@
 #pragma once
 #include <QWidget>
+#include <AxisMgr.h>
 #include "ui_AxisWidget.h"
 
 class CTotalMgr;
@@ -22,7 +23,6 @@ private:
 
 	void initWidget();
 	void connectPrivateSignal();
-	void onUpdateAxisInfo();
 
 	void onClearState();
 	void onServoOn();
@@ -33,7 +33,7 @@ private:
 	void onActMotion();
 
 public slots:
-	
+	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
 private slots:
 	void onBtnClick();
 	void onComboBoxCurrentIndexChanged(int index);

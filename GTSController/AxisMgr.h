@@ -53,7 +53,7 @@ struct stuAxis
         bPosLimit = (status & 0x04) != 0;     // 正限位
         bNegLimit = (status & 0x08) != 0;     // 负限位
         bSmoothStop = (status & 0x40) != 0;   // 急停
-        bServoOn = (status & 0x01) != 0;      // 伺服使能
+        bServoOn = (status & 0x200) != 0;      // 伺服使能
         bMotion = (status & 0x20) != 0;       // 运动中
     }
 };
@@ -66,7 +66,7 @@ class AxisMgr : public QObject {
 private:
     short m_axisCount = 4;
     mutable short m_lastError = 0;
-    std::vector<stuAxis> m_vecAxis[4];
+    std::vector<stuAxis> m_vecAxis;
     CTotalMgr* m_pTotalMgr = nullptr;
 
 public:
@@ -75,8 +75,9 @@ public:
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
     // 获取轴状态
-    stuAxis getAxisInfo(short axis);
+    std::vector<stuAxis>& getAxisInfo();
     
+
 
 public:
     // 使能单个轴
