@@ -48,13 +48,14 @@ struct stuAxis
     // 解析轴状态
     void parseStatus(long status) {
         AxisStatus = status;
-        bAlarm = (status & 0x02) != 0;        // 伺服报警
-        bMError = (status & 0x10) != 0;       // 跟随误差越限
-        bPosLimit = (status & 0x04) != 0;     // 正限位
-        bNegLimit = (status & 0x08) != 0;     // 负限位
-        bSmoothStop = (status & 0x40) != 0;   // 急停
-        bServoOn = (status & 0x200) != 0;      // 伺服使能
-        bMotion = (status & 0x20) != 0;       // 运动中
+        bAlarm = (status & 0x02) != 0;    
+        bMError = (status & 0x10) != 0;   
+        bPosLimit = (status & 0x20) != 0;   
+        bNegLimit = (status & 0x40) != 0;   
+        bSmoothStop = (status & 0x80) != 0;    
+        bAbruptStop = (status & 0x100) != 0; 
+        bServoOn = (status & 0x200) != 0; 
+        bMotion = (status & 0x400) != 0; 
     }
 };
 
