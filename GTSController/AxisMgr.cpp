@@ -12,18 +12,24 @@ AxisMgr::~AxisMgr() {
     disableAll();
 }
 
-std::vector<stuAxis>& AxisMgr::getAxisInfo()
+void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
-    m_vecAxis.clear();
-    stuAxis axisInfo;
-    long sts = 0;
-    for (short axis = 1; axis <= m_axisCount; axis++) {
-        axisInfo.axisIndex = axis;
-        GtsHal::getSts(axis, &sts);
-        axisInfo.parseStatus(sts);
-        m_vecAxis.push_back(axisInfo);
+    if (vecAxis.empty()) {
+        vecAxis.resize(m_axisCount);
+        for (int i = 0; i < m_axisCount; ++i) {
+            vecAxis[i].axisIndex = i + 1;
+        }
     }
-    return m_vecAxis;
+    long sts = 0;
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int idx = axis - 1;
+        vecAxis[idx].axisIndex = axis;
+        GtsHal::getSts(axis, &sts);
+        vecAxis[idx].parseStatus(sts);
+        vecAxis[idx].dCurPos = encoderPosition(axis);
+        vecAxis[idx].dCurVel = encoderVelocity(axis);
+        vecAxis[idx].dCurAcc = encoderAcceleration(axis);
+    }
 }
 
 bool AxisMgr::isValidAxis(short axis)  {

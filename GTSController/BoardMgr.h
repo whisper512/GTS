@@ -51,7 +51,7 @@ public:
     // 获取最后一次错误码
     short lastError() const { return m_lastError; }
     // 获取时钟
-    stuClock getClock();
+    stuClock getClocks();
 
 public:
     // 打开板卡

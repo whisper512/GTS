@@ -164,6 +164,9 @@
     <ClInclude Include="..\GTSLib\LookAheadEx.h">
       <Filter>Header Files\GTS</Filter>
     </ClInclude>
+    <ClInclude Include="AxisData.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="BoradWidget.ui">

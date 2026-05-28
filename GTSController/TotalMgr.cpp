@@ -48,12 +48,12 @@ void CTotalMgr::onRefreshTimeout()
     if (!m_boardMgr->isOpen()) return;
 
     // 读取板卡时钟
-    stuClock clock = m_boardMgr->getClock();
+    stuClock clock = m_boardMgr->getClocks();
     emit boardClockUpdated(clock);
 
-    // 读取轴信息
-    std::vector<stuAxis>& vecAxis = m_axisMgr->getAxisInfo();
-    emit axisUpdated(vecAxis);
+    // 读取轴状态信息
+    m_axisMgr->getAxisStatusInfo(m_vecAxis);
+    emit axisUpdated(m_vecAxis);
 
 
 }

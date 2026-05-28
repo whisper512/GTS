@@ -12,7 +12,7 @@ BoardMgr::~BoardMgr() {
     }
 }
 
-stuClock BoardMgr::getClock()
+stuClock BoardMgr::getClocks()
 {
     if (!m_isOpen) return stuClock();
     stuClock clk;
