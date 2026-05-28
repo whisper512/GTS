@@ -210,6 +210,11 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	ui.radioButton_motionSts->setChecked(axis.bMotion);
 	ui.label_actPosData->setText(QString::number(axis.dCurPos, 'f', 3));
 	ui.label_actVelData->setText(QString::number(axis.dCurVel, 'f', 3));
+    ui.label_tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
+	ui.label_tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
+    ui.label_tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
+	ui.label_motionModeData->setText(QString::number(axis.lPrfMode));
+
 
 	if (axis.bServoOn)
 	{
@@ -221,21 +226,24 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	}
 
 
-	//QString statusStr = QStringLiteral(
-	//	"轴%1 | 位置:%2 | 速度:%3 | 加速度:%4 | "
-	//	"使能:%5 | 报警:%6 | 运动:%7 | 正限位:%8 | 负限位:%9 | "
-	//	"误差:%10 | 急停:%11 | 平滑停止:%12")
-	//	.arg(axis.axisIndex)
-	//	.arg(axis.dCurPos, 0, 'f', 3)
-	//	.arg(axis.dCurVel, 0, 'f', 3)
-	//	.arg(axis.dCurAcc, 0, 'f', 3)
-	//	.arg(axis.bServoOn ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bAlarm ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bMotion ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bPosLimit ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bNegLimit ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bMError ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bAbruptStop ? QStringLiteral("是") : QStringLiteral("否"))
-	//	.arg(axis.bSmoothStop ? QStringLiteral("是") : QStringLiteral("否"));
-	//m_pGTSControllerWidget->showLog(statusStr, Qt::darkCyan);
+	QString statusStr = QStringLiteral(
+		"轴%1 | 位置:%2 | 速度:%3 | 加速度:%4 | "
+		"使能:%5 | 报警:%6 | 运动:%7 | 正限位:%8 | 负限位:%9 | "
+		"误差:%10 | 急停:%11 | 平滑停止:%12"
+	    "运动模式:%13" )
+		
+		.arg(axis.axisIndex)
+		.arg(axis.dCurPos, 0, 'f', 3)
+		.arg(axis.dCurVel, 0, 'f', 3)
+		.arg(axis.dCurAcc, 0, 'f', 3)
+		.arg(axis.bServoOn ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bAlarm ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bMotion ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bPosLimit ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bNegLimit ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bMError ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bAbruptStop ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.bSmoothStop ? QStringLiteral("是") : QStringLiteral("否"))
+		.arg(axis.lPrfMode);
+	m_pGTSControllerWidget->showLog(statusStr, Qt::darkCyan);
 }

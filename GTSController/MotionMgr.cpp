@@ -9,9 +9,20 @@ MotionMgr::~MotionMgr() {
     
 }
 
+void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
+{
+    for (auto& axis : vecAxis) {
+        short axisIndex = axis.axisIndex;           // 轴号 1~4
+        axis.dPrfPos = axisProfilePos(axisIndex);   // 规划位置
+        axis.dPrfVel = axisProfileVel(axisIndex);   // 规划速度
+        axis.dPrfAcc = axisProfileAcc(axisIndex);   // 规划加速度
+        axis.lPrfMode = profileMode(axisIndex);     // 运动模式
+    }
+}
+
 bool MotionMgr::checkProfile(short profile) const
 {
-    if (profile < 0 || profile >= m_axisCount) {
+    if (profile < 1 || profile > m_axisCount) {
         return false;
     }
     return true;

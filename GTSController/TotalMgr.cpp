@@ -53,6 +53,8 @@ void CTotalMgr::onRefreshTimeout()
 
     // 读取轴状态信息
     m_axisMgr->getAxisStatusInfo(m_vecAxis);
+    m_motionMgr->getAxisMotionInfo(m_vecAxis);
+
     emit axisUpdated(m_vecAxis);
 
 

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include "GtsHal.h"
+#include "AxisData.h"
 
 
 // ============================================================
@@ -33,6 +34,9 @@ public:
     explicit MotionMgr( QObject* parent = nullptr);
     ~MotionMgr();
 
+    void getAxisMotionInfo(std::vector<stuAxis>& vecAxis);
+
+public:
 
     // 设置规划器位置
     bool setProfilePos(short profile, long pos);

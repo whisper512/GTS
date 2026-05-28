@@ -33,9 +33,9 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 }
 
 bool AxisMgr::isValidAxis(short axis)  {
-    bool valid = (axis >= 0 && axis < m_axisCount);
+    bool valid = (axis > 0 && axis <= m_axisCount);
     if (!valid) {
-        emit errorOccurred(axis, -1, QStringLiteral("轴号无效: %1 (有效范围 0-%2)")
+        emit errorOccurred(axis, -1, QStringLiteral("轴号无效: %1 (有效范围 1-%2)")
             .arg(axis).arg(m_axisCount - 1));
     }
     return valid;
