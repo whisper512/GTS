@@ -1,6 +1,5 @@
 #pragma once
 #include <QWidget>
-#include <QTimer>
 #include "ui_AxisWidget.h"
 
 class CTotalMgr;
@@ -14,12 +13,8 @@ public:
 	CAxisWidget(QWidget* parent = nullptr, CTotalMgr* mgr = nullptr);
 	~CAxisWidget();
 
-	void startRefresh();
-	void stopRefresh();
-
 private:
 	Ui::CAxisWidgetClass ui;
-	QTimer* m_pClockTimer = nullptr;
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 

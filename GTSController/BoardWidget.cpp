@@ -1,3 +1,4 @@
+#include <QTimer>
 #include "GTSControllerWidget.h"
 #include "BoardWidget.h"
 #include "TotalMgr.h"
@@ -9,18 +10,14 @@ CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
 {
     ui.setupUi(this);
     m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
-    m_pClockTimer = new QTimer(this);
 
-    connect(m_pClockTimer, &QTimer::timeout, this, &CBoardWidget::onUpdateClock);
     connectPrivateSignal();
     updateBoardState(false);
 }
 
 CBoardWidget::~CBoardWidget()
 {
-    if (m_pClockTimer) {
-        m_pClockTimer->stop();
-    }
+    
 }
 
 
@@ -73,9 +70,6 @@ void CBoardWidget::onOpen()
     m_pGTSControllerWidget->showLog(QStringLiteral("固件版本: %1").arg(fwVersion), Qt::darkGreen);
 
     onUpdateClock();
-    m_pClockTimer->start(1000);
-
-    emit boardOpened();
 }
 
 void CBoardWidget::onClose()
@@ -83,7 +77,6 @@ void CBoardWidget::onClose()
     bool ok = m_pTotalMgr->boardMgr()->close();
     if (ok) {
         updateBoardState(false);
-        m_pClockTimer->stop();
         m_pGTSControllerWidget->showLog(QStringLiteral("关闭板卡成功"), Qt::darkGreen);
         emit boardClosed();
     }
@@ -97,7 +90,6 @@ void CBoardWidget::onReset()
     bool ok = m_pTotalMgr->boardMgr()->reset();
     if (ok) {
         updateBoardState(false);
-        m_pClockTimer->stop();
         m_pGTSControllerWidget->showLog(QStringLiteral("复位板卡成功"), Qt::darkGreen);
         emit boardClosed();
     }
@@ -114,16 +106,6 @@ void CBoardWidget::onUpdateClock()
     stuClock clock = m_pTotalMgr->boardMgr()->getClock();
     ui.label_clockData->setText(QString::number(clock.sysClock));
     ui.label_highPrecisionClockData->setText(QString::number(clock.highPrecClock));
-
-    //// 系统时钟
-    //unsigned long sysClock = m_pTotalMgr->boardMgr()->clock();
-    //ui.label_clockData->setText(QString::number(sysClock));
-
-    //// 高精度时钟
-    //unsigned long highPrecClock = m_pTotalMgr->boardMgr()->clockHighPrecision();
-    //ui.label_highPrecisionClockData->setText(QString::number(highPrecClock));
-
-
 }
 
 void CBoardWidget::onBtnClick()

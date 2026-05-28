@@ -1,4 +1,5 @@
 #include "AxisMgr.h"
+#include "TotalMgr.h"
 #include <QMessageBox>
 
 AxisMgr::AxisMgr(QObject* parent)
@@ -11,9 +12,18 @@ AxisMgr::~AxisMgr() {
     disableAll();
 }
 
-stuAxis AxisMgr::getAxisStatus(short axis)
+stuAxis AxisMgr::getAxisInfo(short axis)
 {
-    return stuAxis();
+    stuAxis info;
+    if (!isValidAxis(axis)) return info;
+
+    info.axisIndex = axis;
+
+    // 一次性读取轴状态
+    long sts = 0;
+    GtsHal::getSts(axis, &sts);
+    info.parseStatus(sts);
+    return info;
 }
 
 bool AxisMgr::isValidAxis(short axis)  {
@@ -135,7 +145,6 @@ bool AxisMgr::alarmOn(short axis) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
     }
-    emit alarmTriggered(axis);
     return true;
 }
 
@@ -155,7 +164,7 @@ bool AxisMgr::isAlarm(short axis) {
 
     long sts = 0;
     GtsHal::getSts(axis, &sts);
-    return (sts & 0x02) != 0;  // 假设 bit1 表示报警
+    return (sts & 0x02) != 0;
 }
 
 bool AxisMgr::limitOn(short axis, short limitType) {
@@ -226,7 +235,7 @@ bool AxisMgr::clearStatus(short axis) {
 bool AxisMgr::zeroPosition(short axis) {
     if (!isValidAxis(axis)) return false;
 
-    m_lastError = GtsHal::zeroPos(axis);
+    m_lastError = GtsHal::zeroPos(axis,axis);
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
@@ -377,10 +386,10 @@ QString AxisMgr::statusToString(long sts) {
     if (sts & 0x0002) desc << "报警";
     if (sts & 0x0004) desc << "正限位";
     if (sts & 0x0008) desc << "负限位";
-    if (sts & 0x0010) desc << "回零中";
+    if (sts & 0x0010) desc << "跟随误差超限";
     if (sts & 0x0020) desc << "运动中";
     if (sts & 0x0040) desc << "急停";
-    if (sts & 0x0080) desc << "跟随误差超限";
+    if (sts & 0x0080) desc << "回零中";
     if (sts & 0x0100) desc << "正软限位";
     if (sts & 0x0200) desc << "负软限位";
 

@@ -10,31 +10,14 @@ CAxisWidget::CAxisWidget(QWidget* parent, CTotalMgr* mgr)
 {
 	ui.setupUi(this);
 	m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
-
-	// 创建定时器，先不启动
-	m_pClockTimer = new QTimer(this);
-	connect(m_pClockTimer, &QTimer::timeout, this, &CAxisWidget::onUpdateAxisInfo);
-
 	initWidget();
 	connectPrivateSignal();
 }
 
 CAxisWidget::~CAxisWidget()
 {
-	if (m_pClockTimer) {
-		m_pClockTimer->stop();
-	}
 }
 
-void CAxisWidget::startRefresh()
-{
-	 if (m_pClockTimer) m_pClockTimer->start(500); 
-}
-
-void CAxisWidget::stopRefresh()
-{
-	if (m_pClockTimer) m_pClockTimer->stop();
-}
 
 void CAxisWidget::initWidget()
 {
@@ -71,14 +54,14 @@ void CAxisWidget::onUpdateAxisInfo()
 
 	short axis = m_iAxisId;
 	
-	bool enabled = m_pTotalMgr->axisMgr()->isEnabled(axis);
-	if (enabled) {
-		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
-	}
-	else {
-		ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
-		ui.pushButton_sevorOn->setStyleSheet("");
-	}
+	//bool enabled = m_pTotalMgr->axisMgr()->isEnabled(axis);
+	//if (enabled) {
+	//	ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
+	//}
+	//else {
+	//	ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
+	//	ui.pushButton_sevorOn->setStyleSheet("");
+	//}
 }
 
 

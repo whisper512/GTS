@@ -1,6 +1,5 @@
 #pragma once
 #include <QWidget>
-#include <QTimer>
 #include "ui_BoradWidget.h"
 
 class CTotalMgr;
@@ -16,7 +15,6 @@ public:
 
 private:
 	Ui::BoardWidgetClass ui;
-	QTimer* m_pClockTimer = nullptr;
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 

@@ -73,13 +73,7 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
-    connect(m_pBoardWidget, &CBoardWidget::boardOpened, this, [this]() {
-        m_pAxisWidget->startRefresh();
-        });
 
-    connect(m_pBoardWidget, &CBoardWidget::boardClosed, this, [this]() {
-        m_pAxisWidget->stopRefresh();
-        });
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

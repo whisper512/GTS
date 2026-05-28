@@ -45,7 +45,20 @@ struct stuAxis
         lPrfMode = 0;
         AxisStatus = 0;
     }
+    // 解析轴状态
+    void parseStatus(long status) {
+        AxisStatus = status;
+        bAlarm = (status & 0x02) != 0;        // 伺服报警
+        bMError = (status & 0x10) != 0;       // 跟随误差越限
+        bPosLimit = (status & 0x04) != 0;     // 正限位
+        bNegLimit = (status & 0x08) != 0;     // 负限位
+        bSmoothStop = (status & 0x40) != 0;   // 急停
+        bServoOn = (status & 0x01) != 0;      // 伺服使能
+        bMotion = (status & 0x20) != 0;       // 运动中
+    }
 };
+
+class CTotalMgr;
 
 class AxisMgr : public QObject {
     Q_OBJECT
@@ -54,13 +67,15 @@ private:
     short m_axisCount = 4;
     mutable short m_lastError = 0;
     std::vector<stuAxis> m_vecAxis[4];
+    CTotalMgr* m_pTotalMgr = nullptr;
 
 public:
     explicit AxisMgr(QObject* parent = nullptr);
     ~AxisMgr();
+    void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
     // 获取轴状态
-    stuAxis getAxisStatus(short axis);
+    stuAxis getAxisInfo(short axis);
     
 
 public:
@@ -150,14 +165,8 @@ public:
     static QString statusToString(long sts);
 
 signals:
-    // 轴状态变化
-    void statusChanged(short axis, long status);
     // 发生错误
     void errorOccurred(short axis, short errorCode, const QString& errorMsg);
-    // 报警触发
-    void alarmTriggered(short axis);
-    // 限位触发(轴号, 限位类型 0=正, 1=负)
-    void limitTriggered(short axis, short limitType);
 
 };
 

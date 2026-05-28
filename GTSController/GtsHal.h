@@ -88,7 +88,7 @@ public:
     // 状态
     static short getSts(short axis, long* pSts, short count = 1, unsigned long* pClock = nullptr) { return GT_GetSts(axis, pSts, count, pClock); }
     static short clrSts(short axis  = 1, short count = 1) { return GT_ClrSts(axis, count); }
-    static short zeroPos(short axis, short count = 1) { return GT_ZeroPos(axis, count); }
+    static short zeroPos(short axis = 1 , short count = 1) { return GT_ZeroPos(axis, count); }
     static short synchAxisPos(long mask) { return GT_SynchAxisPos(mask); }
     // 轴模式
     static short ctrlMode(short axis, short mode) { return GT_CtrlMode(axis, mode); }
