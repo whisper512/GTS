@@ -42,10 +42,15 @@ public:
     explicit BoardMgr(QObject* parent = nullptr);
     ~BoardMgr();
 
+    // 设置总管理器指针
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
+    // 是否打开
     bool isOpen() const { return m_isOpen; }
+    // 获取板卡编号
     short getCardNo() const { return m_cardNo; }
+    // 获取最后一次错误码
     short lastError() const { return m_lastError; }
+    // 获取时钟
     stuClock getClock();
 
 public:

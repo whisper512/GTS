@@ -69,7 +69,6 @@ void CBoardWidget::onOpen()
     ui.label_hardwareVerData->setText(fwVersion);
     m_pGTSControllerWidget->showLog(QStringLiteral("¹Ì¼þ°æ±¾: %1").arg(fwVersion), Qt::darkGreen);
 
-    onUpdateClock();
 }
 
 void CBoardWidget::onClose()
@@ -78,7 +77,6 @@ void CBoardWidget::onClose()
     if (ok) {
         updateBoardState(false);
         m_pGTSControllerWidget->showLog(QStringLiteral("¹Ø±Õ°å¿¨³É¹¦"), Qt::darkGreen);
-        emit boardClosed();
     }
     else {
         m_pGTSControllerWidget->showLog(QStringLiteral("¹Ø±Õ°å¿¨Ê§°Ü"), Qt::red);
@@ -87,11 +85,10 @@ void CBoardWidget::onClose()
 
 void CBoardWidget::onReset()
 {
-    bool ok = m_pTotalMgr->boardMgr()->reset();
+    bool ok = m_pTotalMgr->boardMgr()->reset(); 
     if (ok) {
         updateBoardState(false);
         m_pGTSControllerWidget->showLog(QStringLiteral("¸´Î»°å¿¨³É¹¦"), Qt::darkGreen);
-        emit boardClosed();
     }
     else {
         m_pGTSControllerWidget->showLog(QStringLiteral("¸´Î»°å¿¨Ê§°Ü"), Qt::red);
@@ -99,11 +96,8 @@ void CBoardWidget::onReset()
 }
 
 
-void CBoardWidget::onUpdateClock()
+void CBoardWidget::onBoardClockUpdated(const stuClock& clock)
 {
-
-    if (!m_pTotalMgr->boardMgr()->isOpen()) return;
-    stuClock clock = m_pTotalMgr->boardMgr()->getClock();
     ui.label_clockData->setText(QString::number(clock.sysClock));
     ui.label_highPrecisionClockData->setText(QString::number(clock.highPrecClock));
 }

@@ -23,6 +23,8 @@ stuClock BoardMgr::getClock()
 
 bool BoardMgr::open(short channel, short param)
 {
+    if (!m_pTotalMgr) return false;
+
     if (m_isOpen) {
         // 如果已经打开,先关闭再重新打开
         GtsHal::close();
@@ -31,6 +33,8 @@ bool BoardMgr::open(short channel, short param)
     m_lastError = GtsHal::open(channel, param);
     if (m_lastError == 0) {
         m_isOpen = true;
+        // 实时获取数据
+        m_pTotalMgr->startRefresh();
         return true;
     }
     else {
@@ -40,11 +44,13 @@ bool BoardMgr::open(short channel, short param)
 
 bool BoardMgr::close()
 {
+    if (!m_pTotalMgr) return false;
     if (!m_isOpen) return true;
 
     m_lastError = GtsHal::close();
     m_isOpen = false;
     if (m_lastError == 0) {
+        m_pTotalMgr->stopRefresh();
         return true;
     }
     else {
@@ -56,6 +62,7 @@ bool BoardMgr::reset() {
     m_lastError = GtsHal::reset();
     if (m_lastError == 0) {
         m_isOpen = false; 
+        m_pTotalMgr->stopRefresh();
         return true;
     }
     else {

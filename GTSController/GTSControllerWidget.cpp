@@ -73,7 +73,7 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
-
+    connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

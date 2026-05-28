@@ -1,5 +1,6 @@
 #pragma once
 #include <QWidget>
+#include "BoardMgr.h"
 #include "ui_BoradWidget.h"
 
 class CTotalMgr;
@@ -23,14 +24,12 @@ private:
 	void onOpen();
 	void onClose();
 	void onReset();
-	void onUpdateClock(); 
 
 signals:
-	void boardOpened();
-	void boardClosed();
+
 
 public slots:
-
+	void onBoardClockUpdated(const stuClock& clock);
 private slots:
 	void onBtnClick();
 

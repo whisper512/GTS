@@ -2,16 +2,18 @@
 #define TOTALMGR_H
 
 #include <QObject>
-#include <memory>
 #include <QColor>
+#include <QTimer>
+#include <memory>
 
-class BoardMgr;
-class AxisMgr;
-class ConfigMgr;
-class FeedbackMgr;
-class InterpolationMgr;
-class IOMgr;
-class MotionMgr;
+#include "BoardMgr.h"
+#include "AxisMgr.h"
+#include "MotionMgr.h"
+#include "InterpolationMgr.h"
+#include "IOMgr.h"
+#include "FeedbackMgr.h"
+#include "ConfigMgr.h"
+
 
 // TotalMgr — 总管理器
 class CTotalMgr : public QObject 
@@ -20,6 +22,7 @@ class CTotalMgr : public QObject
 
 private:
     bool m_initialized = false;
+    QTimer* m_pRefreshTimer = nullptr;
     std::unique_ptr<BoardMgr> m_boardMgr;
     std::unique_ptr<AxisMgr> m_axisMgr;
     std::unique_ptr<MotionMgr> m_motionMgr;
@@ -47,7 +50,20 @@ public:
     FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器
     ConfigMgr* configMgr() const { return m_configMgr.get(); }
+    // 启动刷新实时数据
+    void startRefresh(int intervalMs = 500);   
+    // 停止刷新实时数据
+    void stopRefresh();                   
+    // 是否正在刷新
+    bool isRefreshing() const;       
 
+signals:
+    // 板卡时钟更新
+    void boardClockUpdated(const stuClock& clock);
+
+private slots:
+    // 定时读取刷新数据
+    void onRefreshTimeout();
 
 
 };
