@@ -20,6 +20,21 @@ void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
     }
 }
 
+void MotionMgr::getTrapMotionInfo(std::vector<stuAxis>& vecTrap)
+{
+    for (auto& axis : vecTrap) {
+        short profile = axis.axisIndex;  // 轴号 1-4
+        TTrapPrm prm;
+        if (getTrapParams(profile, prm)) {
+            // 从 TTrapPrm 读取
+            axis.trapParam.acc = prm.acc;                       // 加速度
+            axis.trapParam.dec = prm.dec;                       // 减速度
+            axis.trapParam.somoothTime = prm.smoothTime;        // 平滑时间
+            axis.trapParam.vel = targetVel(profile);            // 目标速度
+        }
+    }
+}
+
 bool MotionMgr::checkProfile(short profile) const
 {
     if (profile < 1 || profile > m_axisCount) {

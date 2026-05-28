@@ -1,5 +1,50 @@
 #pragma once
+// 数据结构
 
+
+// 板卡信息
+struct stuCardInfo {
+    short cardNum;
+    short cardType;
+};
+
+// 驱动版本
+struct stuDriverVersion {
+    unsigned short mainVer;
+    unsigned short slaveVer;
+};
+
+// 时钟
+struct stuClock {
+    unsigned long sysClock;            // 系统时钟
+    unsigned long highPrecClock;       // 高精度时钟
+
+    stuClock() : sysClock(0), highPrecClock(0) {}
+};
+
+// 点位运动(trap)参数
+struct stuTrapParam
+{
+    unsigned int  stepSize; // 步长
+    double vel;             // 速度
+    double acc;             // 加速度
+    double dec;             // 减速度
+    int somoothTime;        // 平滑时间
+    int cycleTimes;         // 循环次数
+    int Delay;              // 到位延时
+
+    stuTrapParam() {
+        stepSize = 10000;
+        vel = 0.0;
+        acc = 0.0;
+        dec = 0.0;
+        somoothTime = 0;
+        cycleTimes = 0;
+        Delay = 0;
+    }
+};
+
+// 轴信息
 struct stuAxis
 {
     short axisIndex;   // 轴号1-4；
@@ -19,6 +64,7 @@ struct stuAxis
     double dPrfAcc;    // 规划加速度
     long lPrfMode;     // 运动模式
     long AxisStatus;   // 轴状态
+    stuTrapParam trapParam; // 点位运动(trap)参数
 
     stuAxis() {
         axisIndex = 0;
@@ -38,6 +84,7 @@ struct stuAxis
         dPrfAcc = 0.0;
         lPrfMode = 0;
         AxisStatus = 0;
+        trapParam = stuTrapParam();
     }
     // 解析轴状态
     void parseStatus(long status) {
@@ -52,3 +99,18 @@ struct stuAxis
         bMotion = (status & 0x400) != 0;
     }
 };
+
+// 运动模式转字符串
+static QString motionModeToString(long mode)
+{
+    switch (mode) {
+    case 0:  return QStringLiteral("点位运动(Trap)");
+    case 1:  return QStringLiteral("Jog");
+    case 2:  return QStringLiteral("PT");
+    case 3:  return QStringLiteral("电子齿轮(Gear)");
+    case 4:  return QStringLiteral("Follow");
+    case 5:  return QStringLiteral("插补(Interpolation)");
+    case 6:  return QStringLiteral("PVT");
+    default: return QStringLiteral("未知(%1)").arg(mode);
+    }
+}

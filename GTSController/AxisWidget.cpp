@@ -56,7 +56,7 @@ void CAxisWidget::connectPrivateSignal()
 	connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_ActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+	connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 }
 
 
@@ -200,6 +200,7 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	if (index < 0 || index >= (int)axisInfo.size()) return;
 	stuAxis axis = axisInfo[index];
 
+	// 轴状态
 	ui.radioButton_servoEnable->setChecked(axis.bServoOn);
 	ui.radioButton_nLimit->setChecked(axis.bNegLimit);
     ui.radioButton_pLimit->setChecked(axis.bPosLimit);
@@ -213,7 +214,16 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
     ui.label_tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
 	ui.label_tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
     ui.label_tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
-	ui.label_motionModeData->setText(QString::number(axis.lPrfMode));
+	ui.label_motionModeData->setText(motionModeToString(axis.lPrfMode));
+
+	// 点位运动
+	ui.spinBox_trapVel->setValue(axis.trapParam.vel);
+	ui.doubleSpinBoxs_trapAcc->setValue(axis.trapParam.acc);
+    ui.doubleSpinBoxs_trapDec->setValue(axis.trapParam.dec);
+	ui.spinBox_trapStepSize->setValue(axis.trapParam.stepSize);
+	ui.spinBox_trapSmoothTime->setValue(axis.trapParam.somoothTime);
+	ui.spinBox_trapCycleTime->setValue(axis.trapParam.cycleTimes);
+	ui.spinBox_TrapInPositionDelay->setValue(axis.trapParam.Delay);
 
 
 	if (axis.bServoOn)
@@ -226,24 +236,24 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	}
 
 
-	QString statusStr = QStringLiteral(
-		"轴%1 | 位置:%2 | 速度:%3 | 加速度:%4 | "
-		"使能:%5 | 报警:%6 | 运动:%7 | 正限位:%8 | 负限位:%9 | "
-		"误差:%10 | 急停:%11 | 平滑停止:%12"
-	    "运动模式:%13" )
-		
-		.arg(axis.axisIndex)
-		.arg(axis.dCurPos, 0, 'f', 3)
-		.arg(axis.dCurVel, 0, 'f', 3)
-		.arg(axis.dCurAcc, 0, 'f', 3)
-		.arg(axis.bServoOn ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bAlarm ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bMotion ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bPosLimit ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bNegLimit ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bMError ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bAbruptStop ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.bSmoothStop ? QStringLiteral("是") : QStringLiteral("否"))
-		.arg(axis.lPrfMode);
-	m_pGTSControllerWidget->showLog(statusStr, Qt::darkCyan);
+	//QString statusStr = QStringLiteral(
+	//	"轴%1 | 位置:%2 | 速度:%3 | 加速度:%4 | "
+	//	"使能:%5 | 报警:%6 | 运动:%7 | 正限位:%8 | 负限位:%9 | "
+	//	"误差:%10 | 急停:%11 | 平滑停止:%12"
+	//    "运动模式:%13" )
+	//	
+	//	.arg(axis.axisIndex)
+	//	.arg(axis.dCurPos, 0, 'f', 3)
+	//	.arg(axis.dCurVel, 0, 'f', 3)
+	//	.arg(axis.dCurAcc, 0, 'f', 3)
+	//	.arg(axis.bServoOn ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bAlarm ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bMotion ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bPosLimit ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bNegLimit ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bMError ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bAbruptStop ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.bSmoothStop ? QStringLiteral("是") : QStringLiteral("否"))
+	//	.arg(axis.lPrfMode);
+	//m_pGTSControllerWidget->showLog(statusStr, Qt::darkCyan);
 }

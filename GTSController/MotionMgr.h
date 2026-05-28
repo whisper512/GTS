@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QString>
 #include "GtsHal.h"
-#include "AxisData.h"
+#include "ControllerData.h"
 
 
 // ============================================================
@@ -34,7 +34,10 @@ public:
     explicit MotionMgr( QObject* parent = nullptr);
     ~MotionMgr();
 
+    // 读取规划器相关
     void getAxisMotionInfo(std::vector<stuAxis>& vecAxis);
+    // 读取点位运动相关
+    void getTrapMotionInfo(std::vector<stuAxis>& vecTrap);
 
 public:
 

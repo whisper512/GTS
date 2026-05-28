@@ -13,38 +13,34 @@
   <property name="windowTitle">
    <string>CAxisWidget</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
-   <property name="spacing">
-    <number>30</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_axisID">
-       <property name="text">
-        <string>轴号:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBox_axisID"/>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="1" column="0">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
-   <item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QGroupBox" name="groupBox_AxisState">
@@ -145,10 +141,10 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pushButton_clearPos">
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_eStop">
             <property name="text">
-             <string>位置清零</string>
+             <string>紧急停止</string>
             </property>
            </widget>
           </item>
@@ -159,24 +155,24 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="pushButton_sevorOn">
+          <item row="0" column="2">
+           <widget class="QPushButton" name="pushButton_clearPos">
             <property name="text">
-             <string>伺服开启</string>
+             <string>位置清零</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
+          <item row="0" column="1">
            <widget class="QPushButton" name="pushButton_clearState">
             <property name="text">
              <string>清除状态</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_eStop">
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton_sevorOn">
             <property name="text">
-             <string>紧急停止</string>
+             <string>使能</string>
             </property>
            </widget>
           </item>
@@ -254,79 +250,83 @@
         <item>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_vel">
+           <widget class="QLabel" name="label_trapVel">
             <property name="text">
              <string>速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBox_vel"/>
+           <widget class="QSpinBox" name="spinBox_trapVel"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_stepSize">
+           <widget class="QLabel" name="label_trapStepSize">
             <property name="text">
              <string>步长(脉冲):</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_stepSize"/>
+           <widget class="QSpinBox" name="spinBox_trapStepSize">
+            <property name="maximum">
+             <number>999999</number>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_acc">
+           <widget class="QLabel" name="label_trapAcc">
             <property name="text">
              <string>加速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QSpinBox" name="spinBox_acc"/>
-          </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_dec">
+           <widget class="QLabel" name="label_trapDec">
             <property name="text">
              <string>减速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_dec"/>
-          </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_smoothTime">
+           <widget class="QLabel" name="label_trapSmoothTime">
             <property name="text">
              <string>平滑时间(毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBox_smoothTime"/>
+           <widget class="QSpinBox" name="spinBox_trapSmoothTime"/>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_cycleTime">
+           <widget class="QLabel" name="label_trapCycleTime">
             <property name="text">
              <string>循环次数:</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QSpinBox" name="spinBox_cycleTime"/>
+           <widget class="QSpinBox" name="spinBox_trapCycleTime"/>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_inPositionDelay">
+           <widget class="QLabel" name="label_TrapInPositionDelay">
             <property name="text">
              <string>到位延时(毫秒):</string>
             </property>
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QSpinBox" name="spinBox_inPositionDelay"/>
+           <widget class="QSpinBox" name="spinBox_TrapInPositionDelay"/>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapAcc"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapDec"/>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_ActMotion">
+         <widget class="QPushButton" name="pushButton_TarpActMotion">
           <property name="text">
            <string>启动运动</string>
           </property>
@@ -336,6 +336,46 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="0" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_axisID">
+       <property name="text">
+        <string>轴号:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBox_axisID"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

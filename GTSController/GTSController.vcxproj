@@ -152,7 +152,7 @@
     <QtMoc Include="AxisWidget.h" />
     <QtMoc Include="FeedbackWidget.h" />
     <QtMoc Include="ConfigWidget.h" />
-    <ClInclude Include="AxisData.h" />
+    <ClInclude Include="ControllerData.h" />
     <ClInclude Include="GtsHal.h" />
     <QtMoc Include="BoardMgr.h" />
     <QtMoc Include="InterpolationMgr.h" />

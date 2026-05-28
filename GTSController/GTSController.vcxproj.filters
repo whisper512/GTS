@@ -164,7 +164,7 @@
     <ClInclude Include="..\GTSLib\LookAheadEx.h">
       <Filter>Header Files\GTS</Filter>
     </ClInclude>
-    <ClInclude Include="AxisData.h">
+    <ClInclude Include="ControllerData.h">
       <Filter>Header Files\Manager</Filter>
     </ClInclude>
   </ItemGroup>

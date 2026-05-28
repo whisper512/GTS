@@ -25,8 +25,14 @@ private:
     bool m_initialized = false;
     // 刷新数据定时器
     QTimer* m_pRefreshTimer = nullptr;
+
+    // 板卡时钟
+    stuClock m_clocks;
     // 轴数据
     std::vector<stuAxis> m_vecAxis;
+    // 点位运动参数
+    stuTrapParam m_trapParam;
+
 
     std::unique_ptr<BoardMgr> m_boardMgr;
     std::unique_ptr<AxisMgr> m_axisMgr;
@@ -65,6 +71,7 @@ public:
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
+    // 轴更新
     void axisUpdated(const std::vector<stuAxis>& axisInfo);
 
 private slots:

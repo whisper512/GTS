@@ -5,27 +5,9 @@
 #include <QString>
 
 #include "GtsHal.h"
+#include "ControllerData.h"
 
 class CTotalMgr;
-
-// 板卡信息
-struct stuCardInfo {
-    short cardNum;
-    short cardType;
-};
-
-// 驱动版本
-struct stuDriverVersion {
-    unsigned short mainVer;
-    unsigned short slaveVer;
-};
-
-struct stuClock {
-    unsigned long sysClock;            // 系统时钟
-    unsigned long highPrecClock;       // 高精度时钟
-
-    stuClock() : sysClock(0), highPrecClock(0) {}
-};
 
 class BoardMgr : public QObject 
 {
