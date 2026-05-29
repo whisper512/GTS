@@ -35,6 +35,7 @@ private:
 
 public slots:
 	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
+	void onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo);
 private slots:
 	void onBtnClick();
 	void onTrapParamChanged();

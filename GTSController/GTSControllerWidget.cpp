@@ -78,6 +78,7 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
     connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
+    connect(m_pTotalMgr,&CTotalMgr::axisTrapSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisTrapParamUpdated);
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

@@ -66,7 +66,12 @@ public:
     // 返回轴数
     int axisCount() const { return m_axisCount; }
     // 获取轴数据的引用
-    stuAxis& getAxisRef(int index) { return m_vecAxis[index]; }
+    stuAxis* getAxisRef(int index) {
+        if (index < 0 || index >= (int)m_vecAxis.size()) {  
+        return nullptr;
+    }
+        return &m_vecAxis[index];
+    }
     // 启动刷新实时数据
     void startRefresh(int intervalMs = 500);   
     // 停止刷新实时数据
@@ -81,8 +86,10 @@ public:
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
-    // 轴更新
+    // 轴实时数据更新
     void axisUpdated(const std::vector<stuAxis>& axisInfo);
+    // 轴设置数据更新
+    void axisTrapSettingUpdated(const std::vector<stuAxis>& axisInfo);
 
 private slots:
     // 定时读取刷新数据

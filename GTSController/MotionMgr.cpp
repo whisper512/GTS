@@ -1,3 +1,8 @@
+#if _MSC_VER >= 1600
+#pragma execution_character_set("utf-8")
+#endif
+
+#include <QMessageBox>
 #include "TotalMgr.h"
 #include "MotionMgr.h"
 
@@ -57,23 +62,54 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
 
 bool MotionMgr::startTrapMotion(short profile, long stepSize)
 {
-    if (!checkProfile(profile)) return false;
-    // 设置轴为点位运动模式
+    if (!checkProfile(profile)) {
+        QMessageBox::information(nullptr, "Debug",
+            QString("checkProfile 失败: profile=%1, m_axisCount=%2").arg(profile).arg(m_axisCount));
+        return false;
+    }
+    // 先读一下板卡当前各参数值，看看和UI设置的是否一致
+    TTrapPrm curPrm;
+    GtsHal::getTrapPrm(profile, &curPrm);
+    double curVel = targetVel(profile);
+    double curPos = profilePos(profile);
+
+    int idx = profile - 1;
+    double uiAcc = m_pTotalMgr->getAxisRef(idx)->trapParam.acc;
+    double uiDec = m_pTotalMgr->getAxisRef(idx)->trapParam.dec;
+    double uiSmooth = m_pTotalMgr->getAxisRef(idx)->trapParam.somoothTime;
+    double uiVel = m_pTotalMgr->getAxisRef(idx)->trapParam.vel;
+    long uiStepSize = m_pTotalMgr->getAxisRef(idx)->trapParam.stepSize;
+
+    // 设为点位梯形速度模式
     m_lastError = GtsHal::prfTrap(profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
-    // 计算目标位置 = 当前位置（规划位置）+ 步长
-    double curPos = profilePos(profile);
+    // 设置梯形参数
+    TTrapPrm prm;
+    prm.acc = uiAcc;
+    prm.dec = uiDec;
+    prm.smoothTime = uiSmooth;
+    m_lastError = GtsHal::setTrapPrm(profile, prm);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+    // 设置目标位置 = 当前位置 + 步长
     long targetPos = static_cast<long>(curPos) + stepSize;
-    // 设置目标位置
     m_lastError = GtsHal::setPos(profile, targetPos);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
-    // 启动运动（位掩码：轴1→bit0，轴2→bit1...）
+    // 设置目标速度
+    m_lastError = GtsHal::setVel(profile, uiVel);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+    // 启动运动
     long mask = 1L << (profile - 1);
     m_lastError = GtsHal::update(mask);
     if (m_lastError != 0) {

@@ -2,6 +2,7 @@
 
 CTotalMgr::CTotalMgr(QObject* parent)
     : QObject(parent)
+    , m_vecAxis(m_axisCount)
 {
     m_boardMgr = std::make_unique<BoardMgr>(this);
     m_axisMgr = std::make_unique<AxisMgr>(this);
@@ -48,6 +49,8 @@ void CTotalMgr::initAfterBoardOpened()
     startRefresh();
     // 读取点位运动参数
     m_motionMgr->getTrapMotionInfo(m_vecAxis);
+
+    emit axisTrapSettingUpdated(m_vecAxis);
 }
 
 void CTotalMgr::cleanupAfterBoardClosed()

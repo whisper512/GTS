@@ -16,7 +16,6 @@ AxisMgr::~AxisMgr() {
 void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
     if (vecAxis.empty()) {
-        vecAxis.resize(m_pTotalMgr->axisCount());
         for (int i = 0; i < m_pTotalMgr->axisCount(); ++i) {
             vecAxis[i].axisIndex = i + 1;
         }
