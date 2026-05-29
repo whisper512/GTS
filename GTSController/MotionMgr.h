@@ -31,6 +31,8 @@ private:
 
 private:
     bool checkProfile(short profile) const;
+    bool singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel);
+    void waitMotionDone(short profile);
 
 public:
     explicit MotionMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);

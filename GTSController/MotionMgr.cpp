@@ -3,6 +3,7 @@
 #endif
 
 #include <QMessageBox>
+#include <QCoreApplication>
 #include "TotalMgr.h"
 #include "MotionMgr.h"
 
@@ -62,60 +63,49 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
 
 bool MotionMgr::startTrapMotion(short profile, long stepSize)
 {
-    if (!checkProfile(profile)) {
-        QMessageBox::information(nullptr, "Debug",
-            QString("checkProfile 失败: profile=%1, m_axisCount=%2").arg(profile).arg(m_axisCount));
-        return false;
-    }
-    // 先读一下板卡当前各参数值，看看和UI设置的是否一致
-    TTrapPrm curPrm;
-    GtsHal::getTrapPrm(profile, &curPrm);
-    double curVel = targetVel(profile);
-    double curPos = profilePos(profile);
+    if (!checkProfile(profile)) return false;
 
     int idx = profile - 1;
-    double uiAcc = m_pTotalMgr->getAxisRef(idx)->trapParam.acc;
-    double uiDec = m_pTotalMgr->getAxisRef(idx)->trapParam.dec;
-    double uiSmooth = m_pTotalMgr->getAxisRef(idx)->trapParam.somoothTime;
-    double uiVel = m_pTotalMgr->getAxisRef(idx)->trapParam.vel;
-    long uiStepSize = m_pTotalMgr->getAxisRef(idx)->trapParam.stepSize;
+    stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
+    if (!pAxis) return false;
 
-    // 设为点位梯形速度模式
-    m_lastError = GtsHal::prfTrap(profile);
-    if (m_lastError != 0) {
-        emit errorOccurred(profile, m_lastError, lastErrorString());
-        return false;
+    const stuTrapParam& trap = pAxis->trapParam;
+
+    // 单次模式（cycleTimes <= 0）
+    if (trap.cycleTimes <= 0) {
+        return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, trap.vel);
     }
-    // 设置梯形参数
-    TTrapPrm prm;
-    prm.acc = uiAcc;
-    prm.dec = uiDec;
-    prm.smoothTime = uiSmooth;
-    m_lastError = GtsHal::setTrapPrm(profile, prm);
-    if (m_lastError != 0) {
-        emit errorOccurred(profile, m_lastError, lastErrorString());
-        return false;
+
+    // 循环模式
+    long currentStep = stepSize;  // 第一次为正方向
+    int times = trap.cycleTimes;
+
+    for (int i = 0; i < times; ++i) {
+        // 正方向运动
+        if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, trap.vel))
+            return false;
+
+        // 等待运动完成
+        waitMotionDone(profile);
+
+        // 到位延时
+        if (trap.Delay > 0) {
+            GtsHal::delay(static_cast<unsigned short>(trap.Delay));
+        }
+
+        // 反方向运动（步长取反）
+        if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, trap.vel))
+            return false;
+
+        // 等待运动完成
+        waitMotionDone(profile);
+
+        // 到位延时
+        if (trap.Delay > 0) {
+            GtsHal::delay(static_cast<unsigned short>(trap.Delay));
+        }
     }
-    // 设置目标位置 = 当前位置 + 步长
-    long targetPos = static_cast<long>(curPos) + stepSize;
-    m_lastError = GtsHal::setPos(profile, targetPos);
-    if (m_lastError != 0) {
-        emit errorOccurred(profile, m_lastError, lastErrorString());
-        return false;
-    }
-    // 设置目标速度
-    m_lastError = GtsHal::setVel(profile, uiVel);
-    if (m_lastError != 0) {
-        emit errorOccurred(profile, m_lastError, lastErrorString());
-        return false;
-    }
-    // 启动运动
-    long mask = 1L << (profile - 1);
-    m_lastError = GtsHal::update(mask);
-    if (m_lastError != 0) {
-        emit errorOccurred(profile, m_lastError, lastErrorString());
-        return false;
-    }
+
     return true;
 }
 
@@ -125,6 +115,64 @@ bool MotionMgr::checkProfile(short profile) const
         return false;
     }
     return true;
+}
+
+// 抽取的单次运动函数
+bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel)
+{
+    // ① 设为点位模式
+    m_lastError = GtsHal::prfTrap(profile);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ② 设置梯形参数
+    TTrapPrm prm = {};
+    prm.acc = acc;
+    prm.dec = dec;
+    prm.smoothTime = static_cast<short>(smoothTime);
+    m_lastError = GtsHal::setTrapPrm(profile, prm);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ③ 目标位置 = 当前位置 + 步长
+    double curPos = profilePos(profile);
+    long targetPos = static_cast<long>(curPos) + stepSize;
+    m_lastError = GtsHal::setPos(profile, targetPos);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ④ 设置速度
+    m_lastError = GtsHal::setVel(profile, vel);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ⑤ 启动运动
+    long mask = 1L << (profile - 1);
+    m_lastError = GtsHal::update(mask);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    return true;
+}
+
+// 等待运动完成（规划停止 bit10 = 0x400）
+void MotionMgr::waitMotionDone(short profile)
+{
+    long sts = 0;
+    do {
+        GtsHal::getSts(profile, &sts);
+        QCoreApplication::processEvents();  // 保持界面响应
+    } while (sts & 0x400);  // 0x400 = 规划中，运动未完成
 }
 
 
