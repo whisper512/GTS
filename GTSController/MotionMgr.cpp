@@ -2,10 +2,12 @@
 #include "MotionMgr.h"
 
 
-MotionMgr::MotionMgr(QObject* parent)
+MotionMgr::MotionMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)
+    , m_pTotalMgr(totalMgr)
 {
 }
+
 
 MotionMgr::~MotionMgr() {
     

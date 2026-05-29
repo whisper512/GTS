@@ -21,7 +21,7 @@ private:
 
 
 public:
-    explicit BoardMgr(QObject* parent = nullptr);
+    explicit BoardMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~BoardMgr();
 
     // 设置总管理器指针

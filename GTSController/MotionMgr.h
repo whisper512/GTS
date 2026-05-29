@@ -33,7 +33,7 @@ private:
     bool checkProfile(short profile) const;
 
 public:
-    explicit MotionMgr( QObject* parent = nullptr);
+    explicit MotionMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~MotionMgr();
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 

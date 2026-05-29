@@ -17,7 +17,7 @@ private:
     CTotalMgr* m_pTotalMgr = nullptr;
 
 public:
-    explicit AxisMgr(QObject* parent = nullptr);
+    explicit AxisMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~AxisMgr();
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 

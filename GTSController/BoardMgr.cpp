@@ -1,8 +1,9 @@
 ﻿#include "TotalMgr.h"
 #include "BoardMgr.h"
 
-BoardMgr::BoardMgr(QObject* parent)
+BoardMgr::BoardMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)
+    , m_pTotalMgr(totalMgr)
 {
 }
 

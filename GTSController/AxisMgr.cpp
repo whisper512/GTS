@@ -2,8 +2,9 @@
 #include "TotalMgr.h"
 #include <QMessageBox>
 
-AxisMgr::AxisMgr(QObject* parent)
+AxisMgr::AxisMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)
+    , m_pTotalMgr(totalMgr)
 {
 }
 

@@ -11,8 +11,6 @@ CTotalMgr::CTotalMgr(QObject* parent)
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
 
-    m_boardMgr->setTotalMgr(this);
-    m_axisMgr->setTotalMgr(this);
 
     // 创建定时器
     m_pRefreshTimer = new QTimer(this);
