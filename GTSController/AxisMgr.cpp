@@ -113,8 +113,7 @@ unsigned short AxisMgr::onDelayTime() {
 
 bool AxisMgr::stop(short axis, long option) {
     if (!isValidAxis(axis)) return false;
-
-    long mask = 1L << axis;
+    long mask = 1L << (axis - 1);
     m_lastError = GtsHal::stop(mask, option);
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());

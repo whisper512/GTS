@@ -104,12 +104,13 @@ void CAxisWidget::onBtnClick()
 		onEStop();
 	}
 	else if (objName == "pushButton_TarpActMotion") {
-		onActMotion();
+		onTrapMotion();
 	}
 }
 
 void CAxisWidget::onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo)
 {
+	//更新点位运动参数
 	m_bUpdatingFromBoard = true;
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)axisInfo.size()) return;
@@ -226,7 +227,7 @@ void CAxisWidget::onEStop()
 	}
 }
 
-void CAxisWidget::onActMotion()
+void CAxisWidget::onTrapMotion()
 {
 	if (!m_pTotalMgr) return;
 	int index = m_iAxisId - 1;
@@ -243,8 +244,6 @@ void CAxisWidget::onActMotion()
 			QStringLiteral("轴%1 运动启动失败").arg(axisId), Qt::red);
 	}
 }
-
-
 
 
 void CAxisWidget::onComboBoxCurrentIndexChanged(int index)

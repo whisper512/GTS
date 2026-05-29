@@ -65,13 +65,8 @@ public:
     ConfigMgr* configMgr() const { return m_configMgr.get(); }
     // 返回轴数
     int axisCount() const { return m_axisCount; }
-    // 获取轴数据的引用
-    stuAxis* getAxisRef(int index) {
-        if (index < 0 || index >= (int)m_vecAxis.size()) {  
-        return nullptr;
-    }
-        return &m_vecAxis[index];
-    }
+    // 获取轴数据的指针
+    stuAxis* getAxisRef(int index) { if (index < 0 || index >= (int)m_vecAxis.size()) { return nullptr; }return &m_vecAxis[index]; }
     // 启动刷新实时数据
     void startRefresh(int intervalMs = 500);   
     // 停止刷新实时数据

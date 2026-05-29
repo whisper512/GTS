@@ -12,7 +12,6 @@ CTotalMgr::CTotalMgr(QObject* parent)
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
 
-
     // 创建定时器
     m_pRefreshTimer = new QTimer(this);
     connect(m_pRefreshTimer, &QTimer::timeout, this, &CTotalMgr::onRefreshTimeout);
@@ -45,11 +44,10 @@ bool CTotalMgr::isRefreshing() const
 
 void CTotalMgr::initAfterBoardOpened()
 {
-    // 开始实时获取数据
+    // 启动定时器开始实时获取数据
     startRefresh();
     // 读取点位运动参数
     m_motionMgr->getTrapMotionInfo(m_vecAxis);
-
     emit axisTrapSettingUpdated(m_vecAxis);
 }
 
@@ -71,9 +69,6 @@ void CTotalMgr::onRefreshTimeout()
     // 读取轴状态信息
     m_axisMgr->getAxisStatusInfo(m_vecAxis);
     m_motionMgr->getAxisMotionInfo(m_vecAxis);
-
-
     emit axisUpdated(m_vecAxis);
-
 
 }
