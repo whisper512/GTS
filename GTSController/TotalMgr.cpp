@@ -46,9 +46,16 @@ void CTotalMgr::initAfterBoardOpened()
 {
     // 启动定时器开始实时获取数据
     startRefresh();
+
+    //读取通用运动参数
+    m_motionMgr->getCommonMotionInfo(m_vecAxis);
+    emit axisCommonSettingUpdated(m_vecAxis);
     // 读取点位运动参数
     m_motionMgr->getTrapMotionInfo(m_vecAxis);
     emit axisTrapSettingUpdated(m_vecAxis);
+    // 读取jog运动参数
+    m_motionMgr->getJogMotionInfo(m_vecAxis);
+    emit axisJogSettingUpdated(m_vecAxis);
 }
 
 void CTotalMgr::cleanupAfterBoardClosed()

@@ -26,7 +26,6 @@ struct stuClock {
 struct stuTrapParam
 {
     unsigned int  stepSize; // 步长
-    double vel;             // 速度
     double acc;             // 加速度
     double dec;             // 减速度
     int somoothTime;        // 平滑时间
@@ -35,13 +34,26 @@ struct stuTrapParam
 
     stuTrapParam() {
         stepSize = 10000;
-        vel = 0.0;
         acc = 0.0;
         dec = 0.0;
         somoothTime = 0;
         cycleTimes = 0;
         Delay = 0;
     }
+};
+
+// jog运动参数
+struct stuJobParam
+{
+    double acc;             // 加速度
+    double dec;             // 减速度
+    double smoothTime;      // 平滑时间
+
+    stuJobParam() {
+        acc = 0.0;
+        dec = 0.0;
+        smoothTime = 0.0;
+        }
 };
 
 // 轴信息
@@ -58,13 +70,15 @@ struct stuAxis
     bool bMotion;      // 规划器运动
     double dCurPos;    // 当前位置
     double dPrfPos;    // 规划位置
-    double dCurVel;    // 当前速度
+    double dMotionVel; // 运动速度
+    double dCurVel;    // 实际速度
     double dPrfVel;    // 规划速度
     double dCurAcc;    // 当前加速度
     double dPrfAcc;    // 规划加速度
     long lPrfMode;     // 运动模式
     long AxisStatus;   // 轴状态
     stuTrapParam trapParam; // 点位运动(trap)参数
+    stuJobParam jogParam;   // jog运动参数
 
     stuAxis() {
         axisIndex = 0;
@@ -85,6 +99,7 @@ struct stuAxis
         lPrfMode = 0;
         AxisStatus = 0;
         trapParam = stuTrapParam();
+        jogParam = stuJobParam();
     }
     // 解析轴状态
     void parseStatus(long status) {

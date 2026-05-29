@@ -39,17 +39,28 @@ public:
     ~MotionMgr();
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
+    //设置指定轴的运动模式
+    bool setAxisMotionMode(short axis, short mode);
     // 读取规划器相关
     void getAxisMotionInfo(std::vector<stuAxis>& vecAxis);
+    // 读取通用运动参数
+    void getCommonMotionInfo(std::vector<stuAxis>& vecTrap);
+    // 设置通用运动参数
+    bool setCommonParam(short axisId);
     // 读取点位运动相关
     void getTrapMotionInfo(std::vector<stuAxis>& vecTrap);
     // 设置点位运动相关
     bool setTrapParam(short axisId, const stuTrapParam& param);
     // 启动点位运动(相对运动，步长可正可负)
     bool startTrapMotion(short profile, long stepSize);
+    // 读取Jog 运动参数
+    void getJogMotionInfo(std::vector<stuAxis>& vecAxis);
+    // 设置Jog 运动参数
+    bool setJogParam(short axisId, const stuJobParam& param);
+    // 启动Jog运动（direction: +1 正方向, -1 反方向）
+    bool startJogMotion(short profile, short direction);
 
 public:
-
     // 设置规划器位置
     bool setProfilePos(short profile, long pos);
     // 获取规划器位置

@@ -83,8 +83,12 @@ signals:
     void boardClockUpdated(const stuClock& clock);
     // 轴实时数据更新
     void axisUpdated(const std::vector<stuAxis>& axisInfo);
-    // 轴设置数据更新
+    // 轴通用参数更新
+    void axisCommonSettingUpdated(const std::vector<stuAxis>& axisInfo);
+    // 轴点动参数设置更新
     void axisTrapSettingUpdated(const std::vector<stuAxis>& axisInfo);
+    // 轴jog参数设置更新
+    void axisJogSettingUpdated(const std::vector<stuAxis>& axisInfo);
 
 private slots:
     // 定时读取刷新数据

@@ -19,6 +19,25 @@ MotionMgr::~MotionMgr() {
     
 }
 
+bool MotionMgr::setAxisMotionMode(short axis, short mode)
+{
+    if (!checkProfile(axis)) return false;
+    if (mode == 0) {
+        // 点位运动模式 (Trap)
+        return setTrapMode(axis);
+    }
+    else if (mode == 1) {
+        // Jog 持续运动模式
+        return setJogMode(axis);
+    }
+    else {
+        // 无效模式
+        m_lastError = -1;
+        emit errorOccurred(axis, m_lastError, QStringLiteral("无效的运动模式: %1 (仅支持 0=点位, 1=Jog)").arg(mode));
+        return false;
+    }
+}
+
 void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
@@ -26,8 +45,29 @@ void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
         axis.dPrfPos = axisProfilePos(axisIndex);   // 规划位置
         axis.dPrfVel = axisProfileVel(axisIndex);   // 规划速度
         axis.dPrfAcc = axisProfileAcc(axisIndex);   // 规划加速度
-        axis.lPrfMode = profileMode(axisIndex);     // 运动模式
     }
+}
+
+void MotionMgr::getCommonMotionInfo(std::vector<stuAxis>& vecAxis)
+{
+    for (auto& axis : vecAxis) {
+        short profile = axis.axisIndex;           // 轴号 1-4
+        axis.dMotionVel = targetVel(profile);     // 运动速度
+        axis.lPrfMode = profileMode(profile);     // 运动模式
+    }
+}
+
+bool MotionMgr::setCommonParam(short axisId)
+{
+    if (!checkProfile(axisId)) return false;
+    int idx = axisId - 1;
+    stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
+    if (!pAxis) return false;
+    // 通用参数：写入运动速度
+    if (!setTargetVel(axisId, pAxis->dMotionVel)) {
+        return false;
+    }
+    return true;
 }
 
 void MotionMgr::getTrapMotionInfo(std::vector<stuAxis>& vecTrap)
@@ -40,7 +80,6 @@ void MotionMgr::getTrapMotionInfo(std::vector<stuAxis>& vecTrap)
             axis.trapParam.acc = prm.acc;                       // 加速度
             axis.trapParam.dec = prm.dec;                       // 减速度
             axis.trapParam.somoothTime = prm.smoothTime;        // 平滑时间
-            axis.trapParam.vel = targetVel(profile);            // 目标速度
         }
     }
 }
@@ -55,9 +94,7 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
     if (!setTrapParams(axisId, prm)) {
         return false;
     }
-    if (!setTargetVel(axisId, param.vel)) {
-        return false;
-    }
+
     return true;
 }
 
@@ -73,7 +110,7 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
 
     // 单次模式（cycleTimes <= 0）
     if (trap.cycleTimes <= 0) {
-        return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, trap.vel);
+        return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, pAxis->dMotionVel);
     }
 
     // 循环模式
@@ -82,21 +119,17 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
 
     for (int i = 0; i < times; ++i) {
         // 正方向运动
-        if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, trap.vel))
+        if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, pAxis->dMotionVel))
             return false;
-
         // 等待运动完成
         waitMotionDone(profile);
-
         // 到位延时
         if (trap.Delay > 0) {
             GtsHal::delay(static_cast<unsigned short>(trap.Delay));
         }
-
         // 反方向运动（步长取反）
-        if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, trap.vel))
+        if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, pAxis->dMotionVel))
             return false;
-
         // 等待运动完成
         waitMotionDone(profile);
 
@@ -105,9 +138,84 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
             GtsHal::delay(static_cast<unsigned short>(trap.Delay));
         }
     }
+    return true;
+}
+
+void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
+{
+    for (auto& axis : vecAxis) {
+        short profile = axis.axisIndex;  // 轴号 1-4
+        TJogPrm prm;
+        if (getJogParams(profile, prm)) {
+            // 从 TJogPrm 映射到 stuJobParam
+            axis.jogParam.acc = prm.acc;          // 加速度
+            axis.jogParam.dec = prm.dec;          // 减速度
+        }
+    }
+}
+bool MotionMgr::setJogParam(short axisId, const stuJobParam& param)
+{
+    if (!checkProfile(axisId)) return false;
+    // 构造 TJogPrm，从 stuJobParam 映射
+    TJogPrm prm;
+    prm.acc = param.acc;     // 加速度
+    prm.dec = param.dec;     // 减速度
+    prm.smooth = 0.0;        // 平滑时间，参考 trap 给默认值 0
+    // 写入板卡
+    if (!setJogParams(axisId, prm)) {
+        return false;
+    }
 
     return true;
 }
+
+bool MotionMgr::startJogMotion(short profile, short direction)
+{
+    if (!checkProfile(profile)) return false;
+
+    int idx = profile - 1;
+    stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
+    if (!pAxis) return false;
+
+    const stuJobParam& jog = pAxis->jogParam;
+
+    // 设置为 Jog 模式
+    m_lastError = GtsHal::prfJog(profile);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // 设置 Jog 参数 (acc, dec, smooth)
+    TJogPrm prm;
+    prm.acc = jog.acc;
+    prm.dec = jog.dec;
+    prm.smooth = 0.0;
+    m_lastError = GtsHal::setJogPrm(profile, prm);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // 设置速度（方向：正方向 vel > 0，反方向 vel < 0）
+    double targetVel = (direction > 0) ? pAxis->dMotionVel: -pAxis->dMotionVel;
+    m_lastError = GtsHal::setVel(profile, targetVel);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // 启动运动
+    long mask = 1L << (profile - 1);
+    m_lastError = GtsHal::update(mask);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    return true;
+}
+
 
 bool MotionMgr::checkProfile(short profile) const
 {
@@ -120,14 +228,13 @@ bool MotionMgr::checkProfile(short profile) const
 // 抽取的单次运动函数
 bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel)
 {
-    // ① 设为点位模式
+    // 设为点位模式
     m_lastError = GtsHal::prfTrap(profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
-
-    // ② 设置梯形参数
+    // 设置梯形参数
     TTrapPrm prm = {};
     prm.acc = acc;
     prm.dec = dec;
@@ -138,7 +245,7 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
         return false;
     }
 
-    // ③ 目标位置 = 当前位置 + 步长
+    // 目标位置 = 当前位置 + 步长
     double curPos = profilePos(profile);
     long targetPos = static_cast<long>(curPos) + stepSize;
     m_lastError = GtsHal::setPos(profile, targetPos);
@@ -147,14 +254,14 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
         return false;
     }
 
-    // ④ 设置速度
+    // 设置速度
     m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
 
-    // ⑤ 启动运动
+    // 启动运动
     long mask = 1L << (profile - 1);
     m_lastError = GtsHal::update(mask);
     if (m_lastError != 0) {
@@ -848,7 +955,7 @@ bool MotionMgr::jog(short profile, double vel, double acc) {
     }
 
     // 启动
-    m_lastError = GtsHal::update(1L << profile);
+    m_lastError = GtsHal::update(1L << (profile - 1));
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
@@ -859,7 +966,7 @@ bool MotionMgr::jog(short profile, double vel, double acc) {
 
 bool MotionMgr::stop(short profile, long option) {
     if (!checkProfile(profile)) return false;
-    long mask = 1L << profile;
+    long mask = 1L << (profile - 1);
     m_lastError = GtsHal::stop(mask, option);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());

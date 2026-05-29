@@ -28,6 +28,9 @@ void CAxisWidget::initWidget()
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 3"));
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 4"));
 
+	ui.comboBox_Mode->addItem(QStringLiteral("点位运动(trap)"));
+    ui.comboBox_Mode->addItem(QStringLiteral("Jog运动"));
+
 	ui.radioButton_servoEnable->setAutoExclusive(false);
 	ui.radioButton_sevorAlarm->setAutoExclusive(false);
 	ui.radioButton_nLimit->setAutoExclusive(false);
@@ -51,15 +54,18 @@ void CAxisWidget::initWidget()
 void CAxisWidget::connectPrivateSignal()
 {
 	connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxCurrentIndexChanged);
+	connect(ui.comboBox_Mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxModeCurrentIndexChanged);
+	connect(ui.spinBox_motionVel, &QSpinBox::editingFinished, this, &CAxisWidget::onMotionVelChanged);
+
 	connect(ui.pushButton_clearState, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+	connect(ui.pushButton_jogPMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+    connect(ui.pushButton_jogNMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 
-	connect(ui.spinBox_trapVel, &QSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished,
 		this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished,
@@ -72,6 +78,49 @@ void CAxisWidget::connectPrivateSignal()
 		this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished,
 		this, &CAxisWidget::onTrapParamChanged);
+
+    connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished,
+        this, &CAxisWidget::onJogParamChanged);
+	connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished,
+        this, &CAxisWidget::onJogParamChanged);
+
+
+}
+
+void CAxisWidget::updateUIEnable(int index)
+{
+	if (index == 0)
+	{
+		// 点位运动
+		ui.doubleSpinBoxs_jogAcc->setEnabled(false);
+        ui.doubleSpinBoxs_jogDec->setEnabled(false);
+		ui.pushButton_jogPMotion->setEnabled(false);
+        ui.pushButton_jogNMotion->setEnabled(false);
+
+		ui.doubleSpinBoxs_trapAcc->setEnabled(true);
+		ui.doubleSpinBoxs_trapDec->setEnabled(true);
+		ui.spinBox_trapStepSize->setEnabled(true);
+		ui.spinBox_trapSmoothTime->setEnabled(true);
+		ui.spinBox_trapCycleTime->setEnabled(true);
+		ui.spinBox_TrapInPositionDelay->setEnabled(true);
+		ui.pushButton_TarpActMotion->setEnabled(true);
+	}
+	else if (index == 1)
+	{
+		// jog运动
+		ui.doubleSpinBoxs_jogAcc->setEnabled(true);
+		ui.doubleSpinBoxs_jogDec->setEnabled(true);
+		ui.pushButton_jogPMotion->setEnabled(true);
+		ui.pushButton_jogNMotion->setEnabled(true);
+
+		ui.doubleSpinBoxs_trapAcc->setEnabled(false);
+		ui.doubleSpinBoxs_trapDec->setEnabled(false);
+		ui.spinBox_trapStepSize->setEnabled(false);
+		ui.spinBox_trapSmoothTime->setEnabled(false);
+		ui.spinBox_trapCycleTime->setEnabled(false);
+		ui.spinBox_TrapInPositionDelay->setEnabled(false);
+        ui.pushButton_TarpActMotion->setEnabled(false);
+	}
 }
 
 
@@ -106,6 +155,25 @@ void CAxisWidget::onBtnClick()
 	else if (objName == "pushButton_TarpActMotion") {
 		onTrapMotion();
 	}
+	else if (objName == "pushButton_jogPMotion") {
+		onJogPlus();
+	}
+	else if (objName == "pushButton_jogNMotion") {
+		onJogMinus();
+	}
+}
+
+void CAxisWidget::onAxisCommonParamUpdated(const std::vector<stuAxis>& axisInfo)
+{
+	m_bUpdatingFromBoard = true;
+    int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)axisInfo.size()) return;
+	const stuAxis& axis = axisInfo[index];
+
+	ui.spinBox_motionVel->setValue(axis.dMotionVel);
+    ui.comboBox_Mode->setCurrentIndex(axis.lPrfMode);
+	updateUIEnable(ui.comboBox_Mode->currentIndex());
+	m_bUpdatingFromBoard = false;
 }
 
 void CAxisWidget::onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo)
@@ -116,13 +184,25 @@ void CAxisWidget::onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo)
 	if (index < 0 || index >= (int)axisInfo.size()) return;
 	const stuAxis& axis = axisInfo[index];
 	// 只刷新点位运动参数
-	ui.spinBox_trapVel->setValue(axis.trapParam.vel);
 	ui.doubleSpinBoxs_trapAcc->setValue(axis.trapParam.acc);
 	ui.doubleSpinBoxs_trapDec->setValue(axis.trapParam.dec);
 	ui.spinBox_trapStepSize->setValue(axis.trapParam.stepSize);
 	ui.spinBox_trapSmoothTime->setValue(axis.trapParam.somoothTime);
 	ui.spinBox_trapCycleTime->setValue(axis.trapParam.cycleTimes);
 	ui.spinBox_TrapInPositionDelay->setValue(axis.trapParam.Delay);
+	m_bUpdatingFromBoard = false;
+}
+
+void CAxisWidget::onAxisJogParamUpdated(const std::vector<stuAxis>& axisInfo)
+{
+	//更新点位运动参数
+	m_bUpdatingFromBoard = true;
+	int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)axisInfo.size()) return;
+	const stuAxis& axis = axisInfo[index];
+	// 只刷新点位运动参数
+    ui.doubleSpinBoxs_jogAcc->setValue(axis.jogParam.acc);
+	ui.doubleSpinBoxs_jogDec->setValue(axis.jogParam.dec);
 	m_bUpdatingFromBoard = false;
 }
 
@@ -134,13 +214,24 @@ void CAxisWidget::onTrapParamChanged()
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
 	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
     if (!axis) return;
-	axis->trapParam.vel = ui.spinBox_trapVel->value();
 	axis->trapParam.acc = ui.doubleSpinBoxs_trapAcc->value();
 	axis->trapParam.dec = ui.doubleSpinBoxs_trapDec->value();
 	axis->trapParam.stepSize = ui.spinBox_trapStepSize->value();
 	axis->trapParam.somoothTime = ui.spinBox_trapSmoothTime->value();
 	axis->trapParam.cycleTimes = ui.spinBox_trapCycleTime->value();
 	axis->trapParam.Delay = ui.spinBox_TrapInPositionDelay->value();
+}
+
+void CAxisWidget::onJogParamChanged()
+{
+	if (m_bUpdatingFromBoard) return;
+	if (!m_pTotalMgr) return;
+	int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
+	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	if (!axis) return;
+    axis->jogParam.acc = ui.doubleSpinBoxs_jogAcc->value();
+    axis->jogParam.dec = ui.doubleSpinBoxs_jogDec->value();
 }
 
 void CAxisWidget::onClearState()
@@ -245,6 +336,59 @@ void CAxisWidget::onTrapMotion()
 	}
 }
 
+void CAxisWidget::onJogPlus()
+{
+	if (!m_pTotalMgr) return;
+	int index = m_iAxisId - 1;
+	short axisId = m_iAxisId;
+
+	// 先将 UI 中的 Jog 参数写入板卡
+	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->getAxisRef(index)->jogParam);
+	if (!ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 写入Jog参数失败").arg(axisId), Qt::red);
+		return;
+	}
+
+	// 启动正向 Jog
+	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, 1);
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 正向Jog已启动").arg(axisId), Qt::darkGreen);
+	}
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 正向Jog启动失败").arg(axisId), Qt::red);
+	}
+}
+
+void CAxisWidget::onJogMinus()
+{
+	if (!m_pTotalMgr) return;
+	int index = m_iAxisId - 1;
+	short axisId = m_iAxisId;
+
+	// 先将 UI 中的 Jog 参数写入板卡
+	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->getAxisRef(index)->jogParam);
+	if (!ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 写入Jog参数失败").arg(axisId), Qt::red);
+		return;
+	}
+
+	// 启动反向 Jog
+	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, -1);
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 反向Jog已启动").arg(axisId), Qt::darkGreen);
+	}
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 反向Jog启动失败").arg(axisId), Qt::red);
+	}
+}
+
+
 
 void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 {
@@ -254,15 +398,61 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 		// 切换到对应轴时，刷新点位运动参数显示
 		stuAxis* axis = m_pTotalMgr->getAxisRef(index);
 		if (axis) {
-			ui.spinBox_trapVel->setValue(axis->trapParam.vel);
 			ui.doubleSpinBoxs_trapAcc->setValue(axis->trapParam.acc);
 			ui.doubleSpinBoxs_trapDec->setValue(axis->trapParam.dec);
-			ui.spinBox_trapStepSize->setValue(axis->trapParam.stepSize);
+			ui.spinBox_trapStepSize->setValue(axis->trapParam.stepSize) ;
 			ui.spinBox_trapSmoothTime->setValue(axis->trapParam.somoothTime);
 			ui.spinBox_trapCycleTime->setValue(axis->trapParam.cycleTimes);
 			ui.spinBox_TrapInPositionDelay->setValue(axis->trapParam.Delay);
 		}
+		// 刷新jog运动参数
+		if (axis){
+            ui.doubleSpinBoxs_jogAcc->setValue(axis->jogParam.acc);
+            ui.doubleSpinBoxs_jogDec->setValue(axis->jogParam.dec);
+		}
+		if (axis)
+		{
+			ui.comboBox_Mode->setCurrentIndex(axis->lPrfMode);
+			ui.spinBox_motionVel->setValue(axis->dMotionVel);
+		}
 	}
+}
+
+void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
+{
+	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
+
+		int axisIdx = m_iAxisId - 1;
+		stuAxis* axis = m_pTotalMgr->getAxisRef(axisIdx);
+		if (axis) {
+			bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axis->axisIndex, index);
+			if (ok) {
+				updateUIEnable(index);
+				QString modeName = (index == 0) ? QStringLiteral("点位运动(trap)")
+					: QStringLiteral("Jog运动");
+				m_pGTSControllerWidget->showLog(
+					QStringLiteral("轴%1 切换运动模式为 %2 成功")
+					.arg(m_iAxisId).arg(modeName),
+					Qt::darkGreen);
+			}
+			else {
+				m_pGTSControllerWidget->showLog(
+					QStringLiteral("轴%1 切换运动模式失败").arg(m_iAxisId),
+					Qt::red);
+			}
+		}
+	}
+}
+
+void CAxisWidget::onMotionVelChanged()
+{
+	if (m_bUpdatingFromBoard) return;
+	if (!m_pTotalMgr) return;
+	int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
+	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	if (!axis) return;
+	axis->dMotionVel = ui.spinBox_motionVel->value();
 }
 
 void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
@@ -285,7 +475,6 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	ui.label_tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
 	ui.label_tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
 	ui.label_tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
-	ui.label_motionModeData->setText(motionModeToString(axis.lPrfMode));
 	if (axis.bServoOn)
 	{
 		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));

@@ -22,9 +22,11 @@ private:
 	// 更新标志位
 	bool m_bUpdatingFromBoard = false;
 	short m_iAxisId = 1; 
+	short m_iAxisMode = 0;
 
 	void initWidget();
 	void connectPrivateSignal();
+	void updateUIEnable(int index);
 
 	// 清除状态
 	void onClearState();
@@ -40,14 +42,26 @@ private:
 	void onEStop();
 	// 点位运动开始
 	void onTrapMotion();
+	// jog正向运动
+	void onJogPlus();
+	// jog反向运动
+    void onJogMinus();
 
 public slots:
 	// 更新轴实时信息
 	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
-	// 更新轴点位参数
+	// 更新轴通用信息
+	void onAxisCommonParamUpdated(const std::vector<stuAxis>& axisInfo);
+	// 更新轴点位运动参数
 	void onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo);
+	// 更新轴jog运动参数
+	void onAxisJogParamUpdated(const std::vector<stuAxis>& axisInfo);
+
 private slots:
 	void onBtnClick();
 	void onTrapParamChanged();
+	void onJogParamChanged();
 	void onComboBoxCurrentIndexChanged(int index);
+	void onComboBoxModeCurrentIndexChanged(int index);
+	void onMotionVelChanged();
 };
