@@ -30,8 +30,7 @@ private:
     stuClock m_clocks;
     // 轴数据
     std::vector<stuAxis> m_vecAxis;
-    // 点位运动参数
-    stuTrapParam m_trapParam;
+    
 
 
     std::unique_ptr<BoardMgr> m_boardMgr;
@@ -67,6 +66,10 @@ public:
     void stopRefresh();                   
     // 是否正在刷新
     bool isRefreshing() const;       
+    // 板卡打开后的初始化
+    void initAfterBoardOpened();
+    // 板卡关闭后的清理
+    void cleanupAfterBoardClosed();
 
 signals:
     // 板卡时钟更新

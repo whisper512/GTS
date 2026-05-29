@@ -27,7 +27,7 @@ void CTotalMgr::startRefresh(int intervalMs)
     if (m_pRefreshTimer->isActive()) {
         m_pRefreshTimer->stop();
     }
-    // 立即刷新一次
+    // 立即刷新一次 
     onRefreshTimeout();
     // 启动定时器
     m_pRefreshTimer->start(intervalMs);
@@ -43,6 +43,21 @@ bool CTotalMgr::isRefreshing() const
     return m_pRefreshTimer->isActive();
 }
 
+void CTotalMgr::initAfterBoardOpened()
+{
+    // 开始实时获取数据
+    startRefresh();
+    // 读取点位运动参数
+    m_motionMgr->getTrapMotionInfo(m_vecAxis);
+}
+
+void CTotalMgr::cleanupAfterBoardClosed()
+{
+    stopRefresh();
+    m_vecAxis.clear();     // 清空轴数据
+    m_clocks = stuClock(); // 清空时钟
+}
+
 void CTotalMgr::onRefreshTimeout()
 {
     if (!m_boardMgr->isOpen()) return;
@@ -54,9 +69,6 @@ void CTotalMgr::onRefreshTimeout()
     // 读取轴状态信息
     m_axisMgr->getAxisStatusInfo(m_vecAxis);
     m_motionMgr->getAxisMotionInfo(m_vecAxis);
-
-    // 读取点位运动信息
-    m_motionMgr->getTrapMotionInfo(m_vecAxis);
 
 
     emit axisUpdated(m_vecAxis);

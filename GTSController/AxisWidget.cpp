@@ -225,7 +225,7 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	ui.spinBox_trapCycleTime->setValue(axis.trapParam.cycleTimes);
 	ui.spinBox_TrapInPositionDelay->setValue(axis.trapParam.Delay);
 
-
+	 
 	if (axis.bServoOn)
 	{
         ui.pushButton_sevorOn->setText(QStringLiteral("Ê§ÄÜ"));
