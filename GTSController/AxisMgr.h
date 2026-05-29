@@ -13,7 +13,6 @@ class AxisMgr : public QObject {
     Q_OBJECT
 
 private:
-    short m_axisCount = 4;
     mutable short m_lastError = 0;
     CTotalMgr* m_pTotalMgr = nullptr;
 

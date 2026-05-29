@@ -57,9 +57,73 @@ void CAxisWidget::connectPrivateSignal()
 	connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+
+	connect(ui.spinBox_trapVel, QOverload<int>::of(&QSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.doubleSpinBoxs_trapAcc, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.doubleSpinBoxs_trapDec, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_trapStepSize, QOverload<int>::of(&QSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_trapSmoothTime, QOverload<int>::of(&QSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_trapCycleTime, QOverload<int>::of(&QSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_TrapInPositionDelay, QOverload<int>::of(&QSpinBox::valueChanged),
+		this, &CAxisWidget::onTrapParamChanged);
 }
 
 
+void CAxisWidget::onBtnClick()
+{
+	if (!m_pTotalMgr) return;
+	QPushButton* btn = qobject_cast<QPushButton*>(sender());
+	if (!btn) return;
+
+	QString objName = btn->objectName();
+	if (objName == "pushButton_clearState") {
+		onClearState();
+	}
+	else if (objName == "pushButton_sevorOn") {
+		if (ui.pushButton_sevorOn->text() == QStringLiteral("使能")) {
+			onServoOn();
+		}
+		else
+		{
+			onServoOff();
+		}
+	}
+	else if (objName == "pushButton_clearPos") {
+		onClearPos();
+	}
+	else if (objName == "pushButton_smoothStop") {
+		onSmoothStop();
+	}
+	else if (objName == "pushButton_eStop") {
+		onEStop();
+	}
+	else if (objName == "pushButton_ActMotion") {
+		onActMotion();
+	}
+}
+
+void CAxisWidget::onTrapParamChanged()
+{
+	if (m_bUpdatingFromBoard) return;
+	if (!m_pTotalMgr) return;
+	int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
+	// 只更新内存，不写板卡
+	stuAxis& axis = m_pTotalMgr->getAxisRef(index);
+	axis.trapParam.vel = ui.spinBox_trapVel->value();
+	axis.trapParam.acc = ui.doubleSpinBoxs_trapAcc->value();
+	axis.trapParam.dec = ui.doubleSpinBoxs_trapDec->value();
+	axis.trapParam.stepSize = ui.spinBox_trapStepSize->value();
+	axis.trapParam.somoothTime = ui.spinBox_trapSmoothTime->value();
+	axis.trapParam.cycleTimes = ui.spinBox_trapCycleTime->value();
+	axis.trapParam.Delay = ui.spinBox_TrapInPositionDelay->value();
+}
 
 void CAxisWidget::onClearState()
 {
@@ -147,44 +211,33 @@ void CAxisWidget::onEStop()
 
 void CAxisWidget::onActMotion()
 {
-
-	m_pGTSControllerWidget->showLog(
-		QStringLiteral("轴%1 运动触发（待实现）").arg(m_iAxisId), Qt::blue);
-}
-
-
-void CAxisWidget::onBtnClick()
-{
 	if (!m_pTotalMgr) return;
-	QPushButton* btn = qobject_cast<QPushButton*>(sender());
-	if (!btn) return;
-
-	QString objName = btn->objectName();
-	if (objName == "pushButton_clearState") {
-		onClearState();
+	int index = m_iAxisId - 1;
+	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
+	
+	const stuAxis& axis = m_pTotalMgr->getAxisRef(index);
+	short axisId = m_iAxisId;
+	
+	bool ok = m_pTotalMgr->motionMgr()->setTrapParam(axisId, axis.trapParam);
+	if (!ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 写入点位参数失败").arg(axisId), Qt::red);
+		return;
 	}
-	else if (objName == "pushButton_sevorOn") {
-		if (ui.pushButton_sevorOn->text() == QStringLiteral("使能")) {
-			onServoOn();
-		}
-		else
-		{
-            onServoOff();
-		}
+	
+	ok = m_pTotalMgr->motionMgr()->startTrapMotion(axisId, axis.trapParam.stepSize);
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 点位运动已启动").arg(axisId), Qt::darkGreen);
 	}
-	else if (objName == "pushButton_clearPos") {
-		onClearPos();
-	}
-	else if (objName == "pushButton_smoothStop") {
-		onSmoothStop();
-	}
-	else if (objName == "pushButton_eStop") {
-		onEStop();
-	}
-	else if (objName == "pushButton_ActMotion") {
-		onActMotion();
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 运动启动失败").arg(axisId), Qt::red);
 	}
 }
+
+
+
 
 void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 {
@@ -196,6 +249,8 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 
 void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 {
+	m_bUpdatingFromBoard = true;
+
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)axisInfo.size()) return;
 	stuAxis axis = axisInfo[index];
@@ -235,6 +290,7 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 		ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
 	}
 
+	m_bUpdatingFromBoard = false;  // 恢复标志
 
 	//QString statusStr = QStringLiteral(
 	//	"轴%1 | 位置:%2 | 速度:%3 | 加速度:%4 | "

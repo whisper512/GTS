@@ -19,6 +19,7 @@ private:
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 
+	bool m_bUpdatingFromBoard = false;
 	short m_iAxisId = 1; 
 
 	void initWidget();
@@ -36,5 +37,6 @@ public slots:
 	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
 private slots:
 	void onBtnClick();
+	void onTrapParamChanged();
 	void onComboBoxCurrentIndexChanged(int index);
 };

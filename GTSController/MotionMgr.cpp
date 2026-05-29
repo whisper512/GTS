@@ -1,4 +1,6 @@
+#include "TotalMgr.h"
 #include "MotionMgr.h"
+
 
 MotionMgr::MotionMgr(QObject* parent)
     : QObject(parent)
@@ -33,6 +35,50 @@ void MotionMgr::getTrapMotionInfo(std::vector<stuAxis>& vecTrap)
             axis.trapParam.vel = targetVel(profile);            // 目标速度
         }
     }
+}
+
+bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
+{
+    if (!checkProfile(axisId)) return false;
+    TTrapPrm prm;
+    prm.acc = param.acc;                 // 加速度
+    prm.dec = param.dec;                 // 减速度
+    prm.smoothTime = param.somoothTime;  // 平滑时间
+    if (!setTrapParams(axisId, prm)) {
+        return false;
+    }
+    if (!setTargetVel(axisId, param.vel)) {
+        return false;
+    }
+    return true;
+}
+
+bool MotionMgr::startTrapMotion(short profile, long stepSize)
+{
+    if (!checkProfile(profile)) return false;
+    // 设置轴为点位运动模式
+    m_lastError = GtsHal::prfTrap(profile);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+    // 计算目标位置 = 当前位置（规划位置）+ 步长
+    double curPos = profilePos(profile);
+    long targetPos = static_cast<long>(curPos) + stepSize;
+    // 设置目标位置
+    m_lastError = GtsHal::setPos(profile, targetPos);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+    // 启动运动（位掩码：轴1→bit0，轴2→bit1...）
+    long mask = 1L << (profile - 1);
+    m_lastError = GtsHal::update(mask);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+    return true;
 }
 
 bool MotionMgr::checkProfile(short profile) const

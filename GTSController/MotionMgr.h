@@ -6,6 +6,7 @@
 #include "GtsHal.h"
 #include "ControllerData.h"
 
+class CTotalMgr;
 
 // ============================================================
 // MotionMgr — 单轴运动管理器
@@ -26,6 +27,7 @@ class MotionMgr : public QObject
 private:
     short m_axisCount = 4;
     mutable short m_lastError = 0;
+    CTotalMgr* m_pTotalMgr = nullptr;
 
 private:
     bool checkProfile(short profile) const;
@@ -33,11 +35,16 @@ private:
 public:
     explicit MotionMgr( QObject* parent = nullptr);
     ~MotionMgr();
+    void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
     // 读取规划器相关
     void getAxisMotionInfo(std::vector<stuAxis>& vecAxis);
     // 读取点位运动相关
     void getTrapMotionInfo(std::vector<stuAxis>& vecTrap);
+    // 设置点位运动相关
+    bool setTrapParam(short axisId, const stuTrapParam& param);
+    // 启动点位运动(相对运动，步长可正可负)
+    bool startTrapMotion(short profile, long stepSize);
 
 public:
 

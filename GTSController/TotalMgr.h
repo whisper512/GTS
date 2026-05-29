@@ -26,6 +26,9 @@ private:
     // 刷新数据定时器
     QTimer* m_pRefreshTimer = nullptr;
 
+
+    // 轴数
+    int m_axisCount = 4;
     // 板卡时钟
     stuClock m_clocks;
     // 轴数据
@@ -60,6 +63,10 @@ public:
     FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器
     ConfigMgr* configMgr() const { return m_configMgr.get(); }
+    // 返回轴数
+    int axisCount() const { return m_axisCount; }
+    // 获取轴数据的引用
+    stuAxis& getAxisRef(int index) { return m_vecAxis[index]; }
     // 启动刷新实时数据
     void startRefresh(int intervalMs = 500);   
     // 停止刷新实时数据

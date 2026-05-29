@@ -15,13 +15,13 @@ AxisMgr::~AxisMgr() {
 void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
     if (vecAxis.empty()) {
-        vecAxis.resize(m_axisCount);
-        for (int i = 0; i < m_axisCount; ++i) {
+        vecAxis.resize(m_pTotalMgr->axisCount());
+        for (int i = 0; i < m_pTotalMgr->axisCount(); ++i) {
             vecAxis[i].axisIndex = i + 1;
         }
     }
     long sts = 0;
-    for (short axis = 1; axis <= m_axisCount; ++axis) {
+    for (short axis = 1; axis <= m_pTotalMgr->axisCount(); ++axis) {
         int idx = axis - 1;
         vecAxis[idx].axisIndex = axis;
         GtsHal::getSts(axis, &sts);
@@ -33,10 +33,10 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 }
 
 bool AxisMgr::isValidAxis(short axis)  {
-    bool valid = (axis > 0 && axis <= m_axisCount);
+    bool valid = (axis > 0 && axis <= m_pTotalMgr->axisCount());
     if (!valid) {
         emit errorOccurred(axis, -1, QStringLiteral("轴号无效: %1 (有效范围 1-%2)")
-            .arg(axis).arg(m_axisCount - 1));
+            .arg(axis).arg(m_pTotalMgr->axisCount() - 1));
     }
     return valid;
 }
@@ -82,12 +82,12 @@ bool AxisMgr::disableMulti(unsigned long mask) {
 }
 
 bool AxisMgr::enableAll() {
-    unsigned long mask = (1UL << m_axisCount) - 1;
+    unsigned long mask = (1UL << m_pTotalMgr->axisCount()) - 1;
     return enableMulti(mask);
 }
 
 bool AxisMgr::disableAll() {
-    unsigned long mask = (1UL << m_axisCount) - 1;
+    unsigned long mask = (1UL << m_pTotalMgr->axisCount()) - 1;
     return disableMulti(mask);
 }
 
@@ -124,7 +124,7 @@ bool AxisMgr::stop(short axis, long option) {
 }
 
 bool AxisMgr::stopAll(long option) {
-    long mask = (1L << m_axisCount) - 1;
+    long mask = (1L << m_pTotalMgr->axisCount()) - 1;
     m_lastError = GtsHal::stop(mask, option);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
