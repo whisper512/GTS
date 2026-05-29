@@ -33,7 +33,7 @@ bool MotionMgr::setAxisMotionMode(short axis, short mode)
     else {
         // 无效模式
         m_lastError = -1;
-        emit errorOccurred(axis, m_lastError, QStringLiteral("无效的运动模式: %1 (仅支持 0=点位, 1=Jog)").arg(mode));
+        //emit errorOccurred(axis, m_lastError, QStringLiteral("无效的运动模式"));
         return false;
     }
 }
@@ -74,12 +74,11 @@ void MotionMgr::getTrapMotionInfo(std::vector<stuAxis>& vecTrap)
 {
     for (auto& axis : vecTrap) {
         short profile = axis.axisIndex;  // 轴号 1-4
-        TTrapPrm prm;
+        TTrapPrm prm = {};
         if (getTrapParams(profile, prm)) {
-            // 从 TTrapPrm 读取
-            axis.trapParam.acc = prm.acc;                       // 加速度
-            axis.trapParam.dec = prm.dec;                       // 减速度
-            axis.trapParam.somoothTime = prm.smoothTime;        // 平滑时间
+            axis.trapParam.acc = prm.acc;
+            axis.trapParam.dec = prm.dec;
+            axis.trapParam.somoothTime = prm.smoothTime;
         }
     }
 }
@@ -145,11 +144,11 @@ void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
         short profile = axis.axisIndex;  // 轴号 1-4
-        TJogPrm prm;
+        TJogPrm prm = {};
         if (getJogParams(profile, prm)) {
-            // 从 TJogPrm 映射到 stuJobParam
-            axis.jogParam.acc = prm.acc;          // 加速度
-            axis.jogParam.dec = prm.dec;          // 减速度
+            // 读到了才更新内存
+            axis.jogParam.acc = prm.acc;
+            axis.jogParam.dec = prm.dec;
         }
     }
 }

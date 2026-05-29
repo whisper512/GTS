@@ -34,8 +34,8 @@ struct stuTrapParam
 
     stuTrapParam() {
         stepSize = 10000;
-        acc = 0.0;
-        dec = 0.0;
+        acc = 1.0;
+        dec = 1.0;
         somoothTime = 0;
         cycleTimes = 0;
         Delay = 0;
@@ -50,8 +50,8 @@ struct stuJobParam
     double smoothTime;      // Æ½»¬Ê±¼ä
 
     stuJobParam() {
-        acc = 0.0;
-        dec = 0.0;
+        acc = 1.0;
+        dec = 1.0;
         smoothTime = 0.0;
         }
 };
@@ -92,6 +92,7 @@ struct stuAxis
         bMotion = false;
         dCurPos = 0.0;
         dPrfPos = 0.0;
+        dMotionVel = 1.0;
         dCurVel = 0.0;
         dPrfVel = 0.0;
         dCurAcc = 0.0;
