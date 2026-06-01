@@ -37,7 +37,7 @@ void GTSControllerWidget::InitUI()
     ui.stackedWidget->addWidget(m_pAxisWidget);
     m_pInterpWidget = new CInterpWidget(this);
     ui.stackedWidget->addWidget(m_pInterpWidget);
-    m_pIOWidget = new CIOWidget(this);
+    m_pIOWidget = new CIOWidget(this, this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pIOWidget);
     m_pFeedbackWidget = new CFeedbackWidget(this);
     ui.stackedWidget->addWidget(m_pFeedbackWidget);
@@ -76,6 +76,8 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
     connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);
+    connect(m_pTotalMgr, &CTotalMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
+
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

@@ -1,4 +1,4 @@
-#ifndef IOMGR_H
+ï»¿#ifndef IOMGR_H
 #define IOMGR_H
 
 #include <QObject>
@@ -6,13 +6,13 @@
 #include "GtsHal.h"
 
 // ============================================================
-// IOMgr ¡ª IO ¹ÜÀíÆ÷
-// Ö°Ôğ£º¹ÜÀíÊı×Ö IO¡¢DAC/ADC¡¢À©Õ¹Ä£¿é
-//   - Êı×ÖÊä³ö (DO)
-//   - Êı×ÖÊäÈë (DI)
-//   - ¸ßËÙ IO (HSIO)
-//   - DAC Êä³ö / ADC ÊäÈë
-//   - À©Õ¹Ä£¿é IO/AD/DA
+// IOMgr â€” IO ç®¡ç†å™¨
+// èŒè´£ï¼šç®¡ç†æ•°å­— IOã€DAC/ADCã€æ‰©å±•æ¨¡å—
+//   - æ•°å­—è¾“å‡º (DO)
+//   - æ•°å­—è¾“å…¥ (DI)
+//   - é«˜é€Ÿ IO (HSIO)
+//   - DAC è¾“å‡º / ADC è¾“å…¥
+//   - æ‰©å±•æ¨¡å— IO/AD/DA
 // ============================================================
 
 
@@ -26,101 +26,111 @@ public:
     explicit IOMgr(QObject* parent = nullptr);
     ~IOMgr();
 
-    // ÉèÖÃÕû×é DO Öµ
+    void getPLimitDI(std::vector<int>& limitDI);
+    void getNLimitDI(std::vector<int>& limitDI);
+    void getDriverAlarmDI(std::vector<int>& driverAlarm);
+    void getHomeDI(std::vector<int>& home);
+    void getGPI(std::vector<int>& gpi);
+    void getArriveDI(std::vector<int>& arrive);
+    void getHandwheelDI(std::vector<int>& handwheel);
+
+
+public:
+    // è®¾ç½®æ•´ç»„ DO å€¼
     bool setOutput(short doType, long value);
-    // ÉèÖÃµ¥¸ö DO Î»
+    // è®¾ç½®å•ä¸ª DO ä½
     bool setOutputBit(short doType, short doIndex, short value);
-    // ¶ÁÈ¡Õû×é DO µ±Ç°Öµ
+    // è¯»å–æ•´ç»„ DO å½“å‰å€¼
     long getOutput(short doType) const;
-    // ÉèÖÃ DO Î»·´ÏòÂö³å
+    // è®¾ç½® DO ä½åå‘è„‰å†²
     bool setOutputBitReverse(short doType, short doIndex, short value, short reverseTime);
-    // °´ÑÚÂëÉèÖÃ DO
+    // æŒ‰æ©ç è®¾ç½® DO
     bool setOutputMask(short doType, unsigned short doMask, long value);
-    // Ê¹ÄÜ DO Î»Âö³åÊä³ö
+    // ä½¿èƒ½ DO ä½è„‰å†²è¾“å‡º
     bool enableOutputBitPulse(short doType, short doIndex, unsigned short highLevelTime, unsigned short lowLevelTime, long pulseNum, short firstLevel);
-    // ½ûÖ¹ DO Î»Âö³åÊä³ö
+    // ç¦æ­¢ DO ä½è„‰å†²è¾“å‡º
     bool disableOutputBitPulse(short doType, short doIndex);
-    // ¶ÁÈ¡Õû×é DI Öµ
+    // è¯»å–æ•´ç»„ DI å€¼
     long getInput(short diType) const;
-    // ¶ÁÈ¡ DI Ô­Ê¼Öµ£¨Î´ÂË²¨£©
+    // è¯»å– DI åŸå§‹å€¼ï¼ˆæœªæ»¤æ³¢ï¼‰
     long getInputRaw(short diType) const;
-    // »ñÈ¡ DI ·´×ª¼ÆÊı
+    // è·å– DI åè½¬è®¡æ•°
     bool getInputReverseCount(short diType, short diIndex, unsigned long* pReverseCount, short count = 1) const;
-    // ÉèÖÃ DI ·´×ª¼ÆÊı
+    // è®¾ç½® DI åè½¬è®¡æ•°
     bool setInputReverseCount(short diType, short diIndex, unsigned long* pReverseCount, short count = 1);
-    // ÉèÖÃ¸ßËÙ IO Ñ¡Ïî
+    // è®¾ç½®é«˜é€Ÿ IO é€‰é¡¹
     bool setHSIOOpt(unsigned short value, short channel = 0);
-    // »ñÈ¡¸ßËÙ IO Ñ¡Ïî
+    // è·å–é«˜é€Ÿ IO é€‰é¡¹
     unsigned short getHSIOOpt(short channel = 0) const;
-    // ÉèÖÃ GPI µçÆ½¼«ĞÔ
+    // è®¾ç½® GPI ç”µå¹³ææ€§
     bool setGpiSense(unsigned short sense);
-    // ÉèÖÃ DAC Öµ
+    // è®¾ç½® DAC å€¼
     bool setDAC(short dac, short* pValue, short count = 1);
-    // ¶ÁÈ¡ DAC µ±Ç°Öµ
+    // è¯»å– DAC å½“å‰å€¼
     bool getDAC(short dac, short* pValue, short count = 1) const;
-    // ÉèÖÃµç»úÆ«ÖÃ
+    // è®¾ç½®ç”µæœºåç½®
     bool setMotorBias(short dac, short bias);
-    // »ñÈ¡µç»úÆ«ÖÃ
+    // è·å–ç”µæœºåç½®
     short getMotorBias(short dac) const;
-    // ÉèÖÃµç»úÊä³öÏŞ·ù
+    // è®¾ç½®ç”µæœºè¾“å‡ºé™å¹…
     bool setMotorLimit(short dac, short limit);
-    // »ñÈ¡µç»úÊä³öÏŞ·ù
+    // è·å–ç”µæœºè¾“å‡ºé™å¹…
     short getMotorLimit(short dac) const;
-    // ¶ÁÈ¡ ADC µçÑ¹Öµ£¨×ª»»ºó£©
+    // è¯»å– ADC ç”µå‹å€¼ï¼ˆè½¬æ¢åï¼‰
     bool getADC(short adc, double* pValue, short count = 1) const;
-    // ¶ÁÈ¡ ADC Ô­Ê¼Öµ
+    // è¯»å– ADC åŸå§‹å€¼
     bool getADCValue(short adc, short* pValue, short count = 1) const;
-    // ÉèÖÃ ADC ÂË²¨Ê±¼ä
+    // è®¾ç½® ADC æ»¤æ³¢æ—¶é—´
     bool setADCFilter(short adc, short filterTime);
-    // ÉèÖÃ ADC ÅäÖÃ
+    // è®¾ç½® ADC é…ç½®
     bool setADCConfig(short adc, const TAdcConfig& cfg);
-    // »ñÈ¡ ADC ÅäÖÃ
+    // è·å– ADC é…ç½®
     bool getADCConfig(short adc, TAdcConfig& cfg) const;
-    // ÉèÖÃ ADC ÂË²¨²ÎÊı
+    // è®¾ç½® ADC æ»¤æ³¢å‚æ•°
     bool setADCFilterParam(short adc, double k);
-    // »ñÈ¡ ADC ÂË²¨²ÎÊı
+    // è·å– ADC æ»¤æ³¢å‚æ•°
     double getADCFilterParam(short adc) const;
-    // ´ò¿ªÀ©Õ¹Ä£¿é DLL
+    // æ‰“å¼€æ‰©å±•æ¨¡å— DLL
     bool openExtModule(const char* pDllName = nullptr);
-    // ¹Ø±ÕÀ©Õ¹Ä£¿é
+    // å…³é—­æ‰©å±•æ¨¡å—
     bool closeExtModule();
-    // ÇĞ»»À©Õ¹Ä£¿é¿¨ºÅ
+    // åˆ‡æ¢æ‰©å±•æ¨¡å—å¡å·
     bool switchExtModuleCardNo(short card);
-    // ¸´Î»À©Õ¹Ä£¿é
+    // å¤ä½æ‰©å±•æ¨¡å—
     bool resetExtModule();
-    // ¼ÓÔØÀ©Õ¹Ä£¿éÅäÖÃ
+    // åŠ è½½æ‰©å±•æ¨¡å—é…ç½®
     bool loadExtConfig(const QString& filePath);
-    // ÉèÖÃÀ©Õ¹Ä£¿é IO Öµ
+    // è®¾ç½®æ‰©å±•æ¨¡å— IO å€¼
     bool setExtOutput(short mdl, unsigned short value);
-    // »ñÈ¡À©Õ¹Ä£¿é IO Öµ
+    // è·å–æ‰©å±•æ¨¡å— IO å€¼
     unsigned short getExtOutput(short mdl) const;
-    // ÉèÖÃÀ©Õ¹Ä£¿é IO Î»
+    // è®¾ç½®æ‰©å±•æ¨¡å— IO ä½
     bool setExtOutputBit(short mdl, short index, unsigned short value);
-    // »ñÈ¡À©Õ¹Ä£¿é IO Î»
+    // è·å–æ‰©å±•æ¨¡å— IO ä½
     unsigned short getExtOutputBit(short mdl, short index) const;
-    // »ñÈ¡À©Õ¹Ä£¿é AD Ô­Ê¼Öµ
+    // è·å–æ‰©å±•æ¨¡å— AD åŸå§‹å€¼
     unsigned short getExtADValue(short mdl, short chn) const;
-    // »ñÈ¡À©Õ¹Ä£¿é AD µçÑ¹Öµ
+    // è·å–æ‰©å±•æ¨¡å— AD ç”µå‹å€¼
     double getExtADVoltage(short mdl, short chn) const;
-    // ÉèÖÃÀ©Õ¹Ä£¿é DA Ô­Ê¼Öµ
+    // è®¾ç½®æ‰©å±•æ¨¡å— DA åŸå§‹å€¼
     bool setExtDAValue(short mdl, short chn, unsigned short value);
-    // ÉèÖÃÀ©Õ¹Ä£¿é DA µçÑ¹Öµ
+    // è®¾ç½®æ‰©å±•æ¨¡å— DA ç”µå‹å€¼
     bool setExtDAVoltage(short mdl, short chn, double value);
-    // »ñÈ¡À©Õ¹Ä£¿éÄ£Ê½
+    // è·å–æ‰©å±•æ¨¡å—æ¨¡å¼
     short getExtModuleMode() const;
-    // ÉèÖÃÀ©Õ¹Ä£¿éÄ£Ê½
+    // è®¾ç½®æ‰©å±•æ¨¡å—æ¨¡å¼
     bool setExtModuleMode(short mode);
-    // »ñÈ¡À©Õ¹Ä£¿éÅäÖÃ
+    // è·å–æ‰©å±•æ¨¡å—é…ç½®
     bool getExtConfig(short mdl, TExtMdlCfgInfo& info) const;
-    // ÉèÖÃÀ©Õ¹Ä£¿éÅäÖÃ
+    // è®¾ç½®æ‰©å±•æ¨¡å—é…ç½®
     bool setExtConfig(short mdl, const TExtMdlCfgInfo& info);
-    // ¿ì½İÉèÖÃµ¥¸ö DO Îª¸ßµçÆ½
+    // å¿«æ·è®¾ç½®å•ä¸ª DO ä¸ºé«˜ç”µå¹³
     bool setOutputOn(short doType, short doIndex);
-    // ¿ì½İÉèÖÃµ¥¸ö DO ÎªµÍµçÆ½
+    // å¿«æ·è®¾ç½®å•ä¸ª DO ä¸ºä½ç”µå¹³
     bool setOutputOff(short doType, short doIndex);
-    // ¿ì½İ¶ÁÈ¡µ¥¸ö DI ×´Ì¬
+    // å¿«æ·è¯»å–å•ä¸ª DI çŠ¶æ€
     bool getInputBit(short diType, short diIndex) const;
-    // ¶ÁÈ¡ËùÓĞ IO ×´Ì¬¿ìÕÕ£¨ÓÃÓÚ½çÃæË¢ĞÂ£©
+    // è¯»å–æ‰€æœ‰ IO çŠ¶æ€å¿«ç…§ï¼ˆç”¨äºç•Œé¢åˆ·æ–°ï¼‰
     struct IOSnapshot {
         long input;
         long output;
@@ -128,15 +138,15 @@ public:
     };
     IOSnapshot takeSnapshot() const;
 
-    // »ñÈ¡×îºóÒ»´Î´íÎóÂë
+    // è·å–æœ€åä¸€æ¬¡é”™è¯¯ç 
     short lastError() const { return m_lastError; }
-    // »ñÈ¡×îºóÒ»´Î´íÎóÃèÊö
+    // è·å–æœ€åä¸€æ¬¡é”™è¯¯æè¿°
     QString lastErrorString() const;
 
 signals:
-    // ÊäÈë×´Ì¬±ä»¯ (DIÀàĞÍ, ĞÂÖµ)
+    // è¾“å…¥çŠ¶æ€å˜åŒ– (DIç±»å‹, æ–°å€¼)
     void inputChanged(short diType, long value);
-    // ·¢Éú´íÎó (´íÎóÂë, ÃèÊö)
+    // å‘ç”Ÿé”™è¯¯ (é”™è¯¯ç , æè¿°)
     void errorOccurred(short errorCode, const QString& errorMsg);
 
 };

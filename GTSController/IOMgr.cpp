@@ -1,7 +1,8 @@
-#include "IOMgr.h"
+Ôªø#include "IOMgr.h"
+#include <QMessageBox>
 
 // ============================================================
-// ππ‘Ï/Œˆππ
+// ÊûÑÈÄ†/ÊûêÊûÑ
 // ============================================================
 IOMgr::IOMgr(QObject* parent)
     : QObject(parent)
@@ -11,8 +12,95 @@ IOMgr::IOMgr(QObject* parent)
 IOMgr::~IOMgr() {
 }
 
+void IOMgr::getPLimitDI(std::vector<int>& limitDI)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_LIMIT_POSITIVE, &value);
+    limitDI.clear();
+    limitDI.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        limitDI[i] = (value >> i) & 1;
+    }
+}
+
+void IOMgr::getNLimitDI(std::vector<int>& limitDI)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_LIMIT_NEGATIVE, &value);
+    limitDI.clear();
+    limitDI.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        limitDI[i] = (value >> i) & 1;
+    }
+}
+
+void IOMgr::getDriverAlarmDI(std::vector<int>& driverAlarm)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_ALARM, &value);
+    driverAlarm.clear();
+    driverAlarm.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        driverAlarm[i] = (value >> i) & 1;
+    }
+
+    //QString split;
+    //for (int i = 0; i < 8; ++i) {
+    //    split += QStringLiteral("‰Ωç%1=%2  ").arg(i).arg(driverAlarm[i]);
+    //}
+    //QMessageBox::information(nullptr,
+    //    QStringLiteral("getPLimitDI ÊéíÊü•"),
+    //    QStringLiteral(
+    //        "ÂéüÂßã long = 0x%1 (%2)\n"
+    //        "ÊãÜÂàÜ: %3")
+    //    .arg((unsigned long)value, 8, 16, QChar('0'))
+    //    .arg(value)
+    //    .arg(split));
+}
+void IOMgr::getHomeDI(std::vector<int>& home)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_HOME, &value);
+    home.clear();
+    home.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        home[i] = (value >> i) & 1;
+    }
+}
+void IOMgr::getGPI(std::vector<int>& gpi)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_GPI, &value);
+    gpi.clear();
+    gpi.resize(16);
+    for (int i = 0; i < 16; ++i) {
+        gpi[i] = (value >> i) & 1;
+    }
+}
+void IOMgr::getArriveDI(std::vector<int>& arrive)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_ARRIVE, &value);
+    arrive.clear();
+    arrive.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        arrive[i] = (value >> i) & 1;
+    }
+}
+void IOMgr::getHandwheelDI(std::vector<int>& handwheel)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDi(MC_MPG, &value);
+    handwheel.clear();
+    handwheel.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        handwheel[i] = (value >> i) & 1;
+    }
+}
+
+
 // ================================================================
-// 1.  ˝◊÷ ‰≥ˆ (DO)
+// 1. Êï∞Â≠óËæìÂá∫ (DO)
 // ================================================================
 bool IOMgr::setOutput(short doType, long value) {
     m_lastError = GtsHal::setDo(doType, value);
@@ -78,7 +166,7 @@ bool IOMgr::disableOutputBitPulse(short doType, short doIndex) {
 }
 
 // ================================================================
-// 2.  ˝◊÷ ‰»Î (DI)
+// 2. Êï∞Â≠óËæìÂÖ• (DI)
 // ================================================================
 long IOMgr::getInput(short diType) const {
     long value = 0;
@@ -109,7 +197,7 @@ bool IOMgr::setInputReverseCount(short diType, short diIndex,
 }
 
 // ================================================================
-// 3. ∏ﬂÀŸ IO (HSIO)
+// 3. È´òÈÄü IO (HSIO)
 // ================================================================
 bool IOMgr::setHSIOOpt(unsigned short value, short channel) {
     m_lastError = GtsHal::setHSIOOpt(value, channel);
@@ -136,7 +224,7 @@ bool IOMgr::setGpiSense(unsigned short sense) {
 }
 
 // ================================================================
-// 4. DAC  ‰≥ˆ
+// 4. DAC ËæìÂá∫
 // ================================================================
 bool IOMgr::setDAC(short dac, short* pValue, short count) {
     m_lastError = GtsHal::setDac(dac, pValue, count);
@@ -183,7 +271,7 @@ short IOMgr::getMotorLimit(short dac) const {
 }
 
 // ================================================================
-// 5. ADC  ‰»Î
+// 5. ADC ËæìÂÖ•
 // ================================================================
 bool IOMgr::getADC(short adc, double* pValue, short count) const {
     m_lastError = GtsHal::getAdc(adc, pValue, count);
@@ -234,7 +322,7 @@ double IOMgr::getADCFilterParam(short adc) const {
 }
 
 // ================================================================
-// 6. ¿©’πƒ£øÈ
+// 6. Êâ©Â±ïÊ®°Âùó
 // ================================================================
 bool IOMgr::openExtModule(const char* pDllName) {
     m_lastError = GtsHal::openExtMdl(const_cast<char*>(pDllName));
@@ -371,7 +459,7 @@ bool IOMgr::setExtConfig(short mdl, const TExtMdlCfgInfo& info) {
 }
 
 // ================================================================
-// 7. ±„¿˚∑Ω∑®
+// 7. ‰æøÂà©ÊñπÊ≥ï
 // ================================================================
 bool IOMgr::setOutputOn(short doType, short doIndex) {
     return setOutputBit(doType, doIndex, 1);

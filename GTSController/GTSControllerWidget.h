@@ -26,7 +26,7 @@ private:
     CBoardWidget* m_pBoardWidget = nullptr;  // 板卡
     CAxisWidget* m_pAxisWidget = nullptr;    // 单轴
     QWidget* m_pInterpWidget = nullptr;      // 插补
-    QWidget* m_pIOWidget = nullptr;          // IO
+    CIOWidget* m_pIOWidget = nullptr;        // IO
     QWidget* m_pFeedbackWidget = nullptr;    // 编码器
     QWidget* m_pConfigWidget = nullptr;      // 设置
     QWidget* m_pOthersWidget = nullptr;      // 其他

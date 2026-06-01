@@ -38,7 +38,7 @@ void CIOWidget::InitTableDI()
         { 24,  8, QStringLiteral("原点信号0xF")      },
         { 32, 16, QStringLiteral("通用输入0xFFFF")   },
         { 48,  8, QStringLiteral("电机到位0xF")      },
-        { 56,  8, QStringLiteral("通用输入0x7F")     },
+        { 56,  7, QStringLiteral("手轮输入0x7F")     },
     };
 
     InitTableCommon(ui.tableWidget_DI, 64, blocks, sizeof(blocks) / sizeof(blocks[0]));
@@ -98,4 +98,28 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
 void CIOWidget::connectPrivateSignal()
 {
 
+}
+
+void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status)
+{
+    for (int i = 0; i < (int)status.size(); ++i) {
+        QTableWidgetItem* item = table->item(i, 2);
+        if (!item) continue;
+        if (status[i]) {
+            item->setText(QStringLiteral("● 开"));
+            item->setForeground(Qt::green);
+        }
+        else {
+            item->setText(QStringLiteral("● 关"));
+            item->setForeground(Qt::gray);
+        }
+    }
+}
+void CIOWidget::onDIUpdated(const stuDI& di)
+{
+    RefreshTable(ui.tableWidget_DI, di.toFlatVector());
+}
+void CIOWidget::onDOUpdated(const stuDO& dout)
+{
+    RefreshTable(ui.tableWidget_DO, dout.toFlatVector());
 }

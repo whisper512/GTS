@@ -69,4 +69,14 @@ void CTotalMgr::onRefreshTimeout()
     m_motionMgr->getAxisMotionInfo(m_vecAxis);
     emit axisUpdated(m_vecAxis);
 
+    // 读取IO状态信息
+    m_ioMgr->getPLimitDI(m_di.vecPLimit);
+    m_ioMgr->getNLimitDI(m_di.vecNLimit);
+    m_ioMgr->getDriverAlarmDI(m_di.vecAlarm);
+    m_ioMgr->getHomeDI(m_di.vecHome);
+    m_ioMgr->getGPI(m_di.vecGPI);
+    m_ioMgr->getArriveDI(m_di.vecArrive);
+    m_ioMgr->getHandwheelDI(m_di.vecHandwheel);
+    emit diUpdated(m_di);
+
 }

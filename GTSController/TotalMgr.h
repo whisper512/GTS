@@ -33,7 +33,12 @@ private:
     stuClock m_clocks;
     // 轴数据
     std::vector<stuAxis> m_vecAxis;
-    
+    // DI
+    stuDI m_di;
+    // DO
+    stuDO m_do;
+
+
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
     std::unique_ptr<AxisMgr> m_axisMgr;
@@ -85,6 +90,8 @@ signals:
     void axisUpdated(const std::vector<stuAxis>& axisInfo);
     // 轴参数更新
     void axisSettingUpdated(const std::vector<stuAxis>& axisInfo);
+    // DI 更新
+    void diUpdated(const stuDI& di);
     
 private slots:
     // 定时读取刷新数据

@@ -1,5 +1,7 @@
 #pragma once
 #include <QWidget>
+
+#include "ControllerData.h"
 #include "ui_IOWidget.h"
 
 class CTotalMgr;
@@ -27,5 +29,11 @@ private:
     void InitTableDO();
 	void InitTableCommon(QTableWidget* table, int totalRows, const Block* blocks, int blockCount);
 	void connectPrivateSignal();
+	void RefreshTable(QTableWidget* table, const std::vector<int>& status);
+
+public slots:
+	void onDIUpdated(const stuDI& di);     
+	void onDOUpdated(const stuDO& dout);  
+
 };
 
