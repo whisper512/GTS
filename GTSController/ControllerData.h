@@ -33,14 +33,15 @@ struct stuTrapParam
     int cycleTimes;         // 循环次数
     int Delay;              // 到位延时
 
-    stuTrapParam() {
-        dMotionVel = 0.0;
-        stepSize = 10000;
-        acc = 1.0;
-        dec = 1.0;
-        somoothTime = 0;
-        cycleTimes = 0;
-        Delay = 0;
+    stuTrapParam()
+        : dMotionVel(0.0)
+        , stepSize(10000)
+        , acc(1.0)
+        , dec(1.0)
+        , somoothTime(0)
+        , cycleTimes(0)
+        , Delay(0)
+    {
     }
 };
 
@@ -52,12 +53,13 @@ struct stuJogParam
     double dec;             // 减速度
     double smoothTime;      // 平滑时间
 
-    stuJogParam() {
-        dMotionVel = 5.0;
-        acc = 1.0;
-        dec = 1.0;
-        smoothTime = 0.0;
-        }
+    stuJogParam()
+        : dMotionVel(5.0)
+        , acc(1.0)
+        , dec(1.0)
+        , smoothTime(0.0)
+    {
+    }
 };
 
 // 轴信息
@@ -83,27 +85,29 @@ struct stuAxis
     stuTrapParam trapParam; // 点位运动(trap)参数
     stuJogParam jogParam;   // jog运动参数
 
-    stuAxis() {
-        axisIndex = 0;
-        bAlarm = false;
-        bMError = false;
-        bPosLimit = false;
-        bNegLimit = false;
-        bSmoothStop = false;
-        bAbruptStop = false;
-        bServoOn = false;
-        bMotion = false;
-        dCurPos = 0.0;
-        dPrfPos = 0.0;
-        dCurVel = 0.0;
-        dPrfVel = 0.0;
-        dCurAcc = 0.0;
-        dPrfAcc = 0.0;
-        lPrfMode = 0;
-        AxisStatus = 0;
-        trapParam = stuTrapParam();
-        jogParam = stuJogParam();
+    stuAxis()
+        : axisIndex(0)
+        , bAlarm(false)
+        , bMError(false)
+        , bPosLimit(false)
+        , bNegLimit(false)
+        , bSmoothStop(false)
+        , bAbruptStop(false)
+        , bServoOn(false)
+        , bMotion(false)
+        , dCurPos(0.0)
+        , dPrfPos(0.0)
+        , dCurVel(0.0)
+        , dPrfVel(0.0)
+        , dCurAcc(0.0)
+        , dPrfAcc(0.0)
+        , lPrfMode(0)
+        , AxisStatus(0)
+        , trapParam()
+        , jogParam()
+    {
     }
+
     // 解析轴状态
     void parseStatus(long status) {
         AxisStatus = status;

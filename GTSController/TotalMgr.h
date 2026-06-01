@@ -34,8 +34,7 @@ private:
     // 轴数据
     std::vector<stuAxis> m_vecAxis;
     
-
-
+    // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
     std::unique_ptr<AxisMgr> m_axisMgr;
     std::unique_ptr<MotionMgr> m_motionMgr;

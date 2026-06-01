@@ -4,6 +4,7 @@ CTotalMgr::CTotalMgr(QObject* parent)
     : QObject(parent)
     , m_vecAxis(m_axisCount)
 {
+    // 初始化各个模块
     m_boardMgr = std::make_unique<BoardMgr>(this);
     m_axisMgr = std::make_unique<AxisMgr>(this);
     m_motionMgr = std::make_unique<MotionMgr>(this);
@@ -12,7 +13,7 @@ CTotalMgr::CTotalMgr(QObject* parent)
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
 
-    // 创建定时器
+    // 创建定时器用来刷新实时数据
     m_pRefreshTimer = new QTimer(this);
     connect(m_pRefreshTimer, &QTimer::timeout, this, &CTotalMgr::onRefreshTimeout);
 }
@@ -51,9 +52,6 @@ void CTotalMgr::initAfterBoardOpened()
     m_motionMgr->getCommonMotionInfo(m_vecAxis);
     emit axisSettingUpdated(m_vecAxis);
 
-    
-    
-   
 }
 
 void CTotalMgr::cleanupAfterBoardClosed()

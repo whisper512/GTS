@@ -33,7 +33,6 @@ bool MotionMgr::setAxisMotionMode(short axis, short mode)
     else {
         // 无效模式
         m_lastError = -1;
-        //emit errorOccurred(axis, m_lastError, QStringLiteral("无效的运动模式"));
         return false;
     }
 }
