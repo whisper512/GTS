@@ -79,4 +79,10 @@ void CTotalMgr::onRefreshTimeout()
     m_ioMgr->getHandwheelDI(m_di.vecHandwheel);
     emit diUpdated(m_di);
 
+    // 读取DO状态信息
+    m_ioMgr->getMotorEnableDO(m_do.vecServoOn);
+    m_ioMgr->getGPO(m_do.vecGPO);
+    m_ioMgr->getClearAlarmDO(m_do.vecAlmClear);
+    emit doUpdated(m_do);
+
 }

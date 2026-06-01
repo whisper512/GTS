@@ -98,6 +98,41 @@ void IOMgr::getHandwheelDI(std::vector<int>& handwheel)
     }
 }
 
+void IOMgr::getMotorEnableDO(std::vector<int>& motorEnable)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDo(MC_ENABLE, &value);
+    motorEnable.clear();
+    motorEnable.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        motorEnable[i] = (value >> i) & 1;
+    }
+}
+
+void IOMgr::getClearAlarmDO(std::vector<int>& clearAlarm)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDo(MC_CLEAR, &value);
+    clearAlarm.clear();
+    clearAlarm.resize(8);
+    for (int i = 0; i < 8; ++i) {
+        clearAlarm[i] = (value >> i) & 1;
+    }
+}
+
+void IOMgr::getGPO(std::vector<int>& gpo)
+{
+    long value = 0;
+    m_lastError = GtsHal::getDo(MC_GPO, &value);
+    gpo.clear();
+    gpo.resize(16);
+    for (int i = 0; i < 16; ++i) {
+        gpo[i] = (value >> i) & 1;
+    }
+}
+
+
+
 
 // ================================================================
 // 1. 数字输出 (DO)

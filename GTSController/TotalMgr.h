@@ -92,6 +92,8 @@ signals:
     void axisSettingUpdated(const std::vector<stuAxis>& axisInfo);
     // DI 更新
     void diUpdated(const stuDI& di);
+    // DO 更新
+    void doUpdated(const stuDO& do_);
     
 private slots:
     // 定时读取刷新数据

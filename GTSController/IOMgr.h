@@ -26,6 +26,7 @@ public:
     explicit IOMgr(QObject* parent = nullptr);
     ~IOMgr();
 
+    // 获取输入状态
     void getPLimitDI(std::vector<int>& limitDI);
     void getNLimitDI(std::vector<int>& limitDI);
     void getDriverAlarmDI(std::vector<int>& driverAlarm);
@@ -33,7 +34,10 @@ public:
     void getGPI(std::vector<int>& gpi);
     void getArriveDI(std::vector<int>& arrive);
     void getHandwheelDI(std::vector<int>& handwheel);
-
+    // 获取输出状态
+    void getMotorEnableDO(std::vector<int>& motorEnable);
+    void getClearAlarmDO(std::vector<int>& clearAlarm);
+    void getGPO(std::vector<int>& gpo);
 
 public:
     // 设置整组 DO 值
