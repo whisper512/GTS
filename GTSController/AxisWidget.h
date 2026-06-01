@@ -51,11 +51,7 @@ public slots:
 	// 更新轴实时信息
 	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
 	// 更新轴通用信息
-	void onAxisCommonParamUpdated(const std::vector<stuAxis>& axisInfo);
-	// 更新轴点位运动参数
-	void onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo);
-	// 更新轴jog运动参数
-	void onAxisJogParamUpdated(const std::vector<stuAxis>& axisInfo);
+	void onAxisParamUpdated(const std::vector<stuAxis>& axisInfo);
 
 private slots:
 	void onBtnClick();
@@ -63,5 +59,4 @@ private slots:
 	void onJogParamChanged();
 	void onComboBoxCurrentIndexChanged(int index);
 	void onComboBoxModeCurrentIndexChanged(int index);
-	void onMotionVelChanged();
 };

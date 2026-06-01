@@ -45,8 +45,6 @@ public:
     void getAxisMotionInfo(std::vector<stuAxis>& vecAxis);
     // 读取通用运动参数
     void getCommonMotionInfo(std::vector<stuAxis>& vecTrap);
-    // 设置通用运动参数
-    bool setCommonParam(short axisId);
     // 读取点位运动相关
     void getTrapMotionInfo(std::vector<stuAxis>& vecTrap);
     // 设置点位运动相关
@@ -56,7 +54,7 @@ public:
     // 读取Jog 运动参数
     void getJogMotionInfo(std::vector<stuAxis>& vecAxis);
     // 设置Jog 运动参数
-    bool setJogParam(short axisId, const stuJobParam& param);
+    bool setJogParam(short axisId, const stuJogParam& param);
     // 启动Jog运动（direction: +1 正方向, -1 反方向）
     bool startJogMotion(short profile, short direction);
 

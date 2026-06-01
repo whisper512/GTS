@@ -48,7 +48,6 @@ public:
     explicit CTotalMgr(QObject* parent = nullptr);
     ~CTotalMgr();
 
-    
     // 板卡管理器
     BoardMgr* boardMgr() const { return m_boardMgr.get(); }
     // 轴管理器
@@ -63,6 +62,8 @@ public:
     FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器
     ConfigMgr* configMgr() const { return m_configMgr.get(); }
+
+public:
     // 返回轴数
     int axisCount() const { return m_axisCount; }
     // 获取轴数据的指针
@@ -83,13 +84,9 @@ signals:
     void boardClockUpdated(const stuClock& clock);
     // 轴实时数据更新
     void axisUpdated(const std::vector<stuAxis>& axisInfo);
-    // 轴通用参数更新
-    void axisCommonSettingUpdated(const std::vector<stuAxis>& axisInfo);
-    // 轴点动参数设置更新
-    void axisTrapSettingUpdated(const std::vector<stuAxis>& axisInfo);
-    // 轴jog参数设置更新
-    void axisJogSettingUpdated(const std::vector<stuAxis>& axisInfo);
-
+    // 轴参数更新
+    void axisSettingUpdated(const std::vector<stuAxis>& axisInfo);
+    
 private slots:
     // 定时读取刷新数据
     void onRefreshTimeout();

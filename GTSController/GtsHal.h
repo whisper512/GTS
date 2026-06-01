@@ -120,15 +120,15 @@ public:
     static short getAxisPrfAcc(short axis, double* pValue, short count = 1, unsigned long* pClock = nullptr) { return GT_GetAxisPrfAcc(axis, pValue, count, pClock); }
     static short setPos(short profile, long pos) { return GT_SetPos(profile, pos); }
     static short getPos(short profile, long* pPos) { return GT_GetPos(profile, pPos); }
-    static short setVel(short profile, double vel) { return GT_SetVel(profile, vel); }
-    static short getVel(short profile, double* pVel) { return GT_GetVel(profile, pVel); }
     static short update(long mask) { return GT_Update(mask); }
     static short setProfileScale(short axis, long alpha, long beta) { return GT_SetProfileScale(axis, alpha, beta); }
     static short getProfileScale(short axis, long* pAlpha, long* pBeta) { return GT_GetProfileScale(axis, pAlpha, pBeta); }
 
     // ====================================================================
     // 4. 梯形/点位运动 (Trapezoidal / Point-to-Point)
-    // ====================================================================
+    // ================================================================
+    static short setVel(short profile, double vel) { return GT_SetVel(profile, vel); }            //获取trap模式下的速度
+    static short getVel(short profile, double* pVel) { return GT_GetVel(profile, pVel); }
     static short prfTrap(short profile) { return GT_PrfTrap(profile); }
     static short setTrapPrm(short profile, const TTrapPrm& prm) { return GT_SetTrapPrm(profile, const_cast<TTrapPrm*>(&prm)); }
     static short getTrapPrm(short profile, TTrapPrm* pPrm) { return GT_GetTrapPrm(profile, pPrm); }

@@ -31,6 +31,7 @@ void CAxisWidget::initWidget()
 	ui.comboBox_Mode->addItem(QStringLiteral("点位运动(trap)"));
     ui.comboBox_Mode->addItem(QStringLiteral("Jog运动"));
 
+	// radiobtn禁用互斥
 	ui.radioButton_servoEnable->setAutoExclusive(false);
 	ui.radioButton_sevorAlarm->setAutoExclusive(false);
 	ui.radioButton_nLimit->setAutoExclusive(false);
@@ -55,7 +56,6 @@ void CAxisWidget::connectPrivateSignal()
 {
 	connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxCurrentIndexChanged);
 	connect(ui.comboBox_Mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxModeCurrentIndexChanged);
-	connect(ui.spinBox_motionVel, &QSpinBox::editingFinished, this, &CAxisWidget::onMotionVelChanged);
 
 	connect(ui.pushButton_clearState, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
@@ -66,23 +66,15 @@ void CAxisWidget::connectPrivateSignal()
 	connect(ui.pushButton_jogPMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
     connect(ui.pushButton_jogNMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 
-	connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_trapStepSize, &QSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished,
-		this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_trapStepSize, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
 
-    connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished,
-        this, &CAxisWidget::onJogParamChanged);
-	connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished,
-        this, &CAxisWidget::onJogParamChanged);
+	connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
+	connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
 
 
 }
@@ -92,11 +84,13 @@ void CAxisWidget::updateUIEnable(int index)
 	if (index == 0)
 	{
 		// 点位运动
+		ui.spinBox_jogMotionVel->setEnabled(false);
 		ui.doubleSpinBoxs_jogAcc->setEnabled(false);
         ui.doubleSpinBoxs_jogDec->setEnabled(false);
 		ui.pushButton_jogPMotion->setEnabled(false);
         ui.pushButton_jogNMotion->setEnabled(false);
 
+		ui.spinBox_trapMotionVel->setEnabled(true);
 		ui.doubleSpinBoxs_trapAcc->setEnabled(true);
 		ui.doubleSpinBoxs_trapDec->setEnabled(true);
 		ui.spinBox_trapStepSize->setEnabled(true);
@@ -108,11 +102,14 @@ void CAxisWidget::updateUIEnable(int index)
 	else if (index == 1)
 	{
 		// jog运动
+		ui.spinBox_jogMotionVel->setEnabled(true);
 		ui.doubleSpinBoxs_jogAcc->setEnabled(true);
 		ui.doubleSpinBoxs_jogDec->setEnabled(true);
 		ui.pushButton_jogPMotion->setEnabled(true);
 		ui.pushButton_jogNMotion->setEnabled(true);
 
+		ui.spinBox_trapMotionVel->setEnabled(false);
+		ui.pushButton_TarpActMotion->setEnabled(false);
 		ui.doubleSpinBoxs_trapAcc->setEnabled(false);
 		ui.doubleSpinBoxs_trapDec->setEnabled(false);
 		ui.spinBox_trapStepSize->setEnabled(false);
@@ -163,48 +160,29 @@ void CAxisWidget::onBtnClick()
 	}
 }
 
-void CAxisWidget::onAxisCommonParamUpdated(const std::vector<stuAxis>& axisInfo)
+void CAxisWidget::onAxisParamUpdated(const std::vector<stuAxis>& axisInfo)
 {
 	m_bUpdatingFromBoard = true;
     int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)axisInfo.size()) return;
 	const stuAxis& axis = axisInfo[index];
 
-	ui.spinBox_motionVel->setValue(axis.dMotionVel);
+	ui.spinBox_trapMotionVel->setValue(axis.trapParam.dMotionVel);
     ui.comboBox_Mode->setCurrentIndex(axis.lPrfMode);
+	ui.spinBox_trapStepSize->setValue(axis.trapParam.stepSize);
+	ui.doubleSpinBoxs_trapAcc->setValue(axis.trapParam.acc);
+    ui.doubleSpinBoxs_trapDec->setValue(axis.trapParam.dec);
+    ui.spinBox_trapSmoothTime->setValue(axis.trapParam.somoothTime);
+	ui.spinBox_trapCycleTime->setValue(axis.trapParam.cycleTimes);
+    ui.spinBox_TrapInPositionDelay->setValue(axis.trapParam.Delay);
+	ui.spinBox_jogMotionVel->setValue(axis.jogParam.dMotionVel);
+	ui.doubleSpinBoxs_jogAcc->setValue(axis.jogParam.acc);
+    ui.doubleSpinBoxs_jogDec->setValue(axis.jogParam.dec);
+
 	updateUIEnable(ui.comboBox_Mode->currentIndex());
 	m_bUpdatingFromBoard = false;
 }
 
-void CAxisWidget::onAxisTrapParamUpdated(const std::vector<stuAxis>& axisInfo)
-{
-	//更新点位运动参数
-	m_bUpdatingFromBoard = true;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)axisInfo.size()) return;
-	const stuAxis& axis = axisInfo[index];
-	// 只刷新点位运动参数
-	ui.doubleSpinBoxs_trapAcc->setValue(axis.trapParam.acc);
-	ui.doubleSpinBoxs_trapDec->setValue(axis.trapParam.dec);
-	ui.spinBox_trapStepSize->setValue(axis.trapParam.stepSize);
-	ui.spinBox_trapSmoothTime->setValue(axis.trapParam.somoothTime);
-	ui.spinBox_trapCycleTime->setValue(axis.trapParam.cycleTimes);
-	ui.spinBox_TrapInPositionDelay->setValue(axis.trapParam.Delay);
-	m_bUpdatingFromBoard = false;
-}
-
-void CAxisWidget::onAxisJogParamUpdated(const std::vector<stuAxis>& axisInfo)
-{
-	//更新点位运动参数
-	m_bUpdatingFromBoard = true;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)axisInfo.size()) return;
-	const stuAxis& axis = axisInfo[index];
-	// 只刷新点位运动参数
-    ui.doubleSpinBoxs_jogAcc->setValue(axis.jogParam.acc);
-	ui.doubleSpinBoxs_jogDec->setValue(axis.jogParam.dec);
-	m_bUpdatingFromBoard = false;
-}
 
 void CAxisWidget::onTrapParamChanged()
 {
@@ -214,6 +192,7 @@ void CAxisWidget::onTrapParamChanged()
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
 	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
     if (!axis) return;
+    axis->trapParam.dMotionVel = ui.spinBox_trapMotionVel->value();
 	axis->trapParam.acc = ui.doubleSpinBoxs_trapAcc->value();
 	axis->trapParam.dec = ui.doubleSpinBoxs_trapDec->value();
 	axis->trapParam.stepSize = ui.spinBox_trapStepSize->value();
@@ -230,6 +209,7 @@ void CAxisWidget::onJogParamChanged()
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
 	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
 	if (!axis) return;
+    axis->jogParam.dMotionVel = ui.spinBox_jogMotionVel->value();
     axis->jogParam.acc = ui.doubleSpinBoxs_jogAcc->value();
     axis->jogParam.dec = ui.doubleSpinBoxs_jogDec->value();
 }
@@ -398,6 +378,7 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 		// 切换到对应轴时，刷新点位运动参数显示
 		stuAxis* axis = m_pTotalMgr->getAxisRef(index);
 		if (axis) {
+			ui.spinBox_trapMotionVel->setValue(axis->trapParam.dMotionVel);
 			ui.doubleSpinBoxs_trapAcc->setValue(axis->trapParam.acc);
 			ui.doubleSpinBoxs_trapDec->setValue(axis->trapParam.dec);
 			ui.spinBox_trapStepSize->setValue(axis->trapParam.stepSize) ;
@@ -407,13 +388,13 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 		}
 		// 刷新jog运动参数
 		if (axis){
+			ui.spinBox_jogMotionVel->setValue(axis->jogParam.dMotionVel);
             ui.doubleSpinBoxs_jogAcc->setValue(axis->jogParam.acc);
             ui.doubleSpinBoxs_jogDec->setValue(axis->jogParam.dec);
 		}
 		if (axis)
 		{
 			ui.comboBox_Mode->setCurrentIndex(axis->lPrfMode);
-			ui.spinBox_motionVel->setValue(axis->dMotionVel);
 		}
 	}
 }
@@ -444,16 +425,6 @@ void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
 	}
 }
 
-void CAxisWidget::onMotionVelChanged()
-{
-	if (m_bUpdatingFromBoard) return;
-	if (!m_pTotalMgr) return;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
-	if (!axis) return;
-	axis->dMotionVel = ui.spinBox_motionVel->value();
-}
 
 void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 {
