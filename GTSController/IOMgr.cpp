@@ -131,6 +131,41 @@ void IOMgr::getGPO(std::vector<int>& gpo)
     }
 }
 
+void IOMgr::setMotorEnableDO(const std::vector<int>& motorEnable)
+{
+    long value = 0;
+    for (int i = 0; i < (int)motorEnable.size() && i < 8; ++i) {
+        if (motorEnable[i]) value |= (1L << i);
+    }
+    m_lastError = GtsHal::setDo(MC_ENABLE, value);
+    if (m_lastError != 0) {
+        emit errorOccurred(m_lastError, lastErrorString());
+    }
+}
+
+void IOMgr::setClearAlarmDO(const std::vector<int>& clearAlarm)
+{
+    long value = 0;
+    for (int i = 0; i < (int)clearAlarm.size() && i < 8; ++i) {
+        if (clearAlarm[i]) value |= (1L << i);
+    }
+    m_lastError = GtsHal::setDo(MC_CLEAR, value);
+    if (m_lastError != 0) {
+        emit errorOccurred(m_lastError, lastErrorString());
+    }
+}
+
+void IOMgr::setGPO(const std::vector<int>& gpo)
+{
+    long value = 0;
+    for (int i = 0; i < (int)gpo.size() && i < 16; ++i) {
+        if (gpo[i]) value |= (1L << i);
+    }
+    m_lastError = GtsHal::setDo(MC_GPO, value);
+    if (m_lastError != 0) {
+        emit errorOccurred(m_lastError, lastErrorString());
+    }
+}
 
 
 

@@ -99,7 +99,7 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
 
 void CIOWidget::connectPrivateSignal()
 {
-
+    connect(ui.tableWidget_DO, &QTableWidget::cellDoubleClicked, this, &CIOWidget::onDOCellClicked);
 }
 
 void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status)
@@ -117,11 +117,52 @@ void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status
         }
     }
 }
+void CIOWidget::onDOCellClicked(int row, int col)
+{
+    if (col != 2) return;                          // 只响应状态列
+    if (!m_pTotalMgr) return;
+    IOMgr* ioMgr = m_pTotalMgr->ioMgr();
+    if (!ioMgr) return;
+    // 取反对应位
+    if (row >= 0 && row < 8) {
+        // 伺服使能 (0~7)
+        m_doState.vecServoOn[row] ^= 1;
+        ioMgr->setMotorEnableDO(m_doState.vecServoOn);
+    }
+    else if (row >= 8 && row < 16) {
+        // 报警清除 (8~15)
+        int idx = row - 8;
+        m_doState.vecAlmClear[idx] ^= 1;
+        ioMgr->setClearAlarmDO(m_doState.vecAlmClear);
+    }
+    else if (row >= 16 && row < 32) {
+        // 通用输出 (16~31)
+        int idx = row - 16;
+        m_doState.vecGPO[idx] ^= 1;
+        ioMgr->setGPO(m_doState.vecGPO);
+    }
+    // 刷新该行显示
+    auto flat = m_doState.toFlatVector();
+    QTableWidgetItem* item = ui.tableWidget_DO->item(row, 2);
+    if (item) {
+        if (flat[row]) {
+            item->setText(QStringLiteral("● 开"));
+            item->setForeground(Qt::green);
+        }
+        else {
+            item->setText(QStringLiteral("● 关"));
+            item->setForeground(Qt::gray);
+        }
+    }
+}
+
 void CIOWidget::onDIUpdated(const stuDI& di)
 {
     RefreshTable(ui.tableWidget_DI, di.toFlatVector());
 }
+
 void CIOWidget::onDOUpdated(const stuDO& dout)
 {
+    m_doState = dout;
     RefreshTable(ui.tableWidget_DO, dout.toFlatVector());
 }

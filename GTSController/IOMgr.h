@@ -38,6 +38,11 @@ public:
     void getMotorEnableDO(std::vector<int>& motorEnable);
     void getClearAlarmDO(std::vector<int>& clearAlarm);
     void getGPO(std::vector<int>& gpo);
+    // 设置输出状态
+    void setMotorEnableDO(const std::vector<int>& motorEnable);
+    void setClearAlarmDO(const std::vector<int>& clearAlarm);
+    void setGPO(const std::vector<int>& gpo);
+
 
 public:
     // 设置整组 DO 值
