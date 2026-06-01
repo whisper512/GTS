@@ -47,9 +47,6 @@ void GTSControllerWidget::InitUI()
     ui.stackedWidget->addWidget(m_pOthersWidget);
     // 默认显示板卡页面
     ui.stackedWidget->setCurrentIndex(0);
-
-
-    
 }
 
 void GTSControllerWidget::InitUISignalAndSlotConnect()
