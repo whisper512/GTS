@@ -20,7 +20,7 @@ struct stuDI
     std::vector<int> vecNLimit;    // 负限位，8 位
     std::vector<int> vecAlarm;     // 驱动报警，8 位
     std::vector<int> vecHome;      // 原点信号，8 位
-    std::vector<int> vecGPI;      // 通用输入1，16 位
+    std::vector<int> vecGPI;       // 通用输入1，16 位
     std::vector<int> vecArrive;    // 电机到位，8 位
     std::vector<int> vecHandwheel; // 手轮输入2，8 位
 
