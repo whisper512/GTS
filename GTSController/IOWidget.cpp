@@ -94,6 +94,11 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
     table->setColumnWidth(2, 90);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    table->setStyleSheet(
+        QStringLiteral(
+            "QTableWidget::item:selected { background: rgba(0,160,0,40); color: inherit; }"
+        ));
 }
 
 
