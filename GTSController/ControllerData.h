@@ -34,7 +34,7 @@ struct stuTrapParam
     int Delay;              // µΩŒª—” ±
 
     stuTrapParam()
-        : dMotionVel(0.0)
+        : dMotionVel(1.0)
         , stepSize(10000)
         , acc(1.0)
         , dec(1.0)

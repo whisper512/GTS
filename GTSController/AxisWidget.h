@@ -42,10 +42,8 @@ private:
 	void onEStop();
 	// 点位运动开始
 	void onTrapMotion();
-	// jog正向运动
-	void onJogPlus();
-	// jog反向运动
-    void onJogMinus();
+	void onJogPressed(int direction);   // direction: +1 正向, -1 反向
+	void onJogReleased();
 
 public slots:
 	// 更新轴实时信息

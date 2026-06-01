@@ -67,12 +67,12 @@ public:
     int axisCount() const { return m_axisCount; }
     // 获取轴数据的指针
     stuAxis* getAxisRef(int index) { if (index < 0 || index >= (int)m_vecAxis.size()) { return nullptr; }return &m_vecAxis[index]; }
+    // 是否正在刷新
+    bool isRefreshing() const { return m_pRefreshTimer->isActive(); };
     // 启动刷新实时数据
     void startRefresh(int intervalMs = 500);   
     // 停止刷新实时数据
     void stopRefresh();                   
-    // 是否正在刷新
-    bool isRefreshing() const;       
     // 板卡打开后的初始化
     void initAfterBoardOpened();
     // 板卡关闭后的清理

@@ -38,11 +38,6 @@ void CTotalMgr::stopRefresh()
     m_pRefreshTimer->stop();
 }
 
-bool CTotalMgr::isRefreshing() const
-{
-    return m_pRefreshTimer->isActive();
-}
-
 void CTotalMgr::initAfterBoardOpened()
 {
     // 启动定时器开始实时获取数据

@@ -63,8 +63,10 @@ void CAxisWidget::connectPrivateSignal()
 	connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 	connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_jogPMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-    connect(ui.pushButton_jogNMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+	connect(ui.pushButton_jogPMotion, &QPushButton::pressed, this, [this]() { onJogPressed(1); });
+	connect(ui.pushButton_jogPMotion, &QPushButton::released, this, [this]() { onJogReleased(); });
+	connect(ui.pushButton_jogNMotion, &QPushButton::pressed, this, [this]() { onJogPressed(-1); });
+	connect(ui.pushButton_jogNMotion, &QPushButton::released, this, [this]() { onJogReleased(); });
 
 	connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
@@ -75,8 +77,6 @@ void CAxisWidget::connectPrivateSignal()
 
 	connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
 	connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
-
-
 }
 
 void CAxisWidget::updateUIEnable(int index)
@@ -151,12 +151,6 @@ void CAxisWidget::onBtnClick()
 	}
 	else if (objName == "pushButton_TarpActMotion") {
 		onTrapMotion();
-	}
-	else if (objName == "pushButton_jogPMotion") {
-		onJogPlus();
-	}
-	else if (objName == "pushButton_jogNMotion") {
-		onJogMinus();
 	}
 }
 
@@ -316,58 +310,49 @@ void CAxisWidget::onTrapMotion()
 	}
 }
 
-void CAxisWidget::onJogPlus()
+void CAxisWidget::onJogPressed(int direction)
 {
 	if (!m_pTotalMgr) return;
 	int index = m_iAxisId - 1;
 	short axisId = m_iAxisId;
-
-	// 先将 UI 中的 Jog 参数写入板卡
-	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->getAxisRef(index)->jogParam);
+	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	if (!axis) return;
+	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, axis->jogParam);
 	if (!ok) {
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("轴%1 写入Jog参数失败").arg(axisId), Qt::red);
 		return;
 	}
-
-	// 启动正向 Jog
-	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, 1);
+	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, direction);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 正向Jog已启动").arg(axisId), Qt::darkGreen);
+			QStringLiteral("轴%1 %2Jog已启动")
+			.arg(axisId)
+			.arg(direction > 0 ? QStringLiteral("正向") : QStringLiteral("反向")),
+			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 正向Jog启动失败").arg(axisId), Qt::red);
+			QStringLiteral("轴%1 Jog启动失败").arg(axisId), Qt::red);
 	}
 }
 
-void CAxisWidget::onJogMinus()
+void CAxisWidget::onJogReleased()
 {
 	if (!m_pTotalMgr) return;
-	int index = m_iAxisId - 1;
 	short axisId = m_iAxisId;
 
-	// 先将 UI 中的 Jog 参数写入板卡
-	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->getAxisRef(index)->jogParam);
-	if (!ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 写入Jog参数失败").arg(axisId), Qt::red);
-		return;
-	}
-
-	// 启动反向 Jog
-	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, -1);
+	// 减速停止（option = 1）
+	bool ok = m_pTotalMgr->axisMgr()->stop(axisId, 1);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 反向Jog已启动").arg(axisId), Qt::darkGreen);
+			QStringLiteral("轴%1 Jog停止").arg(axisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 反向Jog启动失败").arg(axisId), Qt::red);
+			QStringLiteral("轴%1 Jog停止失败").arg(axisId), Qt::red);
 	}
 }
-
 
 
 void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
