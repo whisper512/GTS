@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <QWidget>
 #include <AxisMgr.h>
 #include "ui_AxisWidget.h"
@@ -19,7 +19,7 @@ private:
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 	
-	// ¸üĞÂ±êÖ¾Î»
+	// æ›´æ–°æ ‡å¿—ä½
 	bool m_bUpdatingFromBoard = false;
 	short m_iAxisId = 1; 
 	short m_iAxisMode = 0;
@@ -28,27 +28,27 @@ private:
 	void connectPrivateSignal();
 	void updateUIEnable(int index);
 
-	// Çå³ı×´Ì¬
+	// æ¸…é™¤çŠ¶æ€
 	void onClearState();
-	// ËÅ·şÊ¹ÄÜ
+	// ä¼ºæœä½¿èƒ½
 	void onServoOn();
-	// ËÅ·ş¹Ø±Õ
+	// ä¼ºæœå…³é—­
 	void onServoOff();
-	// Çå¿ÕÎ»ÖÃ
+	// æ¸…ç©ºä½ç½®
 	void onClearPos();
-	// Æ½»¬Í£Ö¹
+	// å¹³æ»‘åœæ­¢
 	void onSmoothStop();
-	// ½ô¼±Í£Ö¹
+	// ç´§æ€¥åœæ­¢
 	void onEStop();
-	// µãÎ»ÔË¶¯¿ªÊ¼
+	// ç‚¹ä½è¿åŠ¨å¼€å§‹
 	void onTrapMotion();
-	void onJogPressed(int direction);   // direction: +1 ÕıÏò, -1 ·´Ïò
+	void onJogPressed(int direction);   // direction: +1 æ­£å‘, -1 åå‘
 	void onJogReleased();
 
 public slots:
-	// ¸üĞÂÖáÊµÊ±ĞÅÏ¢
+	// æ›´æ–°è½´å®æ—¶ä¿¡æ¯
 	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
-	// ¸üĞÂÖáÍ¨ÓÃĞÅÏ¢
+	// æ›´æ–°è½´é€šç”¨ä¿¡æ¯
 	void onAxisParamUpdated(const std::vector<stuAxis>& axisInfo);
 
 private slots:

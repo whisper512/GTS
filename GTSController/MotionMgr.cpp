@@ -1,6 +1,6 @@
-#if _MSC_VER >= 1600
-#pragma execution_character_set("utf-8")
-#endif
+ï»¿//#if _MSC_VER >= 1600
+//#pragma execution_character_set("utf-8")
+//#endif
 
 #include <QMessageBox>
 #include <QCoreApplication>
@@ -23,15 +23,15 @@ bool MotionMgr::setAxisMotionMode(short axis, short mode)
 {
     if (!checkProfile(axis)) return false;
     if (mode == 0) {
-        // µãÎ»ÔË¶¯Ä£Ê½ (Trap)
+        // ç‚¹ä½è¿åŠ¨æ¨¡å¼ (Trap)
         return setTrapMode(axis);
     }
     else if (mode == 1) {
-        // Jog ³ÖĞøÔË¶¯Ä£Ê½
+        // Jog æŒç»­è¿åŠ¨æ¨¡å¼
         return setJogMode(axis);
     }
     else {
-        // ÎŞĞ§Ä£Ê½
+        // æ— æ•ˆæ¨¡å¼
         m_lastError = -1;
         return false;
     }
@@ -40,19 +40,19 @@ bool MotionMgr::setAxisMotionMode(short axis, short mode)
 void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
-        short axisIndex = axis.axisIndex;           // ÖáºÅ 1~4
-        axis.dPrfPos = axisProfilePos(axisIndex);   // ¹æ»®Î»ÖÃ
-        axis.dPrfVel = axisProfileVel(axisIndex);   // ¹æ»®ËÙ¶È
-        axis.dPrfAcc = axisProfileAcc(axisIndex);   // ¹æ»®¼ÓËÙ¶È
+        short axisIndex = axis.axisIndex;           // è½´å· 1~4
+        axis.dPrfPos = axisProfilePos(axisIndex);   // è§„åˆ’ä½ç½®
+        axis.dPrfVel = axisProfileVel(axisIndex);   // è§„åˆ’é€Ÿåº¦
+        axis.dPrfAcc = axisProfileAcc(axisIndex);   // è§„åˆ’åŠ é€Ÿåº¦
     }
 }
 
 void MotionMgr::getCommonMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
-        short profile = axis.axisIndex;                     // ÖáºÅ 1-4
-        axis.lPrfMode = profileMode(profile);               // ÔË¶¯Ä£Ê½
-        axis.trapParam.dMotionVel = targetVel(profile);     // ¶ÁÈ¡trapµÄÔË¶¯ËÙ¶È
+        short profile = axis.axisIndex;                     // è½´å· 1-4
+        axis.lPrfMode = profileMode(profile);               // è¿åŠ¨æ¨¡å¼
+        axis.trapParam.dMotionVel = targetVel(profile);     // è¯»å–trapçš„è¿åŠ¨é€Ÿåº¦
     }
 }
 
@@ -60,7 +60,7 @@ void MotionMgr::getCommonMotionInfo(std::vector<stuAxis>& vecAxis)
 void MotionMgr::getTrapMotionInfo(std::vector<stuAxis>& vecTrap)
 {
     for (auto& axis : vecTrap) {
-        short profile = axis.axisIndex;  // ÖáºÅ 1-4
+        short profile = axis.axisIndex;  // è½´å· 1-4
         TTrapPrm prm = {};
         if (getTrapParams(profile, prm)) {
             axis.trapParam.acc = prm.acc;
@@ -74,9 +74,9 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
 {
     if (!checkProfile(axisId)) return false;
     TTrapPrm prm;
-    prm.acc = param.acc;                 // ¼ÓËÙ¶È
-    prm.dec = param.dec;                 // ¼õËÙ¶È
-    prm.smoothTime = param.somoothTime;  // Æ½»¬Ê±¼ä
+    prm.acc = param.acc;                 // åŠ é€Ÿåº¦
+    prm.dec = param.dec;                 // å‡é€Ÿåº¦
+    prm.smoothTime = param.somoothTime;  // å¹³æ»‘æ—¶é—´
     if (!setTrapParams(axisId, prm)) {
         return false;
     }
@@ -87,39 +87,57 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
 bool MotionMgr::startTrapMotion(short profile, long stepSize)
 {
     if (!checkProfile(profile)) return false;
-
     int idx = profile - 1;
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
     if (!pAxis) return false;
-
     const stuTrapParam& trap = pAxis->trapParam;
-
-    // µ¥´ÎÄ£Ê½£¨cycleTimes <= 0£©
+    // æ£€æŸ¥å‚æ•°
+    if (trap.dMotionVel <= 0.0) {
+        QMessageBox::warning(nullptr, QStringLiteral("å‚æ•°é”™è¯¯"),
+            QStringLiteral("è½´%1 è¿åŠ¨é€Ÿåº¦æ— æ•ˆ (dMotionVel = %2)ï¼Œå¿…é¡» > 0")
+            .arg(profile).arg(trap.dMotionVel, 0, 'f', 3));
+        return false;
+    }
+    if (stepSize == 0) {
+        QMessageBox::warning(nullptr, QStringLiteral("å‚æ•°é”™è¯¯"),
+            QStringLiteral("è½´%1 æ­¥é•¿ä¸º 0ï¼Œæ— æ³•è¿åŠ¨").arg(profile));
+        return false;
+    }
+    if (trap.acc <= 0.0) {
+        QMessageBox::warning(nullptr, QStringLiteral("å‚æ•°é”™è¯¯"),
+            QStringLiteral("è½´%1 åŠ é€Ÿåº¦æ— æ•ˆ (acc = %2)ï¼Œå¿…é¡» > 0")
+            .arg(profile).arg(trap.acc, 0, 'f', 3));
+        return false;
+    }
+    if (trap.dec <= 0.0) {
+        QMessageBox::warning(nullptr, QStringLiteral("å‚æ•°é”™è¯¯"),
+            QStringLiteral("è½´%1 å‡é€Ÿåº¦æ— æ•ˆ (dec = %2)ï¼Œå¿…é¡» > 0")
+            .arg(profile).arg(trap.dec, 0, 'f', 3));
+        return false;
+    }
+    if (trap.somoothTime < 0) {
+        QMessageBox::warning(nullptr, QStringLiteral("å‚æ•°é”™è¯¯"),
+            QStringLiteral("è½´%1 å¹³æ»‘æ—¶é—´æ— æ•ˆ (smoothTime = %2)ï¼Œä¸èƒ½ä¸ºè´Ÿæ•°")
+            .arg(profile).arg(trap.somoothTime));
+        return false;
+    }
+    // å•æ¬¡æ¨¡å¼ï¼ˆcycleTimes <= 0ï¼‰
     if (trap.cycleTimes <= 0) {
         return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, pAxis->trapParam.dMotionVel);
     }
-
-    // Ñ­»·Ä£Ê½
-    long currentStep = stepSize;  // µÚÒ»´ÎÎªÕı·½Ïò
+    // å¾ªç¯æ¨¡å¼
+    long currentStep = stepSize;
     int times = trap.cycleTimes;
-
     for (int i = 0; i < times; ++i) {
-        // Õı·½ÏòÔË¶¯
         if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, pAxis->trapParam.dMotionVel))
             return false;
-        // µÈ´ıÔË¶¯Íê³É
         waitMotionDone(profile);
-        // µ½Î»ÑÓÊ±
         if (trap.Delay > 0) {
             GtsHal::delay(static_cast<unsigned short>(trap.Delay));
         }
-        // ·´·½ÏòÔË¶¯£¨²½³¤È¡·´£©
         if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, pAxis->trapParam.dMotionVel))
             return false;
-        // µÈ´ıÔË¶¯Íê³É
         waitMotionDone(profile);
-
-        // µ½Î»ÑÓÊ±
         if (trap.Delay > 0) {
             GtsHal::delay(static_cast<unsigned short>(trap.Delay));
         }
@@ -130,10 +148,10 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
 void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
-        short profile = axis.axisIndex;  // ÖáºÅ 1-4
+        short profile = axis.axisIndex;  // è½´å· 1-4
         TJogPrm prm = {};
         if (getJogParams(profile, prm)) {
-            // ¶Áµ½ÁË²Å¸üĞÂÄÚ´æ
+            // è¯»åˆ°äº†æ‰æ›´æ–°å†…å­˜
             axis.jogParam.acc = prm.acc;
             axis.jogParam.dec = prm.dec;
         }
@@ -142,12 +160,12 @@ void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 bool MotionMgr::setJogParam(short axisId, const stuJogParam& param)
 {
     if (!checkProfile(axisId)) return false;
-    // ¹¹Ôì TJogPrm£¬´Ó stuJobParam Ó³Éä
+    // æ„é€  TJogPrmï¼Œä» stuJobParam æ˜ å°„
     TJogPrm prm;
-    prm.acc = param.acc;     // ¼ÓËÙ¶È
-    prm.dec = param.dec;     // ¼õËÙ¶È
-    prm.smooth = 0.0;        // Æ½»¬Ê±¼ä£¬²Î¿¼ trap ¸øÄ¬ÈÏÖµ 0
-    // Ğ´Èë°å¿¨
+    prm.acc = param.acc;     // åŠ é€Ÿåº¦
+    prm.dec = param.dec;     // å‡é€Ÿåº¦
+    prm.smooth = 0.0;        // å¹³æ»‘æ—¶é—´ï¼Œå‚è€ƒ trap ç»™é»˜è®¤å€¼ 0
+    // å†™å…¥æ¿å¡
     if (!setJogParams(axisId, prm)) {
         return false;
     }
@@ -165,14 +183,14 @@ bool MotionMgr::startJogMotion(short profile, short direction)
 
     const stuJogParam& jog = pAxis->jogParam;
 
-    // ÉèÖÃÎª Jog Ä£Ê½
+    // è®¾ç½®ä¸º Jog æ¨¡å¼
     m_lastError = GtsHal::prfJog(profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
 
-    // ÉèÖÃ Jog ²ÎÊı (acc, dec, smooth)
+    // è®¾ç½® Jog å‚æ•° (acc, dec, smooth)
     TJogPrm prm;
     prm.acc = jog.acc;
     prm.dec = jog.dec;
@@ -183,7 +201,7 @@ bool MotionMgr::startJogMotion(short profile, short direction)
         return false;
     }
 
-    // ÉèÖÃËÙ¶È£¨·½Ïò£ºÕı·½Ïò vel > 0£¬·´·½Ïò vel < 0£©
+    // è®¾ç½®é€Ÿåº¦ï¼ˆæ–¹å‘ï¼šæ­£æ–¹å‘ vel > 0ï¼Œåæ–¹å‘ vel < 0ï¼‰
     double targetVel = (direction > 0) ? pAxis->jogParam.dMotionVel: -pAxis->jogParam.dMotionVel;
     m_lastError = GtsHal::setVel(profile, targetVel);
     if (m_lastError != 0) {
@@ -191,7 +209,7 @@ bool MotionMgr::startJogMotion(short profile, short direction)
         return false;
     }
 
-    // Æô¶¯ÔË¶¯
+    // å¯åŠ¨è¿åŠ¨
     long mask = 1L << (profile - 1);
     m_lastError = GtsHal::update(mask);
     if (m_lastError != 0) {
@@ -211,16 +229,16 @@ bool MotionMgr::checkProfile(short profile) const
     return true;
 }
 
-// ³éÈ¡µÄµ¥´ÎÔË¶¯º¯Êı
+// æŠ½å–çš„å•æ¬¡è¿åŠ¨å‡½æ•°
 bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel)
 {
-    // ÉèÎªµãÎ»Ä£Ê½
+    // è®¾ä¸ºç‚¹ä½æ¨¡å¼
     m_lastError = GtsHal::prfTrap(profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
-    // ÉèÖÃÌİĞÎ²ÎÊı
+    // è®¾ç½®æ¢¯å½¢å‚æ•°
     TTrapPrm prm = {};
     prm.acc = acc;
     prm.dec = dec;
@@ -231,7 +249,7 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
         return false;
     }
 
-    // Ä¿±êÎ»ÖÃ = µ±Ç°Î»ÖÃ + ²½³¤
+    // ç›®æ ‡ä½ç½® = å½“å‰ä½ç½® + æ­¥é•¿
     double curPos = profilePos(profile);
     long targetPos = static_cast<long>(curPos) + stepSize;
     m_lastError = GtsHal::setPos(profile, targetPos);
@@ -240,14 +258,14 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
         return false;
     }
 
-    // ÉèÖÃËÙ¶È
+    // è®¾ç½®é€Ÿåº¦
     m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
 
-    // Æô¶¯ÔË¶¯
+    // å¯åŠ¨è¿åŠ¨
     long mask = 1L << (profile - 1);
     m_lastError = GtsHal::update(mask);
     if (m_lastError != 0) {
@@ -258,14 +276,14 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
     return true;
 }
 
-// µÈ´ıÔË¶¯Íê³É£¨¹æ»®Í£Ö¹ bit10 = 0x400£©
+// ç­‰å¾…è¿åŠ¨å®Œæˆï¼ˆè§„åˆ’åœæ­¢ bit10 = 0x400ï¼‰
 void MotionMgr::waitMotionDone(short profile)
 {
     long sts = 0;
     do {
         GtsHal::getSts(profile, &sts);
-        QCoreApplication::processEvents();  // ±£³Ö½çÃæÏìÓ¦
-    } while (sts & 0x400);  // 0x400 = ¹æ»®ÖĞ£¬ÔË¶¯Î´Íê³É
+        QCoreApplication::processEvents();  // ä¿æŒç•Œé¢å“åº”
+    } while (sts & 0x400);  // 0x400 = è§„åˆ’ä¸­ï¼Œè¿åŠ¨æœªå®Œæˆ
 }
 
 
@@ -875,14 +893,14 @@ bool MotionMgr::pvtTableSetPercent(short tableId, long count, double* time, doub
 bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double dec) {
     if (!checkProfile(profile)) return false;
 
-    // ÉèÖÃÌİĞÎÄ£Ê½
+    // è®¾ç½®æ¢¯å½¢æ¨¡å¼
     m_lastError = GtsHal::prfTrap(profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
 
-    // ÉèÖÃÌİĞÎ²ÎÊı
+    // è®¾ç½®æ¢¯å½¢å‚æ•°
     TTrapPrm trapPrm;
     trapPrm.acc = acc;
     trapPrm.dec = dec;
@@ -895,7 +913,7 @@ bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double d
         return false;
     }
 
-    // ÉèÖÃÄ¿±êÎ»ÖÃºÍËÙ¶È
+    // è®¾ç½®ç›®æ ‡ä½ç½®å’Œé€Ÿåº¦
     m_lastError = GtsHal::setPos(profile, pos);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
@@ -908,7 +926,7 @@ bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double d
         return false;
     }
 
-    // Æô¶¯ÔË¶¯
+    // å¯åŠ¨è¿åŠ¨
     m_lastError = GtsHal::update(1L << profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
@@ -922,17 +940,17 @@ bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double d
 bool MotionMgr::jog(short profile, double vel, double acc) {
     if (!checkProfile(profile)) return false;
 
-    // ÉèÖÃÎª Jog Ä£Ê½
+    // è®¾ç½®ä¸º Jog æ¨¡å¼
     m_lastError = GtsHal::prfJog(profile);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
 
-    // ÉèÖÃ Jog ²ÎÊı
+    // è®¾ç½® Jog å‚æ•°
     TJogPrm jogPrm;
     jogPrm.acc = acc;
-    jogPrm.dec = acc;  // ¼õËÙ¶ÈµÈÓÚ¼ÓËÙ¶È
+    jogPrm.dec = acc;  // å‡é€Ÿåº¦ç­‰äºåŠ é€Ÿåº¦
 
     m_lastError = GtsHal::setJogPrm(profile, jogPrm);
     if (m_lastError != 0) {
@@ -940,7 +958,7 @@ bool MotionMgr::jog(short profile, double vel, double acc) {
         return false;
     }
 
-    // Æô¶¯
+    // å¯åŠ¨
     m_lastError = GtsHal::update(1L << (profile - 1));
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
