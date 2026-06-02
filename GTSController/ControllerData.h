@@ -1,6 +1,69 @@
 #pragma once
 // 数据结构
 
+// 输入类型
+enum class DIType : short
+{
+    LimitPositive = 0,   // MC_LIMIT_POSITIVE  正限位
+    LimitNegative = 1,   // MC_LIMIT_NEGATIVE  负限位
+    Alarm = 2,           // MC_ALARM           驱动报警
+    Home = 3,            // MC_HOME            原点
+    GPI = 4,             // MC_GPI             通用输入
+    Arrive = 5,          // MC_ARRIVE          电机到位
+    MPG = 6              // MC_MPG             手轮
+};
+
+inline QString dioTypeToString(DIType type)
+{
+    switch (type) {
+    case DIType::LimitPositive: return QStringLiteral("正限位");
+    case DIType::LimitNegative: return QStringLiteral("负限位");
+    case DIType::Alarm:         return QStringLiteral("驱动报警");
+    case DIType::Home:          return QStringLiteral("原点");
+    case DIType::GPI:           return QStringLiteral("通用输入");
+    case DIType::Arrive:        return QStringLiteral("电机到位");
+    case DIType::MPG:           return QStringLiteral("手轮");
+    default:                     return QStringLiteral("未知");
+    }
+}
+
+// 输出类型
+enum class DOType : short
+{
+    ServoOn = 0,   // MC_SERVO_ON  伺服使能
+    AlmClear = 1,  // MC_ALM_CLEAR 报警清除
+    GPO = 2        // MC_GPO        通用输出
+};
+
+// 脉冲输出模式
+enum class PulseMode : short
+{
+    PulseDir = 0,   // 脉冲 + 方向
+    CCW_CW = 1      // 双脉冲（正转/反转）
+};
+
+// IO极性
+enum class IOPolarity : short
+{
+    Normal = 0,    // 正常
+    Reverse = 1    // 取反
+};
+
+// 脉冲技术源
+enum class PulseCountSource : short
+{
+    Encoder = 0,   // 编码器
+    PulseCounter = 1 // 脉冲计数器
+};
+
+// 触发沿
+enum class TriggerEdge : short
+{
+    Rising = 0,   // 上升沿
+    Falling = 1    // 下降沿
+};
+
+
 // 板卡信息
 struct stuCardInfo {
     short cardNum;
@@ -70,7 +133,6 @@ struct stuDO
     }
 };
 
-
 // 时钟
 struct stuClock {
     unsigned long sysClock;            // 系统时钟
@@ -78,6 +140,182 @@ struct stuClock {
 
     stuClock() : sysClock(0), highPrecClock(0) {}
 };
+
+// 轴配置
+struct stuAxisConfig
+{
+    int axisIndex;              // 轴号
+    bool bActivate;             // 激活
+    DIType servoAlarm;          // 驱动报警输入类型
+    int servoAlarmIndex;        // 驱动报警输入索引
+    DIType PLimit;              // 正限位输入类型
+    int PLimitIndex;            // 正限位输入索引
+    DIType NLimit;              // 负限位输入类型
+    int NLimitIndex;            // 负限位输入索引
+    DIType smoothStop;          // 平滑停止输入类型
+    int smoothStopIndex;        // 平滑停止输入索引
+    DIType EStop;               // 急停输入类型
+    int EStopIndex;             // 急停输入索引
+    int profileEquivalentAlpha; // 脉冲当量系数A
+    int profileEquivalentBeta;  // 脉冲当量系数B
+    int encoderEquivalentAlpha; // 编码器当量系数A
+    int encoderEquivalentBeta;  // 编码器当量系数B
+    stuAxisConfig()
+        : axisIndex(0)
+        , bActivate(false)
+        , servoAlarm(DIType::Alarm)
+        , servoAlarmIndex(1)
+        , PLimit(DIType::LimitPositive)
+        , PLimitIndex(1)
+        , NLimit(DIType::LimitNegative)
+        , NLimitIndex(1)
+        , smoothStop(DIType::GPI)
+        , smoothStopIndex(1)
+        , EStop(DIType::GPI)
+        , EStopIndex(1)
+        , profileEquivalentAlpha(1)
+        , profileEquivalentBeta(1)
+        , encoderEquivalentAlpha(1)
+        , encoderEquivalentBeta(1)
+    {
+    }
+};
+// step配置
+struct stuStepConfig
+{
+    int stepIndex;             // 步进号
+    PulseMode pulseOutputMode; // 脉冲输出模式
+    stuStepConfig()
+        : stepIndex(0)
+        , pulseOutputMode(PulseMode::PulseDir)
+    {
+    }
+};
+// dac配置
+struct stuDacConfig
+{
+    int dacIndex;                       // DAC号
+    int associateControl;               // 关联控制
+    IOPolarity outputVoltagePolarity;   // 输出电压极性
+    int zeroOffsetCompensation;         // 零漂补偿
+    int outputVoltageSaturationLimit;   // 输出电压饱和限制
+    stuDacConfig()
+        : dacIndex(0)
+        , associateControl(0)
+        , outputVoltagePolarity(IOPolarity::Normal)
+        , zeroOffsetCompensation(0)
+        , outputVoltageSaturationLimit(32767)
+    {
+    }
+};
+// encoder配置
+struct stuEncoderConfig
+{
+    int encoderIndex;                   // 编码器号
+    IOPolarity inputPlusePolarity;      // 输入脉冲极性
+    PulseCountSource pulseCountSource;  // 脉冲计数源
+    TriggerEdge homeTriggerEdge;        // 回原触发沿
+    TriggerEdge indexTriggerEdge;       // 索引触发沿
+    stuEncoderConfig()
+        : encoderIndex(0)
+        , inputPlusePolarity(IOPolarity::Normal)
+        , pulseCountSource(PulseCountSource::Encoder)
+        , homeTriggerEdge(TriggerEdge::Rising)
+        , indexTriggerEdge(TriggerEdge::Rising)
+    {
+    }
+};
+// control配置
+struct stuControlConfig
+{
+    int controlIndex;       // 控制号
+    int associateAxis;      // 关联轴
+    int associateEncoder;   // 关联编码器
+    int followingErrorLimit;// 跟随误差限制
+    stuControlConfig()
+        : controlIndex(0)
+        , associateAxis(0)
+        , associateEncoder(0)
+        , followingErrorLimit(32767)
+    {
+    }
+};
+// profile配置
+struct stuProfileConfig
+{
+    int profileIndex;  // 脉冲配置号
+    int smoothStopDec; // 平滑停止减速
+    int estopDec;
+    stuProfileConfig()
+        : profileIndex(0)
+        , smoothStopDec(100)
+        , estopDec(1000)
+    {
+    }
+};
+// DI配置
+struct stuDIConfig
+{
+    DIType type;            // 输入类型
+    int DIIndex;            // 输入索引
+    IOPolarity DIPolarity;  // 输入极性
+    int filterTime;         // 滤波时间
+    stuDIConfig()
+        : type(DIType::GPI)
+        , DIIndex(0)
+        , DIPolarity(IOPolarity::Normal)
+        , filterTime(0)
+    {
+    }
+};
+// DO配置
+struct stuDOConfig
+{
+    DOType type;            // 输出类型
+    int DOIndex;            // 输出索引
+    IOPolarity DOPolarity;  // 输出极性
+    int associateAxis;      // 关联轴
+    stuDOConfig()
+        : type(DOType::GPO)
+        , DOIndex(0)
+        , DOPolarity(IOPolarity::Normal)
+        , associateAxis(0)
+    {
+    }
+};
+
+// 总配置数据
+struct stuConfig
+{
+    int AxisConfigCount;
+    int StepConfigCount;
+    int DacConfigCount;
+    int EncoderConfigCount;
+    int ControlConfigCount;
+    int ProfileConfigCount;
+    int DIConfigCount;
+    int DOConfigCount;
+    std::vector<stuAxisConfig> vecAxisConfig;
+    std::vector<stuStepConfig> vecStepConfig;
+    std::vector<stuDacConfig> vecDacConfig;
+    std::vector<stuEncoderConfig> vecEncoderConfig;
+    std::vector<stuControlConfig> vecControlConfig;
+    std::vector<stuProfileConfig> vecProfileConfig;
+    std::vector<stuDIConfig> vecDIConfig;
+    std::vector<stuDOConfig> vecDOConfig;
+    stuConfig()
+        : AxisConfigCount(0)
+        , StepConfigCount(0)
+        , DacConfigCount(0)
+        , EncoderConfigCount(0)
+        , ControlConfigCount(0)
+        , ProfileConfigCount(0)
+        , DIConfigCount(0)
+        , DOConfigCount(0)
+    {
+    }
+};
+
 
 // 点位运动(trap)参数
 struct stuTrapParam
@@ -122,7 +360,7 @@ struct stuJogParam
 // 轴信息
 struct stuAxis
 {
-    short axisIndex;   // 轴号1-4；
+    short axisIndex;   // 轴号1-4
     bool bAlarm;       // 报警
     bool bMError;      // 跟随误差越限
     bool bPosLimit;    // 正限位触发
