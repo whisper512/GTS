@@ -14,8 +14,43 @@
    <string>CConfigWidget</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_19">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>20</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QPushButton" name="pushButton_loadFromFile">
+        <property name="text">
+         <string>从文件加载</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_writeToFile">
+        <property name="text">
+         <string>写入到文件</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_readControlState">
+        <property name="text">
+         <string>读取控制器状态</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_writeControlState">
+        <property name="text">
+         <string>写入控制器状态</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
@@ -28,7 +63,7 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label_axisId">
             <property name="text">
              <string>轴号:</string>
             </property>
@@ -38,10 +73,10 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="comboBox_axisId"/>
           </item>
           <item>
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="checkBox_axisActivate">
             <property name="text">
              <string>激活</string>
             </property>
@@ -65,13 +100,13 @@
         <item row="1" column="0">
          <layout class="QGridLayout" name="gridLayout_9">
           <item row="0" column="0">
-           <widget class="QGroupBox" name="groupBox">
+           <widget class="QGroupBox" name="groupBox_servoAlarm">
             <property name="title">
              <string>驱动报警</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_2">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_servoAlarmType">
                <property name="text">
                 <string>类型;</string>
                </property>
@@ -81,10 +116,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_2"/>
+              <widget class="QComboBox" name="comboBox_servoAlarmType"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="label_servoAlarmIndex">
                <property name="text">
                 <string>编号:</string>
                </property>
@@ -94,19 +129,19 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_3"/>
+              <widget class="QComboBox" name="comboBox_servoAlarmIndex"/>
              </item>
             </layout>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QGroupBox" name="groupBox_4">
+           <widget class="QGroupBox" name="groupBox_smoothStop">
             <property name="title">
              <string>平滑停止:</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_3">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="label_smoothStopType">
                <property name="text">
                 <string>类型;</string>
                </property>
@@ -116,10 +151,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_8"/>
+              <widget class="QComboBox" name="comboBox_smoothStopType"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="label_smoothStopIndex">
                <property name="text">
                 <string>编号:</string>
                </property>
@@ -129,19 +164,19 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_9"/>
+              <widget class="QComboBox" name="comboBox_smoothStopIndex"/>
              </item>
             </layout>
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QGroupBox" name="groupBox_6">
+           <widget class="QGroupBox" name="groupBox_profileEquivalent">
             <property name="title">
              <string>规划器当量:</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_12">
+              <widget class="QLabel" name="label_profileEquivalentAlpha">
                <property name="text">
                 <string>Alpha:</string>
                </property>
@@ -151,10 +186,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBox"/>
+              <widget class="QSpinBox" name="spinBox_profileEquivalentAlpha"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_13">
+              <widget class="QLabel" name="label_profileEquivalentBeta">
                <property name="text">
                 <string>Beta:</string>
                </property>
@@ -164,19 +199,19 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QSpinBox" name="spinBox_2"/>
+              <widget class="QSpinBox" name="spinBox_profileEquivalentBeta"/>
              </item>
             </layout>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QGroupBox" name="groupBox_2">
+           <widget class="QGroupBox" name="groupBox_PLimit">
             <property name="title">
              <string>正限位:</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_5">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="label_PLimitType">
                <property name="text">
                 <string>类型;</string>
                </property>
@@ -186,10 +221,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_4"/>
+              <widget class="QComboBox" name="comboBox_PLimitType"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="label_PLimitIndex">
                <property name="text">
                 <string>编号:</string>
                </property>
@@ -199,19 +234,19 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_5"/>
+              <widget class="QComboBox" name="comboBox_PLimitIndex"/>
              </item>
             </layout>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QGroupBox" name="groupBox_5">
+           <widget class="QGroupBox" name="groupBox_EStop">
             <property name="title">
              <string>急停:</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_6">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_EStopType">
                <property name="text">
                 <string>类型;</string>
                </property>
@@ -221,10 +256,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_10"/>
+              <widget class="QComboBox" name="comboBox_EStopType"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_11">
+              <widget class="QLabel" name="label_EStopIndex">
                <property name="text">
                 <string>编号:</string>
                </property>
@@ -234,19 +269,19 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_11"/>
+              <widget class="QComboBox" name="comboBox_EStopIndex"/>
              </item>
             </layout>
            </widget>
           </item>
           <item row="1" column="2">
-           <widget class="QGroupBox" name="groupBox_7">
+           <widget class="QGroupBox" name="groupBox_encoderEquivalent">
             <property name="title">
              <string>编码器当量:</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_7">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_14">
+              <widget class="QLabel" name="label_encoderEquivalentAlpha">
                <property name="text">
                 <string>Alpha:</string>
                </property>
@@ -256,10 +291,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBox_3"/>
+              <widget class="QSpinBox" name="spinBox_encoderEquivalentAlpha"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_15">
+              <widget class="QLabel" name="label_encoderEquivalentBeta">
                <property name="text">
                 <string>Beta:</string>
                </property>
@@ -269,19 +304,19 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QSpinBox" name="spinBox_4"/>
+              <widget class="QSpinBox" name="spinBox_encoderEquivalentBeta"/>
              </item>
             </layout>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QGroupBox" name="groupBox_3">
+           <widget class="QGroupBox" name="groupBox_NLimit">
             <property name="title">
              <string>负限位:</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_8">
              <item row="0" column="0">
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_NLimitType">
                <property name="text">
                 <string>类型;</string>
                </property>
@@ -291,10 +326,10 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_6"/>
+              <widget class="QComboBox" name="comboBox_NLimitType"/>
              </item>
              <item row="1" column="0">
-              <widget class="QLabel" name="label_7">
+              <widget class="QLabel" name="label_NLimitIndex">
                <property name="text">
                 <string>编号:</string>
                </property>
@@ -304,7 +339,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_7"/>
+              <widget class="QComboBox" name="comboBox_NLimitIndex"/>
              </item>
             </layout>
            </widget>
@@ -334,7 +369,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_20">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_31">
+           <widget class="QLabel" name="label_stepIndex">
             <property name="text">
              <string>step索引;</string>
             </property>
@@ -344,20 +379,20 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_23"/>
+           <widget class="QComboBox" name="comboBox_stepIndex"/>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_24"/>
+           <widget class="QComboBox" name="comboBox_pulseOutputMode"/>
           </item>
           <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBox_3">
+           <widget class="QCheckBox" name="checkBox_stepActivate">
             <property name="text">
              <string>激活</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_32">
+           <widget class="QLabel" name="label_pulseOutputMode">
             <property name="text">
              <string>脉冲输出模式;</string>
             </property>
@@ -391,22 +426,22 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_44">
           <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBox_18"/>
+           <widget class="QSpinBox" name="spinBox_outputVoltageSaturationLimit"/>
           </item>
           <item row="5" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_8">
+           <widget class="QCheckBox" name="checkBox_dacActivate">
             <property name="text">
              <string>激活</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_38"/>
+           <widget class="QComboBox" name="comboBox_dacIndex"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_52">
+           <widget class="QLabel" name="label_outputVoltageReversal">
             <property name="text">
-             <string>st输出电压反转;</string>
+             <string>输出电压反转;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -414,13 +449,13 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_40"/>
+           <widget class="QComboBox" name="comboBox_outputVoltageReversal"/>
           </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_17"/>
+           <widget class="QSpinBox" name="spinBox_zeroOffsetCompensation"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_51">
+           <widget class="QLabel" name="label_associationControl">
             <property name="text">
              <string>关联control;</string>
             </property>
@@ -430,7 +465,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_50">
+           <widget class="QLabel" name="label_dacIndex">
             <property name="text">
              <string>dac索引;</string>
             </property>
@@ -440,10 +475,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_39"/>
+           <widget class="QComboBox" name="comboBox_associationControl"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_73">
+           <widget class="QLabel" name="label_zeroOffsetCompensation">
             <property name="text">
              <string>零漂补偿:</string>
             </property>
@@ -453,7 +488,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_74">
+           <widget class="QLabel" name="label_outputVoltageSaturationLimit">
             <property name="text">
              <string>输出电压饱和极限:</string>
             </property>
@@ -513,7 +548,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_59">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_97">
+           <widget class="QLabel" name="label_encoderIndex">
             <property name="text">
              <string>encoder索引;</string>
             </property>
@@ -523,10 +558,10 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_73"/>
+           <widget class="QComboBox" name="comboBox_encoderIndex"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_98">
+           <widget class="QLabel" name="label_inputPulseInvert">
             <property name="text">
              <string>输入脉冲反转;</string>
             </property>
@@ -536,10 +571,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_74"/>
+           <widget class="QComboBox" name="comboBox_inputPulseInvert"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_99">
+           <widget class="QLabel" name="label_pulseCountSource">
             <property name="text">
              <string>脉冲计数源;</string>
             </property>
@@ -549,10 +584,10 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_75"/>
+           <widget class="QComboBox" name="comboBox_pulseCountSource"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_100">
+           <widget class="QLabel" name="label_homeCaptureTriggerEdge">
             <property name="text">
              <string>Home捕获触发沿;</string>
             </property>
@@ -562,10 +597,10 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QComboBox" name="comboBox_76"/>
+           <widget class="QComboBox" name="comboBox_homeCaptureTriggerEdge"/>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_101">
+           <widget class="QLabel" name="label_indexCaptureTriggerEdge">
             <property name="text">
              <string>Index捕获触发沿;</string>
             </property>
@@ -575,10 +610,10 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QComboBox" name="comboBox_77"/>
+           <widget class="QComboBox" name="comboBox_indexCaptureTriggerEdge"/>
           </item>
           <item row="5" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_12">
+           <widget class="QCheckBox" name="checkBox_encoderActivate">
             <property name="text">
              <string>激活</string>
             </property>
@@ -622,7 +657,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_61">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_102">
+           <widget class="QLabel" name="label_controlIndex">
             <property name="text">
              <string>control索引;</string>
             </property>
@@ -632,10 +667,10 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_78"/>
+           <widget class="QComboBox" name="comboBox_controlIndex"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_103">
+           <widget class="QLabel" name="label_controlAssociatedAxis">
             <property name="text">
              <string>关联axis;</string>
             </property>
@@ -645,10 +680,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_79"/>
+           <widget class="QComboBox" name="comboBox_associatedAxis"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_104">
+           <widget class="QLabel" name="label_associatedEncoder">
             <property name="text">
              <string>关联encoder;</string>
             </property>
@@ -658,10 +693,10 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_80"/>
+           <widget class="QComboBox" name="comboBox_associatedEncoder"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_105">
+           <widget class="QLabel" name="label_followingErrorLimit">
             <property name="text">
              <string>跟随误差极限:</string>
             </property>
@@ -671,7 +706,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_25"/>
+           <widget class="QSpinBox" name="spinBox_followingErrorLimit"/>
           </item>
          </layout>
         </item>
@@ -698,7 +733,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_63">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_106">
+           <widget class="QLabel" name="label_profileIndex">
             <property name="text">
              <string>profile索引;</string>
             </property>
@@ -708,10 +743,10 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_81"/>
+           <widget class="QComboBox" name="comboBox_profileIndex"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_107">
+           <widget class="QLabel" name="label_smoothStopDec">
             <property name="text">
              <string>平滑停止减速度:</string>
             </property>
@@ -721,10 +756,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_108">
+           <widget class="QLabel" name="label_EStopDec">
             <property name="text">
              <string>急停减速度:</string>
             </property>
@@ -734,10 +769,10 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_2"/>
+           <widget class="QDoubleSpinBox" name="doubleSpinBox_EStopDec"/>
           </item>
           <item row="3" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_13">
+           <widget class="QCheckBox" name="checkBox_proflieActivate">
             <property name="text">
              <string>激活</string>
             </property>
@@ -781,7 +816,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_65">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_109">
+           <widget class="QLabel" name="label_diType">
             <property name="text">
              <string>di类型;</string>
             </property>
@@ -791,10 +826,10 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_82"/>
+           <widget class="QComboBox" name="comboBox_diType"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_110">
+           <widget class="QLabel" name="label_diIndex">
             <property name="text">
              <string>di索引;</string>
             </property>
@@ -804,10 +839,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_83"/>
+           <widget class="QComboBox" name="comboBox_diIndex"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_111">
+           <widget class="QLabel" name="label_inputInvert">
             <property name="text">
              <string>输入反转;</string>
             </property>
@@ -817,10 +852,10 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_84"/>
+           <widget class="QComboBox" name="comboBox_inputInvert"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_112">
+           <widget class="QLabel" name="label_filterTime">
             <property name="text">
              <string>滤波时间:</string>
             </property>
@@ -830,10 +865,10 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_26"/>
+           <widget class="QSpinBox" name="spinBox_filterTime"/>
           </item>
           <item row="4" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_14">
+           <widget class="QCheckBox" name="checkBox_diActivate">
             <property name="text">
              <string>激活</string>
             </property>
@@ -877,7 +912,7 @@
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout_67">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_113">
+           <widget class="QLabel" name="label_doType">
             <property name="text">
              <string>do类型;</string>
             </property>
@@ -887,12 +922,12 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_85"/>
+           <widget class="QComboBox" name="comboBox_doType"/>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_114">
+           <widget class="QLabel" name="label_doIndex">
             <property name="text">
-             <string>di索引;</string>
+             <string>do索引;</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -900,10 +935,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_86"/>
+           <widget class="QComboBox" name="comboBox_doIndex"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_115">
+           <widget class="QLabel" name="label_outputInvert">
             <property name="text">
              <string>输出反转;</string>
             </property>
@@ -913,10 +948,10 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_87"/>
+           <widget class="QComboBox" name="comboBox_outputInvert"/>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_116">
+           <widget class="QLabel" name="label_doAssociatedAxis">
             <property name="text">
              <string>关联axis;</string>
             </property>
@@ -926,10 +961,10 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QComboBox" name="comboBox_88"/>
+           <widget class="QComboBox" name="comboBox_doAssociatedAxis"/>
           </item>
           <item row="4" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_15">
+           <widget class="QCheckBox" name="checkBox_doActivate">
             <property name="text">
              <string>激活</string>
             </property>
@@ -968,28 +1003,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>581</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu_file">
-    <property name="title">
-     <string>文件</string>
-    </property>
-   </widget>
-   <widget class="QMenu" name="menu_control">
-    <property name="title">
-     <string>控制</string>
-    </property>
-   </widget>
-   <addaction name="menu_file"/>
-   <addaction name="menu_control"/>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
