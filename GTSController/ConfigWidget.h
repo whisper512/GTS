@@ -25,8 +25,25 @@ private:
 	void InitDiConfig();
     void InitDoConfig();
 
+	void connectSignalsAndSlots();
+signals:
+
+private slots:
+	void onBtnClicked();
+	void onAxisCfgChanged();
+	void onStepCfgChanged();
+	void onDacCfgChanged();
+	void onEncoderCfgChanged();
+	void onControlCfgChanged();
+	void onProfileCfgChanged();
+	void onDICfgChanged();
+	void onDOCfgChanged();
+public slots:
+
+
 };
 
+// 给 QComboBox 添加一组数字
 inline void ComboAddNumbers(QComboBox* cb, int n)
 {
 	if (!cb) return;
