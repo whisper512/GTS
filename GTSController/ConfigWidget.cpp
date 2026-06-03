@@ -42,7 +42,7 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.pushButton_servoAlarmEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_limitEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshAlarmButton(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshAlarmButton(); refreshLimitButton(); });
 }
 
 void CConfigWidget::onBtnClicked()
@@ -56,7 +56,7 @@ void CConfigWidget::onBtnClicked()
 		onservoAlarmEnable();
 	}
 	else if (objName == "pushButton_limitEnable") {
-		// TODO: 限位使能
+		onLimitEnable();
 	}
 	else if (objName == "pushButton_loadToBoard") {
 		onLoadToBoard();
@@ -111,6 +111,7 @@ void CConfigWidget::onservoAlarmEnable()
 void CConfigWidget::onAlarmStateChanged()
 {
 	refreshAlarmButton();
+	refreshLimitButton();
 }
 
 void CConfigWidget::refreshAlarmButton()
@@ -129,5 +130,47 @@ void CConfigWidget::refreshAlarmButton()
 	else {
 		ui.pushButton_servoAlarmEnable->setEnabled(false);
 		ui.pushButton_servoAlarmEnable->setText(QStringLiteral("报警:不支持"));
+	}
+}
+
+void CConfigWidget::onLimitEnable()
+{
+	if (!m_pTotalMgr) return;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+
+	if (!m_pTotalMgr->isLimitAvailable(axis)) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 限位不可用（配置文件未启用）").arg(axis),
+			Qt::yellow);
+		return;
+	}
+
+	bool now = m_pTotalMgr->toggleLimit(axis);
+
+	ui.pushButton_limitEnable->setText(
+		now ? QStringLiteral("限位:有效") : QStringLiteral("限位:无效"));
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 限位 → %2")
+		.arg(axis)
+		.arg(now ? QStringLiteral("有效") : QStringLiteral("无效")),
+		now ? Qt::darkGreen : Qt::gray);
+}
+
+void CConfigWidget::refreshLimitButton()
+{
+	if (!m_pTotalMgr) return;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+
+	if (m_pTotalMgr->isLimitAvailable(axis)) {
+		ui.pushButton_limitEnable->setEnabled(true);
+		ui.pushButton_limitEnable->setText(
+			m_pTotalMgr->isLimitActive(axis)
+			? QStringLiteral("限位:有效")
+			: QStringLiteral("限位:无效"));
+	}
+	else {
+		ui.pushButton_limitEnable->setEnabled(false);
+		ui.pushButton_limitEnable->setText(QStringLiteral("限位:不支持"));
 	}
 }

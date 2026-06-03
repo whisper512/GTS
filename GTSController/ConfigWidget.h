@@ -24,6 +24,8 @@ private:
 	void InitUI();
 	void connectSignalsAndSlots();
 	void refreshAlarmButton();
+	void refreshLimitButton();
+	void onLimitEnable();
 
 	// 下载配置文件到板卡
 	void onLoadToBoard();

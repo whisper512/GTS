@@ -39,7 +39,12 @@ private:
     stuDO m_do;
     // 报警信号状态
     bool m_alarmActive[4] = { false, false, false, false };
+    // 报警信号是否可用
     bool m_alarmAvailable[4] = { false, false, false, false };
+    // 限位使能状态
+    bool m_limitActive[4] = { false, false, false, false };
+    // 限位是否可用
+    bool m_limitAvailable[4] = { false, false, false, false };
 
 
     // 板卡的管理类
@@ -96,6 +101,14 @@ public:
     bool isAlarmActive(short axis) const;
     // 获取报警信号是否可用
     bool isAlarmAvailable(short axis) const;
+    // 初始化限位状态
+    void initLimitState();
+    // 切换限位信号的状态
+    bool toggleLimit(short axis);
+    // 获取限位信号的状态
+    bool isLimitActive(short axis) const;
+    // 获取限位信号是否可用
+    bool isLimitAvailable(short axis) const;
 
 signals:
     // 板卡时钟更新

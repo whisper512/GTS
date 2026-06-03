@@ -1,4 +1,5 @@
 ﻿#include "TotalMgr.h"
+#include <QMessageBox>
 
 CTotalMgr::CTotalMgr(QObject* parent)
     : QObject(parent)
@@ -45,6 +46,7 @@ void CTotalMgr::initAfterBoardOpened()
 
     // 初始化轴报警状态
     initAlarmState();
+    initLimitState();
     emit configChanged();
 
     //读取运动参数
@@ -104,6 +106,59 @@ bool CTotalMgr::isAlarmActive(short axis) const
 bool CTotalMgr::isAlarmAvailable(short axis) const
 {
     return (axis >= 1 && axis <= m_axisCount) ? m_alarmAvailable[axis - 1] : false;
+}
+
+void CTotalMgr::initLimitState()
+{
+    QString log;
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int idx = axis - 1;
+        GtsHal::lmtsOff(axis, -1);
+        short ret = GtsHal::lmtsOn(axis, -1);
+        if (ret == 0) {
+            m_limitAvailable[idx] = true;
+            m_limitActive[idx] = true;
+        }
+        else {
+            m_limitAvailable[idx] = false;
+            m_limitActive[idx] = false;
+        }
+        log += QStringLiteral("轴%1: ret=%2 | available=%3 | active=%4\n")
+            .arg(axis)
+            .arg(ret)
+            .arg(m_limitAvailable[idx] ? "true" : "false")
+            .arg(m_limitActive[idx] ? "true" : "false");
+    }
+    QMessageBox::information(nullptr, QStringLiteral("initLimitState 排查"), log);
+}
+
+bool CTotalMgr::toggleLimit(short axis)
+{
+    if (axis < 1 || axis > m_axisCount) return false;
+    int idx = axis - 1;
+    if (!m_limitAvailable[idx]) return false;
+
+    short ret;
+    if (m_limitActive[idx]) {
+        ret = GtsHal::lmtsOff(axis, -1);
+    }
+    else {
+        ret = GtsHal::lmtsOn(axis, -1);
+    }
+    if (ret == 0) {
+        m_limitActive[idx] = !m_limitActive[idx];
+    }
+    return m_limitActive[idx];
+}
+
+bool CTotalMgr::isLimitActive(short axis) const
+{
+    return (axis >= 1 && axis <= m_axisCount) ? m_limitActive[axis - 1] : false;
+}
+
+bool CTotalMgr::isLimitAvailable(short axis) const
+{
+    return (axis >= 1 && axis <= m_axisCount) ? m_limitAvailable[axis - 1] : false;
 }
 
 
