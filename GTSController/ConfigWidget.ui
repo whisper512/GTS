@@ -6,1001 +6,496 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>581</width>
-    <height>449</height>
+    <width>840</width>
+    <height>413</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>CConfigWidget</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>20</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QPushButton" name="pushButton_loadFromFile">
-        <property name="text">
-         <string>从文件加载</string>
+   <layout class="QGridLayout" name="gridLayout_8">
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="1">
+     <layout class="QGridLayout" name="gridLayout_7">
+      <item row="0" column="0" rowspan="4">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>axis</string>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="1,2,4,3">
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="label_axisId_4">
+             <property name="text">
+              <string>轴号:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="comboBox_axisId_4"/>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QPushButton" name="pushButton_6">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>轴报警信号无效</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_7">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>轴限位信号无效</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_stepIndex_5">
+             <property name="text">
+              <string>输出模式;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="comboBox_inputInvert_3"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_stepIndex_4">
+             <property name="text">
+              <string>限位开关触发电平;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="comboBox_inputInvert_2"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_stepIndex_6">
+             <property name="text">
+              <string>平滑停止输入点;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QComboBox" name="comboBox_inputInvert_4"/>
+           </item>
+           <item row="2" column="2">
+            <widget class="QComboBox" name="comboBox_inputInvert_6"/>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_stepIndex_7">
+             <property name="text">
+              <string>紧急停止输入点;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QComboBox" name="comboBox_inputInvert_5"/>
+           </item>
+           <item row="3" column="2">
+            <widget class="QComboBox" name="comboBox_inputInvert_7"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QGroupBox" name="groupBox_profileEquivalent_4">
+             <property name="title">
+              <string>规划器当量:</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_10">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_profileEquivalentAlpha_4">
+                <property name="text">
+                 <string>Alpha:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBox_profileEquivalentAlpha_4"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_profileEquivalentBeta_4">
+                <property name="text">
+                 <string>Beta:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="spinBox_profileEquivalentBeta_4"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_encoderEquivalent_4">
+             <property name="title">
+              <string>编码器当量:</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_11">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_encoderEquivalentAlpha_4">
+                <property name="text">
+                 <string>Alpha:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBox_encoderEquivalentAlpha_4"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_encoderEquivalentBeta_4">
+                <property name="text">
+                 <string>Beta:</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="spinBox_encoderEquivalentBeta_4"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_writeToFile">
-        <property name="text">
-         <string>写入到文件</string>
+      <item row="0" column="1">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="title">
+         <string>step</string>
         </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_stepIndex_3">
+           <property name="text">
+            <string>step号;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_stepIndex_3"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_pulseOutputMode_3">
+           <property name="text">
+            <string>脉冲输出模式;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBox_pulseOutputMode_3"/>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_readControlState">
-        <property name="text">
-         <string>读取控制器状态</string>
+      <item row="0" column="2" rowspan="2">
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>dac</string>
         </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_axisId_5">
+           <property name="text">
+            <string>通道号:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_axisId_5"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_zeroOffsetCompensation_2">
+           <property name="text">
+            <string>零漂补偿:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="spinBox_zeroOffsetCompensation_2"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_outputVoltageSaturationLimit_2">
+           <property name="text">
+            <string>输出电压饱和极限:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBox_outputVoltageSaturationLimit_2"/>
+         </item>
+        </layout>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_writeControlState">
-        <property name="text">
-         <string>写入控制器状态</string>
+      <item row="1" column="1" rowspan="2">
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="title">
+         <string>encoder</string>
         </property>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_axisId_6">
+           <property name="text">
+            <string>编码器号:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_axisId_6"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_inputPulseInvert_2">
+           <property name="text">
+            <string>输入脉冲反转;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBox_inputPulseInvert_2"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_pulseCountSource_2">
+           <property name="text">
+            <string>脉冲计数源;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="comboBox_pulseCountSource_2"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="2" rowspan="2">
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="title">
+         <string>profile</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_axisId_8">
+           <property name="text">
+            <string>规划器号:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_axisId_8"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_smoothStopDec_2">
+           <property name="text">
+            <string>平滑停止减速度:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec_2"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_smoothStopDec_3">
+           <property name="text">
+            <string>急停停止减速度:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec_3"/>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="title">
+         <string>control</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_axisId_7">
+           <property name="text">
+            <string>控制器号:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QComboBox" name="comboBox_axisId_7"/>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QLabel" name="label_followingErrorLimit_2">
+           <property name="text">
+            <string>跟随误差极限:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QSpinBox" name="spinBox_followingErrorLimit_2"/>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
     </item>
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>0</number>
+    <item row="1" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QPushButton" name="pushButton_loadToBoard">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>下载配置文件到控制卡</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="0">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QWidget" name="tab_axis">
-       <attribute name="title">
-        <string>axis</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QLabel" name="label_axisId">
-            <property name="text">
-             <string>轴号:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_axisId"/>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="checkBox_axisActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0">
-         <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0">
-           <widget class="QGroupBox" name="groupBox_servoAlarm">
-            <property name="title">
-             <string>驱动报警</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_servoAlarmType">
-               <property name="text">
-                <string>类型;</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_servoAlarmType"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_servoAlarmIndex">
-               <property name="text">
-                <string>编号:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_servoAlarmIndex"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QGroupBox" name="groupBox_smoothStop">
-            <property name="title">
-             <string>平滑停止:</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_3">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_smoothStopType">
-               <property name="text">
-                <string>类型;</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_smoothStopType"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_smoothStopIndex">
-               <property name="text">
-                <string>编号:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_smoothStopIndex"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QGroupBox" name="groupBox_profileEquivalent">
-            <property name="title">
-             <string>规划器当量:</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_profileEquivalentAlpha">
-               <property name="text">
-                <string>Alpha:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBox_profileEquivalentAlpha"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_profileEquivalentBeta">
-               <property name="text">
-                <string>Beta:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="spinBox_profileEquivalentBeta"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QGroupBox" name="groupBox_PLimit">
-            <property name="title">
-             <string>正限位:</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_5">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_PLimitType">
-               <property name="text">
-                <string>类型;</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_PLimitType"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_PLimitIndex">
-               <property name="text">
-                <string>编号:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_PLimitIndex"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QGroupBox" name="groupBox_EStop">
-            <property name="title">
-             <string>急停:</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_6">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_EStopType">
-               <property name="text">
-                <string>类型;</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_EStopType"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_EStopIndex">
-               <property name="text">
-                <string>编号:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_EStopIndex"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QGroupBox" name="groupBox_encoderEquivalent">
-            <property name="title">
-             <string>编码器当量:</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_7">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_encoderEquivalentAlpha">
-               <property name="text">
-                <string>Alpha:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBox_encoderEquivalentAlpha"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_encoderEquivalentBeta">
-               <property name="text">
-                <string>Beta:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="spinBox_encoderEquivalentBeta"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QGroupBox" name="groupBox_NLimit">
-            <property name="title">
-             <string>负限位:</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_8">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_NLimitType">
-               <property name="text">
-                <string>类型;</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_NLimitType"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_NLimitIndex">
-               <property name="text">
-                <string>编号:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_NLimitIndex"/>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_step">
-       <attribute name="title">
-        <string>step</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_21">
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_20">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_stepIndex">
-            <property name="text">
-             <string>step索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_stepIndex"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_pulseOutputMode"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBox_stepActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_pulseOutputMode">
-            <property name="text">
-             <string>脉冲输出模式;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_dac">
-       <attribute name="title">
-        <string>dac</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_45">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_44">
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBox_outputVoltageSaturationLimit"/>
-          </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_dacActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_dacIndex"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_outputVoltageReversal">
-            <property name="text">
-             <string>输出电压反转;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_outputVoltageReversal"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_zeroOffsetCompensation"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_associationControl">
-            <property name="text">
-             <string>关联control;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_dacIndex">
-            <property name="text">
-             <string>dac索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_associationControl"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_zeroOffsetCompensation">
-            <property name="text">
-             <string>零漂补偿:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_outputVoltageSaturationLimit">
-            <property name="text">
-             <string>输出电压饱和极限:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_8">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_encoder">
-       <attribute name="title">
-        <string>encoder</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_60">
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_7">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_59">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_encoderIndex">
-            <property name="text">
-             <string>encoder索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_encoderIndex"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_inputPulseInvert">
-            <property name="text">
-             <string>输入脉冲反转;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_inputPulseInvert"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_pulseCountSource">
-            <property name="text">
-             <string>脉冲计数源;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_pulseCountSource"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_homeCaptureTriggerEdge">
-            <property name="text">
-             <string>Home捕获触发沿;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="comboBox_homeCaptureTriggerEdge"/>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_indexCaptureTriggerEdge">
-            <property name="text">
-             <string>Index捕获触发沿;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QComboBox" name="comboBox_indexCaptureTriggerEdge"/>
-          </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_encoderActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_12">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_control">
-       <attribute name="title">
-        <string>control</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_62">
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_8">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_61">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_controlIndex">
-            <property name="text">
-             <string>control索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_controlIndex"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_controlAssociatedAxis">
-            <property name="text">
-             <string>关联axis;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_associatedAxis"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_associatedEncoder">
-            <property name="text">
-             <string>关联encoder;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_associatedEncoder"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_followingErrorLimit">
-            <property name="text">
-             <string>跟随误差极限:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_followingErrorLimit"/>
-          </item>
-         </layout>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_13">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_profile">
-       <attribute name="title">
-        <string>profile</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_64">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_63">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_profileIndex">
-            <property name="text">
-             <string>profile索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_profileIndex"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_smoothStopDec">
-            <property name="text">
-             <string>平滑停止减速度:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_EStopDec">
-            <property name="text">
-             <string>急停减速度:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_EStopDec"/>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_proflieActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_9">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_14">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_di">
-       <attribute name="title">
-        <string>di</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_66">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_65">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_diType">
-            <property name="text">
-             <string>di类型;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_diType"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_diIndex">
-            <property name="text">
-             <string>di索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_diIndex"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_inputInvert">
-            <property name="text">
-             <string>输入反转;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_inputInvert"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_filterTime">
-            <property name="text">
-             <string>滤波时间:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox_filterTime"/>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_diActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_10">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_15">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_do">
-       <attribute name="title">
-        <string>do</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_68">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="gridLayout_67">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_doType">
-            <property name="text">
-             <string>do类型;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_doType"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_doIndex">
-            <property name="text">
-             <string>do索引;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_doIndex"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_outputInvert">
-            <property name="text">
-             <string>输出反转;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_outputInvert"/>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_doAssociatedAxis">
-            <property name="text">
-             <string>关联axis;</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="comboBox_doAssociatedAxis"/>
-          </item>
-          <item row="4" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_doActivate">
-            <property name="text">
-             <string>激活</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item row="1" column="0">
-         <spacer name="verticalSpacer_11">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="0" column="1">
-         <spacer name="horizontalSpacer_16">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </widget>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
    </layout>
   </widget>

@@ -16,28 +16,11 @@ private:
 
 private:
 	void InitConfigWidget();
-	void InitAxisConfig();
-	void InitStepConfig();
-	void InitDacConfig();
-	void InitEncoderConfig();
-    void InitControlConfig();
-	void InitProfileConfig();
-	void InitDiConfig();
-    void InitDoConfig();
 
 	void connectSignalsAndSlots();
 signals:
 
 private slots:
-	void onBtnClicked();
-	void onAxisCfgChanged();
-	void onStepCfgChanged();
-	void onDacCfgChanged();
-	void onEncoderCfgChanged();
-	void onControlCfgChanged();
-	void onProfileCfgChanged();
-	void onDICfgChanged();
-	void onDOCfgChanged();
 public slots:
 
 
