@@ -42,6 +42,25 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.pushButton_servoAlarmEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_limitEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshAlarmButton(); });
+}
+
+void CConfigWidget::onBtnClicked()
+{
+	QPushButton* btn = qobject_cast<QPushButton*>(sender());
+	if (!btn) return;
+
+	QString objName = btn->objectName();
+
+	if (objName == "pushButton_servoAlarmEnable") {
+		onservoAlarmEnable();
+	}
+	else if (objName == "pushButton_limitEnable") {
+		// TODO: 限位使能
+	}
+	else if (objName == "pushButton_loadToBoard") {
+		onLoadToBoard();
+	}
 }
 
 void CConfigWidget::onLoadToBoard()
@@ -68,21 +87,47 @@ void CConfigWidget::onLoadToBoard()
 	}
 }
 
-void CConfigWidget::onBtnClicked()
+void CConfigWidget::onservoAlarmEnable()
 {
-	QPushButton* btn = qobject_cast<QPushButton*>(sender());
-	if (!btn) return;
-
-	QString objName = btn->objectName();
-
-	if (objName == "pushButton_servoAlarmEnable") {
-		// TODO: 伺服报警使能
+	if (!m_pTotalMgr) return;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	if (!m_pTotalMgr->isAlarmAvailable(axis)) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("轴%1 报警信号不可用(配置文件未启用)").arg(axis),
+			Qt::yellow);
+		return;
 	}
-	else if (objName == "pushButton_limitEnable") {
-		// TODO: 限位使能
-	}
-	else if (objName == "pushButton_loadToBoard") {
-		onLoadToBoard();
-	}
+	bool now = m_pTotalMgr->toggleAlarm(axis);
+	ui.pushButton_servoAlarmEnable->setText(
+		now ? QStringLiteral("报警:有效") : QStringLiteral("报警:无效"));
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 报警信号 → %2")
+		.arg(axis)
+		.arg(now ? QStringLiteral("有效") : QStringLiteral("无效")),
+		now ? Qt::darkGreen : Qt::gray);
 }
 
+
+void CConfigWidget::onAlarmStateChanged()
+{
+	refreshAlarmButton();
+}
+
+void CConfigWidget::refreshAlarmButton()
+{
+	if (!m_pTotalMgr) {
+		return;
+	}
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	bool avail = m_pTotalMgr->isAlarmAvailable(axis);
+	bool active = m_pTotalMgr->isAlarmActive(axis);
+	if (avail) {
+		ui.pushButton_servoAlarmEnable->setEnabled(true);
+		ui.pushButton_servoAlarmEnable->setText(
+			active ? QStringLiteral("报警:有效") : QStringLiteral("报警:无效"));
+	}
+	else {
+		ui.pushButton_servoAlarmEnable->setEnabled(false);
+		ui.pushButton_servoAlarmEnable->setText(QStringLiteral("报警:不支持"));
+	}
+}

@@ -43,6 +43,10 @@ void CTotalMgr::initAfterBoardOpened()
     // 启动定时器开始实时获取数据
     startRefresh();
 
+    // 初始化轴报警状态
+    initAlarmState();
+    emit configChanged();
+
     //读取运动参数
     m_motionMgr->getCommonMotionInfo(m_vecAxis);
     emit axisSettingUpdated(m_vecAxis);
@@ -55,6 +59,53 @@ void CTotalMgr::cleanupAfterBoardClosed()
     m_vecAxis.clear();     // 清空轴数据
     m_clocks = stuClock(); // 清空时钟
 }
+
+void CTotalMgr::initAlarmState()
+{
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int idx = axis - 1;
+        GtsHal::alarmOff(axis);
+        short ret = GtsHal::alarmOn(axis);
+        if (ret == 0) {
+            m_alarmAvailable[idx] = true;
+            m_alarmActive[idx] = true;
+        }
+        else {
+            m_alarmAvailable[idx] = false;
+            m_alarmActive[idx] = false;
+        }
+    }
+}
+
+bool CTotalMgr::toggleAlarm(short axis)
+{
+    if (axis < 1 || axis > m_axisCount) return false;
+    int idx = axis - 1;
+    if (!m_alarmAvailable[idx]) return false;
+
+    short ret;
+    if (m_alarmActive[idx]) {
+        ret = GtsHal::alarmOff(axis);
+    }
+    else {
+        ret = GtsHal::alarmOn(axis);
+    }
+    if (ret == 0) {
+        m_alarmActive[idx] = !m_alarmActive[idx];
+    }
+    return m_alarmActive[idx];
+}
+
+bool CTotalMgr::isAlarmActive(short axis) const
+{
+    return (axis >= 1 && axis <= m_axisCount) ? m_alarmActive[axis - 1] : false;
+}
+
+bool CTotalMgr::isAlarmAvailable(short axis) const
+{
+    return (axis >= 1 && axis <= m_axisCount) ? m_alarmAvailable[axis - 1] : false;
+}
+
 
 void CTotalMgr::onRefreshTimeout()
 {

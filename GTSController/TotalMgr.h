@@ -37,6 +37,9 @@ private:
     stuDI m_di;
     // DO
     stuDO m_do;
+    // 报警信号状态
+    bool m_alarmActive[4] = { false, false, false, false };
+    bool m_alarmAvailable[4] = { false, false, false, false };
 
 
     // 板卡的管理类
@@ -66,6 +69,8 @@ public:
     FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器
     ConfigMgr* configMgr() const { return m_configMgr.get(); }
+   
+
 
 public:
     // 返回轴数
@@ -83,6 +88,15 @@ public:
     // 板卡关闭后的清理
     void cleanupAfterBoardClosed();
 
+    // 初始化报警状态
+    void initAlarmState();
+    // 切换报警信号的状态
+    bool toggleAlarm(short axis);
+    // 获取报警信号的状态
+    bool isAlarmActive(short axis) const;
+    // 获取报警信号是否可用
+    bool isAlarmAvailable(short axis) const;
+
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
@@ -94,6 +108,8 @@ signals:
     void diUpdated(const stuDI& di);
     // DO 更新
     void doUpdated(const stuDO& do_);
+
+    void configChanged();
     
 private slots:
     // 定时读取刷新数据

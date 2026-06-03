@@ -41,7 +41,7 @@ void GTSControllerWidget::InitUI()
     ui.stackedWidget->addWidget(m_pIOWidget);
     m_pFeedbackWidget = new CFeedbackWidget(this);
     ui.stackedWidget->addWidget(m_pFeedbackWidget);
-    m_pConfigWidget = new CConfigWidget(this);
+    m_pConfigWidget = new CConfigWidget(this, this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pConfigWidget);
     m_pOthersWidget = new COthersWidget(this);
     ui.stackedWidget->addWidget(m_pOthersWidget);
@@ -78,6 +78,8 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
     connect(m_pTotalMgr, &CTotalMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);
     connect(m_pTotalMgr, &CTotalMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
     connect(m_pTotalMgr, &CTotalMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);
+
+    connect(m_pTotalMgr, &CTotalMgr::configChanged,  m_pConfigWidget, &CConfigWidget::onAlarmStateChanged);
 
 }
 

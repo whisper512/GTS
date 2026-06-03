@@ -28,7 +28,7 @@ private:
     QWidget* m_pInterpWidget = nullptr;      // 插补
     CIOWidget* m_pIOWidget = nullptr;        // IO
     QWidget* m_pFeedbackWidget = nullptr;    // 编码器
-    QWidget* m_pConfigWidget = nullptr;      // 设置
+    CConfigWidget* m_pConfigWidget = nullptr;// 设置
     QWidget* m_pOthersWidget = nullptr;      // 其他
     QButtonGroup* m_pBtnGroup = nullptr;
 

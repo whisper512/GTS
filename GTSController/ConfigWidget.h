@@ -23,15 +23,20 @@ private:
 	void InitConfigWidget();
 	void InitUI();
 	void connectSignalsAndSlots();
+	void refreshAlarmButton();
 
+	// 下载配置文件到板卡
 	void onLoadToBoard();
+	// 伺服报警
+	void onservoAlarmEnable();
+
 signals:
 
 private slots:
 	void onBtnClicked();
 
 public slots:
-
+	void onAlarmStateChanged();
 
 };
 
