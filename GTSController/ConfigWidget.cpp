@@ -35,6 +35,8 @@ void CConfigWidget::InitUI()
 	ComboAddNumbers(ui.comboBox_controlId, 4);
 	ComboAddNumbers(ui.comboBox_profileId, 4);
 	ComboAddNumbers(ui.comboBox_inputID, 16);
+	// 编码器当量读取有问题,屏蔽
+	ui.groupBox_encoderEquivalent->setVisible(false);
 }
 
 void CConfigWidget::connectSignalsAndSlots()
@@ -42,7 +44,14 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.pushButton_servoAlarmEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_limitEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
+	connect(ui.spinBox_profileEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onProfileScaleChanged);
+	connect(ui.spinBox_profileEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onProfileScaleChanged);
+	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
+	//connect(ui.spinBox_encoderEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
+
 	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshAlarmButton(); refreshLimitButton(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshScaleEquivalents(); });
+	//connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshScaleEquivalents(); });
 }
 
 void CConfigWidget::onBtnClicked()
@@ -112,6 +121,7 @@ void CConfigWidget::onAlarmStateChanged()
 {
 	refreshAlarmButton();
 	refreshLimitButton();
+	refreshScaleEquivalents();
 }
 
 void CConfigWidget::refreshAlarmButton()
@@ -173,4 +183,47 @@ void CConfigWidget::refreshLimitButton()
 		ui.pushButton_limitEnable->setEnabled(false);
 		ui.pushButton_limitEnable->setText(QStringLiteral("限位:不支持"));
 	}
+}
+
+void CConfigWidget::refreshScaleEquivalents()
+{
+	if (!m_pTotalMgr) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	short encoder = ui.comboBox_encoderId->currentText().toShort();
+
+	ui.spinBox_profileEquivalentAlpha->setValue(
+		(int)m_pTotalMgr->profileScaleAlpha(axis));
+	ui.spinBox_profileEquivalentBeta->setValue(
+		(int)m_pTotalMgr->profileScaleBeta(axis));
+	ui.spinBox_encoderEquivalentAlpha->setValue(
+		(int)m_pTotalMgr->encScaleAlpha(encoder));
+	ui.spinBox_encoderEquivalentBeta->setValue(
+		(int)m_pTotalMgr->encScaleBeta(encoder));
+}
+
+void CConfigWidget::onProfileScaleChanged()
+{
+	if (!m_pTotalMgr) return;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	long alpha = ui.spinBox_profileEquivalentAlpha->value();
+	long beta = ui.spinBox_profileEquivalentBeta->value();
+	m_pTotalMgr->setProfileScale(axis, alpha, beta);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 规划器当量 → α=%2 β=%3").arg(axis).arg(alpha).arg(beta),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onEncoderScaleChanged()
+{
+	if (!m_pTotalMgr) return;
+	short encoder = ui.comboBox_encoderId->currentText().toShort();
+	long alpha = ui.spinBox_encoderEquivalentAlpha->value();
+	long beta = ui.spinBox_encoderEquivalentBeta->value();
+	m_pTotalMgr->setEncoderScale(encoder, alpha, beta);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("编码器%1 当量 → α=%2 β=%3").arg(encoder).arg(alpha).arg(beta),
+		Qt::darkGreen);
 }

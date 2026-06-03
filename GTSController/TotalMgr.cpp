@@ -46,7 +46,10 @@ void CTotalMgr::initAfterBoardOpened()
 
     // 初始化轴报警状态
     initAlarmState();
+    // 初始化轴限位状态
     initLimitState();
+    // 读取规划器和编码器的当量
+    readScaleEquivalents();
     emit configChanged();
 
     //读取运动参数
@@ -129,7 +132,6 @@ void CTotalMgr::initLimitState()
             .arg(m_limitAvailable[idx] ? "true" : "false")
             .arg(m_limitActive[idx] ? "true" : "false");
     }
-    QMessageBox::information(nullptr, QStringLiteral("initLimitState 排查"), log);
 }
 
 bool CTotalMgr::toggleLimit(short axis)
@@ -160,6 +162,53 @@ bool CTotalMgr::isLimitAvailable(short axis) const
 {
     return (axis >= 1 && axis <= m_axisCount) ? m_limitAvailable[axis - 1] : false;
 }
+
+void CTotalMgr::readScaleEquivalents()
+{
+    QString log;
+
+    // 规划器当量
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int idx = axis - 1;
+        long alpha = 1, beta = 1;
+        short ret = GtsHal::getProfileScale(axis, &alpha, &beta);
+        m_profileScaleAlpha[idx] = alpha;
+        m_profileScaleBeta[idx] = beta;
+    }
+}
+
+
+void CTotalMgr::setProfileScale(short axis, long alpha, long beta)
+{
+    if (axis < 1 || axis > m_axisCount) return;
+    int idx = axis - 1;
+    m_profileScaleAlpha[idx] = alpha;
+    m_profileScaleBeta[idx] = beta;
+    GtsHal::setProfileScale(axis, alpha, beta);
+}
+
+void CTotalMgr::setEncoderScale(short encoder, long alpha, long beta)
+{
+    if (encoder < 1 || encoder > 8) return;
+    int idx = encoder - 1;
+    m_encScaleAlpha[idx] = alpha;
+    m_encScaleBeta[idx] = beta;
+    GtsHal::setEncoderScale(encoder, alpha, beta);
+}
+
+long CTotalMgr::profileScaleAlpha(short axis) const {
+    return (axis >= 1 && axis <= m_axisCount) ? m_profileScaleAlpha[axis - 1] : 1;
+}
+long CTotalMgr::profileScaleBeta(short axis) const {
+    return (axis >= 1 && axis <= m_axisCount) ? m_profileScaleBeta[axis - 1] : 1;
+}
+long CTotalMgr::encScaleAlpha(short encoder) const {
+    return (encoder >= 1 && encoder <= m_axisCount) ? m_encScaleAlpha[encoder - 1] : 1;
+}
+long CTotalMgr::encScaleBeta(short encoder) const {
+    return (encoder >= 1 && encoder <= m_axisCount) ? m_encScaleBeta[encoder - 1] : 1;
+}
+
 
 
 void CTotalMgr::onRefreshTimeout()

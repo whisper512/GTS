@@ -45,6 +45,12 @@ private:
     bool m_limitActive[4] = { false, false, false, false };
     // 限位是否可用
     bool m_limitAvailable[4] = { false, false, false, false };
+    // 规划器当量 
+    long m_profileScaleAlpha[4] = { 1, 1, 1, 1 };
+    long m_profileScaleBeta[4] = { 1, 1, 1, 1 };
+    // 编码器当量
+    long m_encScaleAlpha[4] = { 1, 1, 1, 1 };
+    long m_encScaleBeta[4] = { 1, 1, 1, 1 };
 
 
     // 板卡的管理类
@@ -109,6 +115,19 @@ public:
     bool isLimitActive(short axis) const;
     // 获取限位信号是否可用
     bool isLimitAvailable(short axis) const;
+
+    // 注意:目前编码器当量无法读取,不调用
+    // 读取所有当量
+    void readScaleEquivalents();
+    // 设置规划器当量
+    void setProfileScale(short axis, long alpha, long beta);
+    // 设置编码器当量
+    void setEncoderScale(short encoder, long alpha, long beta);
+    // 获取当量
+    long profileScaleAlpha(short axis) const;
+    long profileScaleBeta(short axis) const;
+    long encScaleAlpha(short encoder) const;
+    long encScaleBeta(short encoder) const;
 
 signals:
     // 板卡时钟更新

@@ -124,6 +124,7 @@ public:
     static short setProfileScale(short axis, long alpha, long beta) { return GT_SetProfileScale(axis, alpha, beta); }
     static short getProfileScale(short axis, long* pAlpha, long* pBeta) { return GT_GetProfileScale(axis, pAlpha, pBeta); }
 
+
     // ====================================================================
     // 4. 梯形/点位运动 (Trapezoidal / Point-to-Point)
     // ================================================================

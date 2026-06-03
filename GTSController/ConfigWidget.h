@@ -26,6 +26,9 @@ private:
 	void refreshAlarmButton();
 	void refreshLimitButton();
 	void onLimitEnable();
+	void refreshScaleEquivalents();   
+	void onProfileScaleChanged(); 
+	void onEncoderScaleChanged();
 
 	// 下载配置文件到板卡
 	void onLoadToBoard();
