@@ -3,24 +3,33 @@
 #include <QMainWindow>
 #include "ui_ConfigWidget.h"
 
+class CTotalMgr;
+class GTSControllerWidget;
+
 class CConfigWidget : public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	CConfigWidget(QWidget *parent = nullptr);
+	CConfigWidget(QWidget *parent = nullptr, CTotalMgr* mgr = nullptr);
 	~CConfigWidget();
 
 private:
 	Ui::CConfigWidgetClass ui;
+	CTotalMgr* m_pTotalMgr = nullptr;
+	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 
 private:
 	void InitConfigWidget();
-	void IntiUI();
+	void InitUI();
 	void connectSignalsAndSlots();
+
+	void onLoadToBoard();
 signals:
 
 private slots:
+	void onBtnClicked();
+
 public slots:
 
 
