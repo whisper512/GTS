@@ -16,7 +16,7 @@ private:
 
 private:
 	void InitConfigWidget();
-
+	void IntiUI();
 	void connectSignalsAndSlots();
 signals:
 
