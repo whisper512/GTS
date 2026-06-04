@@ -51,7 +51,9 @@ private:
     // 编码器当量
     long m_encScaleAlpha[4] = { 1, 1, 1, 1 };
     long m_encScaleBeta[4] = { 1, 1, 1, 1 };
-
+    // DAC 配置
+    short m_dacBias[4] = { 0, 0, 0, 0 };
+    short m_dacLimit[4] = { 32767, 32767, 32767, 32767 };
 
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
@@ -128,6 +130,13 @@ public:
     long profileScaleBeta(short axis) const;
     long encScaleAlpha(short encoder) const;
     long encScaleBeta(short encoder) const;
+    // dac相关
+    void readDacConfig();
+    void setDacBias(short dac, short bias);
+    void setDacLimit(short dac, short limit);
+    short dacBias(short dac) const;
+    short dacLimit(short dac) const;
+
 
 signals:
     // 板卡时钟更新

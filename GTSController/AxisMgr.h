@@ -111,6 +111,16 @@ public:
     QString lastErrorString() ;
     // 获取轴状态文本描述
     static QString statusToString(long sts);
+    // 设置步进脉冲输出模式 脉冲+方向
+    bool setStepPulseDir(short step);
+    // CCW/CW（双脉冲）
+    bool setStepPulseCCW(short step);     
+    // DAC 零漂补偿
+    bool setDacBias(short dac, short bias);
+    short getDacBias(short dac) const;
+    // DAC 输出电压饱和极限
+    bool setDacLimit(short dac, short limit);
+    short getDacLimit(short dac) const;
 
 signals:
     // 发生错误

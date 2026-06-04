@@ -35,8 +35,11 @@ void CConfigWidget::InitUI()
 	ComboAddNumbers(ui.comboBox_controlId, 4);
 	ComboAddNumbers(ui.comboBox_profileId, 4);
 	ComboAddNumbers(ui.comboBox_inputID, 16);
+
 	// 编码器当量读取有问题,屏蔽
 	ui.groupBox_encoderEquivalent->setVisible(false);
+	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("脉冲输出模式") , QStringLiteral("CCW/CW")});
+
 }
 
 void CConfigWidget::connectSignalsAndSlots()
@@ -45,12 +48,17 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.pushButton_limitEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.spinBox_profileEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onProfileScaleChanged);
-	connect(ui.spinBox_profileEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onProfileScaleChanged);
+	connect(ui.spinBox_profileEquivalentBeta, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onProfileScaleChanged);
+	connect(ui.comboBox_pulseOutputMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CConfigWidget::onPulseOutputModeChanged);
+	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
+	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
+	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshDacValues(); });
+
 	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
 	//connect(ui.spinBox_encoderEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
 
 	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshAlarmButton(); refreshLimitButton(); });
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshScaleEquivalents(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshScaleEquivalents(); });
 	//connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshScaleEquivalents(); });
 }
 
@@ -122,6 +130,7 @@ void CConfigWidget::onAlarmStateChanged()
 	refreshAlarmButton();
 	refreshLimitButton();
 	refreshScaleEquivalents();
+	refreshDacValues();
 }
 
 void CConfigWidget::refreshAlarmButton()
@@ -225,5 +234,76 @@ void CConfigWidget::onEncoderScaleChanged()
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("编码器%1 当量 → α=%2 β=%3").arg(encoder).arg(alpha).arg(beta),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onPulseOutputModeChanged(int index)
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+	short step = ui.comboBox_stepIndex->currentText().toShort();
+	bool ok = false;
+	QString modeName;
+	if (index == 0) {
+		// 脉冲+方向
+		ok = m_pTotalMgr->axisMgr()->setStepPulseDir(step);
+		modeName = QStringLiteral("脉冲+方向");
+	}
+	else if (index == 1) {
+		// CCW/CW
+		ok = m_pTotalMgr->axisMgr()->setStepPulseCCW(step);
+		modeName = QStringLiteral("CCW/CW");
+	}
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("Step%1 脉冲输出模式 → %2").arg(step).arg(modeName),
+			Qt::darkGreen);
+	}
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("Step%1 设置 %2 失败 (err=%3)")
+			.arg(step)
+			.arg(modeName)
+			.arg(m_pTotalMgr->axisMgr()->lastError()),
+			Qt::red);
+	}
+}
+
+void CConfigWidget::refreshDacValues()
+{
+	if (!m_pTotalMgr) return;
+	short dac = ui.comboBox_dacId->currentText().toShort();
+
+	ui.spinBox_zeroOffsetCompensation->setValue(
+		(int)m_pTotalMgr->dacBias(dac));
+	ui.spinBox_outputVoltageSaturationLimit->setValue(
+		(int)m_pTotalMgr->dacLimit(dac));
+}
+
+void CConfigWidget::onDacBiasChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short dac = ui.comboBox_dacId->currentText().toShort();
+	short bias = (short)ui.spinBox_zeroOffsetCompensation->value();
+	m_pTotalMgr->setDacBias(dac, bias);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("DAC%1 零漂补偿 → %2").arg(dac).arg(bias),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onDacLimitChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short dac = ui.comboBox_dacId->currentText().toShort();
+	short limit = (short)ui.spinBox_outputVoltageSaturationLimit->value();
+	m_pTotalMgr->setDacLimit(dac, limit);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("DAC%1 饱和极限 → %2").arg(dac).arg(limit),
 		Qt::darkGreen);
 }

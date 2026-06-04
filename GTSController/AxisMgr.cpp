@@ -401,3 +401,57 @@ QString AxisMgr::statusToString(long sts) {
     if (desc.isEmpty()) return QStringLiteral("Õý³£");
     return desc.join(" | ");
 }
+
+bool AxisMgr::setStepPulseDir(short step)
+{
+    m_lastError = GtsHal::stepDir(step);
+    if (m_lastError != 0) {
+        emit errorOccurred(step, m_lastError, lastErrorString());
+        return false;
+    }
+    return true;
+}
+
+bool AxisMgr::setStepPulseCCW(short step)
+{
+    m_lastError = GtsHal::stepPulse(step);
+    if (m_lastError != 0) {
+        emit errorOccurred(step, m_lastError, lastErrorString());
+        return false;
+    }
+    return true;
+}
+
+bool AxisMgr::setDacBias(short dac, short bias)
+{
+    m_lastError = GtsHal::setMtrBias(dac, bias);
+    if (m_lastError != 0) {
+        emit errorOccurred(dac, m_lastError, lastErrorString());
+        return false;
+    }
+    return true;
+}
+
+short AxisMgr::getDacBias(short dac) const
+{
+    short bias = 0;
+    GtsHal::getMtrBias(dac, &bias);
+    return bias;
+}
+
+bool AxisMgr::setDacLimit(short dac, short limit)
+{
+    m_lastError = GtsHal::setMtrLmt(dac, limit);
+    if (m_lastError != 0) {
+        emit errorOccurred(dac, m_lastError, lastErrorString());
+        return false;
+    }
+    return true;
+}
+
+short AxisMgr::getDacLimit(short dac) const
+{
+    short limit = 0;
+    GtsHal::getMtrLmt(dac, &limit);
+    return limit;
+}

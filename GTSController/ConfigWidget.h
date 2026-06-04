@@ -29,6 +29,11 @@ private:
 	void refreshScaleEquivalents();   
 	void onProfileScaleChanged(); 
 	void onEncoderScaleChanged();
+	void onPulseOutputModeChanged(int index);
+	void refreshDacValues();
+	void onDacBiasChanged();
+	void onDacLimitChanged();
+
 
 	// 下载配置文件到板卡
 	void onLoadToBoard();

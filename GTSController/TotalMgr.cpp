@@ -50,6 +50,8 @@ void CTotalMgr::initAfterBoardOpened()
     initLimitState();
     // 读取规划器和编码器的当量
     readScaleEquivalents();
+    // 读取DAC配置
+    readDacConfig();
     emit configChanged();
 
     //读取运动参数
@@ -209,6 +211,40 @@ long CTotalMgr::encScaleBeta(short encoder) const {
     return (encoder >= 1 && encoder <= m_axisCount) ? m_encScaleBeta[encoder - 1] : 1;
 }
 
+void CTotalMgr::readDacConfig()
+{
+    for (short dac = 1; dac <= m_axisCount; ++dac) {
+        int idx = dac - 1;
+        m_dacBias[idx] = m_axisMgr->getDacBias(dac);
+        m_dacLimit[idx] = m_axisMgr->getDacLimit(dac);
+    }
+}
+
+void CTotalMgr::setDacBias(short dac, short bias)
+{
+    if (dac < 1 || dac > m_axisCount) return;
+    int idx = dac - 1;
+    m_dacBias[idx] = bias;
+    m_axisMgr->setDacBias(dac, bias);
+}
+
+void CTotalMgr::setDacLimit(short dac, short limit)
+{
+    if (dac < 1 || dac > m_axisCount) return;
+    int idx = dac - 1;
+    m_dacLimit[idx] = limit;
+    m_axisMgr->setDacLimit(dac, limit);
+}
+
+short CTotalMgr::dacBias(short dac) const
+{
+    return (dac >= 1 && dac <= m_axisCount) ? m_dacBias[dac - 1] : 0;
+}
+
+short CTotalMgr::dacLimit(short dac) const
+{
+    return (dac >= 1 && dac <= m_axisCount) ? m_dacLimit[dac - 1] : 32767;
+}
 
 
 void CTotalMgr::onRefreshTimeout()
