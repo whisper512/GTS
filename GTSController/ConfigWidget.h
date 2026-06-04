@@ -18,37 +18,52 @@ private:
 	Ui::CConfigWidgetClass ui;
 	CTotalMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
+	bool m_bRefreshing = false;
 
 private:
 	void InitConfigWidget();
 	void InitUI();
 	void connectSignalsAndSlots();
-	void refreshAlarmButton();
-	void refreshLimitButton();
+	// axis
+	void onservoAlarmEnable();
 	void onLimitEnable();
-	void refreshScaleEquivalents();   
 	void onProfileScaleChanged(); 
 	void onEncoderScaleChanged();
-	void onPulseOutputModeChanged(int index);
-	void refreshDacValues();
-	void onDacBiasChanged();
-	void onDacLimitChanged();
-	void onInputPulseInvertChanged(int index);
-	void onPulseCountSourceChanged(int index);
-	void refreshFollowErrorLimit();
-	void onFollowErrorLimitChanged();
-	void refreshStopDecel();
-	void onStopDecelChanged();
-	void onLimitSwitchLevelChanged(int index);
-	void refreshAxisCtrlMode();
-	void onAxisCtrlModeChanged(int index);
-	void refreshStopIO();
 	void onSmoothStopIOChanged();
 	void onEStopIOChanged();
-	void refreshGpiSense();
+	void onLimitSwitchLevelChanged(int index);
+	void onAxisCtrlModeChanged(int index);
+	// step
+	void onPulseOutputModeChanged(int index);
+	// encoder
+	void onInputPulseInvertChanged(int index);
+	void onPulseCountSourceChanged(int index);
+	//dac
+	void onDacBiasChanged();
+	void onDacLimitChanged();
+	// control
+	void onFollowErrorLimitChanged();
+	// profile
+	void onStopDecelChanged();
+	// di
 	void onGpiSenseChanged();
 	void onLoadToBoard();
-	void onservoAlarmEnable();
+
+	//axxis
+	void refreshAlarmButton();
+	void refreshLimitButton();
+	void refreshAxisCtrlMode();
+	void refreshScaleEquivalents();
+	// step
+	void refreshStepPulseMode();
+	// encoder
+	void refreshEncoderConfig();
+
+	void refreshDacValues();
+	void refreshFollowErrorLimit();
+	void refreshStopDecel();
+	void refreshGpiSense();
+	void refreshStopIO();
 
 signals:
 

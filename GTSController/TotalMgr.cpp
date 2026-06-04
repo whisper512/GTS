@@ -62,6 +62,10 @@ void CTotalMgr::initAfterBoardOpened()
     initStopIO();
     // 读取GPI配置
     initGpiSense();
+    // 读取step
+    initStepPulseMode();
+    // 读取编码器配置
+    initEncoderConfig();
     emit configChanged();
 
     //读取运动参数
@@ -421,4 +425,82 @@ bool CTotalMgr::isGpiSenseInvert(short diIndex) const
 unsigned short CTotalMgr::gpiSense() const
 {
     return m_gpiSense;
+}
+
+void CTotalMgr::initStepPulseMode()
+{
+    for (short step = 1; step <= m_axisCount; ++step) {
+        int idx = step - 1;
+        m_stepPulseMode[idx] = 0;
+        m_axisMgr->setStepPulseDir(step);
+    }
+}
+
+void CTotalMgr::setStepPulseMode(short step, short mode)
+{
+    if (step < 1 || step > m_axisCount) return;
+    int idx = step - 1;
+    m_stepPulseMode[idx] = mode;
+    if (mode == 0) {
+        m_axisMgr->setStepPulseDir(step);
+    }
+    else {
+        m_axisMgr->setStepPulseCCW(step);
+    }
+}
+
+short CTotalMgr::stepPulseMode(short step) const
+{
+    return (step >= 1 && step <= m_axisCount) ? m_stepPulseMode[step - 1] : 0;
+}
+
+void CTotalMgr::initEncoderConfig()
+{
+    unsigned short sense = 0;   // 默认全部正常
+    m_feedbackMgr->setEncoderSense(sense);
+
+    for (short enc = 1; enc <= m_axisCount; ++enc) {
+        int idx = enc - 1;
+        m_encInvert[idx] = false;
+        m_encIsPulse[idx] = false;
+        m_feedbackMgr->encoderOn(idx);   // idx 是 0-based
+    }
+}
+
+void CTotalMgr::setEncoderInvert(short encoder, bool invert)
+{
+    if (encoder < 1 || encoder > m_axisCount) return;
+    int idx = encoder - 1;
+    m_encInvert[idx] = invert;
+
+    // 重建全局 sense 位掩码
+    unsigned short sense = 0;
+    for (short i = 0; i < m_axisCount; ++i) {
+        if (m_encInvert[i]) sense |= (1 << i);
+    }
+    m_feedbackMgr->setEncoderSense(sense);
+}
+
+void CTotalMgr::setEncoderPulseCount(short encoder, bool isPulse)
+{
+    if (encoder < 1 || encoder > m_axisCount) return;
+    int idx = encoder - 1;
+    m_encIsPulse[idx] = isPulse;
+
+    if (isPulse) {
+        m_feedbackMgr->encoderOff(idx);    // 关闭编码器 = 脉冲计数器模式
+    }
+    else {
+        m_feedbackMgr->encoderOn(idx);     // 开启编码器
+    }
+}
+
+bool CTotalMgr::encoderInvert(short encoder) const
+{
+    return (encoder >= 1 && encoder <= m_axisCount) ? m_encInvert[encoder - 1] : false;
+}
+
+bool CTotalMgr::encoderPulseCount(short encoder) const
+{
+    return (encoder >= 1 && encoder <= m_axisCount) ? m_encIsPulse[encoder - 1] : false;
 }

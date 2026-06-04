@@ -35,20 +35,19 @@ void CConfigWidget::InitUI()
 	ComboAddNumbers(ui.comboBox_controlId, 4);
 	ComboAddNumbers(ui.comboBox_profileId, 4);
 	ComboAddNumbers(ui.comboBox_inputID, 16);
+	ComboAddNumbers(ui.comboBox_inputID, 16);
+	ComboAddNumbers(ui.comboBox_smoothStopinputID, 16);
+	ComboAddNumbers(ui.comboBox_eStopinputID, 16);
 
-	// 编码器当量读取有问题,屏蔽
 	ui.groupBox_encoderEquivalent->setVisible(false);
-	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("脉冲输出模式") , QStringLiteral("CCW/CW")});
+	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("脉冲+方向") , QStringLiteral("CCW/CW")});
 	ComboAddItems(ui.comboBox_inputPulseInvert, { QStringLiteral("正常"), QStringLiteral("取反") });
 	ComboAddItems(ui.comboBox_pulseCountSource, { QStringLiteral("外部编码器"), QStringLiteral("脉冲计数器") });
 	ComboAddItems(ui.comboBox_limitSwitchLevel, {QStringLiteral("高电平触发"),QStringLiteral("低电平触发")});
 	ComboAddItems(ui.comboBox_axsiOutputMode, { QStringLiteral("闭环控制(模拟量)"),QStringLiteral("开环控制(脉冲)") });
 	ComboAddItems(ui.comboBox_smoothStopInputType, { QStringLiteral("正限位"), QStringLiteral("负限位"),QStringLiteral("驱动报警"), QStringLiteral("原点"), QStringLiteral("通用输入") });
 	ComboAddItems(ui.comboBox_eStopInputType, { QStringLiteral("正限位"), QStringLiteral("负限位"),QStringLiteral("驱动报警"), QStringLiteral("原点"), QStringLiteral("通用输入") });
-	ComboAddNumbers(ui.comboBox_inputID, 16);
 	ComboAddItems(ui.comboBox_activeLevel, {QStringLiteral("正常"),QStringLiteral("取反")});
-	ComboAddNumbers(ui.comboBox_smoothStopinputID, 16);
-	ComboAddNumbers(ui.comboBox_eStopinputID, 16);
 }
 
 void CConfigWidget::connectSignalsAndSlots()
@@ -80,16 +79,17 @@ void CConfigWidget::connectSignalsAndSlots()
 	// 切轴刷新
 	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshStopIO(); });
 	// GPI 电平极性
-	connect(ui.comboBox_inputID, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onGpiSenseChanged);
+	connect(ui.comboBox_inputID, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshGpiSense(); });
 	connect(ui.comboBox_activeLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onGpiSenseChanged);
-
-
+	// 轴号变化
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {refreshAlarmButton(); refreshLimitButton(); refreshScaleEquivalents();
+	refreshAxisCtrlMode(); });
+	// stepID变化
+	connect(ui.comboBox_stepIndex, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshStepPulseMode(); });
+	// encoderID变化
+	connect(ui.comboBox_encoderId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshEncoderConfig(); });
 	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
-	//connect(ui.spinBox_encoderEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
-
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshAlarmButton(); refreshLimitButton(); });
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshScaleEquivalents(); });
-	//connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshScaleEquivalents(); });
+    //connect(ui.spinBox_encoderEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
 }
 
 void CConfigWidget::onBtnClicked()
@@ -159,13 +159,13 @@ void CConfigWidget::onAlarmStateChanged()
 {
 	refreshAlarmButton();
 	refreshLimitButton();
-	refreshScaleEquivalents();
-	refreshDacValues();
-	refreshFollowErrorLimit();
-	refreshStopDecel();
-	refreshAxisCtrlMode();
-	refreshStopIO();
-	refreshGpiSense();
+	//refreshScaleEquivalents();
+	//refreshDacValues();
+	//refreshFollowErrorLimit();
+	//refreshStopDecel();
+	//refreshAxisCtrlMode();
+	//refreshStopIO();
+	//refreshGpiSense();
 }
 
 void CConfigWidget::refreshAlarmButton()
@@ -173,6 +173,7 @@ void CConfigWidget::refreshAlarmButton()
 	if (!m_pTotalMgr) {
 		return;
 	}
+	m_bRefreshing = true;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 	bool avail = m_pTotalMgr->isAlarmAvailable(axis);
 	bool active = m_pTotalMgr->isAlarmActive(axis);
@@ -185,6 +186,7 @@ void CConfigWidget::refreshAlarmButton()
 		ui.pushButton_servoAlarmEnable->setEnabled(false);
 		ui.pushButton_servoAlarmEnable->setText(QStringLiteral("报警:不支持"));
 	}
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onLimitEnable()
@@ -214,6 +216,7 @@ void CConfigWidget::onLimitEnable()
 void CConfigWidget::refreshLimitButton()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 
 	if (m_pTotalMgr->isLimitAvailable(axis)) {
@@ -227,12 +230,13 @@ void CConfigWidget::refreshLimitButton()
 		ui.pushButton_limitEnable->setEnabled(false);
 		ui.pushButton_limitEnable->setText(QStringLiteral("限位:不支持"));
 	}
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::refreshScaleEquivalents()
 {
 	if (!m_pTotalMgr) return;
-
+	m_bRefreshing = true;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 	short encoder = ui.comboBox_encoderId->currentText().toShort();
 
@@ -244,10 +248,36 @@ void CConfigWidget::refreshScaleEquivalents()
 		(int)m_pTotalMgr->encScaleAlpha(encoder));
 	ui.spinBox_encoderEquivalentBeta->setValue(
 		(int)m_pTotalMgr->encScaleBeta(encoder));
+	m_bRefreshing = false;
 }
+
+void CConfigWidget::refreshStepPulseMode()
+{
+	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
+	short step = ui.comboBox_stepIndex->currentText().toShort();
+	ui.comboBox_pulseOutputMode->setCurrentIndex(
+		(int)m_pTotalMgr->stepPulseMode(step));
+	m_bRefreshing = false;
+}
+
+void CConfigWidget::refreshEncoderConfig()
+{
+	if (!m_pTotalMgr) return;
+	short encoder = ui.comboBox_encoderId->currentText().toShort();
+
+	m_bRefreshing = true;
+	ui.comboBox_inputPulseInvert->setCurrentIndex(
+		m_pTotalMgr->encoderInvert(encoder) ? 1 : 0);
+	ui.comboBox_pulseCountSource->setCurrentIndex(
+		m_pTotalMgr->encoderPulseCount(encoder) ? 1 : 0);
+	m_bRefreshing = false;
+}
+
 
 void CConfigWidget::onProfileScaleChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 	long alpha = ui.spinBox_profileEquivalentAlpha->value();
@@ -261,6 +291,7 @@ void CConfigWidget::onProfileScaleChanged()
 
 void CConfigWidget::onEncoderScaleChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	short encoder = ui.comboBox_encoderId->currentText().toShort();
 	long alpha = ui.spinBox_encoderEquivalentAlpha->value();
@@ -274,49 +305,33 @@ void CConfigWidget::onEncoderScaleChanged()
 
 void CConfigWidget::onPulseOutputModeChanged(int index)
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 	short step = ui.comboBox_stepIndex->currentText().toShort();
-	bool ok = false;
-	QString modeName;
-	if (index == 0) {
-		// 脉冲+方向
-		ok = m_pTotalMgr->axisMgr()->setStepPulseDir(step);
-		modeName = QStringLiteral("脉冲+方向");
-	}
-	else if (index == 1) {
-		// CCW/CW
-		ok = m_pTotalMgr->axisMgr()->setStepPulseCCW(step);
-		modeName = QStringLiteral("CCW/CW");
-	}
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Step%1 脉冲输出模式 → %2").arg(step).arg(modeName),
-			Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Step%1 设置 %2 失败 (err=%3)")
-			.arg(step)
-			.arg(modeName)
-			.arg(m_pTotalMgr->axisMgr()->lastError()),
-			Qt::red);
-	}
+	m_pTotalMgr->setStepPulseMode(step, (short)index);
+	const char* names[] = { "脉冲+方向", "CCW/CW" };
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("Step%1 脉冲输出模式 → %2").arg(step).arg(names[index]),
+		Qt::darkGreen);
 }
 
 void CConfigWidget::refreshDacValues()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short dac = ui.comboBox_dacId->currentText().toShort();
 
 	ui.spinBox_zeroOffsetCompensation->setValue(
 		(int)m_pTotalMgr->dacBias(dac));
 	ui.spinBox_outputVoltageSaturationLimit->setValue(
 		(int)m_pTotalMgr->dacLimit(dac));
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onDacBiasChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -331,6 +346,7 @@ void CConfigWidget::onDacBiasChanged()
 
 void CConfigWidget::onDacLimitChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -345,76 +361,47 @@ void CConfigWidget::onDacLimitChanged()
 
 void CConfigWidget::onInputPulseInvertChanged(int index)
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
-
 	short encoder = ui.comboBox_encoderId->currentText().toShort();
-	// encSns 是全局位掩码，bit0=编码器1, bit1=编码器2...
-	// 这里简化：取反时设对应位，正常时清对应位
-	unsigned short sense = (index == 1) ? (1 << (encoder - 1)) : 0;
-
-	bool ok = m_pTotalMgr->feedbackMgr()->setEncoderSense(sense);
-
-	QString polar = (index == 0) ? QStringLiteral("正常") : QStringLiteral("取反");
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("编码器%1 极性 → %2").arg(encoder).arg(polar),
-			Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("编码器%1 设置极性失败 (err=%2)")
-			.arg(encoder)
-			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
-			Qt::red);
-	}
+	bool invert = (index == 1);
+	m_pTotalMgr->setEncoderInvert(encoder, invert);
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("编码器%1 极性 → %2")
+		.arg(encoder)
+		.arg(invert ? QStringLiteral("取反") : QStringLiteral("正常")),
+		Qt::darkGreen);
 }
 
 void CConfigWidget::onPulseCountSourceChanged(int index)
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
-
 	short encoder = ui.comboBox_encoderId->currentText().toShort();
-	bool ok = false;
-	QString name;
-
-	if (index == 0) {
-		// 外部编码器 → 开启编码器
-		ok = m_pTotalMgr->feedbackMgr()->encoderOn(encoder);
-		name = QStringLiteral("外部编码器");
-	}
-	else if (index == 1) {
-		// 脉冲计数器 → 关闭编码器（切换到脉冲计数模式）
-		ok = m_pTotalMgr->feedbackMgr()->encoderOff(encoder);
-		name = QStringLiteral("脉冲计数器");
-	}
-
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("编码器%1 计数源 → %2").arg(encoder).arg(name),
-			Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("编码器%1 设置 %2 失败 (err=%3)")
-			.arg(encoder + 1)
-			.arg(name)
-			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
-			Qt::red);
-	}
+	bool isPulse = (index == 1);
+	m_pTotalMgr->setEncoderPulseCount(encoder, isPulse);
+	// 注意：index=0 是外部编码器，index=1 是脉冲计数器
+	QString strLogCounter = index == 1 ? QStringLiteral("脉冲计数器") : QStringLiteral("外部编码器");
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("编码器%1 计数源 → %2").arg(encoder).arg(strLogCounter),
+		Qt::darkGreen);
 }
 
 void CConfigWidget::refreshFollowErrorLimit()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short ctrl = ui.comboBox_controlId->currentText().toShort();
 	ui.spinBox_followingErrorLimit->setValue(
 		(int)m_pTotalMgr->followErrorLimit(ctrl));
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onFollowErrorLimitChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -430,16 +417,19 @@ void CConfigWidget::onFollowErrorLimitChanged()
 void CConfigWidget::refreshStopDecel()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short profile = ui.comboBox_profileId->currentText().toShort();
 
 	ui.doubleSpinBox_smoothStopDec->setValue(
 		m_pTotalMgr->smoothStopDec(profile));
 	ui.doubleSpinBox_smoothStopDec_2->setValue(
 		m_pTotalMgr->estopDec(profile));
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onStopDecelChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -457,6 +447,7 @@ void CConfigWidget::onStopDecelChanged()
 
 void CConfigWidget::onLimitSwitchLevelChanged(int index)
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -482,13 +473,16 @@ void CConfigWidget::onLimitSwitchLevelChanged(int index)
 void CConfigWidget::refreshAxisCtrlMode()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 	ui.comboBox_axsiOutputMode->setCurrentIndex(
 		(int)m_pTotalMgr->axisCtrlMode(axis));
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onAxisCtrlModeChanged(int index)
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -505,6 +499,7 @@ void CConfigWidget::onAxisCtrlModeChanged(int index)
 void CConfigWidget::refreshStopIO()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 
 	ui.comboBox_smoothStopInputType->setCurrentIndex(
@@ -515,10 +510,12 @@ void CConfigWidget::refreshStopIO()
 		(int)m_pTotalMgr->stopInputType(axis, 0));
 	ui.comboBox_eStopinputID->setCurrentIndex(
 		(int)m_pTotalMgr->stopInputIndex(axis, 0) - 1);
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onSmoothStopIOChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -538,6 +535,7 @@ void CConfigWidget::onSmoothStopIOChanged()
 
 void CConfigWidget::onEStopIOChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
@@ -558,14 +556,17 @@ void CConfigWidget::onEStopIOChanged()
 void CConfigWidget::refreshGpiSense()
 {
 	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
 	short diIndex = (short)(ui.comboBox_inputID->currentIndex() + 1);
 
 	ui.comboBox_activeLevel->setCurrentIndex(
 		m_pTotalMgr->isGpiSenseInvert(diIndex) ? 1 : 0);
+	m_bRefreshing = false;
 }
 
 void CConfigWidget::onGpiSenseChanged()
 {
+	if (m_bRefreshing) return;
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 

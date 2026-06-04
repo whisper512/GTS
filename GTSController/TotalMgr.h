@@ -48,9 +48,14 @@ private:
     // 规划器当量 
     long m_profileScaleAlpha[4] = { 1, 1, 1, 1 };
     long m_profileScaleBeta[4] = { 1, 1, 1, 1 };
+    // 脉冲输出模式
+    short m_stepPulseMode[4] = { 0, 0, 0, 0 };
     // 编码器当量
     long m_encScaleAlpha[4] = { 1, 1, 1, 1 };
     long m_encScaleBeta[4] = { 1, 1, 1, 1 };
+    // 编码器配置
+    bool m_encInvert[4] = { false, false, false, false };   // 极性: false=正常 true=取反
+    bool m_encIsPulse[4] = { false, false, false, false };   // 计数源: false=外部编码器 true=脉冲计数器
     // DAC 配置
     short m_dacBias[4] = { 0, 0, 0, 0 };
     short m_dacLimit[4] = { 32767, 32767, 32767, 32767 };
@@ -142,6 +147,10 @@ public:
     long profileScaleBeta(short axis) const;
     long encScaleAlpha(short encoder) const;
     long encScaleBeta(short encoder) const;
+    // 脉冲输出模式
+    void initStepPulseMode();
+    void setStepPulseMode(short step, short mode);
+    short stepPulseMode(short step) const;
     // dac相关
     void readDacConfig();
     void setDacBias(short dac, short bias);
@@ -171,6 +180,12 @@ public:
     void setGpiSenseBit(short diIndex, bool invert);
     bool isGpiSenseInvert(short diIndex) const;
     unsigned short gpiSense() const;
+    // 编码器相关
+    void initEncoderConfig();
+    void setEncoderInvert(short encoder, bool invert);
+    void setEncoderPulseCount(short encoder, bool isPulse);
+    bool encoderInvert(short encoder) const;
+    bool encoderPulseCount(short encoder) const;
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
