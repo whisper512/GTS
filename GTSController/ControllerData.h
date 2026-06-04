@@ -180,140 +180,56 @@ struct stuAxisConfig
     {
     }
 };
-// step配置
-struct stuStepConfig
-{
-    int stepIndex;             // 步进号
-    PulseMode pulseOutputMode; // 脉冲输出模式
-    stuStepConfig()
-        : stepIndex(0)
-        , pulseOutputMode(PulseMode::PulseDir)
-    {
-    }
-};
-// dac配置
-struct stuDacConfig
-{
-    int dacIndex;                       // DAC号
-    int associateControl;               // 关联控制
-    IOPolarity outputVoltagePolarity;   // 输出电压极性
-    int zeroOffsetCompensation;         // 零漂补偿
-    int outputVoltageSaturationLimit;   // 输出电压饱和限制
-    stuDacConfig()
-        : dacIndex(0)
-        , associateControl(0)
-        , outputVoltagePolarity(IOPolarity::Normal)
-        , zeroOffsetCompensation(0)
-        , outputVoltageSaturationLimit(32767)
-    {
-    }
-};
-// encoder配置
-struct stuEncoderConfig
-{
-    int encoderIndex;                   // 编码器号
-    IOPolarity inputPlusePolarity;      // 输入脉冲极性
-    PulseCountSource pulseCountSource;  // 脉冲计数源
-    TriggerEdge homeTriggerEdge;        // 回原触发沿
-    TriggerEdge indexTriggerEdge;       // 索引触发沿
-    stuEncoderConfig()
-        : encoderIndex(0)
-        , inputPlusePolarity(IOPolarity::Normal)
-        , pulseCountSource(PulseCountSource::Encoder)
-        , homeTriggerEdge(TriggerEdge::Rising)
-        , indexTriggerEdge(TriggerEdge::Rising)
-    {
-    }
-};
-// control配置
-struct stuControlConfig
-{
-    int controlIndex;       // 控制号
-    int associateAxis;      // 关联轴
-    int associateEncoder;   // 关联编码器
-    int followingErrorLimit;// 跟随误差限制
-    stuControlConfig()
-        : controlIndex(0)
-        , associateAxis(0)
-        , associateEncoder(0)
-        , followingErrorLimit(32767)
-    {
-    }
-};
-// profile配置
-struct stuProfileConfig
-{
-    int profileIndex;  // 脉冲配置号
-    int smoothStopDec; // 平滑停止减速
-    int estopDec;
-    stuProfileConfig()
-        : profileIndex(0)
-        , smoothStopDec(100)
-        , estopDec(1000)
-    {
-    }
-};
-// DI配置
-struct stuDIConfig
-{
-    DIType type;            // 输入类型
-    int DIIndex;            // 输入索引
-    IOPolarity DIPolarity;  // 输入极性
-    int filterTime;         // 滤波时间
-    stuDIConfig()
-        : type(DIType::GPI)
-        , DIIndex(0)
-        , DIPolarity(IOPolarity::Normal)
-        , filterTime(0)
-    {
-    }
-};
-// DO配置
-struct stuDOConfig
-{
-    DOType type;            // 输出类型
-    int DOIndex;            // 输出索引
-    IOPolarity DOPolarity;  // 输出极性
-    int associateAxis;      // 关联轴
-    stuDOConfig()
-        : type(DOType::GPO)
-        , DOIndex(0)
-        , DOPolarity(IOPolarity::Normal)
-        , associateAxis(0)
-    {
-    }
-};
 
-// 总配置数据
-struct stuConfig
+struct stuRuntimeConfig
 {
-    int AxisConfigCount;
-    int StepConfigCount;
-    int DacConfigCount;
-    int EncoderConfigCount;
-    int ControlConfigCount;
-    int ProfileConfigCount;
-    int DIConfigCount;
-    int DOConfigCount;
-    std::vector<stuAxisConfig> vecAxisConfig;
-    std::vector<stuStepConfig> vecStepConfig;
-    std::vector<stuDacConfig> vecDacConfig;
-    std::vector<stuEncoderConfig> vecEncoderConfig;
-    std::vector<stuControlConfig> vecControlConfig;
-    std::vector<stuProfileConfig> vecProfileConfig;
-    std::vector<stuDIConfig> vecDIConfig;
-    std::vector<stuDOConfig> vecDOConfig;
-    stuConfig()
-        : AxisConfigCount(0)
-        , StepConfigCount(0)
-        , DacConfigCount(0)
-        , EncoderConfigCount(0)
-        , ControlConfigCount(0)
-        , ProfileConfigCount(0)
-        , DIConfigCount(0)
-        , DOConfigCount(0)
-    {
-    }
+    int axisCount = 4;
+
+    // 报警
+    bool alarmActive[4] = { false, false, false, false };
+    bool alarmAvailable[4] = { false, false, false, false };
+
+    // 限位
+    bool limitActive[4] = { false, false, false, false };
+    bool limitAvailable[4] = { false, false, false, false };
+
+    // 规划器当量
+    long profileScaleAlpha[4] = { 1, 1, 1, 1 };
+    long profileScaleBeta[4] = { 1, 1, 1, 1 };
+
+    // 脉冲模式
+    short stepPulseMode[4] = { 0, 0, 0, 0 };
+
+    // 编码器
+    long encScaleAlpha[4] = { 1, 1, 1, 1 };
+    long encScaleBeta[4] = { 1, 1, 1, 1 };
+    bool encInvert[4] = { false, false, false, false };
+    bool encIsPulse[4] = { false, false, false, false };
+
+    // DAC
+    short dacBias[4] = { 0, 0, 0, 0 };
+    short dacLimit[4] = { 32767, 32767, 32767, 32767 };
+
+    // 跟随误差
+    long followingErrorLimit[4] = { 32767, 32767, 32767, 32767 };
+
+    // 停止减速
+    double smoothStopDec[4] = { 100.0, 100.0, 100.0, 100.0 };
+    double estopDec[4] = { 1000.0, 1000.0, 1000.0, 1000.0 };
+
+    // 控制模式
+    short axisCtrlMode[4] = { 0, 0, 0, 0 };
+
+    // 停止 IO
+    short stopInputType[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
+    short stopInputIndex[4][2] = { {1,1}, {1,1}, {1,1}, {1,1} };
+
+    // GPI
+    unsigned short gpiSense = 0;
+
+    // 序列化/反序列化接口（后面接 JSON）
+    // bool loadFromJson(const QString& path);
+    // bool saveToJson(const QString& path);
 };
 
 

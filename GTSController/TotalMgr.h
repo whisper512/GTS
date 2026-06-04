@@ -37,40 +37,8 @@ private:
     stuDI m_di;
     // DO
     stuDO m_do;
-    // 报警信号状态
-    bool m_alarmActive[4] = { false, false, false, false };
-    // 报警信号是否可用
-    bool m_alarmAvailable[4] = { false, false, false, false };
-    // 限位使能状态
-    bool m_limitActive[4] = { false, false, false, false };
-    // 限位是否可用
-    bool m_limitAvailable[4] = { false, false, false, false };
-    // 规划器当量 
-    long m_profileScaleAlpha[4] = { 1, 1, 1, 1 };
-    long m_profileScaleBeta[4] = { 1, 1, 1, 1 };
-    // 脉冲输出模式
-    short m_stepPulseMode[4] = { 0, 0, 0, 0 };
-    // 编码器当量
-    long m_encScaleAlpha[4] = { 1, 1, 1, 1 };
-    long m_encScaleBeta[4] = { 1, 1, 1, 1 };
-    // 编码器配置
-    bool m_encInvert[4] = { false, false, false, false };   // 极性: false=正常 true=取反
-    bool m_encIsPulse[4] = { false, false, false, false };   // 计数源: false=外部编码器 true=脉冲计数器
-    // DAC 配置
-    short m_dacBias[4] = { 0, 0, 0, 0 };
-    short m_dacLimit[4] = { 32767, 32767, 32767, 32767 };
-    // 跟随误差极限 
-    long m_followingErrorLimit[4] = { 32767, 32767, 32767, 32767 };
-    // 停止减速参数 
-    double m_smoothStopDec[4] = { 100.0, 100.0, 100.0, 100.0 };
-    double m_estopDec[4] = { 1000.0, 1000.0, 1000.0, 1000.0 };
-    // 轴控制模式: 0=闭环(模拟量) 1=开环(脉冲)
-    short m_axisCtrlMode[4] = { 0, 0, 0, 0 };
-    // 停止 IO 配置 [4 轴][2 类型: 0=急停 1=平滑]
-    short m_stopInputType[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
-    short m_stopInputIndex[4][2] = { {1,1}, {1,1}, {1,1}, {1,1} };
-    // GPI 电平极性 (16 位, bit0~bit15 对应 DI1~DI16)
-    unsigned short m_gpiSense = 0;
+    // 配置
+    stuRuntimeConfig m_cfg;
 
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
@@ -134,7 +102,6 @@ public:
     bool isLimitActive(short axis) const;
     // 获取限位信号是否可用
     bool isLimitAvailable(short axis) const;
-
     // 注意:目前编码器当量无法读取,不调用
     // 读取所有当量
     void readScaleEquivalents();
