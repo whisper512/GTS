@@ -56,6 +56,12 @@ void CTotalMgr::initAfterBoardOpened()
     readFollowErrorLimit();
     // 读取停止减速度参数
     readStopDecel();
+    // 读取轴控制模式
+    initAxisCtrlMode();
+    // 读取停止IO设置
+    initStopIO();
+    // 读取GPI配置
+    initGpiSense();
     emit configChanged();
 
     //读取运动参数
@@ -331,4 +337,88 @@ double CTotalMgr::smoothStopDec(short profile) const
 double CTotalMgr::estopDec(short profile) const
 {
     return (profile >= 1 && profile <= m_axisCount) ? m_estopDec[profile - 1] : 1000.0;
+}
+
+void CTotalMgr::initAxisCtrlMode()
+{
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int idx = axis - 1;
+        m_axisCtrlMode[idx] = 0;
+        m_axisMgr->setControlMode(axis, 0);
+    }
+}
+
+void CTotalMgr::setAxisCtrlMode(short axis, short mode)
+{
+    if (axis < 1 || axis > m_axisCount) return;
+    int idx = axis - 1;
+    m_axisCtrlMode[idx] = mode;
+    m_axisMgr->setControlMode(axis, mode);
+}
+
+short CTotalMgr::axisCtrlMode(short axis) const
+{
+    return (axis >= 1 && axis <= m_axisCount) ? m_axisCtrlMode[axis - 1] : 0;
+}
+
+void CTotalMgr::initStopIO()
+{
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int idx = axis - 1;
+        // 急停
+        m_axisMgr->setStopIO(axis, 0, m_stopInputType[idx][0], m_stopInputIndex[idx][0]);
+        // 平滑停止
+        m_axisMgr->setStopIO(axis, 1, m_stopInputType[idx][1], m_stopInputIndex[idx][1]);
+    }
+}
+
+void CTotalMgr::setStopIO(short axis, short stopType, short inputType, short inputIndex)
+{
+    if (axis < 1 || axis > m_axisCount) return;
+    int idx = axis - 1;
+    m_stopInputType[idx][stopType] = inputType;
+    m_stopInputIndex[idx][stopType] = inputIndex;
+    m_axisMgr->setStopIO(axis, stopType, inputType, inputIndex);
+}
+
+short CTotalMgr::stopInputType(short axis, short stopType) const
+{
+    if (axis < 1 || axis > m_axisCount) return 0;
+    return m_stopInputType[axis - 1][stopType];
+}
+
+short CTotalMgr::stopInputIndex(short axis, short stopType) const
+{
+    if (axis < 1 || axis > m_axisCount) return 1;
+    return m_stopInputIndex[axis - 1][stopType];
+}
+
+void CTotalMgr::initGpiSense()
+{
+    m_gpiSense = 0;
+    m_ioMgr->setGpiSense(0);   // 默认全部不取反
+}
+
+void CTotalMgr::setGpiSenseBit(short diIndex, bool invert)
+{
+    if (diIndex < 1 || diIndex > 16) return;
+
+    if (invert) {
+        m_gpiSense |= (1 << (diIndex - 1));
+    }
+    else {
+        m_gpiSense &= ~(1 << (diIndex - 1));
+    }
+    m_ioMgr->setGpiSense(m_gpiSense);
+}
+
+bool CTotalMgr::isGpiSenseInvert(short diIndex) const
+{
+    if (diIndex < 1 || diIndex > 16) return false;
+    return (m_gpiSense >> (diIndex - 1)) & 1;
+}
+
+unsigned short CTotalMgr::gpiSense() const
+{
+    return m_gpiSense;
 }

@@ -1,4 +1,4 @@
-#include <QTimer>
+ï»¿#include <QTimer>
 #include <QFileDialog>
 #include "ConfigWidget.h"
 #include "GTSControllerWidget.h"
@@ -36,13 +36,21 @@ void CConfigWidget::InitUI()
 	ComboAddNumbers(ui.comboBox_profileId, 4);
 	ComboAddNumbers(ui.comboBox_inputID, 16);
 
-	// ±àÂëÆ÷µ±Á¿¶ÁÈ¡ÓĞÎÊÌâ,ÆÁ±Î
+	// ç¼–ç å™¨å½“é‡è¯»å–æœ‰é—®é¢˜,å±è”½
 	ui.groupBox_encoderEquivalent->setVisible(false);
-	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("Âö³åÊä³öÄ£Ê½") , QStringLiteral("CCW/CW")});
-	ComboAddItems(ui.comboBox_inputPulseInvert, { QStringLiteral("Õı³£"), QStringLiteral("È¡·´") });
-	ComboAddItems(ui.comboBox_pulseCountSource, { QStringLiteral("Íâ²¿±àÂëÆ÷"), QStringLiteral("Âö³å¼ÆÊıÆ÷") });
-	ComboAddItems(ui.comboBox_limitSwitchLevel, {QStringLiteral("¸ßµçÆ½´¥·¢"),QStringLiteral("µÍµçÆ½´¥·¢")});
-
+	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("è„‰å†²è¾“å‡ºæ¨¡å¼") , QStringLiteral("CCW/CW")});
+	ComboAddItems(ui.comboBox_inputPulseInvert, { QStringLiteral("æ­£å¸¸"), QStringLiteral("å–å") });
+	ComboAddItems(ui.comboBox_pulseCountSource, { QStringLiteral("å¤–éƒ¨ç¼–ç å™¨"), QStringLiteral("è„‰å†²è®¡æ•°å™¨") });
+	ComboAddItems(ui.comboBox_limitSwitchLevel, {QStringLiteral("é«˜ç”µå¹³è§¦å‘"),QStringLiteral("ä½ç”µå¹³è§¦å‘")});
+	ComboAddItems(ui.comboBox_axsiOutputMode, { QStringLiteral("é—­ç¯æ§åˆ¶(æ¨¡æ‹Ÿé‡)"),QStringLiteral("å¼€ç¯æ§åˆ¶(è„‰å†²)") });
+	ComboAddItems(ui.comboBox_smoothStopInputType, { QStringLiteral("æ­£é™ä½"), QStringLiteral("è´Ÿé™ä½"),
+		QStringLiteral("é©±åŠ¨æŠ¥è­¦"), QStringLiteral("åŸç‚¹"), QStringLiteral("é€šç”¨è¾“å…¥") });
+	ComboAddItems(ui.comboBox_eStopInputType, { QStringLiteral("æ­£é™ä½"), QStringLiteral("è´Ÿé™ä½"),
+		QStringLiteral("é©±åŠ¨æŠ¥è­¦"), QStringLiteral("åŸç‚¹"), QStringLiteral("é€šç”¨è¾“å…¥") });
+	ComboAddNumbers(ui.comboBox_inputID, 16);
+	ComboAddItems(ui.comboBox_activeLevel, {QStringLiteral("æ­£å¸¸"),QStringLiteral("å–å")});
+	ComboAddNumbers(ui.comboBox_smoothStopinputID, 16);
+	ComboAddNumbers(ui.comboBox_eStopinputID, 16);
 }
 
 void CConfigWidget::connectSignalsAndSlots()
@@ -64,6 +72,25 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.doubleSpinBox_smoothStopDec_2, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onStopDecelChanged);
 	connect(ui.comboBox_profileId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshStopDecel(); });
 	connect(ui.comboBox_limitSwitchLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onLimitSwitchLevelChanged);
+	connect(ui.comboBox_axsiOutputMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CConfigWidget::onAxisCtrlModeChanged);
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshAxisCtrlMode(); });
+	connect(ui.comboBox_smoothStopInputType, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onSmoothStopIOChanged);
+	connect(ui.comboBox_smoothStopinputID, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onSmoothStopIOChanged);
+	// æ€¥åœ IO
+	connect(ui.comboBox_eStopInputType, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onEStopIOChanged);
+	connect(ui.comboBox_eStopinputID, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onEStopIOChanged);
+	// åˆ‡è½´åˆ·æ–°
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, [this]() { refreshStopIO(); });
+	// GPI ç”µå¹³ææ€§
+	connect(ui.comboBox_inputID, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onGpiSenseChanged);
+	connect(ui.comboBox_activeLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onGpiSenseChanged);
 
 
 	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
@@ -96,20 +123,20 @@ void CConfigWidget::onLoadToBoard()
 {
 	QString filePath = QFileDialog::getOpenFileName(
 		this,
-		QStringLiteral("Ñ¡ÔñÅäÖÃÎÄ¼ş"),
+		QStringLiteral("é€‰æ‹©é…ç½®æ–‡ä»¶"),
 		QString(),
-		QStringLiteral("ÅäÖÃÎÄ¼ş (*.cfg *.CFG);;ËùÓĞÎÄ¼ş (*.*)")
+		QStringLiteral("é…ç½®æ–‡ä»¶ (*.cfg *.CFG);;æ‰€æœ‰æ–‡ä»¶ (*.*)")
 	);
 	if (filePath.isEmpty()) return;
 	short ret = GtsHal::loadConfig(filePath.toLocal8Bit().constData());
 	if (ret == 0) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("ÅäÖÃÎÄ¼ş¼ÓÔØ³É¹¦: %1").arg(filePath),
+			QStringLiteral("é…ç½®æ–‡ä»¶åŠ è½½æˆåŠŸ: %1").arg(filePath),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("ÅäÖÃÎÄ¼ş¼ÓÔØÊ§°Ü (err=%1): %2")
+			QStringLiteral("é…ç½®æ–‡ä»¶åŠ è½½å¤±è´¥ (err=%1): %2")
 			.arg(ret)
 			.arg(filePath),
 			Qt::red);
@@ -122,17 +149,17 @@ void CConfigWidget::onservoAlarmEnable()
 	short axis = ui.comboBox_axisId->currentText().toShort();
 	if (!m_pTotalMgr->isAlarmAvailable(axis)) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ±¨¾¯ĞÅºÅ²»¿ÉÓÃ(ÅäÖÃÎÄ¼şÎ´ÆôÓÃ)").arg(axis),
+			QStringLiteral("è½´%1 æŠ¥è­¦ä¿¡å·ä¸å¯ç”¨(é…ç½®æ–‡ä»¶æœªå¯ç”¨)").arg(axis),
 			Qt::yellow);
 		return;
 	}
 	bool now = m_pTotalMgr->toggleAlarm(axis);
 	ui.pushButton_servoAlarmEnable->setText(
-		now ? QStringLiteral("±¨¾¯:ÓĞĞ§") : QStringLiteral("±¨¾¯:ÎŞĞ§"));
+		now ? QStringLiteral("æŠ¥è­¦:æœ‰æ•ˆ") : QStringLiteral("æŠ¥è­¦:æ— æ•ˆ"));
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("Öá%1 ±¨¾¯ĞÅºÅ ¡ú %2")
+		QStringLiteral("è½´%1 æŠ¥è­¦ä¿¡å· â†’ %2")
 		.arg(axis)
-		.arg(now ? QStringLiteral("ÓĞĞ§") : QStringLiteral("ÎŞĞ§")),
+		.arg(now ? QStringLiteral("æœ‰æ•ˆ") : QStringLiteral("æ— æ•ˆ")),
 		now ? Qt::darkGreen : Qt::gray);
 }
 
@@ -145,6 +172,9 @@ void CConfigWidget::onAlarmStateChanged()
 	refreshDacValues();
 	refreshFollowErrorLimit();
 	refreshStopDecel();
+	refreshAxisCtrlMode();
+	refreshStopIO();
+	refreshGpiSense();
 }
 
 void CConfigWidget::refreshAlarmButton()
@@ -158,11 +188,11 @@ void CConfigWidget::refreshAlarmButton()
 	if (avail) {
 		ui.pushButton_servoAlarmEnable->setEnabled(true);
 		ui.pushButton_servoAlarmEnable->setText(
-			active ? QStringLiteral("±¨¾¯:ÓĞĞ§") : QStringLiteral("±¨¾¯:ÎŞĞ§"));
+			active ? QStringLiteral("æŠ¥è­¦:æœ‰æ•ˆ") : QStringLiteral("æŠ¥è­¦:æ— æ•ˆ"));
 	}
 	else {
 		ui.pushButton_servoAlarmEnable->setEnabled(false);
-		ui.pushButton_servoAlarmEnable->setText(QStringLiteral("±¨¾¯:²»Ö§³Ö"));
+		ui.pushButton_servoAlarmEnable->setText(QStringLiteral("æŠ¥è­¦:ä¸æ”¯æŒ"));
 	}
 }
 
@@ -173,7 +203,7 @@ void CConfigWidget::onLimitEnable()
 
 	if (!m_pTotalMgr->isLimitAvailable(axis)) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ÏŞÎ»²»¿ÉÓÃ£¨ÅäÖÃÎÄ¼şÎ´ÆôÓÃ£©").arg(axis),
+			QStringLiteral("è½´%1 é™ä½ä¸å¯ç”¨ï¼ˆé…ç½®æ–‡ä»¶æœªå¯ç”¨ï¼‰").arg(axis),
 			Qt::yellow);
 		return;
 	}
@@ -181,12 +211,12 @@ void CConfigWidget::onLimitEnable()
 	bool now = m_pTotalMgr->toggleLimit(axis);
 
 	ui.pushButton_limitEnable->setText(
-		now ? QStringLiteral("ÏŞÎ»:ÓĞĞ§") : QStringLiteral("ÏŞÎ»:ÎŞĞ§"));
+		now ? QStringLiteral("é™ä½:æœ‰æ•ˆ") : QStringLiteral("é™ä½:æ— æ•ˆ"));
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("Öá%1 ÏŞÎ» ¡ú %2")
+		QStringLiteral("è½´%1 é™ä½ â†’ %2")
 		.arg(axis)
-		.arg(now ? QStringLiteral("ÓĞĞ§") : QStringLiteral("ÎŞĞ§")),
+		.arg(now ? QStringLiteral("æœ‰æ•ˆ") : QStringLiteral("æ— æ•ˆ")),
 		now ? Qt::darkGreen : Qt::gray);
 }
 
@@ -199,12 +229,12 @@ void CConfigWidget::refreshLimitButton()
 		ui.pushButton_limitEnable->setEnabled(true);
 		ui.pushButton_limitEnable->setText(
 			m_pTotalMgr->isLimitActive(axis)
-			? QStringLiteral("ÏŞÎ»:ÓĞĞ§")
-			: QStringLiteral("ÏŞÎ»:ÎŞĞ§"));
+			? QStringLiteral("é™ä½:æœ‰æ•ˆ")
+			: QStringLiteral("é™ä½:æ— æ•ˆ"));
 	}
 	else {
 		ui.pushButton_limitEnable->setEnabled(false);
-		ui.pushButton_limitEnable->setText(QStringLiteral("ÏŞÎ»:²»Ö§³Ö"));
+		ui.pushButton_limitEnable->setText(QStringLiteral("é™ä½:ä¸æ”¯æŒ"));
 	}
 }
 
@@ -234,7 +264,7 @@ void CConfigWidget::onProfileScaleChanged()
 	m_pTotalMgr->setProfileScale(axis, alpha, beta);
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("Öá%1 ¹æ»®Æ÷µ±Á¿ ¡ú ¦Á=%2 ¦Â=%3").arg(axis).arg(alpha).arg(beta),
+		QStringLiteral("è½´%1 è§„åˆ’å™¨å½“é‡ â†’ Î±=%2 Î²=%3").arg(axis).arg(alpha).arg(beta),
 		Qt::darkGreen);
 }
 
@@ -247,7 +277,7 @@ void CConfigWidget::onEncoderScaleChanged()
 	m_pTotalMgr->setEncoderScale(encoder, alpha, beta);
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("±àÂëÆ÷%1 µ±Á¿ ¡ú ¦Á=%2 ¦Â=%3").arg(encoder).arg(alpha).arg(beta),
+		QStringLiteral("ç¼–ç å™¨%1 å½“é‡ â†’ Î±=%2 Î²=%3").arg(encoder).arg(alpha).arg(beta),
 		Qt::darkGreen);
 }
 
@@ -259,9 +289,9 @@ void CConfigWidget::onPulseOutputModeChanged(int index)
 	bool ok = false;
 	QString modeName;
 	if (index == 0) {
-		// Âö³å+·½Ïò
+		// è„‰å†²+æ–¹å‘
 		ok = m_pTotalMgr->axisMgr()->setStepPulseDir(step);
-		modeName = QStringLiteral("Âö³å+·½Ïò");
+		modeName = QStringLiteral("è„‰å†²+æ–¹å‘");
 	}
 	else if (index == 1) {
 		// CCW/CW
@@ -270,12 +300,12 @@ void CConfigWidget::onPulseOutputModeChanged(int index)
 	}
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Step%1 Âö³åÊä³öÄ£Ê½ ¡ú %2").arg(step).arg(modeName),
+			QStringLiteral("Step%1 è„‰å†²è¾“å‡ºæ¨¡å¼ â†’ %2").arg(step).arg(modeName),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Step%1 ÉèÖÃ %2 Ê§°Ü (err=%3)")
+			QStringLiteral("Step%1 è®¾ç½® %2 å¤±è´¥ (err=%3)")
 			.arg(step)
 			.arg(modeName)
 			.arg(m_pTotalMgr->axisMgr()->lastError()),
@@ -304,7 +334,7 @@ void CConfigWidget::onDacBiasChanged()
 	m_pTotalMgr->setDacBias(dac, bias);
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("DAC%1 ÁãÆ¯²¹³¥ ¡ú %2").arg(dac).arg(bias),
+		QStringLiteral("DAC%1 é›¶æ¼‚è¡¥å¿ â†’ %2").arg(dac).arg(bias),
 		Qt::darkGreen);
 }
 
@@ -318,7 +348,7 @@ void CConfigWidget::onDacLimitChanged()
 	m_pTotalMgr->setDacLimit(dac, limit);
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("DAC%1 ±¥ºÍ¼«ÏŞ ¡ú %2").arg(dac).arg(limit),
+		QStringLiteral("DAC%1 é¥±å’Œæé™ â†’ %2").arg(dac).arg(limit),
 		Qt::darkGreen);
 }
 
@@ -328,21 +358,21 @@ void CConfigWidget::onInputPulseInvertChanged(int index)
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
 	short encoder = ui.comboBox_encoderId->currentText().toShort();
-	// encSns ÊÇÈ«¾ÖÎ»ÑÚÂë£¬bit0=±àÂëÆ÷1, bit1=±àÂëÆ÷2...
-	// ÕâÀï¼ò»¯£ºÈ¡·´Ê±Éè¶ÔÓ¦Î»£¬Õı³£Ê±Çå¶ÔÓ¦Î»
+	// encSns æ˜¯å…¨å±€ä½æ©ç ï¼Œbit0=ç¼–ç å™¨1, bit1=ç¼–ç å™¨2...
+	// è¿™é‡Œç®€åŒ–ï¼šå–åæ—¶è®¾å¯¹åº”ä½ï¼Œæ­£å¸¸æ—¶æ¸…å¯¹åº”ä½
 	unsigned short sense = (index == 1) ? (1 << (encoder - 1)) : 0;
 
 	bool ok = m_pTotalMgr->feedbackMgr()->setEncoderSense(sense);
 
-	QString polar = (index == 0) ? QStringLiteral("Õı³£") : QStringLiteral("È¡·´");
+	QString polar = (index == 0) ? QStringLiteral("æ­£å¸¸") : QStringLiteral("å–å");
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("±àÂëÆ÷%1 ¼«ĞÔ ¡ú %2").arg(encoder).arg(polar),
+			QStringLiteral("ç¼–ç å™¨%1 ææ€§ â†’ %2").arg(encoder).arg(polar),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("±àÂëÆ÷%1 ÉèÖÃ¼«ĞÔÊ§°Ü (err=%2)")
+			QStringLiteral("ç¼–ç å™¨%1 è®¾ç½®ææ€§å¤±è´¥ (err=%2)")
 			.arg(encoder)
 			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
 			Qt::red);
@@ -359,24 +389,24 @@ void CConfigWidget::onPulseCountSourceChanged(int index)
 	QString name;
 
 	if (index == 0) {
-		// Íâ²¿±àÂëÆ÷ ¡ú ¿ªÆô±àÂëÆ÷
+		// å¤–éƒ¨ç¼–ç å™¨ â†’ å¼€å¯ç¼–ç å™¨
 		ok = m_pTotalMgr->feedbackMgr()->encoderOn(encoder);
-		name = QStringLiteral("Íâ²¿±àÂëÆ÷");
+		name = QStringLiteral("å¤–éƒ¨ç¼–ç å™¨");
 	}
 	else if (index == 1) {
-		// Âö³å¼ÆÊıÆ÷ ¡ú ¹Ø±Õ±àÂëÆ÷£¨ÇĞ»»µ½Âö³å¼ÆÊıÄ£Ê½£©
+		// è„‰å†²è®¡æ•°å™¨ â†’ å…³é—­ç¼–ç å™¨ï¼ˆåˆ‡æ¢åˆ°è„‰å†²è®¡æ•°æ¨¡å¼ï¼‰
 		ok = m_pTotalMgr->feedbackMgr()->encoderOff(encoder);
-		name = QStringLiteral("Âö³å¼ÆÊıÆ÷");
+		name = QStringLiteral("è„‰å†²è®¡æ•°å™¨");
 	}
 
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("±àÂëÆ÷%1 ¼ÆÊıÔ´ ¡ú %2").arg(encoder).arg(name),
+			QStringLiteral("ç¼–ç å™¨%1 è®¡æ•°æº â†’ %2").arg(encoder).arg(name),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("±àÂëÆ÷%1 ÉèÖÃ %2 Ê§°Ü (err=%3)")
+			QStringLiteral("ç¼–ç å™¨%1 è®¾ç½® %2 å¤±è´¥ (err=%3)")
 			.arg(encoder + 1)
 			.arg(name)
 			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
@@ -402,7 +432,7 @@ void CConfigWidget::onFollowErrorLimitChanged()
 	m_pTotalMgr->setFollowErrorLimit(ctrl, error);
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("Control%1 ¸úËæÎó²î¼«ÏŞ ¡ú %2").arg(ctrl).arg(error),
+		QStringLiteral("Control%1 è·Ÿéšè¯¯å·®æé™ â†’ %2").arg(ctrl).arg(error),
 		Qt::darkGreen);
 }
 
@@ -429,7 +459,7 @@ void CConfigWidget::onStopDecelChanged()
 	m_pTotalMgr->setStopDecel(profile, smooth, abrupt);
 
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("Profile%1 Í£Ö¹¼õËÙ¶È ¡ú Æ½»¬=%2 ¼±Í£=%3")
+		QStringLiteral("Profile%1 åœæ­¢å‡é€Ÿåº¦ â†’ å¹³æ»‘=%2 æ€¥åœ=%3")
 		.arg(profile).arg(smooth, 0, 'f', 3).arg(abrupt, 0, 'f', 3),
 		Qt::darkGreen);
 }
@@ -439,21 +469,122 @@ void CConfigWidget::onLimitSwitchLevelChanged(int index)
 	if (!m_pTotalMgr) return;
 	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
 
-	// 0=¸ßµçÆ½´¥·¢(ËùÓĞÎ»=0)£¬1=µÍµçÆ½´¥·¢(Öá1~4Î»È«ÖÃ1)
+	// 0=é«˜ç”µå¹³è§¦å‘(æ‰€æœ‰ä½=0)ï¼Œ1=ä½ç”µå¹³è§¦å‘(è½´1~4ä½å…¨ç½®1)
 	unsigned short sense = (index == 0) ? 0 : 0x000F;
 
 	bool ok = m_pTotalMgr->axisMgr()->setLimitSense(sense);
 
-	QString level = (index == 0) ? QStringLiteral("¸ßµçÆ½´¥·¢") : QStringLiteral("µÍµçÆ½´¥·¢");
+	QString level = (index == 0) ? QStringLiteral("é«˜ç”µå¹³è§¦å‘") : QStringLiteral("ä½ç”µå¹³è§¦å‘");
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("ÏŞÎ»´¥·¢µçÆ½ ¡ú %1").arg(level),
+			QStringLiteral("é™ä½è§¦å‘ç”µå¹³ â†’ %1").arg(level),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("ÉèÖÃÏŞÎ»´¥·¢µçÆ½Ê§°Ü (err=%1)")
+			QStringLiteral("è®¾ç½®é™ä½è§¦å‘ç”µå¹³å¤±è´¥ (err=%1)")
 			.arg(m_pTotalMgr->axisMgr()->lastError()),
 			Qt::red);
 	}
+}
+
+void CConfigWidget::refreshAxisCtrlMode()
+{
+	if (!m_pTotalMgr) return;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	ui.comboBox_axsiOutputMode->setCurrentIndex(
+		(int)m_pTotalMgr->axisCtrlMode(axis));
+}
+
+void CConfigWidget::onAxisCtrlModeChanged(int index)
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	m_pTotalMgr->setAxisCtrlMode(axis, (short)index);
+
+	const char* names[] = { "é—­ç¯æ§åˆ¶(æ¨¡æ‹Ÿé‡)", "å¼€ç¯æ§åˆ¶(è„‰å†²)" };
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("è½´%1 æ§åˆ¶æ¨¡å¼ â†’ %2").arg(axis).arg(names[index]),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::refreshStopIO()
+{
+	if (!m_pTotalMgr) return;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+
+	ui.comboBox_smoothStopInputType->setCurrentIndex(
+		(int)m_pTotalMgr->stopInputType(axis, 1));
+	ui.comboBox_smoothStopinputID->setCurrentIndex(
+		(int)m_pTotalMgr->stopInputIndex(axis, 1) - 1);
+	ui.comboBox_eStopInputType->setCurrentIndex(
+		(int)m_pTotalMgr->stopInputType(axis, 0));
+	ui.comboBox_eStopinputID->setCurrentIndex(
+		(int)m_pTotalMgr->stopInputIndex(axis, 0) - 1);
+}
+
+void CConfigWidget::onSmoothStopIOChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	short inputType = (short)ui.comboBox_smoothStopInputType->currentIndex();
+	short inputIdx = (short)(ui.comboBox_smoothStopinputID->currentIndex() + 1);
+
+	m_pTotalMgr->setStopIO(axis, 1, inputType, inputIdx);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("è½´%1 å¹³æ»‘åœæ­¢IO â†’ %2[%3]")
+		.arg(axis)
+		.arg(dioTypeToString(static_cast<DIType>(inputType)))
+		.arg(inputIdx),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onEStopIOChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	short inputType = (short)ui.comboBox_eStopInputType->currentIndex();
+	short inputIdx = (short)(ui.comboBox_eStopinputID->currentIndex() + 1);
+
+	m_pTotalMgr->setStopIO(axis, 0, inputType, inputIdx);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("è½´%1 æ€¥åœIO â†’ %2[%3]")
+		.arg(axis)
+		.arg(dioTypeToString(static_cast<DIType>(inputType)))
+		.arg(inputIdx),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::refreshGpiSense()
+{
+	if (!m_pTotalMgr) return;
+	short diIndex = (short)(ui.comboBox_inputID->currentIndex() + 1);
+
+	ui.comboBox_activeLevel->setCurrentIndex(
+		m_pTotalMgr->isGpiSenseInvert(diIndex) ? 1 : 0);
+}
+
+void CConfigWidget::onGpiSenseChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short diIndex = (short)(ui.comboBox_inputID->currentIndex() + 1);
+	bool invert = (ui.comboBox_activeLevel->currentIndex() == 1);
+
+	m_pTotalMgr->setGpiSenseBit(diIndex, invert);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("DI%1 ç”µå¹³é€»è¾‘ â†’ %2")
+		.arg(diIndex)
+		.arg(invert ? QStringLiteral("å–å") : QStringLiteral("æ­£å¸¸")),
+		Qt::darkGreen);
 }

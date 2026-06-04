@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <QMainWindow>
 #include "ui_ConfigWidget.h"
@@ -40,10 +40,16 @@ private:
 	void refreshStopDecel();
 	void onStopDecelChanged();
 	void onLimitSwitchLevelChanged(int index);
-
-	// ÏÂÔØÅäÖÃÎÄ¼þµ½°å¿¨
+	void refreshAxisCtrlMode();
+	void onAxisCtrlModeChanged(int index);
+	void refreshStopIO();
+	void onSmoothStopIOChanged();
+	void onEStopIOChanged();
+	void refreshGpiSense();
+	void onGpiSenseChanged();
+	// ä¸‹è½½é…ç½®æ–‡ä»¶åˆ°æ¿å¡
 	void onLoadToBoard();
-	// ËÅ·þ±¨¾¯
+	// ä¼ºæœæŠ¥è­¦
 	void onservoAlarmEnable();
 
 signals:
@@ -56,7 +62,7 @@ public slots:
 
 };
 
-// ¸ø QComboBox Ìí¼ÓÒ»×éÊý×Ö
+// ç»™ QComboBox æ·»åŠ ä¸€ç»„æ•°å­—
 inline void ComboAddNumbers(QComboBox* cb, int n)
 {
 	if (!cb) return;
@@ -64,7 +70,7 @@ inline void ComboAddNumbers(QComboBox* cb, int n)
 		cb->addItem(QString::number(i));
 	}
 }
-// ¸ø QComboBox Ìí¼ÓÒ»×é×Ö·û´®
+// ç»™ QComboBox æ·»åŠ ä¸€ç»„å­—ç¬¦ä¸²
 inline void ComboAddItems(QComboBox* cb, std::initializer_list<QString> items)
 {
 	if (!cb) return;

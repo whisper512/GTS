@@ -59,7 +59,13 @@ private:
     // 停止减速参数 
     double m_smoothStopDec[4] = { 100.0, 100.0, 100.0, 100.0 };
     double m_estopDec[4] = { 1000.0, 1000.0, 1000.0, 1000.0 };
-
+    // 轴控制模式: 0=闭环(模拟量) 1=开环(脉冲)
+    short m_axisCtrlMode[4] = { 0, 0, 0, 0 };
+    // 停止 IO 配置 [4 轴][2 类型: 0=急停 1=平滑]
+    short m_stopInputType[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
+    short m_stopInputIndex[4][2] = { {1,1}, {1,1}, {1,1}, {1,1} };
+    // GPI 电平极性 (16 位, bit0~bit15 对应 DI1~DI16)
+    unsigned short m_gpiSense = 0;
 
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
@@ -151,7 +157,20 @@ public:
     void setStopDecel(short profile, double smooth, double abrupt);
     double smoothStopDec(short profile) const;
     double estopDec(short profile) const;
-
+    // 轴控制模式相关
+    void initAxisCtrlMode();
+    void setAxisCtrlMode(short axis, short mode);
+    short axisCtrlMode(short axis) const;
+    // 停止 IO 相关
+    void initStopIO();
+    void setStopIO(short axis, short stopType, short inputType, short inputIndex);
+    short stopInputType(short axis, short stopType) const;
+    short stopInputIndex(short axis, short stopType) const;
+    // GPI 相关
+    void initGpiSense();
+    void setGpiSenseBit(short diIndex, bool invert);
+    bool isGpiSenseInvert(short diIndex) const;
+    unsigned short gpiSense() const;
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
