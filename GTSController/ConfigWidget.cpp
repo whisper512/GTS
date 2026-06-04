@@ -43,10 +43,8 @@ void CConfigWidget::InitUI()
 	ComboAddItems(ui.comboBox_pulseCountSource, { QStringLiteral("外部编码器"), QStringLiteral("脉冲计数器") });
 	ComboAddItems(ui.comboBox_limitSwitchLevel, {QStringLiteral("高电平触发"),QStringLiteral("低电平触发")});
 	ComboAddItems(ui.comboBox_axsiOutputMode, { QStringLiteral("闭环控制(模拟量)"),QStringLiteral("开环控制(脉冲)") });
-	ComboAddItems(ui.comboBox_smoothStopInputType, { QStringLiteral("正限位"), QStringLiteral("负限位"),
-		QStringLiteral("驱动报警"), QStringLiteral("原点"), QStringLiteral("通用输入") });
-	ComboAddItems(ui.comboBox_eStopInputType, { QStringLiteral("正限位"), QStringLiteral("负限位"),
-		QStringLiteral("驱动报警"), QStringLiteral("原点"), QStringLiteral("通用输入") });
+	ComboAddItems(ui.comboBox_smoothStopInputType, { QStringLiteral("正限位"), QStringLiteral("负限位"),QStringLiteral("驱动报警"), QStringLiteral("原点"), QStringLiteral("通用输入") });
+	ComboAddItems(ui.comboBox_eStopInputType, { QStringLiteral("正限位"), QStringLiteral("负限位"),QStringLiteral("驱动报警"), QStringLiteral("原点"), QStringLiteral("通用输入") });
 	ComboAddNumbers(ui.comboBox_inputID, 16);
 	ComboAddItems(ui.comboBox_activeLevel, {QStringLiteral("正常"),QStringLiteral("取反")});
 	ComboAddNumbers(ui.comboBox_smoothStopinputID, 16);
@@ -74,23 +72,16 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.comboBox_limitSwitchLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onLimitSwitchLevelChanged);
 	connect(ui.comboBox_axsiOutputMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CConfigWidget::onAxisCtrlModeChanged);
 	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshAxisCtrlMode(); });
-	connect(ui.comboBox_smoothStopInputType, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onSmoothStopIOChanged);
-	connect(ui.comboBox_smoothStopinputID, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onSmoothStopIOChanged);
+	connect(ui.comboBox_smoothStopInputType, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onSmoothStopIOChanged);
+	connect(ui.comboBox_smoothStopinputID, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onSmoothStopIOChanged);
 	// 急停 IO
-	connect(ui.comboBox_eStopInputType, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onEStopIOChanged);
-	connect(ui.comboBox_eStopinputID, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onEStopIOChanged);
+	connect(ui.comboBox_eStopInputType, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onEStopIOChanged);
+	connect(ui.comboBox_eStopinputID, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onEStopIOChanged);
 	// 切轴刷新
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, [this]() { refreshStopIO(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshStopIO(); });
 	// GPI 电平极性
-	connect(ui.comboBox_inputID, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onGpiSenseChanged);
-	connect(ui.comboBox_activeLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onGpiSenseChanged);
+	connect(ui.comboBox_inputID, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onGpiSenseChanged);
+	connect(ui.comboBox_activeLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onGpiSenseChanged);
 
 
 	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
@@ -504,9 +495,10 @@ void CConfigWidget::onAxisCtrlModeChanged(int index)
 	short axis = ui.comboBox_axisId->currentText().toShort();
 	m_pTotalMgr->setAxisCtrlMode(axis, (short)index);
 
-	const char* names[] = { "闭环控制(模拟量)", "开环控制(脉冲)" };
+	QString strMode;
+	index == 0 ? strMode = QStringLiteral("闭环模式(模拟)") : strMode = QStringLiteral("开环模式(脉冲)");
 	m_pGTSControllerWidget->showLog(
-		QStringLiteral("轴%1 控制模式 → %2").arg(axis).arg(names[index]),
+		QStringLiteral("轴%1 控制模式 → %2").arg(axis).arg(strMode),
 		Qt::darkGreen);
 }
 

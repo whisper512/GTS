@@ -47,9 +47,7 @@ private:
 	void onEStopIOChanged();
 	void refreshGpiSense();
 	void onGpiSenseChanged();
-	// 下载配置文件到板卡
 	void onLoadToBoard();
-	// 伺服报警
 	void onservoAlarmEnable();
 
 signals:
