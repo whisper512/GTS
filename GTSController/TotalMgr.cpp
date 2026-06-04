@@ -52,6 +52,10 @@ void CTotalMgr::initAfterBoardOpened()
     readScaleEquivalents();
     // 读取DAC配置
     readDacConfig();
+    // 读取误差极限
+    readFollowErrorLimit();
+    // 读取停止减速度参数
+    readStopDecel();
     emit configChanged();
 
     //读取运动参数
@@ -276,4 +280,55 @@ void CTotalMgr::onRefreshTimeout()
     m_ioMgr->getClearAlarmDO(m_do.vecAlmClear);
     emit doUpdated(m_do);
 
+}
+
+void CTotalMgr::readFollowErrorLimit()
+{
+    for (short ctrl = 1; ctrl <= m_axisCount; ++ctrl) {
+        int idx = ctrl - 1;
+        m_followingErrorLimit[idx] = m_axisMgr->getFollowErrorLimit(ctrl);
+    }
+}
+
+void CTotalMgr::setFollowErrorLimit(short control, long error)
+{
+    if (control < 1 || control > m_axisCount) return;
+    int idx = control - 1;
+    m_followingErrorLimit[idx] = error;
+    m_axisMgr->setFollowErrorLimit(control, error);
+}
+
+long CTotalMgr::followErrorLimit(short control) const
+{
+    return (control >= 1 && control <= m_axisCount) ? m_followingErrorLimit[control - 1] : 32767;
+}
+
+void CTotalMgr::readStopDecel()
+{
+    for (short profile = 1; profile <= m_axisCount; ++profile) {
+        int idx = profile - 1;
+        double smooth = 100.0, abrupt = 1000.0;
+        m_axisMgr->getStopDecel(profile, smooth, abrupt);
+        m_smoothStopDec[idx] = smooth;
+        m_estopDec[idx] = abrupt;
+    }
+}
+
+void CTotalMgr::setStopDecel(short profile, double smooth, double abrupt)
+{
+    if (profile < 1 || profile > m_axisCount) return;
+    int idx = profile - 1;
+    m_smoothStopDec[idx] = smooth;
+    m_estopDec[idx] = abrupt;
+    m_axisMgr->setStopDecel(profile, smooth, abrupt);
+}
+
+double CTotalMgr::smoothStopDec(short profile) const
+{
+    return (profile >= 1 && profile <= m_axisCount) ? m_smoothStopDec[profile - 1] : 100.0;
+}
+
+double CTotalMgr::estopDec(short profile) const
+{
+    return (profile >= 1 && profile <= m_axisCount) ? m_estopDec[profile - 1] : 1000.0;
 }

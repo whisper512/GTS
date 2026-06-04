@@ -35,7 +35,11 @@ private:
 	void onDacLimitChanged();
 	void onInputPulseInvertChanged(int index);
 	void onPulseCountSourceChanged(int index);
-
+	void refreshFollowErrorLimit();
+	void onFollowErrorLimitChanged();
+	void refreshStopDecel();
+	void onStopDecelChanged();
+	void onLimitSwitchLevelChanged(int index);
 
 	// 下载配置文件到板卡
 	void onLoadToBoard();

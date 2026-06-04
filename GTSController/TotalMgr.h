@@ -54,6 +54,12 @@ private:
     // DAC 配置
     short m_dacBias[4] = { 0, 0, 0, 0 };
     short m_dacLimit[4] = { 32767, 32767, 32767, 32767 };
+    // 跟随误差极限 
+    long m_followingErrorLimit[4] = { 32767, 32767, 32767, 32767 };
+    // 停止减速参数 
+    double m_smoothStopDec[4] = { 100.0, 100.0, 100.0, 100.0 };
+    double m_estopDec[4] = { 1000.0, 1000.0, 1000.0, 1000.0 };
+
 
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
@@ -136,7 +142,15 @@ public:
     void setDacLimit(short dac, short limit);
     short dacBias(short dac) const;
     short dacLimit(short dac) const;
-
+    // 误差极限相关
+    void readFollowErrorLimit();
+    void setFollowErrorLimit(short control, long error);
+    long followErrorLimit(short control) const;
+    // 停止减速相关
+    void readStopDecel();
+    void setStopDecel(short profile, double smooth, double abrupt);
+    double smoothStopDec(short profile) const;
+    double estopDec(short profile) const;
 
 signals:
     // 板卡时钟更新

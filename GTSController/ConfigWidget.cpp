@@ -41,6 +41,7 @@ void CConfigWidget::InitUI()
 	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("脉冲输出模式") , QStringLiteral("CCW/CW")});
 	ComboAddItems(ui.comboBox_inputPulseInvert, { QStringLiteral("正常"), QStringLiteral("取反") });
 	ComboAddItems(ui.comboBox_pulseCountSource, { QStringLiteral("外部编码器"), QStringLiteral("脉冲计数器") });
+	ComboAddItems(ui.comboBox_limitSwitchLevel, {QStringLiteral("高电平触发"),QStringLiteral("低电平触发")});
 
 }
 
@@ -57,6 +58,13 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshDacValues(); });
 	connect(ui.comboBox_inputPulseInvert, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onInputPulseInvertChanged);
 	connect(ui.comboBox_pulseCountSource, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onPulseCountSourceChanged);
+	connect(ui.spinBox_followingErrorLimit, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onFollowErrorLimitChanged);
+	connect(ui.comboBox_controlId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshFollowErrorLimit(); });
+	connect(ui.doubleSpinBox_smoothStopDec, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onStopDecelChanged);
+	connect(ui.doubleSpinBox_smoothStopDec_2, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onStopDecelChanged);
+	connect(ui.comboBox_profileId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshStopDecel(); });
+	connect(ui.comboBox_limitSwitchLevel, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onLimitSwitchLevelChanged);
+
 
 	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
 	//connect(ui.spinBox_encoderEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
@@ -135,6 +143,8 @@ void CConfigWidget::onAlarmStateChanged()
 	refreshLimitButton();
 	refreshScaleEquivalents();
 	refreshDacValues();
+	refreshFollowErrorLimit();
+	refreshStopDecel();
 }
 
 void CConfigWidget::refreshAlarmButton()
@@ -370,6 +380,80 @@ void CConfigWidget::onPulseCountSourceChanged(int index)
 			.arg(encoder + 1)
 			.arg(name)
 			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
+			Qt::red);
+	}
+}
+
+void CConfigWidget::refreshFollowErrorLimit()
+{
+	if (!m_pTotalMgr) return;
+	short ctrl = ui.comboBox_controlId->currentText().toShort();
+	ui.spinBox_followingErrorLimit->setValue(
+		(int)m_pTotalMgr->followErrorLimit(ctrl));
+}
+
+void CConfigWidget::onFollowErrorLimitChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short ctrl = ui.comboBox_controlId->currentText().toShort();
+	long error = ui.spinBox_followingErrorLimit->value();
+	m_pTotalMgr->setFollowErrorLimit(ctrl, error);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("Control%1 跟随误差极限 → %2").arg(ctrl).arg(error),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::refreshStopDecel()
+{
+	if (!m_pTotalMgr) return;
+	short profile = ui.comboBox_profileId->currentText().toShort();
+
+	ui.doubleSpinBox_smoothStopDec->setValue(
+		m_pTotalMgr->smoothStopDec(profile));
+	ui.doubleSpinBox_smoothStopDec_2->setValue(
+		m_pTotalMgr->estopDec(profile));
+}
+
+void CConfigWidget::onStopDecelChanged()
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short profile = ui.comboBox_profileId->currentText().toShort();
+	double smooth = ui.doubleSpinBox_smoothStopDec->value();
+	double abrupt = ui.doubleSpinBox_smoothStopDec_2->value();
+
+	m_pTotalMgr->setStopDecel(profile, smooth, abrupt);
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("Profile%1 停止减速度 → 平滑=%2 急停=%3")
+		.arg(profile).arg(smooth, 0, 'f', 3).arg(abrupt, 0, 'f', 3),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onLimitSwitchLevelChanged(int index)
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	// 0=高电平触发(所有位=0)，1=低电平触发(轴1~4位全置1)
+	unsigned short sense = (index == 0) ? 0 : 0x000F;
+
+	bool ok = m_pTotalMgr->axisMgr()->setLimitSense(sense);
+
+	QString level = (index == 0) ? QStringLiteral("高电平触发") : QStringLiteral("低电平触发");
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("限位触发电平 → %1").arg(level),
+			Qt::darkGreen);
+	}
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("设置限位触发电平失败 (err=%1)")
+			.arg(m_pTotalMgr->axisMgr()->lastError()),
 			Qt::red);
 	}
 }
