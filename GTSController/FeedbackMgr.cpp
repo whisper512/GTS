@@ -1,8 +1,9 @@
 #include "FeedbackMgr.h"
+#include "TotalMgr.h"
 
-
-FeedbackMgr::FeedbackMgr(QObject* parent)
+FeedbackMgr::FeedbackMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)
+    , m_pTotalMgr(totalMgr)
 {
 }
 
@@ -10,11 +11,10 @@ FeedbackMgr::~FeedbackMgr() {
 }
 
 bool FeedbackMgr::checkEncoder(short encoder) const {
-    return (encoder >= 0 && encoder < m_axisCount);
+    return (encoder >= 0 && encoder < m_pTotalMgr->axisCount());
 }
-
 bool FeedbackMgr::checkAxis(short axis) const {
-    return (axis >= 0 && axis < m_axisCount);
+    return (axis >= 0 && axis < m_pTotalMgr->axisCount());
 }
 
 // ================================================================

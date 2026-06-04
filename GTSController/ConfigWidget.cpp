@@ -31,7 +31,7 @@ void CConfigWidget::InitUI()
 	ComboAddNumbers(ui.comboBox_axisId, 4);
 	ComboAddNumbers(ui.comboBox_stepIndex, 4);
 	ComboAddNumbers(ui.comboBox_dacId, 4);
-	ComboAddNumbers(ui.comboBox_encoderId, 8);
+	ComboAddNumbers(ui.comboBox_encoderId, 4);
 	ComboAddNumbers(ui.comboBox_controlId, 4);
 	ComboAddNumbers(ui.comboBox_profileId, 4);
 	ComboAddNumbers(ui.comboBox_inputID, 16);
@@ -39,6 +39,8 @@ void CConfigWidget::InitUI()
 	// 编码器当量读取有问题,屏蔽
 	ui.groupBox_encoderEquivalent->setVisible(false);
 	ComboAddItems(ui.comboBox_pulseOutputMode,{ QStringLiteral("脉冲输出模式") , QStringLiteral("CCW/CW")});
+	ComboAddItems(ui.comboBox_inputPulseInvert, { QStringLiteral("正常"), QStringLiteral("取反") });
+	ComboAddItems(ui.comboBox_pulseCountSource, { QStringLiteral("外部编码器"), QStringLiteral("脉冲计数器") });
 
 }
 
@@ -53,6 +55,8 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
 	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
 	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshDacValues(); });
+	connect(ui.comboBox_inputPulseInvert, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onInputPulseInvertChanged);
+	connect(ui.comboBox_pulseCountSource, QOverload<int>::of(&QComboBox::currentIndexChanged),this, &CConfigWidget::onPulseCountSourceChanged);
 
 	//connect(ui.spinBox_encoderEquivalentAlpha, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
 	//connect(ui.spinBox_encoderEquivalentBeta, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onEncoderScaleChanged);
@@ -306,4 +310,66 @@ void CConfigWidget::onDacLimitChanged()
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("DAC%1 饱和极限 → %2").arg(dac).arg(limit),
 		Qt::darkGreen);
+}
+
+void CConfigWidget::onInputPulseInvertChanged(int index)
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short encoder = ui.comboBox_encoderId->currentText().toShort();
+	// encSns 是全局位掩码，bit0=编码器1, bit1=编码器2...
+	// 这里简化：取反时设对应位，正常时清对应位
+	unsigned short sense = (index == 1) ? (1 << (encoder - 1)) : 0;
+
+	bool ok = m_pTotalMgr->feedbackMgr()->setEncoderSense(sense);
+
+	QString polar = (index == 0) ? QStringLiteral("正常") : QStringLiteral("取反");
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("编码器%1 极性 → %2").arg(encoder).arg(polar),
+			Qt::darkGreen);
+	}
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("编码器%1 设置极性失败 (err=%2)")
+			.arg(encoder)
+			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
+			Qt::red);
+	}
+}
+
+void CConfigWidget::onPulseCountSourceChanged(int index)
+{
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short encoder = ui.comboBox_encoderId->currentText().toShort();
+	bool ok = false;
+	QString name;
+
+	if (index == 0) {
+		// 外部编码器 → 开启编码器
+		ok = m_pTotalMgr->feedbackMgr()->encoderOn(encoder);
+		name = QStringLiteral("外部编码器");
+	}
+	else if (index == 1) {
+		// 脉冲计数器 → 关闭编码器（切换到脉冲计数模式）
+		ok = m_pTotalMgr->feedbackMgr()->encoderOff(encoder);
+		name = QStringLiteral("脉冲计数器");
+	}
+
+	if (ok) {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("编码器%1 计数源 → %2").arg(encoder).arg(name),
+			Qt::darkGreen);
+	}
+	else {
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("编码器%1 设置 %2 失败 (err=%3)")
+			.arg(encoder + 1)
+			.arg(name)
+			.arg(m_pTotalMgr->feedbackMgr()->lastError()),
+			Qt::red);
+	}
 }

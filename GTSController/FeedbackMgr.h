@@ -5,6 +5,7 @@
 #include <QString>
 #include "GtsHal.h"
 
+class CTotalMgr;
 
 // ============================================================
 // FeedbackMgr — 反馈管理器（编码器 + 捕获 + 回零）
@@ -19,14 +20,14 @@ class FeedbackMgr : public QObject
     Q_OBJECT
 
 private:
-    short m_axisCount;
+    CTotalMgr* m_pTotalMgr = nullptr;
     mutable short m_lastError = 0;
 
     bool checkEncoder(short encoder) const;
     bool checkAxis(short axis) const;
 
 public:
-    explicit FeedbackMgr(QObject* parent = nullptr);
+    explicit FeedbackMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~FeedbackMgr();
 
     // 设置编码器极性

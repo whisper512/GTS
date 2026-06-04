@@ -33,6 +33,8 @@ private:
 	void refreshDacValues();
 	void onDacBiasChanged();
 	void onDacLimitChanged();
+	void onInputPulseInvertChanged(int index);
+	void onPulseCountSourceChanged(int index);
 
 
 	// 下载配置文件到板卡
