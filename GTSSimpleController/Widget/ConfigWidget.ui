@@ -63,7 +63,11 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QSpinBox" name="spinBox_followingErrorLimit"/>
+          <widget class="QSpinBox" name="spinBox_followingErrorLimit">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -98,7 +102,11 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QSpinBox" name="spinBox_zeroOffsetCompensation"/>
+          <widget class="QSpinBox" name="spinBox_zeroOffsetCompensation">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_outputVoltageSaturationLimit">
@@ -111,7 +119,11 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox_outputVoltageSaturationLimit"/>
+          <widget class="QSpinBox" name="spinBox_outputVoltageSaturationLimit">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>

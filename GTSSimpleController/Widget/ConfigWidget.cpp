@@ -42,14 +42,16 @@ void CConfigWidget::connectSignalsAndSlots()
 
 	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 
+	connect(ui.comboBox_profileId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshStopDecel(); });
+	connect(ui.doubleSpinBox_smoothStopDec, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onStopDecelChanged);
+	connect(ui.doubleSpinBox_smoothStopDec_2, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onStopDecelChanged);
+
+	connect(ui.comboBox_controlId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshFollowErrorLimit(); });
+	connect(ui.spinBox_followingErrorLimit, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onFollowErrorLimitChanged);
+
+	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshDacValues(); });
 	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
 	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
-	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshDacValues(); });
-	connect(ui.spinBox_followingErrorLimit, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onFollowErrorLimitChanged);
-	connect(ui.comboBox_controlId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshFollowErrorLimit(); });
-	connect(ui.doubleSpinBox_smoothStopDec, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onStopDecelChanged);
-	connect(ui.doubleSpinBox_smoothStopDec_2, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onStopDecelChanged);
-	connect(ui.comboBox_profileId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshStopDecel(); });
 }
 
 void CConfigWidget::onBtnClicked()
@@ -119,6 +121,8 @@ void CConfigWidget::onconfigChanged()
 {
 	refreshAlarmButton();
 	refreshLimitButton();
+	refreshFollowErrorLimit();
+	refreshDacValues();
 	refreshStopDecel();
 }
 
