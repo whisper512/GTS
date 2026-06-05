@@ -154,7 +154,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="GTSControllerWidget.qrc">
+    <QtRcc Include="AdvGTSControllerWidget.qrc">
       <Filter>Resouce Files</Filter>
     </QtRcc>
   </ItemGroup>
