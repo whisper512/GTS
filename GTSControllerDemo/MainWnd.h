@@ -1,6 +1,5 @@
 #pragma once
 #include <cstddef>
-#include "gts.h"
 #include <QtWidgets/QMainWindow>
 #include "ui_MainWnd.h"
 
