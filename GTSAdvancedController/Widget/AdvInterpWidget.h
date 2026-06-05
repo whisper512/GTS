@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "ui_InterpWidget.h"
+#include "ui_AdvInterpWidget.h"
 
 class CInterpWidget : public QWidget
 {

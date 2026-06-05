@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <QWidget>
 #include "../Mgr/AdvAxisMgr.h"
-#include "ui_AxisWidget.h"
+#include "ui_AdvAxisWidget.h"
 
 class CTotalMgr;
 class GTSControllerWidget;

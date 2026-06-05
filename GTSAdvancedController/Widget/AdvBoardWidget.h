@@ -1,7 +1,7 @@
 #pragma once
 #include <QWidget>
 #include "../Mgr/AdvBoardMgr.h"
-#include "ui_BoradWidget.h"
+#include "ui_AdvBoradWidget.h"
 
 class CTotalMgr;
 class GTSControllerWidget;

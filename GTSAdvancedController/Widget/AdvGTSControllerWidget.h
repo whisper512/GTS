@@ -2,7 +2,7 @@
 #include <QtWidgets/QWidget>
 #include <QButtonGroup>
 
-#include "ui_GTSControllerWidget.h"
+#include "ui_AdvGTSControllerWidget.h"
 #include "../Mgr/AdvTotalMgr.h"
 #include "AdvBoardWidget.h"
 #include "AdvAxisWidget.h"

@@ -2,7 +2,7 @@
 #include <QWidget>
 
 #include "../Mgr/AdvControllerData.h"
-#include "ui_IOWidget.h"
+#include "ui_AdvIOWidget.h"
 
 class CTotalMgr;
 class GTSControllerWidget;

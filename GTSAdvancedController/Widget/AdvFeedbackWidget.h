@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "ui_FeedbackWidget.h"
+#include "ui_AdvFeedbackWidget.h"
 
 class CFeedbackWidget : public QWidget
 {

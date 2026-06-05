@@ -6,9 +6,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Forn Files">
-      <UniqueIdentifier>{12b8d902-66ab-41b3-aaba-151badc996a7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{c3937d41-1b43-4f48-9c74-85ec2c34920c}</UniqueIdentifier>
     </Filter>
@@ -29,6 +26,9 @@
     </Filter>
     <Filter Include="Source Files\Widget">
       <UniqueIdentifier>{7a2fa686-e6fd-40b4-80d2-20edfc3b1b6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{12b8d902-66ab-41b3-aaba-151badc996a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -141,28 +141,28 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Widget\AxisWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\BoradWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\ConfigWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\FeedbackWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\GTSControllerWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\InterpWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\IOWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\OthersWidget.ui">
-      <Filter>Forn Files</Filter>
+      <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
 </Project>

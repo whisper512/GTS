@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <QMainWindow>
-#include "ui_ConfigWidget.h"
+#include "ui_AdvConfigWidget.h"
 
 class CTotalMgr;
 class GTSControllerWidget;
