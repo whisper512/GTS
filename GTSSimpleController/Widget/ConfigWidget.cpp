@@ -36,10 +36,12 @@ void CConfigWidget::InitUI()
 
 void CConfigWidget::connectSignalsAndSlots()
 {
-	connect(ui.pushButton_servoAlarmEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CConfigWidget::refreshAlarmButton);
+	connect(ui.pushButton_servoAlarmEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
 	connect(ui.pushButton_limitEnable, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
+
 	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onBtnClicked);
+
 	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
 	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
 	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshDacValues(); });
@@ -117,7 +119,7 @@ void CConfigWidget::onconfigChanged()
 {
 	refreshAlarmButton();
 	refreshLimitButton();
-
+	refreshStopDecel();
 }
 
 void CConfigWidget::refreshAlarmButton()
