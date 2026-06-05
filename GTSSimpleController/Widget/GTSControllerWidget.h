@@ -6,9 +6,7 @@
 #include "../Mgr/TotalMgr.h"
 #include "BoardWidget.h"
 #include "AxisWidget.h"
-#include "InterpWidget.h"
 #include "IOWidget.h"
-#include "FeedbackWidget.h"
 #include "ConfigWidget.h"
 #include "OthersWidget.h"
 

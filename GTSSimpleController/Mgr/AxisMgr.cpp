@@ -26,9 +26,9 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         vecAxis[idx].axisIndex = axis;
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
-        vecAxis[idx].dCurPos = encoderPosition(axis);
-        vecAxis[idx].dCurVel = encoderVelocity(axis);
-        vecAxis[idx].dCurAcc = encoderAcceleration(axis);
+        vecAxis[idx].dCurPlusePos = encoderPosition(axis);
+        vecAxis[idx].dCurPluseVel = encoderVelocity(axis);
+        vecAxis[idx].dCurPluseAcc = encoderAcceleration(axis);
     }
 }
 

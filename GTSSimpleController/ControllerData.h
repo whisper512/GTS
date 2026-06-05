@@ -279,6 +279,7 @@ struct stuJogParam
 // 轴信息
 struct stuAxis
 {
+    // 轴状态
     short axisIndex;   // 轴号1-4
     bool bAlarm;       // 报警
     bool bMError;      // 跟随误差越限
@@ -288,11 +289,15 @@ struct stuAxis
     bool bAbruptStop;  // 急停
     bool bServoOn;     // 伺服使能
     bool bMotion;      // 规划器运动
-    double dCurPos;    // 当前位置
+    // 运动相关
+    double dCurPlusePos;  // 当前位置(单位:脉冲)
+    double dCurPluseVel;  // 实际速度(单位:脉冲/s)
+    double dCurPluseAcc;  // 当前加速度(单位:脉冲/s^2)
+    double dCurPos;    // 当前实际位置(单位:mm)
+    double dCurVel;    // 当前实际速度(单位:mm/s)
+    double dCurAcc;    // 当前实际加速度(单位:mm/s^2)
     double dPrfPos;    // 规划位置
-    double dCurVel;    // 实际速度
     double dPrfVel;    // 规划速度
-    double dCurAcc;    // 当前加速度
     double dPrfAcc;    // 规划加速度
     long lPrfMode;     // 运动模式
     long AxisStatus;   // 轴状态
@@ -309,11 +314,14 @@ struct stuAxis
         , bAbruptStop(false)
         , bServoOn(false)
         , bMotion(false)
+        , dCurPlusePos(0.0)
+        , dCurPluseVel(0.0)
+        , dCurPluseAcc(0.0)
         , dCurPos(0.0)
-        , dPrfPos(0.0)
         , dCurVel(0.0)
-        , dPrfVel(0.0)
         , dCurAcc(0.0)
+        , dPrfPos(0.0)
+        , dPrfVel(0.0)
         , dPrfAcc(0.0)
         , lPrfMode(0)
         , AxisStatus(0)

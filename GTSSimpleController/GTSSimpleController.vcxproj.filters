@@ -70,13 +70,7 @@
     <QtMoc Include="Widget\ConfigWidget.h">
       <Filter>Header Files\Widget</Filter>
     </QtMoc>
-    <QtMoc Include="Widget\FeedbackWidget.h">
-      <Filter>Header Files\Widget</Filter>
-    </QtMoc>
     <QtMoc Include="Widget\GTSControllerWidget.h">
-      <Filter>Header Files\Widget</Filter>
-    </QtMoc>
-    <QtMoc Include="Widget\InterpWidget.h">
       <Filter>Header Files\Widget</Filter>
     </QtMoc>
     <QtMoc Include="Widget\IOWidget.h">
@@ -120,13 +114,7 @@
     <ClCompile Include="Widget\ConfigWidget.cpp">
       <Filter>Source Files\Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\FeedbackWidget.cpp">
-      <Filter>Source Files\Widget</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\GTSControllerWidget.cpp">
-      <Filter>Source Files\Widget</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget\InterpWidget.cpp">
       <Filter>Source Files\Widget</Filter>
     </ClCompile>
     <ClCompile Include="Widget\IOWidget.cpp">
