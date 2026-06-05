@@ -4,7 +4,7 @@
 #include <QTextCursor>
 #include <QTime>
 
-#include "GTSControllerWidget.h"
+#include "AdvGTSControllerWidget.h"
 
 GTSControllerWidget::GTSControllerWidget(QWidget* parent)
     : QWidget(parent)

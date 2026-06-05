@@ -1,6 +1,6 @@
 #pragma once
 #include <QWidget>
-#include "BoardMgr.h"
+#include "../Mgr/AdvBoardMgr.h"
 #include "ui_BoradWidget.h"
 
 class CTotalMgr;

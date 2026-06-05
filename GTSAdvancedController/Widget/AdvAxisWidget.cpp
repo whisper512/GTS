@@ -1,8 +1,8 @@
-#include "AxisWidget.h"
-#include "GTSControllerWidget.h"
-#include "TotalMgr.h"
-#include "BoardMgr.h"
-#include "AxisMgr.h"
+#include "AdvAxisWidget.h"
+#include "AdvGTSControllerWidget.h"
+#include "../Mgr/AdvTotalMgr.h"
+#include "../Mgr/AdvBoardMgr.h"
+#include "../Mgr/AdvAxisMgr.h"
 
 #include <QMessageBox>
 

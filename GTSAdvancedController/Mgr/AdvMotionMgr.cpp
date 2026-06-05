@@ -4,8 +4,8 @@
 
 #include <QMessageBox>
 #include <QCoreApplication>
-#include "TotalMgr.h"
-#include "MotionMgr.h"
+#include "AdvTotalMgr.h"
+#include "AdvMotionMgr.h"
 
 
 MotionMgr::MotionMgr(CTotalMgr* totalMgr, QObject* parent)

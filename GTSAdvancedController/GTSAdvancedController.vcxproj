@@ -111,55 +111,55 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AxisWidget.cpp" />
-    <ClCompile Include="ConfigMgr.cpp" />
-    <ClCompile Include="ConfigWidget.cpp" />
-    <ClCompile Include="FeedbackMgr.cpp" />
-    <ClCompile Include="FeedbackWidget.cpp" />
-    <ClCompile Include="InterpolationMgr.cpp" />
-    <ClCompile Include="InterpWidget.cpp" />
-    <ClCompile Include="IOMgr.cpp" />
-    <ClCompile Include="BoardWidget.cpp" />
-    <ClCompile Include="IOWidget.cpp" />
-    <ClCompile Include="MotionMgr.cpp" />
-    <ClCompile Include="OthersWidget.cpp" />
-    <ClCompile Include="TotalMgr.cpp" />
     <QtRcc Include="GTSControllerWidget.qrc" />
-    <QtUic Include="AxisWidget.ui" />
-    <QtUic Include="ConfigWidget.ui" />
-    <QtUic Include="FeedbackWidget.ui" />
-    <QtUic Include="GTSControllerWidget.ui" />
-    <QtMoc Include="GTSControllerWidget.h" />
-    <ClCompile Include="AxisMgr.cpp" />
-    <ClCompile Include="BoardMgr.cpp" />
-    <ClCompile Include="GTSControllerWidget.cpp" />
-    <ClCompile Include="main.cpp" />
-    <QtUic Include="BoradWidget.ui" />
-    <QtUic Include="InterpWidget.ui" />
-    <QtUic Include="IOWidget.ui" />
-    <QtUic Include="OthersWidget.ui" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="OthersWidget.h" />
-    <QtMoc Include="IOWidget.h" />
-    <QtMoc Include="InterpWidget.h" />
-    <QtMoc Include="BoardWidget.h" />
-    <QtMoc Include="AxisMgr.h" />
-    <ClInclude Include="..\GTSLib\config.h" />
-    <ClInclude Include="..\GTSLib\gts.h" />
-    <ClInclude Include="..\GTSLib\LookAheadEx.h" />
-    <QtMoc Include="ConfigMgr.h" />
-    <QtMoc Include="FeedbackMgr.h" />
-    <QtMoc Include="AxisWidget.h" />
-    <QtMoc Include="FeedbackWidget.h" />
-    <QtMoc Include="ConfigWidget.h" />
-    <ClInclude Include="ControllerData.h" />
-    <ClInclude Include="GtsHal.h" />
-    <QtMoc Include="BoardMgr.h" />
-    <QtMoc Include="InterpolationMgr.h" />
-    <QtMoc Include="IOMgr.h" />
-    <QtMoc Include="MotionMgr.h" />
-    <QtMoc Include="TotalMgr.h" />
+    <QtUic Include="Widget\AdvAxisWidget.ui" />
+    <QtUic Include="Widget\AdvBoradWidget.ui" />
+    <QtUic Include="Widget\AdvConfigWidget.ui" />
+    <QtUic Include="Widget\AdvFeedbackWidget.ui" />
+    <QtUic Include="Widget\AdvGTSControllerWidget.ui" />
+    <QtUic Include="Widget\AdvInterpWidget.ui" />
+    <QtUic Include="Widget\AdvIOWidget.ui" />
+    <QtUic Include="Widget\AdvOthersWidget.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Mgr\AdvAxisMgr.h" />
+    <QtMoc Include="Mgr\AdvBoardMgr.h" />
+    <QtMoc Include="Mgr\AdvConfigMgr.h" />
+    <ClInclude Include="Mgr\AdvControllerData.h" />
+    <QtMoc Include="Mgr\AdvFeedbackMgr.h" />
+    <QtMoc Include="Mgr\AdvInterpolationMgr.h" />
+    <QtMoc Include="Mgr\AdvIOMgr.h" />
+    <QtMoc Include="Mgr\AdvMotionMgr.h" />
+    <QtMoc Include="Mgr\AdvTotalMgr.h" />
+    <QtMoc Include="Widget\AdvOthersWidget.h" />
+    <QtMoc Include="Widget\AdvIOWidget.h" />
+    <QtMoc Include="Widget\AdvInterpWidget.h" />
+    <QtMoc Include="Widget\AdvGTSControllerWidget.h" />
+    <QtMoc Include="Widget\AdvFeedbackWidget.h" />
+    <QtMoc Include="Widget\AdvConfigWidget.h" />
+    <QtMoc Include="Widget\AdvBoardWidget.h" />
+    <QtMoc Include="Widget\AdvAxisWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mgr\AdvAxisMgr.cpp" />
+    <ClCompile Include="Mgr\AdvBoardMgr.cpp" />
+    <ClCompile Include="Mgr\AdvConfigMgr.cpp" />
+    <ClCompile Include="Mgr\AdvFeedbackMgr.cpp" />
+    <ClCompile Include="Mgr\AdvInterpolationMgr.cpp" />
+    <ClCompile Include="Mgr\AdvIOMgr.cpp" />
+    <ClCompile Include="Mgr\AdvMotionMgr.cpp" />
+    <ClCompile Include="Mgr\AdvTotalMgr.cpp" />
+    <ClCompile Include="Widget\AdvAxisWidget.cpp" />
+    <ClCompile Include="Widget\AdvBoardWidget.cpp" />
+    <ClCompile Include="Widget\AdvConfigWidget.cpp" />
+    <ClCompile Include="Widget\AdvFeedbackWidget.cpp" />
+    <ClCompile Include="Widget\AdvGTSControllerWidget.cpp" />
+    <ClCompile Include="Widget\AdvInterpWidget.cpp" />
+    <ClCompile Include="Widget\AdvIOWidget.cpp" />
+    <ClCompile Include="Widget\AdvOthersWidget.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

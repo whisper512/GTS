@@ -5,7 +5,7 @@
 #include <QString>
 #include <Vector>
 #include "GtsHal.h"
-#include "ControllerData.h"
+#include "AdvControllerData.h"
 
 class CTotalMgr;
 

@@ -1,5 +1,5 @@
-#include "FeedbackMgr.h"
-#include "TotalMgr.h"
+#include "AdvTotalmgr.h"
+#include "AdvFeedbackmgr.h"
 
 FeedbackMgr::FeedbackMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)

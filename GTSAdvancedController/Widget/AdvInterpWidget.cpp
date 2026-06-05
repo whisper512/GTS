@@ -1,4 +1,4 @@
-#include "InterpWidget.h"
+#include "AdvInterpWidget.h"
 
 CInterpWidget::CInterpWidget(QWidget *parent)
 	: QWidget(parent)

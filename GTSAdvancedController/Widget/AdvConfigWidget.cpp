@@ -1,8 +1,8 @@
 ﻿#include <QTimer>
 #include <QFileDialog>
-#include "ConfigWidget.h"
-#include "GTSControllerWidget.h"
-#include "TotalMgr.h"
+#include "AdvConfigWidget.h"
+#include "AdvGTSControllerWidget.h"
+#include "../Mgr/AdvTotalMgr.h"
 
 CConfigWidget::CConfigWidget(QWidget *parent, CTotalMgr* mgr)
 	: QMainWindow(parent)

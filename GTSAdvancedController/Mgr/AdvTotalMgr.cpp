@@ -1,4 +1,4 @@
-﻿#include "TotalMgr.h"
+﻿#include "AdvTotalMgr.h"
 #include <QMessageBox>
 
 CTotalMgr::CTotalMgr(QObject* parent)

@@ -1,152 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="AxisMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AxisWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoardMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoardWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfigMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfigWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FeedbackMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FeedbackWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GTSControllerWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InterpolationMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InterpWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IOMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IOWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MotionMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OthersWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TotalMgr.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\GTSLib\config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ControllerData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GTSLib\gts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GtsHal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\GTSLib\LookAheadEx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="AxisMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="BoardMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="AxisWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="BoardWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="ConfigMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="ConfigWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="FeedbackMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="FeedbackWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="GTSControllerWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="InterpolationMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="InterpWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="IOMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="IOWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="MotionMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="OthersWidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="TotalMgr.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="AxisWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="BoradWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="ConfigWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="FeedbackWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="GTSControllerWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="InterpWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="IOWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="OthersWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Form Files">
       <UniqueIdentifier>{54b352dd-7c87-415e-a2e7-9461cf64225c}</UniqueIdentifier>
     </Filter>
@@ -159,10 +13,156 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{c87b4d69-6654-4d27-bf27-a6f7dad8de6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mgr">
+      <UniqueIdentifier>{289b5efd-9171-4c74-873a-836d50ecded7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Widget">
+      <UniqueIdentifier>{2a48e910-6f5e-44c6-acc4-ed9669b61215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Widget">
+      <UniqueIdentifier>{9c7789e8-77ed-441d-8663-aa64a93795bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mgr">
+      <UniqueIdentifier>{b8017401-395c-4b5e-830c-a7833a03b8c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="GTSControllerWidget.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="Widget\AdvAxisWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvBoradWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvConfigWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvFeedbackWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvGTSControllerWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvInterpWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvIOWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\AdvOthersWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Mgr\AdvControllerData.h">
+      <Filter>Header Files\Mgr</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Widget\AdvAxisWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvBoardWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvConfigWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvFeedbackWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvGTSControllerWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvInterpWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvIOWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AdvOthersWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvAxisMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvBoardMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvConfigMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvFeedbackMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvInterpolationMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvIOMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvMotionMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Mgr\AdvTotalMgr.cpp">
+      <Filter>Source Files\Mgr</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Widget\AdvAxisWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvBoardWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvConfigWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvFeedbackWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvGTSControllerWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvInterpWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvIOWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Widget\AdvOthersWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvAxisMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvBoardMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvConfigMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvFeedbackMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvInterpolationMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvIOMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvTotalMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
+    <QtMoc Include="Mgr\AdvMotionMgr.h">
+      <Filter>Header Files\Mgr</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 #include <QWidget>
 
-#include "ControllerData.h"
+#include "../Mgr/AdvControllerData.h"
 #include "ui_IOWidget.h"
 
 class CTotalMgr;

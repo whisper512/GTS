@@ -1,4 +1,4 @@
-#include "OthersWidget.h"
+#include "AdvOthersWidget.h"
 
 COthersWidget::COthersWidget(QWidget *parent)
 	: QWidget(parent)

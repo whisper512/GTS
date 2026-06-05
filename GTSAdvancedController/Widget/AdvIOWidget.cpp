@@ -1,8 +1,8 @@
 #include <QTimer>
 
-#include "IOWidget.h"
-#include "GTSControllerWidget.h"
-#include "TotalMgr.h"
+#include "AdvIOWidget.h"
+#include "AdvGTSControllerWidget.h"
+#include "../Mgr/AdvTotalMgr.h"
 
 CIOWidget::CIOWidget(QWidget *parent,CTotalMgr* mgr)
 	: QWidget(parent)

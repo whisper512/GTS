@@ -1,4 +1,4 @@
-#include "InterpolationMgr.h"
+#include "AdvInterpolationMgr.h"
 
 InterpolationMgr::InterpolationMgr(QObject* parent)
     : QObject(parent)

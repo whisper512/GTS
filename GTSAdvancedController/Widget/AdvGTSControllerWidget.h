@@ -3,14 +3,14 @@
 #include <QButtonGroup>
 
 #include "ui_GTSControllerWidget.h"
-#include "TotalMgr.h"
-#include "BoardWidget.h"
-#include "AxisWidget.h"
-#include "InterpWidget.h"
-#include "IOWidget.h"
-#include "FeedbackWidget.h"
-#include "ConfigWidget.h"
-#include "OthersWidget.h"
+#include "../Mgr/AdvTotalMgr.h"
+#include "AdvBoardWidget.h"
+#include "AdvAxisWidget.h"
+#include "AdvInterpWidget.h"
+#include "AdvIOWidget.h"
+#include "AdvFeedbackWidget.h"
+#include "AdvConfigWidget.h"
+#include "AdvOthersWidget.h"
 
 
 class GTSControllerWidget : public QWidget

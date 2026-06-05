@@ -1,4 +1,4 @@
-#include "FeedbackWidget.h"
+#include "AdvFeedbackWidget.h"
 
 CFeedbackWidget::CFeedbackWidget(QWidget *parent)
 	: QWidget(parent)

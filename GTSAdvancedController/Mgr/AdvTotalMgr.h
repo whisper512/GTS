@@ -6,13 +6,13 @@
 #include <QTimer>
 #include <memory>
 
-#include "BoardMgr.h"
-#include "AxisMgr.h"
-#include "MotionMgr.h"
-#include "InterpolationMgr.h"
-#include "IOMgr.h"
-#include "FeedbackMgr.h"
-#include "ConfigMgr.h"
+#include "AdvBoardMgr.h"
+#include "AdvAxisMgr.h"
+#include "AdvMotionMgr.h"
+#include "AdvInterpolationMgr.h"
+#include "AdvIOMgr.h"
+#include "AdvFeedbackMgr.h"
+#include "AdvConfigMgr.h"
 
 
 // TotalMgr — 总管理器

@@ -1,5 +1,5 @@
-﻿#include "TotalMgr.h"
-#include "BoardMgr.h"
+﻿#include "AdvTotalMgr.h"
+#include "AdvBoardMgr.h"
 
 BoardMgr::BoardMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)

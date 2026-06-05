@@ -1,5 +1,5 @@
-#include "AxisMgr.h"
-#include "TotalMgr.h"
+#include "AdvAxisMgr.h"
+#include "AdvTotalMgr.h"
 #include <QMessageBox>
 
 AxisMgr::AxisMgr(CTotalMgr* totalMgr, QObject* parent)
