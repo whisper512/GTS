@@ -45,10 +45,19 @@ bool AxisMgr::enable(short axis) {
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::axisOn(axis);
+
+    QMessageBox::information(nullptr,
+        QStringLiteral("GT_AxisOn ≈≈≤È"),
+        QStringLiteral("÷·%1 enable: ret=%2 (%3)")
+        .arg(axis)
+        .arg(m_lastError)
+        .arg(GtsErrorToString(m_lastError)));
+
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
     }
+
     return true;
 }
 

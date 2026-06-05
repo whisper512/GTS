@@ -62,7 +62,7 @@ void CTotalMgr::initAfterBoardOpened()
     // 读取轴控制模式
     initAxisCtrlMode();
     // 读取停止IO设置
-    initStopIO();
+    //initStopIO(); 
     // 读取GPI配置
     initGpiSense();
     // 读取step

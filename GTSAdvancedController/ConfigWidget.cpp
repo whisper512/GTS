@@ -528,7 +528,7 @@ void CConfigWidget::onSmoothStopIOChanged()
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 平滑停止IO → %2[%3]")
 		.arg(axis)
-		.arg(dioTypeToString(static_cast<DIType>(inputType)))
+		.arg(DITypeToString(static_cast<DIType>(inputType)))
 		.arg(inputIdx),
 		Qt::darkGreen);
 }
@@ -548,7 +548,7 @@ void CConfigWidget::onEStopIOChanged()
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 急停IO → %2[%3]")
 		.arg(axis)
-		.arg(dioTypeToString(static_cast<DIType>(inputType)))
+		.arg(DITypeToString(static_cast<DIType>(inputType)))
 		.arg(inputIdx),
 		Qt::darkGreen);
 }

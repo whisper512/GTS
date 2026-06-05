@@ -1,9 +1,12 @@
 #pragma once
-// 数据结构
 
+// #define GTS_SIMULATION    // 模拟卡模式
+// #define GTS_NO_Motor      // 无电机模式
+
+// 数据结构
 // 输入类型
 enum class DIType : short
-{
+{ 
     LimitPositive = 0,   // MC_LIMIT_POSITIVE  正限位
     LimitNegative = 1,   // MC_LIMIT_NEGATIVE  负限位
     Alarm = 2,           // MC_ALARM           驱动报警
@@ -13,7 +16,7 @@ enum class DIType : short
     MPG = 6              // MC_MPG             手轮
 };
 
-inline QString dioTypeToString(DIType type)
+inline QString DITypeToString(DIType type)
 {
     switch (type) {
     case DIType::LimitPositive: return QStringLiteral("正限位");
