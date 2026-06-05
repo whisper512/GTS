@@ -3,7 +3,7 @@
 #include <QButtonGroup>
 
 #include "ui_GTSControllerWidget.h"
-#include "TotalMgr.h"
+#include "../Mgr/TotalMgr.h"
 #include "BoardWidget.h"
 #include "AxisWidget.h"
 #include "InterpWidget.h"

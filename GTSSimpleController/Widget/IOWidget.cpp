@@ -2,7 +2,7 @@
 
 #include "IOWidget.h"
 #include "GTSControllerWidget.h"
-#include "TotalMgr.h"
+#include "../Mgr/TotalMgr.h"
 
 CIOWidget::CIOWidget(QWidget *parent,CTotalMgr* mgr)
 	: QWidget(parent)

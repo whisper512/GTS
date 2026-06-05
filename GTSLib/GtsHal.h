@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <cstdint>
 
-#include "../GTSLib/gts.h"
+#include "gts.h"
 
 // ============================================================
 // 错误码转换为字符串(调试辅助)

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include <QWidget>
-#include <AxisMgr.h>
+#include "../Mgr/AxisMgr.h"
 #include "ui_AxisWidget.h"
 
 class CTotalMgr;

@@ -1,8 +1,8 @@
 #include <QTimer>
 #include "GTSControllerWidget.h"
 #include "BoardWidget.h"
-#include "TotalMgr.h"
-#include "BoardMgr.h"
+#include "../Mgr/TotalMgr.h"
+#include "../Mgr/BoardMgr.h"
 
 CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
     : QWidget(parent)

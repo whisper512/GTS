@@ -2,7 +2,7 @@
 #include <QFileDialog>
 #include "ConfigWidget.h"
 #include "GTSControllerWidget.h"
-#include "TotalMgr.h"
+#include "../Mgr/TotalMgr.h"
 
 CConfigWidget::CConfigWidget(QWidget *parent, CTotalMgr* mgr)
 	: QMainWindow(parent)
