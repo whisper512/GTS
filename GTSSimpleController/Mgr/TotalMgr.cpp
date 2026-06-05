@@ -49,26 +49,12 @@ void CTotalMgr::initAfterBoardOpened()
 
     // 初始化轴报警状态
     initAlarmState();
-    // 初始化轴限位状态
-    initLimitState();
-    // 读取规划器和编码器的当量
-    readScaleEquivalents();
     // 读取DAC配置
     readDacConfig();
-    // 读取误差极限
+    // 读取control误差极限
     readFollowErrorLimit();
-    // 读取停止减速度参数
+    // 读取profile停止减速度参数
     readStopDecel();
-    // 读取轴控制模式
-    initAxisCtrlMode();
-    // 读取停止IO设置
-    //initStopIO(); 
-    // 读取GPI配置
-    initGpiSense();
-    // 读取step
-    initStepPulseMode();
-    // 读取编码器配置
-    initEncoderConfig();
     emit configChanged();
 
     //读取运动参数
@@ -194,6 +180,8 @@ void CTotalMgr::readScaleEquivalents()
         m_cfg.profileScaleAlpha[idx] = alpha;
         m_cfg.profileScaleBeta[idx] = beta;
     }
+
+
 }
 
 

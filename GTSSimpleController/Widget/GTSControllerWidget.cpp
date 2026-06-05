@@ -65,13 +65,12 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
+    connect(m_pTotalMgr, &CTotalMgr::configChanged, m_pConfigWidget, &CConfigWidget::onconfigChanged);
     connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);
     connect(m_pTotalMgr, &CTotalMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
     connect(m_pTotalMgr, &CTotalMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);
-    connect(m_pTotalMgr, &CTotalMgr::configChanged,  m_pConfigWidget, &CConfigWidget::onAlarmStateChanged);
-
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

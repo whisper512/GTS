@@ -24,20 +24,12 @@ private:
 	void InitConfigWidget();
 	void InitUI();
 	void connectSignalsAndSlots();
+	void onLoadToBoard();
 	// axis
 	void onservoAlarmEnable();
 	void onLimitEnable();
+	// profile
 	void onProfileScaleChanged(); 
-	void onEncoderScaleChanged();
-	void onSmoothStopIOChanged();
-	void onEStopIOChanged();
-	void onLimitSwitchLevelChanged(int index);
-	void onAxisCtrlModeChanged(int index);
-	// step
-	void onPulseOutputModeChanged(int index);
-	// encoder
-	void onInputPulseInvertChanged(int index);
-	void onPulseCountSourceChanged(int index);
 	//dac
 	void onDacBiasChanged();
 	void onDacLimitChanged();
@@ -45,25 +37,14 @@ private:
 	void onFollowErrorLimitChanged();
 	// profile
 	void onStopDecelChanged();
-	// di
-	void onGpiSenseChanged();
-	void onLoadToBoard();
-
-	//axxis
+	//axis
 	void refreshAlarmButton();
 	void refreshLimitButton();
-	void refreshAxisCtrlMode();
-	void refreshScaleEquivalents();
-	// step
-	void refreshStepPulseMode();
-	// encoder
-	void refreshEncoderConfig();
-
 	void refreshDacValues();
 	void refreshFollowErrorLimit();
 	void refreshStopDecel();
 	void refreshGpiSense();
-	void refreshStopIO();
+
 
 signals:
 
@@ -71,7 +52,7 @@ private slots:
 	void onBtnClicked();
 
 public slots:
-	void onAlarmStateChanged();
+	void onconfigChanged();
 
 };
 
