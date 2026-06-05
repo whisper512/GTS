@@ -26,9 +26,31 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         vecAxis[idx].axisIndex = axis;
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
+        //读取规划器位置,速度,加速度
+        vecAxis[idx].dPrfPos = prfPosition(axis);
+        vecAxis[idx].dPrfVel = prfVelocity(axis);
+        vecAxis[idx].dPrfAcc = prfAcceleration(axis);
+        //读取编码器位置,速度,加速度
         vecAxis[idx].dCurPlusePos = encoderPosition(axis);
         vecAxis[idx].dCurPluseVel = encoderVelocity(axis);
         vecAxis[idx].dCurPluseAcc = encoderAcceleration(axis);
+#ifdef GTS_NO_Motor
+        // 无编码器时,实际位置直接用规划器值
+        vecAxis[idx].dCurPlusePos = vecAxis[idx].dPrfPos;
+        vecAxis[idx].dCurPluseVel = vecAxis[idx].dPrfVel;
+        vecAxis[idx].dCurPluseAcc = vecAxis[idx].dPrfAcc;
+        vecAxis[idx].dCurPos = vecAxis[idx].dPrfPos;    // 无编码器，脉冲即实际
+        vecAxis[idx].dCurVel = vecAxis[idx].dPrfVel;
+        vecAxis[idx].dCurAcc = vecAxis[idx].dPrfAcc;
+#else
+        // 有编码器
+        long alpha = 1, beta = 1;                           //用设置中的编码器当量
+        GtsHal::getEncoderScale(axis, &alpha, &beta);       // 读取编码器当量
+        vecAxis[idx].dCurPos = vecAxis[idx].dCurPlusePos * alpha / beta;
+        vecAxis[idx].dCurVel = vecAxis[idx].dCurPluseVel * alpha / beta;
+        vecAxis[idx].dCurAcc = vecAxis[idx].dCurPluseAcc * alpha / beta;
+        
+#endif
     }
 }
 
@@ -380,6 +402,34 @@ double AxisMgr::encoderAcceleration(short axis) {
     GtsHal::getAxisEncAcc(axis, &acc);
     return acc;
 }
+
+double AxisMgr::prfPosition(short axis)
+{
+    if (!isValidAxis(axis)) return 0.0;
+
+    double pos = 0.0;
+    GtsHal::getAxisPrfPos(axis, &pos);
+    return pos;
+}
+
+double AxisMgr::prfVelocity(short axis)
+{
+    if (!isValidAxis(axis)) return 0.0;
+
+    double vel = 0.0;
+    GtsHal::getAxisPrfVel(axis, &vel);
+    return vel;
+}
+
+double AxisMgr::prfAcceleration(short axis)
+{
+    if (!isValidAxis(axis)) return 0.0;
+
+    double acc = 0.0;
+    GtsHal::getAxisPrfAcc(axis, &acc);
+    return acc;
+}
+
 
 double AxisMgr::trackingError(short axis) {
     if (!isValidAxis(axis)) return 0.0;

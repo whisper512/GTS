@@ -101,6 +101,12 @@ public:
     double encoderVelocity(short axis) ;
     // 获取轴编码器加速度
     double encoderAcceleration(short axis) ;
+    // 获取轴规划器位置
+    double prfPosition(short axis);
+    // 获取轴规划器速度
+    double prfVelocity(short axis);
+    // 获取轴规划器加速度
+    double prfAcceleration(short axis);
     // 获取轴跟踪误差
     double trackingError(short axis);
     // 轴号是否有效

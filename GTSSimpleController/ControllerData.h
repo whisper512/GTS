@@ -1,7 +1,7 @@
 #pragma once
 
 // #define GTS_SIMULATION    // 模拟卡模式
-// #define GTS_NO_Motor      // 无电机模式
+#define GTS_NO_Motor      // 无电机模式
 
 // 数据结构
 // 输入类型

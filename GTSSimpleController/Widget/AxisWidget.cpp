@@ -431,8 +431,15 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	ui.radioButton_eStop->setChecked(axis.bAbruptStop);
 	ui.radioButton_smoothStop->setChecked(axis.bSmoothStop);
 	ui.radioButton_motionSts->setChecked(axis.bMotion);
-	ui.label_actPosData->setText(QString::number(axis.dCurPlusePos, 'f', 3));
-	ui.label_actVelData->setText(QString::number(axis.dCurPluseVel, 'f', 3));
+	// 编码器脉冲数值
+	ui.label_actPosPluseData->setText(QString::number(axis.dCurPlusePos, 'f', 3));
+	ui.label_actVelPluseData->setText(QString::number(axis.dCurPluseVel, 'f', 3));
+    ui.label_actPluseAccData->setText(QString::number(axis.dCurPluseAcc, 'f', 3));
+	// 编码器长度数值
+    ui.label_actPosData->setText(QString::number(axis.dCurPos, 'f', 3));
+    ui.label_actVelData->setText(QString::number(axis.dCurVel, 'f', 3));
+    ui.label_actAccData->setText(QString::number(axis.dCurAcc, 'f', 3));
+	// 规划期数值
 	ui.label_tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
 	ui.label_tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
 	ui.label_tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
