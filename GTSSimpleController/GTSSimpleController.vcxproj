@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ControllerData.h" />
+    <QtMoc Include="Widget\MasterControlWidget.h" />
     <QtMoc Include="Widget\OthersWidget.h" />
     <QtMoc Include="Widget\IOWidget.h" />
     <QtMoc Include="Widget\GTSControllerWidget.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Widget\ConfigWidget.cpp" />
     <ClCompile Include="Widget\GTSControllerWidget.cpp" />
     <ClCompile Include="Widget\IOWidget.cpp" />
+    <ClCompile Include="Widget\MasterControlWidget.cpp" />
     <ClCompile Include="Widget\OthersWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +157,7 @@
     <QtUic Include="Widget\GTSControllerWidget.ui" />
     <QtUic Include="Widget\InterpWidget.ui" />
     <QtUic Include="Widget\IOWidget.ui" />
+    <QtUic Include="Widget\MasterControlWidget.ui" />
     <QtUic Include="Widget\OthersWidget.ui" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

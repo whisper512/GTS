@@ -5,6 +5,7 @@
 #include "ui_GTSControllerWidget.h"
 #include "../Mgr/TotalMgr.h"
 #include "BoardWidget.h"
+#include "MasterControlWidget.h"
 #include "AxisWidget.h"
 #include "IOWidget.h"
 #include "ConfigWidget.h"
@@ -22,10 +23,9 @@ public:
 private:
     CTotalMgr* m_pTotalMgr = nullptr;        // 总管理
     CBoardWidget* m_pBoardWidget = nullptr;  // 板卡
+    CMasterControlWidget* m_pMasterControlWidget = nullptr; // 主控
     CAxisWidget* m_pAxisWidget = nullptr;    // 单轴
-    QWidget* m_pInterpWidget = nullptr;      // 插补
     CIOWidget* m_pIOWidget = nullptr;        // IO
-    QWidget* m_pFeedbackWidget = nullptr;    // 编码器
     CConfigWidget* m_pConfigWidget = nullptr;// 设置
     QWidget* m_pOthersWidget = nullptr;      // 其他
     QButtonGroup* m_pBtnGroup = nullptr;

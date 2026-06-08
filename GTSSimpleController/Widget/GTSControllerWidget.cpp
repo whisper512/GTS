@@ -33,6 +33,8 @@ void GTSControllerWidget::InitUI()
 {
     m_pBoardWidget = new CBoardWidget(this,this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pBoardWidget);
+    m_pMasterControlWidget = new CMasterControlWidget(this, this->m_pTotalMgr);
+    ui.stackedWidget->addWidget(m_pMasterControlWidget);
     m_pAxisWidget = new CAxisWidget(this, this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pAxisWidget);
     m_pIOWidget = new CIOWidget(this, this->m_pTotalMgr);
@@ -48,16 +50,18 @@ void GTSControllerWidget::InitUI()
 void GTSControllerWidget::InitUISignalAndSlotConnect()
 {
     ui.toolButton_Board->setCheckable(true);
+    ui.toolButton_masterControl->setCheckable(true);
     ui.toolButton_Axis->setCheckable(true);
     ui.toolButton_IO->setCheckable(true);
     ui.toolButton_Config->setCheckable(true);
     ui.toolButton_Others->setCheckable(true);
     m_pBtnGroup = new QButtonGroup(this);
     m_pBtnGroup->addButton(ui.toolButton_Board, 0);
-    m_pBtnGroup->addButton(ui.toolButton_Axis, 1);
-    m_pBtnGroup->addButton(ui.toolButton_IO, 2);
-    m_pBtnGroup->addButton(ui.toolButton_Config, 3);
-    m_pBtnGroup->addButton(ui.toolButton_Others, 4);
+    m_pBtnGroup->addButton(ui.toolButton_masterControl, 1);
+    m_pBtnGroup->addButton(ui.toolButton_Axis, 2);
+    m_pBtnGroup->addButton(ui.toolButton_IO, 3);
+    m_pBtnGroup->addButton(ui.toolButton_Config, 4);
+    m_pBtnGroup->addButton(ui.toolButton_Others, 5);
 
     ui.toolButton_Board->setChecked(true);
     connect(m_pBtnGroup, &QButtonGroup::idClicked, this, &GTSControllerWidget::OnBtnClicked);

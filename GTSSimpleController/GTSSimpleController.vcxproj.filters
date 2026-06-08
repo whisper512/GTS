@@ -79,6 +79,9 @@
     <QtMoc Include="Widget\OthersWidget.h">
       <Filter>Header Files\Widget</Filter>
     </QtMoc>
+    <QtMoc Include="Widget\MasterControlWidget.h">
+      <Filter>Header Files\Widget</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Mgr\AxisMgr.cpp">
@@ -126,6 +129,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\MasterControlWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Widget\AxisWidget.ui">
@@ -150,6 +156,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\OthersWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\MasterControlWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

@@ -156,6 +156,8 @@ public:
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
+    // 主控轴实时数据更新
+    //void masterAxisUpdated(const stuAxis& axisInfo);
     // 轴实时数据更新
     void axisUpdated(const std::vector<stuAxis>& axisInfo);
     // 轴参数更新
