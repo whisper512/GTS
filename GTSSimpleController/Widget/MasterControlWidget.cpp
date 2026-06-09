@@ -11,14 +11,14 @@ CMasterControlWidget::CMasterControlWidget(QWidget* parent, CTotalMgr* mgr)
 	ui.setupUi(this);
 	m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
 	initMasterControlWidget();
-	connectPrivateSignal();
+	connectPrivateSignal(); 
 }
 
 CMasterControlWidget::~CMasterControlWidget()
 {
 }
 
-// ===================================================================
+
 void CMasterControlWidget::initMasterControlWidget()
 {
 	ui.spinBox_MotionVel->setValue(5.0);
