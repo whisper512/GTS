@@ -2,6 +2,8 @@
 #include "GTSControllerWidget.h"
 #include "../Mgr/TotalMgr.h"
 
+#include <cmath>
+
 CMasterControlWidget::CMasterControlWidget(QWidget* parent, CTotalMgr* mgr)
 	: QWidget(parent)
 	, m_pTotalMgr(mgr)
@@ -16,11 +18,12 @@ CMasterControlWidget::~CMasterControlWidget()
 {
 }
 
+// ===================================================================
 void CMasterControlWidget::initMasterControlWidget()
 {
 	ui.spinBox_MotionVel->setValue(5.0);
 	ui.doubleSpinBoxs_Acc->setValue(1.0);
-    ui.doubleSpinBoxs_Dec->setValue(1.0);
+	ui.doubleSpinBoxs_Dec->setValue(1.0);
 
 	// ========== X 轴指示灯 ==========
 	ui.radioButton_servoEnableX->setAutoExclusive(false);
@@ -39,6 +42,7 @@ void CMasterControlWidget::initMasterControlWidget()
 	ui.radioButton_motionStsX->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_eStopX->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_smoothStopX->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
 	// ========== Y 轴指示灯 ==========
 	ui.radioButton_servoEnableY->setAutoExclusive(false);
 	ui.radioButton_sevorAlarmY->setAutoExclusive(false);
@@ -56,6 +60,7 @@ void CMasterControlWidget::initMasterControlWidget()
 	ui.radioButton_motionStsY->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_eStopY->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_smoothStopY->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
 	// ========== Z 轴指示灯 ==========
 	ui.radioButton_servoEnableZ->setAutoExclusive(false);
 	ui.radioButton_sevorAlarmZ->setAutoExclusive(false);
@@ -78,26 +83,34 @@ void CMasterControlWidget::initMasterControlWidget()
 // ===================================================================
 void CMasterControlWidget::connectPrivateSignal()
 {
-	// ===== X 轴 Jog (±) =====
+	// ===== X 轴 Jog =====
 	connect(ui.toolButton_xPlus, &QToolButton::pressed, this, [this]() { onJogPressed(1, 1); });
 	connect(ui.toolButton_xPlus, &QToolButton::released, this, [this]() { onJogReleased(1); });
 	connect(ui.toolButton_xMinus, &QToolButton::pressed, this, [this]() { onJogPressed(1, -1); });
 	connect(ui.toolButton_xMinus, &QToolButton::released, this, [this]() { onJogReleased(1); });
 
-	// ===== Y 轴 Jog (±) =====
+	// ===== Y 轴 Jog =====
 	connect(ui.toolButton_yPlus, &QToolButton::pressed, this, [this]() { onJogPressed(2, 1); });
 	connect(ui.toolButton_yPlus, &QToolButton::released, this, [this]() { onJogReleased(2); });
 	connect(ui.toolButton_yMinus, &QToolButton::pressed, this, [this]() { onJogPressed(2, -1); });
 	connect(ui.toolButton_yMinus, &QToolButton::released, this, [this]() { onJogReleased(2); });
 
-	// ===== Z 轴 Jog (±) =====
+	// ===== Z 轴 Jog =====
 	connect(ui.toolButton_zPlus, &QToolButton::pressed, this, [this]() { onJogPressed(3, 1); });
 	connect(ui.toolButton_zPlus, &QToolButton::released, this, [this]() { onJogReleased(3); });
 	connect(ui.toolButton_zMinus, &QToolButton::pressed, this, [this]() { onJogPressed(3, -1); });
 	connect(ui.toolButton_zMinus, &QToolButton::released, this, [this]() { onJogReleased(3); });
+
+	// ===== 点位运动启动 =====
+	connect(ui.pushButton_ActMotion, &QPushButton::clicked,
+		this, &CMasterControlWidget::onTrapMotion);
+
+	
 }
 
-
+// ===================================================================
+// onJogPressed / onJogReleased 保持不变
+// ===================================================================
 void CMasterControlWidget::onJogPressed(short axisId, int direction)
 {
 	if (!m_pTotalMgr) return;
@@ -107,7 +120,6 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
 	if (!axis) return;
 
-	// 设置为jog模式
 	bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axisId, 1);
 	if (!ok)
 	{
@@ -121,8 +133,7 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	jogParam.acc = ui.doubleSpinBoxs_Acc->value();
 	jogParam.dec = ui.doubleSpinBoxs_Dec->value();
 
-	m_pTotalMgr->motionMgr()->setJogParam(axisId, jogParam);
-
+	ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, jogParam);
 	if (!ok)
 	{
 		m_pGTSControllerWidget->showLog(
@@ -146,11 +157,10 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	}
 }
 
-
 void CMasterControlWidget::onJogReleased(short axisId)
 {
 	if (!m_pTotalMgr) return;
-	bool ok = m_pTotalMgr->axisMgr()->stop(axisId, 1);  // option=1 减速停止
+	bool ok = m_pTotalMgr->axisMgr()->stop(axisId, 1);
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
@@ -160,6 +170,82 @@ void CMasterControlWidget::onJogReleased(short axisId)
 	{
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("%1 Jog停止失败").arg(axisName(axisId)), Qt::red);
+	}
+}
+
+void CMasterControlWidget::onTrapMotion()
+{
+	if (!m_pTotalMgr) return;
+	int axisCount = (int)m_pTotalMgr->axisCount();
+	if (axisCount >= 1)
+	{
+		double targetX = ui.spinBox_curPosX->value();
+		startSingleTrap(1, m_pTotalMgr->getAxisRef(0)->dCurPos, targetX);
+	}
+	if (axisCount >= 2)
+	{
+		double targetY = ui.spinBox_curPosY->value();
+		startSingleTrap(2, m_pTotalMgr->getAxisRef(1)->dCurPos, targetY);
+	}
+}
+
+
+bool CMasterControlWidget::startSingleTrap(short axisId, double curPos, double targetPos)
+{
+	double delta = targetPos - curPos;
+	if (std::fabs(delta) < 1e-9)
+	{
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("%1 已在目标位置，无需移动").arg(axisName(axisId)),
+			Qt::darkGreen);
+		return false;
+	}
+
+	// 拿到可写轴指针，填入本界面参数
+	int index = axisId - 1;
+	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	if (!axis) return false;
+
+	axis->trapParam.dMotionVel = ui.spinBox_MotionVel->value();
+	axis->trapParam.acc = ui.doubleSpinBoxs_Acc->value();
+	axis->trapParam.dec = ui.doubleSpinBoxs_Dec->value();
+	axis->trapParam.stepSize = static_cast<int>(delta);
+	axis->trapParam.somoothTime = 0;
+	axis->trapParam.cycleTimes = 0;
+	axis->trapParam.Delay = 0;
+
+	// 切换点位模式
+	bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axisId, 0);
+	if (!ok)
+	{
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("%1 切换点位模式失败").arg(axisName(axisId)), Qt::red);
+		return false;
+	}
+
+	// 启动 ———— 参考 AxisWidget::onTrapMotion
+	ok = m_pTotalMgr->motionMgr()->startTrapMotion(axisId, axis->trapParam.stepSize);
+	if (ok)
+	{
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("%1 点位运动已启动  当前=%2 → 目标=%3  步数=%4  速度=%5  加速度=%6")
+			.arg(axisName(axisId))
+			.arg(curPos, 0, 'f', 3)
+			.arg(targetPos, 0, 'f', 3)
+			.arg(axis->trapParam.stepSize)
+			.arg(axis->trapParam.dMotionVel)
+			.arg(axis->trapParam.acc, 0, 'f', 3),
+			Qt::darkGreen);
+		return true;
+	}
+	else
+	{
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("%1 点位运动启动失败 err=%2")
+			.arg(axisName(axisId))
+			.arg(m_pTotalMgr->motionMgr()->lastError()),
+			Qt::red);
+		return false;
 	}
 }
 
@@ -280,6 +366,12 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.label_tgtPosDataZ,
 			ui.label_tgtVelDataZ,
 			ui.label_tgtAccDataZ);
+
+	// ===== lineEdit 显示当前位置 =====
+	if ((int)axisInfo.size() >= 1 && !ui.spinBox_curPosX->hasFocus())
+		ui.spinBox_curPosX->setValue(static_cast<int>(axisInfo[0].dCurPos));
+	if ((int)axisInfo.size() >= 2 && !ui.spinBox_curPosY->hasFocus())
+		ui.spinBox_curPosY->setValue(static_cast<int>(axisInfo[1].dCurPos));
 
 	m_bUpdatingFromBoard = false;
 }

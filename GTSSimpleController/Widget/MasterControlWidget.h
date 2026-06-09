@@ -33,6 +33,10 @@ private:
 	void onJogPressed(short axisId, int direction);
 	void onJogReleased(short axisId);
 
-	// 硬绑定:轴号 → 名称
+	// 点位运动
+	void onTrapMotion();
+	bool startSingleTrap(short axisId, double curPos, double targetPos);
+
+	// 硬绑定：轴号 → 名称
 	static QString axisName(short axisId);
 };
