@@ -663,7 +663,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>X+</string>
+                <string>X-</string>
                </property>
               </widget>
              </item>
@@ -676,7 +676,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>X-</string>
+                <string>X+</string>
                </property>
               </widget>
              </item>
@@ -758,7 +758,7 @@
            <item>
             <widget class="QLabel" name="label_curPos">
              <property name="text">
-              <string>当前位置(mm):</string>
+              <string>当前位置(p):</string>
              </property>
             </widget>
            </item>

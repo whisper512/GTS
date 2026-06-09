@@ -2,19 +2,37 @@
 
 #include <QWidget>
 #include "ui_MasterControlWidget.h"
+#include "../Mgr/AxisMgr.h"
 
 class CTotalMgr;
+class GTSControllerWidget;
 
 class CMasterControlWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CMasterControlWidget(QWidget *parent = nullptr,CTotalMgr * mgr = nullptr);
+	CMasterControlWidget(QWidget* parent = nullptr, CTotalMgr* mgr = nullptr);
 	~CMasterControlWidget();
+
+public slots:
+	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
+	void onAxisParamUpdated(const std::vector<stuAxis>& axisInfo);
 
 private:
 	Ui::CMasterControlWidgetClass ui;
-	CTotalMgr * m_pTotalMgr;
-};
+	CTotalMgr* m_pTotalMgr;
+	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
+	bool m_bUpdatingFromBoard = false;
 
+private:
+	void initMasterControlWidget();
+	void connectPrivateSignal();
+
+	// Jog 运动
+	void onJogPressed(short axisId, int direction);
+	void onJogReleased(short axisId);
+
+	// 硬绑定:轴号 → 名称
+	static QString axisName(short axisId);
+};
