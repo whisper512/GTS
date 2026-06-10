@@ -21,13 +21,13 @@ public:
     ~GTSControllerWidget();
 
 private:
-    CTotalMgr* m_pTotalMgr = nullptr;        // 总管理
-    CBoardWidget* m_pBoardWidget = nullptr;  // 板卡
+    CTotalMgr* m_pTotalMgr = nullptr;                       // 总管理
+    CBoardWidget* m_pBoardWidget = nullptr;                 // 板卡
     CMasterControlWidget* m_pMasterControlWidget = nullptr; // 主控
-    CAxisWidget* m_pAxisWidget = nullptr;    // 单轴
-    CIOWidget* m_pIOWidget = nullptr;        // IO
-    CConfigWidget* m_pConfigWidget = nullptr;// 设置
-    QWidget* m_pOthersWidget = nullptr;      // 其他
+    CAxisWidget* m_pAxisWidget = nullptr;                   // 单轴
+    CIOWidget* m_pIOWidget = nullptr;                       // IO
+    CConfigWidget* m_pConfigWidget = nullptr;               // 设置
+    QWidget* m_pOthersWidget = nullptr;                     // 其他
     QButtonGroup* m_pBtnGroup = nullptr;
 
 private:
