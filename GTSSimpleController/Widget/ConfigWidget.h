@@ -25,21 +25,16 @@ private:
 	void InitUI();
 	void connectSignalsAndSlots();
 	void onLoadToBoard();
-	// axis
-	void onservoAlarmEnable();
-	void onLimitEnable();
-	// profile
-	void onProfileScaleChanged(); 
-	//dac
+
+	//dac参数
 	void onDacBiasChanged();
 	void onDacLimitChanged();
-	// control
+	// 控制器参数
 	void onFollowErrorLimitChanged();
-	// profile
+	// 规划期参数
 	void onStopDecelChanged();
-	//axis
-	void refreshAlarmButton();
-	void refreshLimitButton();
+	
+	// 刷新
 	void refreshDacValues();
 	void refreshFollowErrorLimit();
 	void refreshStopDecel();

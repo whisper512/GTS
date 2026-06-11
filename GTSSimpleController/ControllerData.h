@@ -2,7 +2,6 @@
 
 #define GTS_NO_Motor      // 无电机模式
 
-// 数据结构
 // 输入类型
 enum class DIType : short
 { 
@@ -143,95 +142,26 @@ struct stuClock {
     stuClock() : sysClock(0), highPrecClock(0) {}
 };
 
-// 轴配置
-struct stuAxisConfig
-{
-    int axisIndex;              // 轴号
-    bool bActivate;             // 激活
-    DIType servoAlarm;          // 驱动报警输入类型
-    int servoAlarmIndex;        // 驱动报警输入索引
-    DIType PLimit;              // 正限位输入类型
-    int PLimitIndex;            // 正限位输入索引
-    DIType NLimit;              // 负限位输入类型
-    int NLimitIndex;            // 负限位输入索引
-    DIType smoothStop;          // 平滑停止输入类型
-    int smoothStopIndex;        // 平滑停止输入索引
-    DIType EStop;               // 急停输入类型
-    int EStopIndex;             // 急停输入索引
-    int profileEquivalentAlpha; // 脉冲当量系数A
-    int profileEquivalentBeta;  // 脉冲当量系数B
-    int encoderEquivalentAlpha; // 编码器当量系数A
-    int encoderEquivalentBeta;  // 编码器当量系数B
-    stuAxisConfig()
-        : axisIndex(0)
-        , bActivate(false)
-        , servoAlarm(DIType::Alarm)
-        , servoAlarmIndex(1)
-        , PLimit(DIType::LimitPositive)
-        , PLimitIndex(1)
-        , NLimit(DIType::LimitNegative)
-        , NLimitIndex(1)
-        , smoothStop(DIType::GPI)
-        , smoothStopIndex(1)
-        , EStop(DIType::GPI)
-        , EStopIndex(1)
-        , profileEquivalentAlpha(1)
-        , profileEquivalentBeta(1)
-        , encoderEquivalentAlpha(1)
-        , encoderEquivalentBeta(1)
-    {
-    }
-};
 
-struct stuRuntimeConfig
+struct stuConfig
 {
     int axisCount = 4;
-
-    // 报警
-    bool alarmActive[4] = { false, false, false, false };
-    bool alarmAvailable[4] = { false, false, false, false };
-
-    // 限位
-    bool limitActive[4] = { false, false, false, false };
-    bool limitAvailable[4] = { false, false, false, false };
 
     // 规划器当量
     long profileScaleAlpha[4] = { 1, 1, 1, 1 };
     long profileScaleBeta[4] = { 1, 1, 1, 1 };
-
-    // 脉冲模式
-    short stepPulseMode[4] = { 0, 0, 0, 0 };
-
-    // 编码器
+    // 编码器当量
     long encScaleAlpha[4] = { 1, 1, 1, 1 };
     long encScaleBeta[4] = { 1, 1, 1, 1 };
-    bool encInvert[4] = { false, false, false, false };
-    bool encIsPulse[4] = { false, false, false, false };
-
     // DAC
     short dacBias[4] = { 0, 0, 0, 0 };
     short dacLimit[4] = { 32767, 32767, 32767, 32767 };
-
     // 跟随误差
     long followingErrorLimit[4] = { 32767, 32767, 32767, 32767 };
-
     // 停止减速
     double smoothStopDec[4] = { 100.0, 100.0, 100.0, 100.0 };
     double estopDec[4] = { 1000.0, 1000.0, 1000.0, 1000.0 };
 
-    // 控制模式
-    short axisCtrlMode[4] = { 0, 0, 0, 0 };
-
-    // 停止 IO
-    short stopInputType[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
-    short stopInputIndex[4][2] = { {1,1}, {1,1}, {1,1}, {1,1} };
-
-    // GPI
-    unsigned short gpiSense = 0;
-
-    // 序列化/反序列化接口（后面接 JSON）
-    // bool loadFromJson(const QString& path);
-    // bool saveToJson(const QString& path);
 };
 
 
