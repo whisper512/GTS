@@ -15,44 +15,50 @@ AxisMgr::~AxisMgr() {
 
 void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
-    if (vecAxis.empty()) {
-        for (int i = 0; i < m_pTotalMgr->axisCount(); ++i) {
-            vecAxis[i].axisIndex = i + 1;
-        }
+    int n = m_pTotalMgr->axisCount();
+    if ((int)vecAxis.size() < n) {
+        vecAxis.resize(n);
     }
+
     long sts = 0;
-    for (short axis = 1; axis <= m_pTotalMgr->axisCount(); ++axis) {
+    for (short axis = 1; axis <= n; ++axis) {
         int idx = axis - 1;
         vecAxis[idx].axisIndex = axis;
+
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
-        //读取规划器位置,速度,加速度
+
+        // ===== 规划器 =====
         vecAxis[idx].dPrfPos = prfPosition(axis);
         vecAxis[idx].dPrfVel = prfVelocity(axis);
         vecAxis[idx].dPrfAcc = prfAcceleration(axis);
-        //读取编码器位置,速度,加速度
-        vecAxis[idx].dCurPlusePos = encoderPosition(axis);
-        vecAxis[idx].dCurPluseVel = encoderVelocity(axis);
-        vecAxis[idx].dCurPluseAcc = encoderAcceleration(axis);
+
 #ifdef GTS_NO_Motor
-        // 无编码器时,实际位置直接用规划器值
-        vecAxis[idx].dCurPlusePos = vecAxis[idx].dPrfPos;
-        vecAxis[idx].dCurPluseVel = vecAxis[idx].dPrfVel;
-        vecAxis[idx].dCurPluseAcc = vecAxis[idx].dPrfAcc;
-        vecAxis[idx].dCurPos = vecAxis[idx].dPrfPos;    // 无编码器，脉冲即实际
-        vecAxis[idx].dCurVel = vecAxis[idx].dPrfVel;
-        vecAxis[idx].dCurAcc = vecAxis[idx].dPrfAcc;
+        // 无电机：编码器用规划器值代替
+        vecAxis[idx].dEncPos = vecAxis[idx].dPrfPos;
+        vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel;
+        vecAxis[idx].dEncPosMm = vecAxis[idx].dPrfPos;
+        vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVel;
 #else
-        // 有编码器
-        long alpha = 1, beta = 1;                           //用设置中的编码器当量
-        GtsHal::getEncoderScale(axis, &alpha, &beta);       // 读取编码器当量
-        vecAxis[idx].dCurPos = vecAxis[idx].dCurPlusePos * alpha / beta;
-        vecAxis[idx].dCurVel = vecAxis[idx].dCurPluseVel * alpha / beta;
-        vecAxis[idx].dCurAcc = vecAxis[idx].dCurPluseAcc * alpha / beta;
-        
+        // ===== 编码器 =====
+        vecAxis[idx].dEncPos = encoderPosition(axis);
+        vecAxis[idx].dEncVel = encoderVelocity(axis);
+
+        long encAlpha = 1, encBeta = 1;
+        GtsHal::getEncoderScale(axis, &encAlpha, &encBeta);
+        if (encBeta != 0) {
+            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos * encAlpha / encBeta;
+            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel * encAlpha / encBeta;
+        }
+        else {
+            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos;
+            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel;
+        }
 #endif
     }
 }
+
+
 
 bool AxisMgr::isValidAxis(short axis)  {
     bool valid = (axis > 0 && axis <= m_pTotalMgr->axisCount());

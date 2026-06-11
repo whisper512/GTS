@@ -23,8 +23,6 @@ public:
 
     // 获取轴状态
     void getAxisStatusInfo(std::vector<stuAxis>& vecAxis);
-    
-
 
 public:
     // 使能单个轴

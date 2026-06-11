@@ -1,94 +1,93 @@
-#pragma once
+ï»¿#pragma once
 
-// #define GTS_SIMULATION    // Ä£Äâ¿¨Ä£Ê½
-#define GTS_NO_Motor      // ÎŞµç»úÄ£Ê½
+#define GTS_NO_Motor      // æ— ç”µæœºæ¨¡å¼
 
-// Êı¾İ½á¹¹
-// ÊäÈëÀàĞÍ
+// æ•°æ®ç»“æ„
+// è¾“å…¥ç±»å‹
 enum class DIType : short
 { 
-    LimitPositive = 0,   // MC_LIMIT_POSITIVE  ÕıÏŞÎ»
-    LimitNegative = 1,   // MC_LIMIT_NEGATIVE  ¸ºÏŞÎ»
-    Alarm = 2,           // MC_ALARM           Çı¶¯±¨¾¯
-    Home = 3,            // MC_HOME            Ô­µã
-    GPI = 4,             // MC_GPI             Í¨ÓÃÊäÈë
-    Arrive = 5,          // MC_ARRIVE          µç»úµ½Î»
-    MPG = 6              // MC_MPG             ÊÖÂÖ
+    LimitPositive = 0,   // MC_LIMIT_POSITIVE  æ­£é™ä½
+    LimitNegative = 1,   // MC_LIMIT_NEGATIVE  è´Ÿé™ä½
+    Alarm = 2,           // MC_ALARM           é©±åŠ¨æŠ¥è­¦
+    Home = 3,            // MC_HOME            åŸç‚¹
+    GPI = 4,             // MC_GPI             é€šç”¨è¾“å…¥
+    Arrive = 5,          // MC_ARRIVE          ç”µæœºåˆ°ä½
+    MPG = 6              // MC_MPG             æ‰‹è½®
 };
 
 inline QString DITypeToString(DIType type)
 {
     switch (type) {
-    case DIType::LimitPositive: return QStringLiteral("ÕıÏŞÎ»");
-    case DIType::LimitNegative: return QStringLiteral("¸ºÏŞÎ»");
-    case DIType::Alarm:         return QStringLiteral("Çı¶¯±¨¾¯");
-    case DIType::Home:          return QStringLiteral("Ô­µã");
-    case DIType::GPI:           return QStringLiteral("Í¨ÓÃÊäÈë");
-    case DIType::Arrive:        return QStringLiteral("µç»úµ½Î»");
-    case DIType::MPG:           return QStringLiteral("ÊÖÂÖ");
-    default:                     return QStringLiteral("Î´Öª");
+    case DIType::LimitPositive: return QStringLiteral("æ­£é™ä½");
+    case DIType::LimitNegative: return QStringLiteral("è´Ÿé™ä½");
+    case DIType::Alarm:         return QStringLiteral("é©±åŠ¨æŠ¥è­¦");
+    case DIType::Home:          return QStringLiteral("åŸç‚¹");
+    case DIType::GPI:           return QStringLiteral("é€šç”¨è¾“å…¥");
+    case DIType::Arrive:        return QStringLiteral("ç”µæœºåˆ°ä½");
+    case DIType::MPG:           return QStringLiteral("æ‰‹è½®");
+    default:                     return QStringLiteral("æœªçŸ¥");
     }
 }
 
-// Êä³öÀàĞÍ
+// è¾“å‡ºç±»å‹
 enum class DOType : short
 {
-    ServoOn = 0,   // MC_SERVO_ON  ËÅ·şÊ¹ÄÜ
-    AlmClear = 1,  // MC_ALM_CLEAR ±¨¾¯Çå³ı
-    GPO = 2        // MC_GPO        Í¨ÓÃÊä³ö
+    ServoOn = 0,   // MC_SERVO_ON  ä¼ºæœä½¿èƒ½
+    AlmClear = 1,  // MC_ALM_CLEAR æŠ¥è­¦æ¸…é™¤
+    GPO = 2        // MC_GPO        é€šç”¨è¾“å‡º
 };
 
-// Âö³åÊä³öÄ£Ê½
+// è„‰å†²è¾“å‡ºæ¨¡å¼
 enum class PulseMode : short
 {
-    PulseDir = 0,   // Âö³å + ·½Ïò
-    CCW_CW = 1      // Ë«Âö³å£¨Õı×ª/·´×ª£©
+    PulseDir = 0,   // è„‰å†² + æ–¹å‘
+    CCW_CW = 1      // åŒè„‰å†²ï¼ˆæ­£è½¬/åè½¬ï¼‰
 };
 
-// IO¼«ĞÔ
+// IOææ€§
 enum class IOPolarity : short
 {
-    Normal = 0,    // Õı³£
-    Reverse = 1    // È¡·´
+    Normal = 0,    // æ­£å¸¸
+    Reverse = 1    // å–å
 };
 
-// Âö³å¼¼ÊõÔ´
+// è„‰å†²æŠ€æœ¯æº
 enum class PulseCountSource : short
 {
-    Encoder = 0,   // ±àÂëÆ÷
-    PulseCounter = 1 // Âö³å¼ÆÊıÆ÷
+    Encoder = 0,   // ç¼–ç å™¨
+    PulseCounter = 1 // è„‰å†²è®¡æ•°å™¨
 };
 
-// ´¥·¢ÑØ
+// è§¦å‘æ²¿
 enum class TriggerEdge : short
 {
-    Rising = 0,   // ÉÏÉıÑØ
-    Falling = 1    // ÏÂ½µÑØ
+    Rising = 0,   // ä¸Šå‡æ²¿
+    Falling = 1    // ä¸‹é™æ²¿
 };
 
 
-// °å¿¨ĞÅÏ¢
+// æ¿å¡ä¿¡æ¯
 struct stuCardInfo {
     short cardNum;
     short cardType;
 };
 
-// Çı¶¯°æ±¾
+// é©±åŠ¨ç‰ˆæœ¬
 struct stuDriverVersion {
     unsigned short mainVer;
     unsigned short slaveVer;
 };
 
-// DI ×´Ì¬
+// DI çŠ¶æ€
 struct stuDI
 {
-    std::vector<int> vecPLimit;    // ÕıÏŞÎ»£¬8 Î»
-    std::vector<int> vecNLimit;    // ¸ºÏŞÎ»£¬8 Î»
-    std::vector<int> vecAlarm;     // Çı¶¯±¨¾¯£¬8 Î»
-    std::vector<int> vecHome;      // Ô­µãĞÅºÅ£¬8 Î»
-    std::vector<int> vecGPI;       // Í¨ÓÃÊäÈë1£¬16 Î»
-    std::vector<int> vecArrive;    // µç»úµ½Î»£¬8 Î»
-    std::vector<int> vecHandwheel; // ÊÖÂÖÊäÈë2£¬8 Î»
+    std::vector<int> vecPLimit;    // æ­£é™ä½ï¼Œ8 ä½
+    std::vector<int> vecNLimit;    // è´Ÿé™ä½ï¼Œ8 ä½
+    std::vector<int> vecAlarm;     // é©±åŠ¨æŠ¥è­¦ï¼Œ8 ä½
+    std::vector<int> vecHome;      // åŸç‚¹ä¿¡å·ï¼Œ8 ä½
+    std::vector<int> vecGPI;       // é€šç”¨è¾“å…¥1ï¼Œ16 ä½
+    std::vector<int> vecArrive;    // ç”µæœºåˆ°ä½ï¼Œ8 ä½
+    std::vector<int> vecHandwheel; // æ‰‹è½®è¾“å…¥2ï¼Œ8 ä½
 
     stuDI() {
         vecPLimit.resize(8, 0);
@@ -100,7 +99,7 @@ struct stuDI
         vecHandwheel.resize(8, 0);
     }
 
-    // Õ¹Æ½Îª 64 Î»£¬Óë±í¸ñĞĞºÅÒ»Ò»¶ÔÓ¦
+    // å±•å¹³ä¸º 64 ä½ï¼Œä¸è¡¨æ ¼è¡Œå·ä¸€ä¸€å¯¹åº”
     std::vector<int> toFlatVector() const {
         std::vector<int> flat;
         flat.insert(flat.end(), vecPLimit.begin(), vecPLimit.end());   // 0~7
@@ -114,12 +113,12 @@ struct stuDI
     }
 };
 
-// DO ×´Ì¬
+// DO çŠ¶æ€
 struct stuDO
 {
-    std::vector<int> vecServoOn;   // ËÅ·şÊ¹ÄÜ£¬8 Î»
-    std::vector<int> vecAlmClear;  // ±¨¾¯Çå³ı£¬8 Î»
-    std::vector<int> vecGPO;       // Í¨ÓÃÊä³ö£¬16 Î»
+    std::vector<int> vecServoOn;   // ä¼ºæœä½¿èƒ½ï¼Œ8 ä½
+    std::vector<int> vecAlmClear;  // æŠ¥è­¦æ¸…é™¤ï¼Œ8 ä½
+    std::vector<int> vecGPO;       // é€šç”¨è¾“å‡ºï¼Œ16 ä½
 
     stuDO() {
         vecServoOn.resize(8, 0);
@@ -136,33 +135,33 @@ struct stuDO
     }
 };
 
-// Ê±ÖÓ
+// æ—¶é’Ÿ
 struct stuClock {
-    unsigned long sysClock;            // ÏµÍ³Ê±ÖÓ
-    unsigned long highPrecClock;       // ¸ß¾«¶ÈÊ±ÖÓ
+    unsigned long sysClock;            // ç³»ç»Ÿæ—¶é’Ÿ
+    unsigned long highPrecClock;       // é«˜ç²¾åº¦æ—¶é’Ÿ
 
     stuClock() : sysClock(0), highPrecClock(0) {}
 };
 
-// ÖáÅäÖÃ
+// è½´é…ç½®
 struct stuAxisConfig
 {
-    int axisIndex;              // ÖáºÅ
-    bool bActivate;             // ¼¤»î
-    DIType servoAlarm;          // Çı¶¯±¨¾¯ÊäÈëÀàĞÍ
-    int servoAlarmIndex;        // Çı¶¯±¨¾¯ÊäÈëË÷Òı
-    DIType PLimit;              // ÕıÏŞÎ»ÊäÈëÀàĞÍ
-    int PLimitIndex;            // ÕıÏŞÎ»ÊäÈëË÷Òı
-    DIType NLimit;              // ¸ºÏŞÎ»ÊäÈëÀàĞÍ
-    int NLimitIndex;            // ¸ºÏŞÎ»ÊäÈëË÷Òı
-    DIType smoothStop;          // Æ½»¬Í£Ö¹ÊäÈëÀàĞÍ
-    int smoothStopIndex;        // Æ½»¬Í£Ö¹ÊäÈëË÷Òı
-    DIType EStop;               // ¼±Í£ÊäÈëÀàĞÍ
-    int EStopIndex;             // ¼±Í£ÊäÈëË÷Òı
-    int profileEquivalentAlpha; // Âö³åµ±Á¿ÏµÊıA
-    int profileEquivalentBeta;  // Âö³åµ±Á¿ÏµÊıB
-    int encoderEquivalentAlpha; // ±àÂëÆ÷µ±Á¿ÏµÊıA
-    int encoderEquivalentBeta;  // ±àÂëÆ÷µ±Á¿ÏµÊıB
+    int axisIndex;              // è½´å·
+    bool bActivate;             // æ¿€æ´»
+    DIType servoAlarm;          // é©±åŠ¨æŠ¥è­¦è¾“å…¥ç±»å‹
+    int servoAlarmIndex;        // é©±åŠ¨æŠ¥è­¦è¾“å…¥ç´¢å¼•
+    DIType PLimit;              // æ­£é™ä½è¾“å…¥ç±»å‹
+    int PLimitIndex;            // æ­£é™ä½è¾“å…¥ç´¢å¼•
+    DIType NLimit;              // è´Ÿé™ä½è¾“å…¥ç±»å‹
+    int NLimitIndex;            // è´Ÿé™ä½è¾“å…¥ç´¢å¼•
+    DIType smoothStop;          // å¹³æ»‘åœæ­¢è¾“å…¥ç±»å‹
+    int smoothStopIndex;        // å¹³æ»‘åœæ­¢è¾“å…¥ç´¢å¼•
+    DIType EStop;               // æ€¥åœè¾“å…¥ç±»å‹
+    int EStopIndex;             // æ€¥åœè¾“å…¥ç´¢å¼•
+    int profileEquivalentAlpha; // è„‰å†²å½“é‡ç³»æ•°A
+    int profileEquivalentBeta;  // è„‰å†²å½“é‡ç³»æ•°B
+    int encoderEquivalentAlpha; // ç¼–ç å™¨å½“é‡ç³»æ•°A
+    int encoderEquivalentBeta;  // ç¼–ç å™¨å½“é‡ç³»æ•°B
     stuAxisConfig()
         : axisIndex(0)
         , bActivate(false)
@@ -188,22 +187,22 @@ struct stuRuntimeConfig
 {
     int axisCount = 4;
 
-    // ±¨¾¯
+    // æŠ¥è­¦
     bool alarmActive[4] = { false, false, false, false };
     bool alarmAvailable[4] = { false, false, false, false };
 
-    // ÏŞÎ»
+    // é™ä½
     bool limitActive[4] = { false, false, false, false };
     bool limitAvailable[4] = { false, false, false, false };
 
-    // ¹æ»®Æ÷µ±Á¿
+    // è§„åˆ’å™¨å½“é‡
     long profileScaleAlpha[4] = { 1, 1, 1, 1 };
     long profileScaleBeta[4] = { 1, 1, 1, 1 };
 
-    // Âö³åÄ£Ê½
+    // è„‰å†²æ¨¡å¼
     short stepPulseMode[4] = { 0, 0, 0, 0 };
 
-    // ±àÂëÆ÷
+    // ç¼–ç å™¨
     long encScaleAlpha[4] = { 1, 1, 1, 1 };
     long encScaleBeta[4] = { 1, 1, 1, 1 };
     bool encInvert[4] = { false, false, false, false };
@@ -213,39 +212,39 @@ struct stuRuntimeConfig
     short dacBias[4] = { 0, 0, 0, 0 };
     short dacLimit[4] = { 32767, 32767, 32767, 32767 };
 
-    // ¸úËæÎó²î
+    // è·Ÿéšè¯¯å·®
     long followingErrorLimit[4] = { 32767, 32767, 32767, 32767 };
 
-    // Í£Ö¹¼õËÙ
+    // åœæ­¢å‡é€Ÿ
     double smoothStopDec[4] = { 100.0, 100.0, 100.0, 100.0 };
     double estopDec[4] = { 1000.0, 1000.0, 1000.0, 1000.0 };
 
-    // ¿ØÖÆÄ£Ê½
+    // æ§åˆ¶æ¨¡å¼
     short axisCtrlMode[4] = { 0, 0, 0, 0 };
 
-    // Í£Ö¹ IO
+    // åœæ­¢ IO
     short stopInputType[4][2] = { {0,0}, {0,0}, {0,0}, {0,0} };
     short stopInputIndex[4][2] = { {1,1}, {1,1}, {1,1}, {1,1} };
 
     // GPI
     unsigned short gpiSense = 0;
 
-    // ĞòÁĞ»¯/·´ĞòÁĞ»¯½Ó¿Ú£¨ºóÃæ½Ó JSON£©
+    // åºåˆ—åŒ–/ååºåˆ—åŒ–æ¥å£ï¼ˆåé¢æ¥ JSONï¼‰
     // bool loadFromJson(const QString& path);
     // bool saveToJson(const QString& path);
 };
 
 
-// µãÎ»ÔË¶¯(trap)²ÎÊı
+// ç‚¹ä½è¿åŠ¨(trap)å‚æ•°
 struct stuTrapParam
 {
-    double dMotionVel;      // ÔË¶¯ËÙ¶È
-    unsigned int  stepSize; // ²½³¤
-    double acc;             // ¼ÓËÙ¶È
-    double dec;             // ¼õËÙ¶È
-    int somoothTime;        // Æ½»¬Ê±¼ä
-    int cycleTimes;         // Ñ­»·´ÎÊı
-    int Delay;              // µ½Î»ÑÓÊ±
+    double dMotionVel;      // è¿åŠ¨é€Ÿåº¦
+    unsigned int  stepSize; // æ­¥é•¿
+    double acc;             // åŠ é€Ÿåº¦
+    double dec;             // å‡é€Ÿåº¦
+    int somoothTime;        // å¹³æ»‘æ—¶é—´
+    int cycleTimes;         // å¾ªç¯æ¬¡æ•°
+    int Delay;              // åˆ°ä½å»¶æ—¶
 
     stuTrapParam()
         : dMotionVel(1.0)
@@ -259,13 +258,13 @@ struct stuTrapParam
     }
 };
 
-// jogÔË¶¯²ÎÊı
+// jogè¿åŠ¨å‚æ•°
 struct stuJogParam
 {
-    double dMotionVel;      // ÔË¶¯ËÙ¶È
-    double acc;             // ¼ÓËÙ¶È
-    double dec;             // ¼õËÙ¶È
-    double smoothTime;      // Æ½»¬Ê±¼ä
+    double dMotionVel;      // è¿åŠ¨é€Ÿåº¦
+    double acc;             // åŠ é€Ÿåº¦
+    double dec;             // å‡é€Ÿåº¦
+    double smoothTime;      // å¹³æ»‘æ—¶é—´
 
     stuJogParam()
         : dMotionVel(5.0)
@@ -276,33 +275,35 @@ struct stuJogParam
     }
 };
 
-// ÖáĞÅÏ¢
+// è½´ä¿¡æ¯
 struct stuAxis
 {
-    // Öá×´Ì¬
-    short axisIndex;   // ÖáºÅ1-4
-    bool bAlarm;       // ±¨¾¯
-    bool bMError;      // ¸úËæÎó²îÔ½ÏŞ
-    bool bPosLimit;    // ÕıÏŞÎ»´¥·¢
-    bool bNegLimit;    // ¸ºÏŞÎ»´¥·¢
-    bool bSmoothStop;  // Æ½»¬Í£Ö¹
-    bool bAbruptStop;  // ¼±Í£
-    bool bServoOn;     // ËÅ·şÊ¹ÄÜ
-    bool bMotion;      // ¹æ»®Æ÷ÔË¶¯
-    // ÔË¶¯Ïà¹Ø
-    double dCurPlusePos;  // µ±Ç°Î»ÖÃ(µ¥Î»:Âö³å)
-    double dCurPluseVel;  // Êµ¼ÊËÙ¶È(µ¥Î»:Âö³å/s)
-    double dCurPluseAcc;  // µ±Ç°¼ÓËÙ¶È(µ¥Î»:Âö³å/s^2)
-    double dCurPos;    // µ±Ç°Êµ¼ÊÎ»ÖÃ(µ¥Î»:mm)
-    double dCurVel;    // µ±Ç°Êµ¼ÊËÙ¶È(µ¥Î»:mm/s)
-    double dCurAcc;    // µ±Ç°Êµ¼Ê¼ÓËÙ¶È(µ¥Î»:mm/s^2)
-    double dPrfPos;    // ¹æ»®Î»ÖÃ
-    double dPrfVel;    // ¹æ»®ËÙ¶È
-    double dPrfAcc;    // ¹æ»®¼ÓËÙ¶È
-    long lPrfMode;     // ÔË¶¯Ä£Ê½
-    long AxisStatus;   // Öá×´Ì¬
-    stuTrapParam trapParam; // µãÎ»ÔË¶¯(trap)²ÎÊı
-    stuJogParam jogParam;   // jogÔË¶¯²ÎÊı
+    // è½´çŠ¶æ€
+    short axisIndex;   // è½´å·1-4
+    bool bAlarm;       // æŠ¥è­¦
+    bool bMError;      // è·Ÿéšè¯¯å·®è¶Šé™
+    bool bPosLimit;    // æ­£é™ä½è§¦å‘
+    bool bNegLimit;    // è´Ÿé™ä½è§¦å‘
+    bool bSmoothStop;  // å¹³æ»‘åœæ­¢
+    bool bAbruptStop;  // æ€¥åœ
+    bool bServoOn;     // ä¼ºæœä½¿èƒ½
+    bool bMotion;      // è§„åˆ’å™¨è¿åŠ¨
+
+    // ===== è§„åˆ’å™¨ =====
+    double dPrfPos;    // è§„åˆ’ä½ç½®
+    double dPrfVel;    // è§„åˆ’é€Ÿåº¦
+    double dPrfAcc;    // è§„åˆ’åŠ é€Ÿåº¦
+    long lPrfMode;     // è¿åŠ¨æ¨¡å¼
+    long AxisStatus;   // è½´çŠ¶æ€
+
+    // ===== ç¼–ç å™¨ =====
+    double dEncPos;    // ç¼–ç å™¨ä½ç½®(å•ä½:counts)
+    double dEncVel;    // ç¼–ç å™¨é€Ÿåº¦(å•ä½:counts/s)
+    double dEncPosMm;  // ç¼–ç å™¨æ¢ç®—ä½ç½®(å•ä½:mm)
+    double dEncVelMm;  // ç¼–ç å™¨æ¢ç®—é€Ÿåº¦(å•ä½:mm/s)
+
+    stuTrapParam trapParam; // ç‚¹ä½è¿åŠ¨(trap)å‚æ•°
+    stuJogParam jogParam;   // jogè¿åŠ¨å‚æ•°
 
     stuAxis()
         : axisIndex(0)
@@ -314,12 +315,6 @@ struct stuAxis
         , bAbruptStop(false)
         , bServoOn(false)
         , bMotion(false)
-        , dCurPlusePos(0.0)
-        , dCurPluseVel(0.0)
-        , dCurPluseAcc(0.0)
-        , dCurPos(0.0)
-        , dCurVel(0.0)
-        , dCurAcc(0.0)
         , dPrfPos(0.0)
         , dPrfVel(0.0)
         , dPrfAcc(0.0)
@@ -329,8 +324,7 @@ struct stuAxis
         , jogParam()
     {
     }
-
-    // ½âÎöÖá×´Ì¬
+    // è§£æè½´çŠ¶æ€
     void parseStatus(long status) {
         AxisStatus = status;
         bAlarm = (status & 0x02) != 0;
@@ -344,17 +338,17 @@ struct stuAxis
     }
 };
 
-// ÔË¶¯Ä£Ê½×ª×Ö·û´®
+// è¿åŠ¨æ¨¡å¼è½¬å­—ç¬¦ä¸²
 static QString motionModeToString(long mode)
 {
     switch (mode) {
-    case 0:  return QStringLiteral("µãÎ»ÔË¶¯(Trap)");
+    case 0:  return QStringLiteral("ç‚¹ä½è¿åŠ¨(Trap)");
     case 1:  return QStringLiteral("Jog");
     case 2:  return QStringLiteral("PT");
-    case 3:  return QStringLiteral("µç×Ó³İÂÖ(Gear)");
+    case 3:  return QStringLiteral("ç”µå­é½¿è½®(Gear)");
     case 4:  return QStringLiteral("Follow");
-    case 5:  return QStringLiteral("²å²¹(Interpolation)");
+    case 5:  return QStringLiteral("æ’è¡¥(Interpolation)");
     case 6:  return QStringLiteral("PVT");
-    default: return QStringLiteral("Î´Öª(%1)").arg(mode);
+    default: return QStringLiteral("æœªçŸ¥(%1)").arg(mode);
     }
 }

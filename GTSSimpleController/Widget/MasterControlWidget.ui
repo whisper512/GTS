@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>CMasterControlWidget</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <layout class="QVBoxLayout" name="verticalLayout_3" stretch="2,1">
    <property name="spacing">
     <number>20</number>
    </property>
@@ -27,45 +27,17 @@
        <layout class="QVBoxLayout" name="verticalLayout" stretch="7,3">
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_actVelData1">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
+          <item row="5" column="0">
            <widget class="QLabel" name="label_tgtVel1">
             <property name="text">
              <string>规划速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_actVelPluseData1">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_actPluseVel1">
-            <property name="text">
-             <string>实际速度(脉冲/毫秒):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_actPos1">
             <property name="text">
              <string>实际位置(mm):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_actPluseAccData1">
-            <property name="text">
-             <string>0.0000</string>
             </property>
            </widget>
           </item>
@@ -76,45 +48,31 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_actPluseAcc1">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_actPluseVel1">
             <property name="text">
-             <string>实际加速度(脉冲/毫秒^2:):</string>
+             <string>实际速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="4" column="1">
            <widget class="QLabel" name="label_tgtPosData1">
             <property name="text">
              <string>0.0</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="label_tgtAcc1">
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_actVel1">
             <property name="text">
-             <string>规划加速度(脉冲/毫秒^2):</string>
+             <string>实际速度(mm/s):</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label_actAccData1">
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_actVelData1">
             <property name="text">
              <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_actAcc1">
-            <property name="text">
-             <string>实际加速度(mm/s^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="label_tgtVelData1">
-            <property name="text">
-             <string>0.000</string>
             </property>
            </widget>
           </item>
@@ -125,31 +83,45 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_actVel1">
-            <property name="text">
-             <string>实际速度(mm/s):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1">
+          <item row="6" column="1">
            <widget class="QLabel" name="label_tgtAccData1">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_actPosData1">
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_actVelPluseData1">
             <property name="text">
-             <string>0.0</string>
+             <string>0.0000</string>
             </property>
            </widget>
           </item>
           <item row="6" column="0">
+           <widget class="QLabel" name="label_tgtAcc1">
+            <property name="text">
+             <string>规划加速度(脉冲/毫秒^2):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
            <widget class="QLabel" name="label_tgtPos1">
             <property name="text">
              <string>规划位置(脉冲):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="label_tgtVelData1">
+            <property name="text">
+             <string>0.000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_actPosData1">
+            <property name="text">
+             <string>0.0</string>
             </property>
            </widget>
           </item>
@@ -227,21 +199,35 @@
         <item>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="4" column="1">
+           <widget class="QLabel" name="label_tgtPosData2">
+            <property name="text">
+             <string>0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_actPosPluseData2">
+            <property name="text">
+             <string>0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_actPlusePos2">
+            <property name="text">
+             <string>实际位置(脉冲):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_actPosData2">
+            <property name="text">
+             <string>0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
            <widget class="QLabel" name="label_actVelData2">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_tgtVel2">
-            <property name="text">
-             <string>规划速度(脉冲/毫秒):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_actVelPluseData2">
             <property name="text">
              <string>0.0000</string>
             </property>
@@ -254,101 +240,59 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_actPos2">
-            <property name="text">
-             <string>实际位置(mm):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_actPluseAccData2">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_actPosPluseData2">
-            <property name="text">
-             <string>0.0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_actPluseAcc2">
-            <property name="text">
-             <string>实际加速度(脉冲/毫秒^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_tgtPosData2">
-            <property name="text">
-             <string>0.0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="label_tgtAcc2">
-            <property name="text">
-             <string>规划加速度(脉冲/毫秒^2):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label_actAccData2">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_actAcc2">
-            <property name="text">
-             <string>实际加速度(mm/s^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="label_tgtVelData2">
-            <property name="text">
-             <string>0.000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_actPlusePos2">
-            <property name="text">
-             <string>实际位置(脉冲):</string>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0">
+           <widget class="QLabel" name="label_tgtPos2">
+            <property name="text">
+             <string>规划位置(脉冲):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
            <widget class="QLabel" name="label_actVel2">
             <property name="text">
              <string>实际速度(mm/s):</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_actVelPluseData2">
+            <property name="text">
+             <string>0.0000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_tgtVel2">
+            <property name="text">
+             <string>规划速度(脉冲/毫秒):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="label_tgtVelData2">
+            <property name="text">
+             <string>0.000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
            <widget class="QLabel" name="label_tgtAccData2">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_actPosData2">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_actPos2">
             <property name="text">
-             <string>0.0</string>
+             <string>实际位置(mm):</string>
             </property>
            </widget>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_tgtPos2">
+           <widget class="QLabel" name="label_tgtAcc2">
             <property name="text">
-             <string>规划位置(脉冲):</string>
+             <string>规划加速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
@@ -425,17 +369,59 @@
        <layout class="QVBoxLayout" name="verticalLayout_6" stretch="7,3">
         <item>
          <layout class="QGridLayout" name="gridLayout_7">
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_actVelData3">
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_actPosData3">
             <property name="text">
-             <string>0.0000</string>
+             <string>0.0</string>
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_tgtVel3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_actPlusePos3">
             <property name="text">
-             <string>规划速度(脉冲/毫秒):</string>
+             <string>实际位置(脉冲):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_tgtPos3">
+            <property name="text">
+             <string>规划位置(脉冲):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="label_tgtPosData3">
+            <property name="text">
+             <string>0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_actPosPluseData3">
+            <property name="text">
+             <string>0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_actPos3">
+            <property name="text">
+             <string>实际位置(mm):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="label_tgtVelData3">
+            <property name="text">
+             <string>0.000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="label_tgtAccData3">
+            <property name="text">
+             <string>0.0000</string>
             </property>
            </widget>
           </item>
@@ -453,101 +439,31 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_actPos3">
-            <property name="text">
-             <string>实际位置(mm):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_actPluseAccData3">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_actPosPluseData3">
-            <property name="text">
-             <string>0.0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_actPluseAcc3">
-            <property name="text">
-             <string>实际加速度(脉冲/毫秒^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_tgtPosData3">
-            <property name="text">
-             <string>0.0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
+          <item row="6" column="0">
            <widget class="QLabel" name="label_tgtAcc3">
             <property name="text">
              <string>规划加速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label_actAccData3">
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_actVelData3">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_actAcc3">
-            <property name="text">
-             <string>实际加速度(mm/s^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="label_tgtVelData3">
-            <property name="text">
-             <string>0.000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_actPlusePos3">
-            <property name="text">
-             <string>实际位置(脉冲):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_actVel3">
             <property name="text">
              <string>实际速度(mm/s):</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
-           <widget class="QLabel" name="label_tgtAccData3">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_tgtVel3">
             <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_actPosData3">
-            <property name="text">
-             <string>0.0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_tgtPos3">
-            <property name="text">
-             <string>规划位置(脉冲):</string>
+             <string>规划速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>
@@ -624,45 +540,17 @@
        <layout class="QVBoxLayout" name="verticalLayout_7" stretch="7,3">
         <item>
          <layout class="QGridLayout" name="gridLayout_10">
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_actVelData4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_actPlusePos4">
             <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_tgtVel4">
-            <property name="text">
-             <string>规划速度(脉冲/毫秒):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_actVelPluseData4">
-            <property name="text">
-             <string>0.0000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_actPluseVel4">
-            <property name="text">
-             <string>实际速度(脉冲/毫秒):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_actPos4">
-            <property name="text">
-             <string>实际位置(mm):</string>
+             <string>实际位置(脉冲):</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="label_actPluseAccData4">
+           <widget class="QLabel" name="label_actPosData4">
             <property name="text">
-             <string>0.0000</string>
+             <string>0.0</string>
             </property>
            </widget>
           </item>
@@ -673,80 +561,80 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_actPluseAcc4">
-            <property name="text">
-             <string>实际加速度(脉冲/毫秒^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_tgtPosData4">
-            <property name="text">
-             <string>0.0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="label_tgtAcc4">
-            <property name="text">
-             <string>规划加速度(脉冲/毫秒^2):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label_actAccData4">
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_actVelPluseData4">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_actAcc4">
-            <property name="text">
-             <string>实际加速度(mm/s^2:):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="label_tgtVelData4">
-            <property name="text">
-             <string>0.000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_actPlusePos4">
-            <property name="text">
-             <string>实际位置(脉冲):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_actVel4">
             <property name="text">
              <string>实际速度(mm/s):</string>
             </property>
            </widget>
           </item>
-          <item row="8" column="1">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_tgtVel4">
+            <property name="text">
+             <string>规划速度(脉冲/毫秒):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="label_actVelData4">
+            <property name="text">
+             <string>0.0000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_tgtPos4">
+            <property name="text">
+             <string>规划位置(脉冲):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="label_tgtPosData4">
+            <property name="text">
+             <string>0.0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
            <widget class="QLabel" name="label_tgtAccData4">
             <property name="text">
              <string>0.0000</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_actPosData4">
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_tgtAcc4">
             <property name="text">
-             <string>0.0</string>
+             <string>规划加速度(脉冲/毫秒^2):</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_tgtPos4">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_actPos4">
             <property name="text">
-             <string>规划位置(脉冲):</string>
+             <string>实际位置(mm):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="label_tgtVelData4">
+            <property name="text">
+             <string>0.000</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_actPluseVel4">
+            <property name="text">
+             <string>实际速度(脉冲/毫秒):</string>
             </property>
            </widget>
           </item>

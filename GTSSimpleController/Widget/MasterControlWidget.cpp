@@ -182,13 +182,13 @@ void CMasterControlWidget::onTrapMotion()
 	if (!m_pTotalMgr) return;
 	int axisCount = (int)m_pTotalMgr->axisCount();
 	double target1 = ui.spinBox_curPos1->value();
-	startSingleTrap(1, m_pTotalMgr->getAxisRef(0)->dCurPos, target1);
+	startSingleTrap(1, m_pTotalMgr->getAxisRef(0)->dEncPos, target1);
 	double target2 = ui.spinBox_curPos2->value();
-	startSingleTrap(2, m_pTotalMgr->getAxisRef(1)->dCurPos, target2);
+	startSingleTrap(2, m_pTotalMgr->getAxisRef(1)->dEncPos, target2);
 	double target3 = ui.spinBox_curPos3->value();
-	startSingleTrap(3, m_pTotalMgr->getAxisRef(2)->dCurPos, target3);
+	startSingleTrap(3, m_pTotalMgr->getAxisRef(2)->dEncPos, target3);
 	double target4 = ui.spinBox_curPos4->value();
-	startSingleTrap(4, m_pTotalMgr->getAxisRef(3)->dCurPos, target4);
+	startSingleTrap(4, m_pTotalMgr->getAxisRef(3)->dEncPos, target4);
 }
 
 
@@ -278,10 +278,8 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 		QRadioButton* smoothStop,
 		QLabel* actPosPluseData,
 		QLabel* actVelPluseData,
-		QLabel* actPluseAccData,
 		QLabel* actPosData,
 		QLabel* actVelData,
-		QLabel* actAccData,
 		QLabel* tgtPosData,
 		QLabel* tgtVelData,
 		QLabel* tgtAccData)
@@ -295,13 +293,11 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			eStop->setChecked(axis.bAbruptStop);
 			smoothStop->setChecked(axis.bSmoothStop);
 
-			actPosPluseData->setText(QString::number(axis.dCurPlusePos, 'f', 3));
-			actVelPluseData->setText(QString::number(axis.dCurPluseVel, 'f', 3));
-			actPluseAccData->setText(QString::number(axis.dCurPluseAcc, 'f', 3));
+			actPosPluseData->setText(QString::number(axis.dEncPos, 'f', 3));
+			actVelPluseData->setText(QString::number(axis.dEncVel, 'f', 3));
 
-			actPosData->setText(QString::number(axis.dCurPos, 'f', 3));
-			actVelData->setText(QString::number(axis.dCurVel, 'f', 3));
-			actAccData->setText(QString::number(axis.dCurAcc, 'f', 3));
+			actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
+			actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
 
 			tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
 			tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
@@ -320,10 +316,8 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_smoothStop1,
 			ui.label_actPosPluseData1,
 			ui.label_actVelPluseData1,
-			ui.label_actPluseAccData1,
 			ui.label_actPosData1,
 			ui.label_actVelData1,
-			ui.label_actAccData1,
 			ui.label_tgtPosData1,
 			ui.label_tgtVelData1,
 			ui.label_tgtAccData1);
@@ -340,10 +334,8 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_smoothStop2,
 			ui.label_actPosPluseData2,
 			ui.label_actVelPluseData2,
-			ui.label_actPluseAccData2,
 			ui.label_actPosData2,
 			ui.label_actVelData2,
-			ui.label_actAccData2,
 			ui.label_tgtPosData2,
 			ui.label_tgtVelData2,
 			ui.label_tgtAccData2);
@@ -360,10 +352,8 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_smoothStop3,
 			ui.label_actPosPluseData3,
 			ui.label_actVelPluseData3,
-			ui.label_actPluseAccData3,
 			ui.label_actPosData3,
 			ui.label_actVelData3,
-			ui.label_actAccData3,
 			ui.label_tgtPosData3,
 			ui.label_tgtVelData3,
 			ui.label_tgtAccData3);
@@ -380,22 +370,20 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_smoothStop4,
 			ui.label_actPosPluseData4,
 			ui.label_actVelPluseData4,
-			ui.label_actPluseAccData4,
 			ui.label_actPosData4,
 			ui.label_actVelData4,
-			ui.label_actAccData4,
 			ui.label_tgtPosData4,
 			ui.label_tgtVelData4,
 			ui.label_tgtAccData4);
 
 	if ((int)axisInfo.size() >= 1 && !ui.spinBox_curPos1->hasFocus())
-		ui.spinBox_curPos1->setValue(static_cast<int>(axisInfo[0].dCurPos));
+		ui.spinBox_curPos1->setValue(static_cast<int>(axisInfo[0].dEncPos));
 	if ((int)axisInfo.size() >= 2 && !ui.spinBox_curPos2->hasFocus())
-		ui.spinBox_curPos2->setValue(static_cast<int>(axisInfo[1].dCurPos));
+		ui.spinBox_curPos2->setValue(static_cast<int>(axisInfo[1].dEncPos));
 	if ((int)axisInfo.size() >= 3 && !ui.spinBox_curPos3->hasFocus())
-		ui.spinBox_curPos3->setValue(static_cast<int>(axisInfo[2].dCurPos));
+		ui.spinBox_curPos3->setValue(static_cast<int>(axisInfo[2].dEncPos));
 	if ((int)axisInfo.size() >= 4 && !ui.spinBox_curPos4->hasFocus())
-		ui.spinBox_curPos4->setValue(static_cast<int>(axisInfo[3].dCurPos));
+		ui.spinBox_curPos4->setValue(static_cast<int>(axisInfo[3].dEncPos));
 
 	m_bUpdatingFromBoard = false;
 }
