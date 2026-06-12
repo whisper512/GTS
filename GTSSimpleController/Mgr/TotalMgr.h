@@ -88,10 +88,12 @@ public:
     void cleanupAfterBoardClosed();
 
     // JSON 读写
-    bool loadScaleFromJson(const QString& filePath = QString());
-    bool saveScaleToJson(const QString& filePath = QString()) const;
-    void readScaleFromBoard();
-    QString scaleJsonPath() const;
+    bool loadAxisConfig(const QString& filePath = QString());
+    bool saveAxisConfig(const QString& filePath = QString()) const;
+    void readAllAxisConfigFromBoard();
+    void applyAllAxisConfigToBoard();
+    QString axisConfigPath() const;
+
 
     // profile 当量
     void setProfileScale(short axis, long alpha, long beta);

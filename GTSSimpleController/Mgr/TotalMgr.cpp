@@ -53,12 +53,12 @@ void CTotalMgr::initAfterBoardOpened()
     // 启动定时器开始实时获取数据
     startRefresh();
     // 从json读取配置
-    if (!loadScaleFromJson()) {
-        readScaleFromBoard();
-        saveScaleToJson();
+    if (!loadAxisConfig()) {
+        readAllAxisConfigFromBoard();
+        saveAxisConfig();
     }
     else {
-        saveScaleToJson();
+        applyAllAxisConfigToBoard();
     }
     // 读取DAC配置
     readDacConfig();
@@ -83,18 +83,77 @@ void CTotalMgr::cleanupAfterBoardClosed()
 }
 
 
-// ============================================================
-//                    轴当量 JSON 读写
-// ============================================================
 
-QString CTotalMgr::scaleJsonPath() const
+QString CTotalMgr::axisConfigPath() const
 {
-    return QCoreApplication::applicationDirPath() + QStringLiteral("/axis_scale.json");
+    return QCoreApplication::applicationDirPath() + QStringLiteral("/axis_config.json");
 }
 
-bool CTotalMgr::loadScaleFromJson(const QString& filePath)
+
+static QJsonObject axisConfigToJson(short axis, const stuConfig& cfg)
 {
-    QString path = filePath.isEmpty() ? scaleJsonPath() : filePath;
+    int i = axis - 1;
+
+    QJsonObject scalePrf;
+    scalePrf[QStringLiteral("alpha")] = static_cast<qint64>(cfg.profileScale[i].alpha);
+    scalePrf[QStringLiteral("beta")] = static_cast<qint64>(cfg.profileScale[i].beta);
+
+    QJsonObject scaleEnc;
+    scaleEnc[QStringLiteral("alpha")] = static_cast<qint64>(cfg.encScale[i].alpha);
+    scaleEnc[QStringLiteral("beta")] = static_cast<qint64>(cfg.encScale[i].beta);
+
+    QJsonObject scaleObj;
+    scaleObj[QStringLiteral("profile")] = scalePrf;
+    scaleObj[QStringLiteral("encoder")] = scaleEnc;
+
+    QJsonObject dacObj;
+    dacObj[QStringLiteral("bias")] = static_cast<int>(cfg.dacBias[i]);
+    dacObj[QStringLiteral("limit")] = static_cast<int>(cfg.dacLimit[i]);
+
+    QJsonObject ctrlObj;
+    ctrlObj[QStringLiteral("followErrorLimit")] = static_cast<qint64>(cfg.followingErrorLimit[i]);
+
+    QJsonObject prfObj;
+    prfObj[QStringLiteral("smoothStopDec")] = cfg.smoothStopDec[i];
+    prfObj[QStringLiteral("estopDec")] = cfg.estopDec[i];
+
+    QJsonObject obj;
+    obj[QStringLiteral("axis")] = axis;
+    obj[QStringLiteral("scale")] = scaleObj;
+    obj[QStringLiteral("dac")] = dacObj;
+    obj[QStringLiteral("control")] = ctrlObj;
+    obj[QStringLiteral("profile")] = prfObj;
+    return obj;
+}
+
+
+bool CTotalMgr::saveAxisConfig(const QString& filePath) const
+{
+    QString path = filePath.isEmpty() ? axisConfigPath() : filePath;
+
+    QJsonArray axes;
+    for (short axis = 1; axis <= m_axisCount; ++axis)
+        axes.append(axisConfigToJson(axis, m_cfg));
+
+    QJsonObject root;
+    root[QStringLiteral("version")] = 2;
+    root[QStringLiteral("axisCount")] = m_axisCount;
+    root[QStringLiteral("axes")] = axes;
+
+    QDir().mkpath(QFileInfo(path).absolutePath());
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return false;
+
+    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+    file.close();
+    return true;
+}
+
+bool CTotalMgr::loadAxisConfig(const QString& filePath)
+{
+    QString path = filePath.isEmpty() ? axisConfigPath() : filePath;
 
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly))
@@ -109,105 +168,120 @@ bool CTotalMgr::loadScaleFromJson(const QString& filePath)
         return false;
 
     QJsonObject root = doc.object();
-    QJsonArray axes = root.value(QStringLiteral("axes")).toArray();
+    int ver = root.value(QStringLiteral("version")).toInt(1);
 
+    // ----- 轴数个数组 -----
     // 先全部置默认值
     for (int i = 0; i < m_axisCount; ++i) {
         m_cfg.profileScale[i] = stuScaleFactor{ 1, 1 };
         m_cfg.encScale[i] = stuScaleFactor{ 1, 1 };
+        m_cfg.dacBias[i] = 0;
+        m_cfg.dacLimit[i] = 32767;
+        m_cfg.followingErrorLimit[i] = 32767;
+        m_cfg.smoothStopDec[i] = 100.0;
+        m_cfg.estopDec[i] = 1000.0;
     }
 
-    for (int i = 0; i < axes.size() && i < m_axisCount; ++i) {
-        QJsonObject obj = axes[i].toObject();
-        int axis = obj.value(QStringLiteral("axis")).toInt(0);
+    QJsonArray axes = root.value(QStringLiteral("axes")).toArray();
+    for (int n = 0; n < axes.size() && n < m_axisCount; ++n) {
+        QJsonObject ax = axes[n].toObject();
+        int axis = ax.value(QStringLiteral("axis")).toInt(0);
         if (axis < 1 || axis > m_axisCount)
             continue;
+        int i = axis - 1;
 
-        int idx = axis - 1;
-
-        QJsonObject prf = obj.value(QStringLiteral("profile")).toObject();
-        if (!prf.isEmpty()) {
-            m_cfg.profileScale[idx].alpha = static_cast<long>(prf.value(QStringLiteral("alpha")).toDouble(1.0));
-            m_cfg.profileScale[idx].beta = static_cast<long>(prf.value(QStringLiteral("beta")).toDouble(1.0));
+        // ---- scale ----
+        QJsonObject scaleObj = ax.value(QStringLiteral("scale")).toObject();
+        if (!scaleObj.isEmpty()) {
+            QJsonObject prf = scaleObj.value(QStringLiteral("profile")).toObject();
+            if (!prf.isEmpty()) {
+                m_cfg.profileScale[i].alpha = static_cast<long>(prf.value(QStringLiteral("alpha")).toDouble(1.0));
+                m_cfg.profileScale[i].beta = static_cast<long>(prf.value(QStringLiteral("beta")).toDouble(1.0));
+            }
+            QJsonObject enc = scaleObj.value(QStringLiteral("encoder")).toObject();
+            if (!enc.isEmpty()) {
+                m_cfg.encScale[i].alpha = static_cast<long>(enc.value(QStringLiteral("alpha")).toDouble(1.0));
+                m_cfg.encScale[i].beta = static_cast<long>(enc.value(QStringLiteral("beta")).toDouble(1.0));
+            }
+            else {
+                m_cfg.encScale[i] = m_cfg.profileScale[i];
+            }
         }
 
-        QJsonObject enc = obj.value(QStringLiteral("encoder")).toObject();
-        if (!enc.isEmpty()) {
-            m_cfg.encScale[idx].alpha = static_cast<long>(enc.value(QStringLiteral("alpha")).toDouble(1.0));
-            m_cfg.encScale[idx].beta = static_cast<long>(enc.value(QStringLiteral("beta")).toDouble(1.0));
+        // ---- dac ----
+        QJsonObject dacObj = ax.value(QStringLiteral("dac")).toObject();
+        if (!dacObj.isEmpty()) {
+            m_cfg.dacBias[i] = static_cast<short>(dacObj.value(QStringLiteral("bias")).toInt(0));
+            m_cfg.dacLimit[i] = static_cast<short>(dacObj.value(QStringLiteral("limit")).toInt(32767));
         }
-        else {
-            // 未配置 encoder → 默认与 profile 一致
-            m_cfg.encScale[idx] = m_cfg.profileScale[idx];
+
+        // ---- control ----
+        QJsonObject ctrlObj = ax.value(QStringLiteral("control")).toObject();
+        if (!ctrlObj.isEmpty()) {
+            m_cfg.followingErrorLimit[i] = static_cast<long>(ctrlObj.value(QStringLiteral("followErrorLimit")).toDouble(32767.0));
+        }
+
+        // ---- profile ----
+        QJsonObject prfObj = ax.value(QStringLiteral("profile")).toObject();
+        if (!prfObj.isEmpty()) {
+            m_cfg.smoothStopDec[i] = prfObj.value(QStringLiteral("smoothStopDec")).toDouble(100.0);
+            m_cfg.estopDec[i] = prfObj.value(QStringLiteral("estopDec")).toDouble(1000.0);
         }
     }
-    return true;
-}
 
-bool CTotalMgr::saveScaleToJson(const QString& filePath) const
-{
-    QString path = filePath.isEmpty() ? scaleJsonPath() : filePath;
-
-    QJsonArray axes;
-    for (short axis = 1; axis <= m_axisCount; ++axis) {
-        int idx = axis - 1;
-        const stuScaleFactor& prf = m_cfg.profileScale[idx];
-        const stuScaleFactor& enc = m_cfg.encScale[idx];
-
-        QJsonObject prfObj;
-        prfObj[QStringLiteral("alpha")] = static_cast<qint64>(prf.alpha);
-        prfObj[QStringLiteral("beta")] = static_cast<qint64>(prf.beta); 
-
-        QJsonObject encObj;
-        encObj[QStringLiteral("alpha")] = static_cast<qint64>(enc.alpha);
-        encObj[QStringLiteral("beta")] = static_cast<qint64>(enc.beta);
-
-        QJsonObject obj;
-        obj[QStringLiteral("axis")] = axis;
-        obj[QStringLiteral("profile")] = prfObj;
-        obj[QStringLiteral("encoder")] = encObj;
-
-        axes.append(obj);
-    }
-
-    QJsonObject root;
-    root[QStringLiteral("version")] = 1;
-    root[QStringLiteral("axes")] = axes;
-
-    QDir().mkpath(QFileInfo(path).absolutePath());
-
-    QFile file(path);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return false;
-
-    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
-    file.close();
     return true;
 }
 
 
-void CTotalMgr::readScaleFromBoard()
+void CTotalMgr::readAllAxisConfigFromBoard()
 {
     for (short axis = 1; axis <= m_axisCount; ++axis) {
-        int idx = axis - 1;
-        stuScaleFactor& prf = m_cfg.profileScale[idx];
-        stuScaleFactor& enc = m_cfg.encScale[idx];
+        int i = axis - 1;
 
-        // 读规划器当量
-        m_axisMgr->getProfileScale(axis, prf.alpha, prf.beta);
+        // scale
+        m_axisMgr->getProfileScale(axis, m_cfg.profileScale[i].alpha, m_cfg.profileScale[i].beta);
+        short ret = m_axisMgr->getEncoderScale(axis, m_cfg.encScale[i].alpha, m_cfg.encScale[i].beta);
+        if (ret != 0)
+            m_cfg.encScale[i] = m_cfg.profileScale[i];
 
-        // 读编码器当量
-        short ret = m_axisMgr->getEncoderScale(axis, enc.alpha, enc.beta);
-        if (ret != 0) {
-            // 卡不支持 → 编码器当量 = 规划器当量
-            enc = prf;
-        }
+        // dac
+        m_cfg.dacBias[i] = m_axisMgr->getDacBias(axis);
+        m_cfg.dacLimit[i] = m_axisMgr->getDacLimit(axis);
+
+        // follow error
+        m_cfg.followingErrorLimit[i] = m_axisMgr->getFollowErrorLimit(axis);
+
+        // stop decel
+        double smooth = 100.0, abrupt = 1000.0;
+        m_axisMgr->getStopDecel(axis, smooth, abrupt);
+        m_cfg.smoothStopDec[i] = smooth;
+        m_cfg.estopDec[i] = abrupt;
     }
 }
 
-// ============================================================
-//                    读写接口
-// ============================================================
+void CTotalMgr::applyAllAxisConfigToBoard()
+{
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int i = axis - 1;
+
+        // scale
+        m_axisMgr->setProfileScale(axis, m_cfg.profileScale[i].alpha, m_cfg.profileScale[i].beta);
+        m_axisMgr->setEncoderScale(axis, m_cfg.encScale[i].alpha, m_cfg.encScale[i].beta);
+
+        // dac
+        m_axisMgr->setDacBias(axis, m_cfg.dacBias[i]);
+        m_axisMgr->setDacLimit(axis, m_cfg.dacLimit[i]);
+
+        // follow error
+        m_axisMgr->setFollowErrorLimit(axis, m_cfg.followingErrorLimit[i]);
+
+        // stop decel
+        m_axisMgr->setStopDecel(axis, m_cfg.smoothStopDec[i], m_cfg.estopDec[i]);
+    }
+}
+
+
+
 
 void CTotalMgr::setProfileScale(short axis, long alpha, long beta)
 {
