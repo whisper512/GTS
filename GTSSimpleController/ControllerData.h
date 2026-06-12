@@ -142,17 +142,21 @@ struct stuClock {
     stuClock() : sysClock(0), highPrecClock(0) {}
 };
 
+struct stuScaleFactor
+{
+    long alpha = 1;
+    long beta = 1;
+};
+
 
 struct stuConfig
 {
     int axisCount = 4;
 
     // 规划器当量
-    long profileScaleAlpha[4] = { 1, 1, 1, 1 };
-    long profileScaleBeta[4] = { 1, 1, 1, 1 };
+    stuScaleFactor profileScale[4];
     // 编码器当量
-    long encScaleAlpha[4] = { 1, 1, 1, 1 };
-    long encScaleBeta[4] = { 1, 1, 1, 1 };
+    stuScaleFactor encScale[4];
     // DAC
     short dacBias[4] = { 0, 0, 0, 0 };
     short dacLimit[4] = { 32767, 32767, 32767, 32767 };
