@@ -60,7 +60,7 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 
 short AxisMgr::setProfileScale(short axis, long alpha, long beta)
 {
-    return GT_SetProfileScale(axis, alpha, beta);
+    return GT_ProfileScale(axis, static_cast<short>(alpha), static_cast<short>(beta));
 }
 
 short AxisMgr::getProfileScale(short axis, long& alpha, long& beta)
@@ -70,7 +70,7 @@ short AxisMgr::getProfileScale(short axis, long& alpha, long& beta)
 
 short AxisMgr::setEncoderScale(short axis, long alpha, long beta)
 {
-    return GT_SetEncoderScale(axis, alpha, beta);
+    return GtsHal::encScale(axis, static_cast<short>(alpha), static_cast<short>(beta));
 }
 
 short AxisMgr::getEncoderScale(short axis, long& alpha, long& beta)

@@ -1114,10 +1114,12 @@ typedef struct
 
 GT_API GT_GetLeadScrewCompInnerValue(short axis,short dir,long pos,long *pCompValue);
 
+// ÎÞÐ§-----
 GT_API GT_SetProfileScale(short axis,long alpha,long beta);
 GT_API GT_GetProfileScale(short axis,long *pAlpha,long *pBeta);
 GT_API GT_SetEncoderScale(short encoder,long alpha,long beta);
 GT_API GT_GetEncoderScale(short encoder,long *pAlpha,long *pBeta);
+// -----
 
 GT_API GT_MultiAxisOn(unsigned long mask);
 GT_API GT_MultiAxisOff(unsigned long mask);
