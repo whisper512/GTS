@@ -50,7 +50,7 @@ enum class IOPolarity : short
     Reverse = 1    // 取反
 };
 
-// 脉冲技术源
+// 脉冲计数源
 enum class PulseCountSource : short
 {
     Encoder = 0,   // 编码器
