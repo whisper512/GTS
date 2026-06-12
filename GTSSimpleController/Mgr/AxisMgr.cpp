@@ -49,7 +49,7 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         }
 
 #ifdef GTS_NO_Motor
-        // 无电机：编码器用规划器值代替
+        // 无电机调试或者开环控制：编码器数值用规划器数值代替
         vecAxis[idx].dEncPos = vecAxis[idx].dPrfPos;
         vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel;
         vecAxis[idx].dEncPosMm = vecAxis[idx].dPrfPos;
