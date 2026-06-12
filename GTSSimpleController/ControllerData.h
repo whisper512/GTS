@@ -227,6 +227,9 @@ struct stuAxis
     double dPrfPos;    // 规划位置
     double dPrfVel;    // 规划速度
     double dPrfAcc;    // 规划加速度
+    double dPrfPosMm;  // mm
+    double dPrfVelMm;  // mm/s
+    double dPrfAccMm;  // mm/s²
     long lPrfMode;     // 运动模式
     long AxisStatus;   // 轴状态
 
@@ -252,6 +255,9 @@ struct stuAxis
         , dPrfPos(0.0)
         , dPrfVel(0.0)
         , dPrfAcc(0.0)
+        , dPrfPosMm(0.0)
+        , dPrfVelMm(0.0)
+        , dPrfAccMm(0.0)
         , lPrfMode(0)
         , AxisStatus(0)
         , trapParam()

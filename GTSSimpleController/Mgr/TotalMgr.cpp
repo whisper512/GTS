@@ -262,20 +262,19 @@ void CTotalMgr::readAllAxisConfigFromBoard()
 
 void CTotalMgr::applyAllAxisConfigToBoard()
 {
-    stopRefresh();   // ← 暂停定时器，避免读写冲突
+    stopRefresh();
     QStringList results;
     for (short axis = 1; axis <= m_axisCount; ++axis) {
         int i = axis - 1;
 
         short rPrf = m_axisMgr->setProfileScale(axis, m_cfg.profileScale[i].alpha, m_cfg.profileScale[i].beta);
         short rEnc = m_axisMgr->setEncoderScale(axis, m_cfg.encScale[i].alpha, m_cfg.encScale[i].beta);
-        // dac / follow error / stop decel 不受影响，照写
         m_axisMgr->setDacBias(axis, m_cfg.dacBias[i]);
         m_axisMgr->setDacLimit(axis, m_cfg.dacLimit[i]);
         m_axisMgr->setFollowErrorLimit(axis, m_cfg.followingErrorLimit[i]);
         m_axisMgr->setStopDecel(axis, m_cfg.smoothStopDec[i], m_cfg.estopDec[i]);
     }
-    startRefresh();   // ← 恢复定时器
+    startRefresh();
 }
 
 

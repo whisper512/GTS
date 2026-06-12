@@ -32,6 +32,21 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         vecAxis[idx].dPrfPos = prfPosition(axis);
         vecAxis[idx].dPrfVel = prfVelocity(axis);
         vecAxis[idx].dPrfAcc = prfAcceleration(axis);
+        
+        long prfAlpha = 1, prfBeta = 1;
+        prfAlpha = m_pTotalMgr->profileScaleAlpha(axis);
+        prfBeta = m_pTotalMgr->profileScaleBeta(axis);
+        GtsHal::getProfileScale(axis, &prfAlpha, &prfBeta);
+        if (prfBeta != 0) {
+            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos * prfAlpha / prfBeta;
+            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel * prfAlpha / prfBeta;
+            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc * prfAlpha / prfBeta;
+        }
+        else {
+            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos;
+            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel;
+            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc;
+        }
 
 #ifdef GTS_NO_Motor
         // 无电机：编码器用规划器值代替
@@ -45,6 +60,8 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         vecAxis[idx].dEncVel = encoderVelocity(axis);
 
         long encAlpha = 1, encBeta = 1;
+        encAlpha = m_pTotalMgr->encoderScaleAlpha(axis);
+        encBeta = m_pTotalMgr->encoderScaleBeta(axis);
         GtsHal::getEncoderScale(axis, &encAlpha, &encBeta);
         if (encBeta != 0) {
             vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos * encAlpha / encBeta;
