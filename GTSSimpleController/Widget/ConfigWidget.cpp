@@ -45,6 +45,18 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshDacValues(); });
 	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
 	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
+	// ===== 当量：轴切换刷新 spinBox =====
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, [this]() { refreshScaleValues(); });
+	// ===== 当量：spinBox 修改后保存 JSON + 写板卡 =====
+	connect(ui.spinBox_prfAlpha, &QAbstractSpinBox::editingFinished,
+		this, &CConfigWidget::onPrfAlphaChanged);
+	connect(ui.spinBox_prfBeta, &QAbstractSpinBox::editingFinished,
+		this, &CConfigWidget::onPrfBetaChanged);
+	connect(ui.spinBox_encAlpha, &QAbstractSpinBox::editingFinished,
+		this, &CConfigWidget::onEncAlphaChanged);
+	connect(ui.spinBox_encBeta, &QAbstractSpinBox::editingFinished,
+		this, &CConfigWidget::onEncBetaChanged);
 }
 
 void CConfigWidget::onBtnClicked()
@@ -89,6 +101,7 @@ void CConfigWidget::onconfigChanged()
 	refreshFollowErrorLimit();
 	refreshDacValues();
 	refreshStopDecel();
+	refreshScaleValues();
 }
 
 
@@ -190,5 +203,92 @@ void CConfigWidget::onStopDecelChanged()
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("Profile%1 停止减速度 → 平滑=%2 急停=%3")
 		.arg(profile).arg(smooth, 0, 'f', 3).arg(abrupt, 0, 'f', 3),
+		Qt::darkGreen);
+}
+
+
+void CConfigWidget::refreshScaleValues()
+{
+	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+
+	ui.spinBox_prfAlpha->setValue((int)m_pTotalMgr->profileScaleAlpha(axis));
+	ui.spinBox_prfBeta->setValue((int)m_pTotalMgr->profileScaleBeta(axis));
+	ui.spinBox_encAlpha->setValue((int)m_pTotalMgr->encoderScaleAlpha(axis));
+	ui.spinBox_encBeta->setValue((int)m_pTotalMgr->encoderScaleBeta(axis));
+
+	m_bRefreshing = false;
+}
+
+void CConfigWidget::onPrfAlphaChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	long  alpha = ui.spinBox_prfAlpha->value();
+	long  beta = ui.spinBox_prfBeta->value();
+
+	m_pTotalMgr->setProfileScale(axis, alpha, beta);
+	m_pTotalMgr->saveScaleToJson();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 profile当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onPrfBetaChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	long  alpha = ui.spinBox_prfAlpha->value();
+	long  beta = ui.spinBox_prfBeta->value();
+
+	m_pTotalMgr->setProfileScale(axis, alpha, beta);
+	m_pTotalMgr->saveScaleToJson();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 profile当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onEncAlphaChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	long  alpha = ui.spinBox_encAlpha->value();
+	long  beta = ui.spinBox_encBeta->value();
+
+	m_pTotalMgr->setEncoderScale(axis, alpha, beta);
+	m_pTotalMgr->saveScaleToJson();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 encoder当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onEncBetaChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	long  alpha = ui.spinBox_encAlpha->value();
+	long  beta = ui.spinBox_encBeta->value();
+
+	m_pTotalMgr->setEncoderScale(axis, alpha, beta);
+	m_pTotalMgr->saveScaleToJson();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 encoder当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
 		Qt::darkGreen);
 }

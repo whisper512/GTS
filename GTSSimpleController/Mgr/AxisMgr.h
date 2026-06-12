@@ -23,6 +23,13 @@ public:
 
     // 获取轴状态
     void getAxisStatusInfo(std::vector<stuAxis>& vecAxis);
+    // profile 当量
+    short setProfileScale(short axis, long alpha, long beta);
+    short getProfileScale(short axis, long& alpha, long& beta);
+
+    // encoder 当量
+    short setEncoderScale(short axis, long alpha, long beta);
+    short getEncoderScale(short axis, long& alpha, long& beta);
 
 public:
     // 使能单个轴

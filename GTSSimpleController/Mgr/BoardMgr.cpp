@@ -31,7 +31,13 @@ bool BoardMgr::open(short channel, short param)
         GtsHal::close();
         m_isOpen = false;
     }
+
     m_lastError = GtsHal::open(channel, param);
+    
+#ifdef _DEBUG
+    m_lastError = 0;
+#endif // DEBUG
+
     if (m_lastError == 0) {
         m_isOpen = true;
         m_pTotalMgr->initAfterBoardOpened();

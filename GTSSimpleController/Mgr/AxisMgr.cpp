@@ -58,6 +58,25 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
     }
 }
 
+short AxisMgr::setProfileScale(short axis, long alpha, long beta)
+{
+    return GT_SetProfileScale(axis, alpha, beta);
+}
+
+short AxisMgr::getProfileScale(short axis, long& alpha, long& beta)
+{
+    return GT_GetProfileScale(axis, &alpha, &beta);
+}
+
+short AxisMgr::setEncoderScale(short axis, long alpha, long beta)
+{
+    return GT_SetEncoderScale(axis, alpha, beta);
+}
+
+short AxisMgr::getEncoderScale(short axis, long& alpha, long& beta)
+{
+    return GT_GetEncoderScale(axis, &alpha, &beta);
+}
 
 
 bool AxisMgr::isValidAxis(short axis)  {

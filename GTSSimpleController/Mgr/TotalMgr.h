@@ -5,6 +5,7 @@
 #include <QColor>
 #include <QTimer>
 #include <memory>
+#include <vector>
 
 #include "BoardMgr.h"
 #include "AxisMgr.h"
@@ -86,9 +87,22 @@ public:
     // 板卡关闭后的清理
     void cleanupAfterBoardClosed();
 
+    // JSON 读写
+    bool loadScaleFromJson(const QString& filePath = QString());
+    bool saveScaleToJson(const QString& filePath = QString()) const;
+    void readScaleFromBoard();
+    QString scaleJsonPath() const;
 
-    // ----- 轴当量 -----
-    
+    // profile 当量
+    void setProfileScale(short axis, long alpha, long beta);
+    long profileScaleAlpha(short axis) const;
+    long profileScaleBeta(short axis) const;
+
+    // encoder 当量
+    void setEncoderScale(short axis, long alpha, long beta);
+    long encoderScaleAlpha(short axis) const;
+    long encoderScaleBeta(short axis) const;
+
 
     // dac相关
     void readDacConfig();

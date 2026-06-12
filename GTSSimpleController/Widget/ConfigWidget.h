@@ -39,6 +39,11 @@ private:
 	void refreshFollowErrorLimit();
 	void refreshStopDecel();
 	void refreshGpiSense();
+	void refreshScaleValues();
+	void onPrfAlphaChanged();
+	void onPrfBetaChanged();
+	void onEncAlphaChanged();
+	void onEncBetaChanged();
 
 
 signals:

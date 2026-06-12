@@ -14,82 +14,117 @@
    <string>CConfigWidget</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_2">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
     <item row="0" column="1">
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0" rowspan="2">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string>axis</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="3">
-         <property name="spacing">
-          <number>20</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="label_axisId">
-             <property name="text">
-              <string>轴号:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="comboBox_axisId"/>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QGroupBox" name="groupBox_4">
-        <property name="title">
-         <string>control</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_4">
+        <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="label_controlId">
+          <widget class="QLabel" name="label_axisId">
            <property name="text">
-            <string>控制器号:</string>
+            <string>轴号:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" colspan="2">
-          <widget class="QComboBox" name="comboBox_controlId"/>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_axisId"/>
          </item>
-         <item row="1" column="0" colspan="2">
-          <widget class="QLabel" name="label_followingErrorLimit">
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_prfAlpha">
            <property name="text">
-            <string>跟随误差极限:</string>
+            <string>规划器当量alpha:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
-          <widget class="QSpinBox" name="spinBox_followingErrorLimit">
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="spinBox_prfAlpha">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_prfBeta">
+           <property name="text">
+            <string>规划器当量beta:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBox_prfBeta">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_encAlpha">
+           <property name="text">
+            <string>编码器当量alpha:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBox_encAlpha">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_encBeta">
+           <property name="text">
+            <string>编码器当量beta:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QSpinBox" name="spinBox_encBeta">
            <property name="maximum">
             <number>32767</number>
            </property>
@@ -98,59 +133,7 @@
         </layout>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QGroupBox" name="groupBox_6">
-        <property name="title">
-         <string>profile</string>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_6">
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_profileId">
-           <property name="text">
-            <string>规划器号:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="comboBox_profileId"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_smoothStopDec">
-           <property name="text">
-            <string>平滑停止减速度:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec"/>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_smoothStopDec_2">
-           <property name="text">
-            <string>急停停止减速度:</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec_2">
-           <property name="maximum">
-            <double>99999.000000000000000</double>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="1" column="1">
+      <item row="0" column="1" colspan="2">
        <widget class="QGroupBox" name="groupBox_3">
         <property name="title">
          <string>dac</string>
@@ -206,92 +189,131 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+      <item row="0" column="3">
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="title">
+         <string>profile</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_profileId">
+           <property name="text">
+            <string>规划器号:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="comboBox_profileId"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_smoothStopDec">
+           <property name="text">
+            <string>平滑停止减速度:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_smoothStopDec_2">
+           <property name="text">
+            <string>急停停止减速度:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_smoothStopDec_2">
+           <property name="maximum">
+            <double>99999.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
-      <item row="2" column="1">
-       <spacer name="verticalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
+      <item row="1" column="1">
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="title">
+         <string>control</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_controlId">
+           <property name="text">
+            <string>控制器号:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" colspan="2">
+          <widget class="QComboBox" name="comboBox_controlId"/>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <widget class="QLabel" name="label_followingErrorLimit">
+           <property name="text">
+            <string>跟随误差极限:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QSpinBox" name="spinBox_followingErrorLimit">
+           <property name="maximum">
+            <number>32767</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="2" colspan="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="pushButton_loadToBoard">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>下载配置文件到控制卡</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
     <item row="1" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QPushButton" name="pushButton_loadToBoard">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>下载配置文件到控制卡</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="0" column="0">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="2">
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="1">
-     <spacer name="verticalSpacer_3">
+     <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
