@@ -263,33 +263,19 @@ void CTotalMgr::readAllAxisConfigFromBoard()
 void CTotalMgr::applyAllAxisConfigToBoard()
 {
     stopRefresh();   // ← 暂停定时器，避免读写冲突
-
     QStringList results;
     for (short axis = 1; axis <= m_axisCount; ++axis) {
         int i = axis - 1;
 
         short rPrf = m_axisMgr->setProfileScale(axis, m_cfg.profileScale[i].alpha, m_cfg.profileScale[i].beta);
         short rEnc = m_axisMgr->setEncoderScale(axis, m_cfg.encScale[i].alpha, m_cfg.encScale[i].beta);
-
-        results << QStringLiteral("轴%1 prof α=%2 β=%3 → %4   enc α=%5 β=%6 → %7")
-            .arg(axis)
-            .arg(m_cfg.profileScale[i].alpha).arg(m_cfg.profileScale[i].beta)
-            .arg(rPrf == 0 ? QStringLiteral("OK") : QString("FAIL(%1)").arg(GtsErrorToString(rPrf)))
-            .arg(m_cfg.encScale[i].alpha).arg(m_cfg.encScale[i].beta)
-            .arg(rEnc == 0 ? QStringLiteral("OK") : QString("FAIL(%1)").arg(GtsErrorToString(rEnc)));
-
         // dac / follow error / stop decel 不受影响，照写
         m_axisMgr->setDacBias(axis, m_cfg.dacBias[i]);
         m_axisMgr->setDacLimit(axis, m_cfg.dacLimit[i]);
         m_axisMgr->setFollowErrorLimit(axis, m_cfg.followingErrorLimit[i]);
         m_axisMgr->setStopDecel(axis, m_cfg.smoothStopDec[i], m_cfg.estopDec[i]);
     }
-
     startRefresh();   // ← 恢复定时器
-
-    QMessageBox::information(nullptr,
-        QStringLiteral("当量写入结果"),
-        results.join('\n'));
 }
 
 
