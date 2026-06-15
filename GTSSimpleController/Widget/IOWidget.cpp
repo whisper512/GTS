@@ -81,7 +81,6 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
             // 状态（默认关）
             auto* stsItem = new QTableWidgetItem(QStringLiteral("● 关"));
             stsItem->setTextAlignment(Qt::AlignCenter);
-            stsItem->setForeground(Qt::gray);
             table->setItem(i, 2, stsItem);
         }
     }
@@ -114,11 +113,11 @@ void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status
         if (!item) continue;
         if (status[i]) {
             item->setText(QStringLiteral("● 开"));
-            item->setForeground(Qt::green);
+            item->setBackground(Qt::green);   // 背景变绿
         }
         else {
             item->setText(QStringLiteral("● 关"));
-            item->setForeground(Qt::gray);
+            item->setBackground(Qt::white);   // 背景恢复白色
         }
     }
 }
@@ -152,11 +151,11 @@ void CIOWidget::onDOCellClicked(int row, int col)
     if (item) {
         if (flat[row]) {
             item->setText(QStringLiteral("● 开"));
-            item->setForeground(Qt::green);
+            item->setBackground(Qt::green);
         }
         else {
             item->setText(QStringLiteral("● 关"));
-            item->setForeground(Qt::gray);
+            item->setBackground(Qt::white);
         }
     }
 }
