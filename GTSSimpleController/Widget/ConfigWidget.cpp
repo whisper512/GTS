@@ -32,6 +32,11 @@ void CConfigWidget::InitUI()
 	ComboAddNumbers(ui.comboBox_dacId, 4);
 	ComboAddNumbers(ui.comboBox_controlId, 4);
 	ComboAddNumbers(ui.comboBox_profileId, 4);
+	ComboAddItems(ui.comboBox_controlMode, {
+		QStringLiteral("闭环"),
+		QStringLiteral("开环"),
+		QStringLiteral("调试")
+		});
 }
 
 void CConfigWidget::connectSignalsAndSlots()
@@ -45,9 +50,11 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshDacValues(); });
 	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
 	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
-	// ===== 当量：轴切换刷新 spinBox =====
+	// ===== 轴切换刷新  =====
 	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
 		this, [this]() { refreshScaleValues(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, [this]() { refreshControlMode(); });
 	// ===== 当量：spinBox 修改后保存 JSON + 写板卡 =====
 	connect(ui.spinBox_prfAlpha, &QAbstractSpinBox::editingFinished,
 		this, &CConfigWidget::onPrfAlphaChanged);
@@ -57,6 +64,8 @@ void CConfigWidget::connectSignalsAndSlots()
 		this, &CConfigWidget::onEncAlphaChanged);
 	connect(ui.spinBox_encBeta, &QAbstractSpinBox::editingFinished,
 		this, &CConfigWidget::onEncBetaChanged);
+	connect(ui.comboBox_controlMode, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, &CConfigWidget::onControlModeChanged);
 }
 
 void CConfigWidget::onBtnClicked()
@@ -102,6 +111,7 @@ void CConfigWidget::onconfigChanged()
 	refreshDacValues();
 	refreshStopDecel();
 	refreshScaleValues();
+	refreshControlMode();
 }
 
 
@@ -290,5 +300,42 @@ void CConfigWidget::onEncBetaChanged()
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 encoder当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::refreshControlMode()
+{
+	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	int  mode = static_cast<int>(m_pTotalMgr->controlMode(axis));
+	ui.comboBox_controlMode->setCurrentIndex(mode);
+
+	m_bRefreshing = false;
+}
+
+void CConfigWidget::onControlModeChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+	if (!m_pTotalMgr->boardMgr()->isOpen()) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	int  index = ui.comboBox_controlMode->currentIndex();
+	auto mode = static_cast<ControlMode>(index);
+
+	m_pTotalMgr->setControlMode(axis, mode);
+	m_pTotalMgr->saveAxisConfig();
+
+	// ✅ 用 QStringLiteral 数组，和项目其他代码一致
+	static const QString modeNames[] = {
+		QStringLiteral("闭环"),
+		QStringLiteral("开环"),
+		QStringLiteral("调试")
+	};
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 控制模式 → %2").arg(axis).arg(modeNames[index]),
 		Qt::darkGreen);
 }

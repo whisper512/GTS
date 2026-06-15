@@ -94,6 +94,9 @@ public:
     void applyAllAxisConfigToBoard();
     QString axisConfigPath() const;
 
+    // 控制模式
+    void setControlMode(short axis, ControlMode mode);
+    ControlMode controlMode(short axis) const;
 
     // profile 当量
     void setProfileScale(short axis, long alpha, long beta);
@@ -104,7 +107,6 @@ public:
     void setEncoderScale(short axis, long alpha, long beta);
     long encoderScaleAlpha(short axis) const;
     long encoderScaleBeta(short axis) const;
-
 
     // dac相关
     void readDacConfig();

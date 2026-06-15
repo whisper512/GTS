@@ -33,7 +33,7 @@ enum class DOType : short
 {
     ServoOn = 0,   // MC_SERVO_ON  伺服使能
     AlmClear = 1,  // MC_ALM_CLEAR 报警清除
-    GPO = 2        // MC_GPO        通用输出
+    GPO = 2        // MC_GPO       通用输出
 };
 
 // 脉冲输出模式
@@ -53,16 +53,25 @@ enum class IOPolarity : short
 // 脉冲计数源
 enum class PulseCountSource : short
 {
-    Encoder = 0,   // 编码器
+    Encoder = 0,     // 编码器
     PulseCounter = 1 // 脉冲计数器
 };
 
 // 触发沿
 enum class TriggerEdge : short
 {
-    Rising = 0,   // 上升沿
+    Rising = 0,    // 上升沿
     Falling = 1    // 下降沿
 };
+
+// 控制模式
+enum class ControlMode : short
+{
+    ClosedLoop = 0,   // 闭环:有电机 + 编码器
+    OpenLoop = 1,     // 开环:有电机 + 脉冲计数器
+    Simulation = 2    // 调试:无电机 + 脉冲计数器
+};
+
 
 
 // 板卡信息
@@ -157,6 +166,9 @@ struct stuConfig
     stuScaleFactor profileScale[4];
     // 编码器当量
     stuScaleFactor encScale[4];
+    // 控制模式
+    ControlMode ctrlMode[4] = { ControlMode::ClosedLoop,ControlMode::ClosedLoop, ControlMode::ClosedLoop,ControlMode::ClosedLoop };
+
     // DAC
     short dacBias[4] = { 0, 0, 0, 0 };
     short dacLimit[4] = { 32767, 32767, 32767, 32767 };

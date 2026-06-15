@@ -45,6 +45,9 @@ private:
 	void onEncAlphaChanged();
 	void onEncBetaChanged();
 
+	// 控制模式
+	void refreshControlMode();
+	void onControlModeChanged();
 
 signals:
 

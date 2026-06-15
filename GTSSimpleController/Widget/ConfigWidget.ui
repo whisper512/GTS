@@ -15,35 +15,9 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_3">
-    <item row="0" column="0">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="0" column="2">
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
     <item row="0" column="1">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0" rowspan="2">
+      <item row="0" column="0" rowspan="3">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string>axis</string>
@@ -59,10 +33,23 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="0" column="1" colspan="2">
           <widget class="QComboBox" name="comboBox_axisId"/>
          </item>
          <item row="1" column="0">
+          <widget class="QLabel" name="label_controlMode">
+           <property name="text">
+            <string>控制模式:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2">
+          <widget class="QComboBox" name="comboBox_controlMode"/>
+         </item>
+         <item row="2" column="0" colspan="2">
           <widget class="QLabel" name="label_prfAlpha">
            <property name="text">
             <string>规划器当量alpha:</string>
@@ -72,14 +59,14 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="2">
           <widget class="QSpinBox" name="spinBox_prfAlpha">
            <property name="maximum">
             <number>32767</number>
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0" colspan="2">
           <widget class="QLabel" name="label_prfBeta">
            <property name="text">
             <string>规划器当量beta:</string>
@@ -89,14 +76,14 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="2">
           <widget class="QSpinBox" name="spinBox_prfBeta">
            <property name="maximum">
             <number>32767</number>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
+         <item row="4" column="0" colspan="2">
           <widget class="QLabel" name="label_encAlpha">
            <property name="text">
             <string>编码器当量alpha:</string>
@@ -106,14 +93,14 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="2">
           <widget class="QSpinBox" name="spinBox_encAlpha">
            <property name="maximum">
             <number>32767</number>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
+         <item row="5" column="0" colspan="2">
           <widget class="QLabel" name="label_encBeta">
            <property name="text">
             <string>编码器当量beta:</string>
@@ -123,7 +110,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="2">
           <widget class="QSpinBox" name="spinBox_encBeta">
            <property name="maximum">
             <number>32767</number>
@@ -133,7 +120,7 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2">
+      <item row="0" column="1">
        <widget class="QGroupBox" name="groupBox_3">
         <property name="title">
          <string>dac</string>
@@ -189,7 +176,7 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="0" column="2">
        <widget class="QGroupBox" name="groupBox_6">
         <property name="title">
          <string>profile</string>
@@ -280,7 +267,7 @@
         </layout>
        </widget>
       </item>
-      <item row="1" column="2" colspan="2">
+      <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QPushButton" name="pushButton_loadToBoard">
@@ -311,6 +298,32 @@
        </layout>
       </item>
      </layout>
+    </item>
+    <item row="0" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="2">
+     <spacer name="horizontalSpacer_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
     </item>
     <item row="1" column="1">
      <spacer name="verticalSpacer">

@@ -118,10 +118,14 @@ static QJsonObject axisConfigToJson(short axis, const stuConfig& cfg)
     prfObj[QStringLiteral("smoothStopDec")] = cfg.smoothStopDec[i];
     prfObj[QStringLiteral("estopDec")] = cfg.estopDec[i];
 
+    QJsonObject modeObj;
+    modeObj[QStringLiteral("controlMode")] = static_cast<int>(cfg.ctrlMode[i]);
+
     QJsonObject obj;
     obj[QStringLiteral("axis")] = axis;
     obj[QStringLiteral("scale")] = scaleObj;
     obj[QStringLiteral("dac")] = dacObj;
+    obj[QStringLiteral("mode")] = modeObj;
     obj[QStringLiteral("control")] = ctrlObj;
     obj[QStringLiteral("profile")] = prfObj;
     return obj;
@@ -174,6 +178,7 @@ bool CTotalMgr::loadAxisConfig(const QString& filePath)
     // ----- 轴数个数组 -----
     // 先全部置默认值
     for (int i = 0; i < m_axisCount; ++i) {
+        m_cfg.ctrlMode[i] = ControlMode::ClosedLoop;
         m_cfg.profileScale[i] = stuScaleFactor{ 1, 1 };
         m_cfg.encScale[i] = stuScaleFactor{ 1, 1 };
         m_cfg.dacBias[i] = 0;
@@ -228,6 +233,15 @@ bool CTotalMgr::loadAxisConfig(const QString& filePath)
             m_cfg.smoothStopDec[i] = prfObj.value(QStringLiteral("smoothStopDec")).toDouble(100.0);
             m_cfg.estopDec[i] = prfObj.value(QStringLiteral("estopDec")).toDouble(1000.0);
         }
+
+        // ---- ControlMode ----
+        QJsonObject modeObj = ax.value(QStringLiteral("mode")).toObject();
+        if (!modeObj.isEmpty()) {
+            int m = modeObj.value(QStringLiteral("controlMode")).toInt(
+                static_cast<int>(ControlMode::ClosedLoop));
+            if (m >= 0 && m <= 2)
+                m_cfg.ctrlMode[i] = static_cast<ControlMode>(m);
+        }
     }
 
     return true;
@@ -273,10 +287,33 @@ void CTotalMgr::applyAllAxisConfigToBoard()
         m_axisMgr->setDacLimit(axis, m_cfg.dacLimit[i]);
         m_axisMgr->setFollowErrorLimit(axis, m_cfg.followingErrorLimit[i]);
         m_axisMgr->setStopDecel(axis, m_cfg.smoothStopDec[i], m_cfg.estopDec[i]);
+        // 控制模式设置编码器
+        switch (m_cfg.ctrlMode[i]) {
+        case ControlMode::ClosedLoop:
+            GT_EncOn(axis);    // 读外部编码器
+            break;
+        case ControlMode::OpenLoop:
+        case ControlMode::Simulation:
+            GT_EncOff(axis);   // 脉冲计数器
+            break;
+        }
     }
     startRefresh();
 }
 
+void CTotalMgr::setControlMode(short axis, ControlMode mode)
+{
+    if (axis < 1 || axis > m_axisCount) return;
+    int idx = axis - 1;
+    m_cfg.ctrlMode[idx] = mode;
+}
+
+ControlMode CTotalMgr::controlMode(short axis) const
+{
+    return (axis >= 1 && axis <= m_axisCount)
+        ? m_cfg.ctrlMode[axis - 1]
+        : ControlMode::ClosedLoop;
+}
 
 
 void CTotalMgr::setProfileScale(short axis, long alpha, long beta)
