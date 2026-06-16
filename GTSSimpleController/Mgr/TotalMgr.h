@@ -27,7 +27,6 @@ private:
     // 刷新数据定时器
     QTimer* m_pRefreshTimer = nullptr;
 
-
     // 轴数
     int m_axisCount = 4;
     // 板卡时钟

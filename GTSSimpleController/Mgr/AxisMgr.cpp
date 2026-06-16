@@ -13,6 +13,47 @@ AxisMgr::~AxisMgr() {
     disableAll();
 }
 
+bool AxisMgr::homeInit(short axis, double vel, double acc, short mode)
+{
+    if (!isValidAxis(axis)) return false;
+
+    m_lastError = GtsHal::homeInit();
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+    return true;
+}
+
+bool AxisMgr::homeInitAll(double vel, double acc, short mode)
+{
+    int n = m_pTotalMgr->axisCount();
+    bool allOk = true;
+    for (short i = 1; i <= n; ++i) {
+        if (!homeInit(i, vel, acc, mode))
+            allOk = false;
+    }
+    return allOk;
+}
+
+
+bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
+{
+    // 检查轴号合法性
+    if (!isValidAxis(axis)) return false;
+
+    // 调用底层 GT_Home
+    m_lastError = GtsHal::home(axis, pos, vel, acc, offset);
+
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+    // 回零已启动（异步），之后可通过 status 位 0x0080 判断是否完成
+    return true;
+}
+
+
 void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
     int n = m_pTotalMgr->axisCount();

@@ -21,6 +21,13 @@ public:
     ~AxisMgr();
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
+    // home初始化
+    bool homeInit(short axis, double vel = 10.0, double acc = 100.0, short mode = 0);
+    bool homeInitAll(double vel = 10.0, double acc = 100.0, short mode = 0);
+    // 简单回零
+    bool home(short axis, long pos = 0, double vel = 10.0, double acc = 100.0, long offset = 0);
+
+
     // 获取轴状态
     void getAxisStatusInfo(std::vector<stuAxis>& vecAxis);
     // profile 当量

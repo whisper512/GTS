@@ -37,6 +37,8 @@ private:
 	void onTrapMotion();
 	bool startSingleTrap(short axisId, double curPos, double targetPos);
 
+	void onHomeButtonClicked(short axis);
+
 	// Ó²°ó¶¨£ºÖáºÅ ¡ú Ãû³Æ
 	static QString axisName(short axisId);
 };
