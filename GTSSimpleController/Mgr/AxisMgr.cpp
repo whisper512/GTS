@@ -43,18 +43,8 @@ bool AxisMgr::setHomeIndexMode(short axis, long indexOffset, long indexWidth)
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GT_Index(axis, indexOffset, indexWidth);
-    QMessageBox::information(nullptr,
-        QStringLiteral("GT_Index 调试"),
-        QStringLiteral("轴%1 GT_Index(axis=%1, offset=%2, width=%3)\n"
-            "返回: err=%4")
-        .arg(axis).arg(indexOffset).arg(indexWidth).arg(m_lastError));
 
     if (m_lastError != 0) {
-        QMessageBox::warning(nullptr,
-            QStringLiteral("GT_Index 失败"),
-            QStringLiteral("轴%1 GT_Index 返回错误码 %2\n%3")
-            .arg(axis).arg(m_lastError).arg(lastErrorString()));
-        emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
     }
     return true;
@@ -71,16 +61,7 @@ bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
     {
         return false;
     }
-
-    // ── 调用底层 GT_Home ──
     m_lastError = GtsHal::home(axis, pos, vel, acc, offset);
-
-    // ── 调试：打印 GT_Home 返回值 ──
-    QMessageBox::information(nullptr,
-        QStringLiteral("GT_Home 返回调试"),
-        QStringLiteral("轴%1 GT_Home(axis=%1, pos=%2, ...) 返回: err=%3 (%4)")
-        .arg(axis).arg(pos)
-        .arg(m_lastError).arg(lastErrorString()));
 
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
@@ -137,7 +118,7 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         }
         else  // ClosedLoop
         {
-            // 闭环：读取真实编码器
+            // 闭环:读取真实编码器
             vecAxis[idx].dEncPos = encoderPosition(axis);
             vecAxis[idx].dEncVel = encoderVelocity(axis);
 

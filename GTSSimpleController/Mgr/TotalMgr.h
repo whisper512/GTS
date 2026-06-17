@@ -15,7 +15,6 @@
 #include "FeedbackMgr.h"
 #include "ConfigMgr.h"
 
-
 // TotalMgr — 总管理器
 class CTotalMgr : public QObject 
 {
