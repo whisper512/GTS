@@ -92,14 +92,15 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         vecAxis[idx].dPrfVel = prfVelocity(axis);
         vecAxis[idx].dPrfAcc = prfAcceleration(axis);
 
+        // 实际距离计算
         long prfAlpha = 1, prfBeta = 1;
         prfAlpha = m_pTotalMgr->profileScaleAlpha(axis);
         prfBeta = m_pTotalMgr->profileScaleBeta(axis);
         GtsHal::getProfileScale(axis, &prfAlpha, &prfBeta);
         if (prfBeta != 0) {
-            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos * prfAlpha / prfBeta;
-            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel * prfAlpha / prfBeta;
-            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc * prfAlpha / prfBeta;
+            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos;
+            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel;
+            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc ;
         }
         else {
             vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos;
