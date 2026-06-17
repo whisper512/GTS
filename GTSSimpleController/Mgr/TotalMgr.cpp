@@ -70,10 +70,19 @@ void CTotalMgr::initAfterBoardOpened()
 
     emit configChanged();
 
-    //读取运动参数
+    // 读取运动参数
     m_motionMgr->getCommonMotionInfo(m_vecAxis);
     emit axisSettingUpdated(m_vecAxis);
 
+    // 回零初始化
+    bool homeOk = axisMgr()->homeInitAll();
+    qDebug() << "homeInitAll result:" << homeOk;
+
+    // 同时看一下每个轴的 homeInit 返回值
+    for (short i = 1; i <= m_axisCount; ++i) {
+        short err = GtsHal::homeInit();  // 直接看返回值
+        qDebug() << "axis" << i << "homeInit ret:" << err;
+    }
 }
 
 void CTotalMgr::cleanupAfterBoardClosed()

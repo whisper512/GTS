@@ -118,7 +118,6 @@ void CMasterControlWidget::connectPrivateSignal()
 	connect(ui.pushButtonHome2, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(2); });
 	connect(ui.pushButtonHome3, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(3); });
 	connect(ui.pushButtonHome4, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(4); });
-
 }
 
 void CMasterControlWidget::onJogPressed(short axisId, int direction)
@@ -261,19 +260,10 @@ void CMasterControlWidget::onHomeButtonClicked(short axis)
 	auto axisMgr = m_pTotalMgr->axisMgr();
 	if (!axisMgr) return;
 
-	//// 使能检查
-	//if (!axisMgr->isEnabled(axis)) {
-	//	m_pGTSControllerWidget->showLog(
-	//		QStringLiteral("%1 未使能").arg(axisName(axis)), Qt::red);
-	//	return;
-	//}
-
-
-
 	double vel = static_cast<double>(ui.spinBox_MotionVel->value());
 	double acc = ui.doubleSpinBoxs_Acc->value();
 
-	// 参数保护：确保速度/加速度为正
+	// 参数保护:确保速度/加速度为正
 	if (vel <= 0.0 || acc <= 0.0) {
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("回零参数错误：速度=%1 加速度=%2（必须大于0）").arg(vel).arg(acc),
@@ -281,14 +271,8 @@ void CMasterControlWidget::onHomeButtonClicked(short axis)
 		return;
 	}
 
-	
-	static bool homeInited = false;
-	if (!homeInited) {
-		m_pTotalMgr->axisMgr()->homeInitAll(vel, acc, 0);
-		homeInited = true;
-	}
 
-	bool ok = axisMgr->home(axis, 0, vel, acc, 0);
+	bool ok = axisMgr->home(axis, 200000, vel, acc, 1000);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("%1 回零已启动").arg(axisName(axis)), Qt::darkGreen);

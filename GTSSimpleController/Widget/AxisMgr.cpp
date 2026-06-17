@@ -64,11 +64,29 @@ bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
 {
     if (!isValidAxis(axis)) return false;
 
+    // ── 调试：打印调用前状态 ──
     long sts = status(axis);
-    long indexOffset = 20000;
-    long indexWidth = 2000;
+    QMessageBox::information(nullptr,
+        QStringLiteral("GT_Home 调用前调试"),
+        QStringLiteral("轴%1 准备回零\n"
+            "参数: pos=%2  vel=%3  acc=%4  offset=%5\n"
+            "当前状态: sts=0x%6\n"
+            "  使能=%7 | 报警=%8 | 运动中=%9 | 回零中=%10")
+        .arg(axis)
+        .arg(pos).arg(vel).arg(acc).arg(offset)
+        .arg(sts, 4, 16, QLatin1Char('0'))
+        .arg((sts & 0x0001) ? "是" : "否")
+        .arg((sts & 0x0002) ? "是" : "否")
+        .arg((sts & 0x0020) ? "是" : "否")
+        .arg((sts & 0x0080) ? "是" : "否"));
+
+    // ── ★ 关键修复：调用 GT_Index 配置 per-axis 捕获模式 ──
+    // 对应官方例程: GT_Index(1, 20000, 2000);
+    long indexOffset = 20000;   // Home信号到Index信号的最大搜索距离
+    long indexWidth = 2000;    // Index捕获窗口宽度
     if (!setHomeIndexMode(axis, indexOffset, indexWidth))
     {
+        // setHomeIndexMode 内部已经弹窗报错
         return false;
     }
 

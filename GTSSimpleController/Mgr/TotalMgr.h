@@ -78,7 +78,7 @@ public:
     // 是否正在刷新
     bool isRefreshing() const { return m_pRefreshTimer->isActive(); };
     // 启动刷新实时数据
-    void startRefresh(int intervalMs = 500);   
+    void startRefresh(int intervalMs = 500);
     // 停止刷新实时数据
     void stopRefresh();                   
     // 板卡打开后的初始化
