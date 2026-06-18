@@ -93,13 +93,6 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        long prfAlpha = 1, prfBeta = 1;
-        long encAlpha = 1, encBeta = 1;
-        prfAlpha = m_pTotalMgr->profileScaleAlpha(axis);
-        prfBeta = m_pTotalMgr->profileScaleBeta(axis);
-        encAlpha = m_pTotalMgr->encoderScaleAlpha(axis);
-        encBeta = m_pTotalMgr->encoderScaleBeta(axis);
-
         // 规划器原始数据
         vecAxis[idx].dPrfPos = prfPosition(axis);
         vecAxis[idx].dPrfVel = prfVelocity(axis);
