@@ -185,7 +185,7 @@ struct stuConfig
 struct stuTrapParam
 {
     double dMotionVel;      // 运动速度
-    unsigned int  stepSize; // 步长
+    double lengthMm;        // 步长 mm
     double acc;             // 加速度
     double dec;             // 减速度
     int somoothTime;        // 平滑时间
@@ -194,7 +194,7 @@ struct stuTrapParam
 
     stuTrapParam()
         : dMotionVel(1.0)
-        , stepSize(10000)
+        , lengthMm(10.0)
         , acc(1.0)
         , dec(1.0)
         , somoothTime(0)

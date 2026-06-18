@@ -33,7 +33,8 @@ private:
     bool checkProfile(short profile) const;
     bool singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel);
     void waitMotionDone(short profile);
-
+    // 启动点位运动(相对运动,步长可正可负)脉冲版
+    bool startTrapMotion(short profile, long stepSize);
 public:
     explicit MotionMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~MotionMgr();
@@ -49,8 +50,8 @@ public:
     void getTrapMotionInfo(std::vector<stuAxis>& vecTrap);
     // 设置点位运动相关
     bool setTrapParam(short axisId, const stuTrapParam& param);
-    // 启动点位运动(相对运动，步长可正可负)
-    bool startTrapMotion(short profile, long stepSize);
+    // 启动点位运动(相对运动，步长可正可负) —— 长度版,内部自动做当量换算
+    bool trapMotion(short profile, double lengthMm);
     // 读取Jog 运动参数
     void getJogMotionInfo(std::vector<stuAxis>& vecAxis);
     // 设置Jog 运动参数

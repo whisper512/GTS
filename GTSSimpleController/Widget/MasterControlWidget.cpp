@@ -199,59 +199,60 @@ void CMasterControlWidget::onTrapMotion()
 
 bool CMasterControlWidget::startSingleTrap(short axisId, double curPos, double targetPos)
 {
-	double delta = targetPos - curPos;
-	if (std::fabs(delta) < 1e-9)
-	{
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 已在目标位置，无需移动").arg(axisName(axisId)),
-			Qt::darkGreen);
-		return false;
-	}
+	//double delta = targetPos - curPos;
+	//if (std::fabs(delta) < 1e-9)
+	//{
+	//	m_pGTSControllerWidget->showLog(
+	//		QStringLiteral("%1 已在目标位置，无需移动").arg(axisName(axisId)),
+	//		Qt::darkGreen);
+	//	return false;
+	//}
 
-	int index = axisId - 1;
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
-	if (!axis) return false;
+	//int index = axisId - 1;
+	//stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	//if (!axis) return false;
 
-	axis->trapParam.dMotionVel = ui.spinBox_MotionVel->value();
-	axis->trapParam.acc = ui.doubleSpinBoxs_Acc->value();
-	axis->trapParam.dec = ui.doubleSpinBoxs_Dec->value();
-	axis->trapParam.stepSize = static_cast<int>(delta);
-	axis->trapParam.somoothTime = 0;
-	axis->trapParam.cycleTimes = 0;
-	axis->trapParam.Delay = 0;
-	// 切换点位模式
-	bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axisId, 0);
-	if (!ok)
-	{
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 切换点位模式失败").arg(axisName(axisId)), Qt::red);
-		return false;
-	}
+	//axis->trapParam.dMotionVel = ui.spinBox_MotionVel->value();
+	//axis->trapParam.acc = ui.doubleSpinBoxs_Acc->value();
+	//axis->trapParam.dec = ui.doubleSpinBoxs_Dec->value();
+	//axis->trapParam.stepSize = static_cast<int>(delta);
+	//axis->trapParam.somoothTime = 0;
+	//axis->trapParam.cycleTimes = 0;
+	//axis->trapParam.Delay = 0;
+	//// 切换点位模式
+	//bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axisId, 0);
+	//if (!ok)
+	//{
+	//	m_pGTSControllerWidget->showLog(
+	//		QStringLiteral("%1 切换点位模式失败").arg(axisName(axisId)), Qt::red);
+	//	return false;
+	//}
 
-	// 启动
-	ok = m_pTotalMgr->motionMgr()->startTrapMotion(axisId, axis->trapParam.stepSize);
-	if (ok)
-	{
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 点位运动已启动  当前=%2 → 目标=%3  步数=%4  速度=%5  加速度=%6")
-			.arg(axisName(axisId))
-			.arg(curPos, 0, 'f', 3)
-			.arg(targetPos, 0, 'f', 3)
-			.arg(axis->trapParam.stepSize)
-			.arg(axis->trapParam.dMotionVel)
-			.arg(axis->trapParam.acc, 0, 'f', 3),
-			Qt::darkGreen);
-		return true;
-	}
-	else
-	{
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 点位运动启动失败 err=%2")
-			.arg(axisName(axisId))
-			.arg(m_pTotalMgr->motionMgr()->lastError()),
-			Qt::red);
-		return false;
-	}
+	//// 启动
+	//ok = m_pTotalMgr->motionMgr()->startTrapMotion(axisId, axis->trapParam.stepSize);
+	//if (ok)
+	//{
+	//	m_pGTSControllerWidget->showLog(
+	//		QStringLiteral("%1 点位运动已启动  当前=%2 → 目标=%3  步数=%4  速度=%5  加速度=%6")
+	//		.arg(axisName(axisId))
+	//		.arg(curPos, 0, 'f', 3)
+	//		.arg(targetPos, 0, 'f', 3)
+	//		.arg(axis->trapParam.stepSize)
+	//		.arg(axis->trapParam.dMotionVel)
+	//		.arg(axis->trapParam.acc, 0, 'f', 3),
+	//		Qt::darkGreen);
+	//	return true;
+	//}
+	//else
+	//{
+	//	m_pGTSControllerWidget->showLog(
+	//		QStringLiteral("%1 点位运动启动失败 err=%2")
+	//		.arg(axisName(axisId))
+	//		.arg(m_pTotalMgr->motionMgr()->lastError()),
+	//		Qt::red);
+	//	return false;
+	//}
+	return false;
 }
 
 void CMasterControlWidget::onHomeButtonClicked(short axis)
@@ -313,8 +314,6 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 		QRadioButton* motionSts,
 		QRadioButton* eStop,
 		QRadioButton* smoothStop,
-		QLabel* actPosPluseData,
-		QLabel* actVelPluseData,
 		QLabel* actPosData,
 		QLabel* actVelData,
 		QLabel* tgtPosData,
@@ -329,13 +328,8 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			motionSts->setChecked(axis.bMotion);
 			eStop->setChecked(axis.bAbruptStop);
 			smoothStop->setChecked(axis.bSmoothStop);
-
-			actPosPluseData->setText(QString::number(axis.dEncPos, 'f', 3));
-			actVelPluseData->setText(QString::number(axis.dEncVel, 'f', 3));
-
 			actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
 			actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
-
 			tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
 			tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
 			tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
@@ -351,8 +345,6 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_motionSts1,
 			ui.radioButton_eStop1,
 			ui.radioButton_smoothStop1,
-			ui.label_actPosPluseData1,
-			ui.label_actVelPluseData1,
 			ui.label_actPosData1,
 			ui.label_actVelData1,
 			ui.label_tgtPosData1,
@@ -369,8 +361,6 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_motionSts2,
 			ui.radioButton_eStop2,
 			ui.radioButton_smoothStop2,
-			ui.label_actPosPluseData2,
-			ui.label_actVelPluseData2,
 			ui.label_actPosData2,
 			ui.label_actVelData2,
 			ui.label_tgtPosData2,
@@ -387,8 +377,6 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_motionSts3,
 			ui.radioButton_eStop3,
 			ui.radioButton_smoothStop3,
-			ui.label_actPosPluseData3,
-			ui.label_actVelPluseData3,
 			ui.label_actPosData3,
 			ui.label_actVelData3,
 			ui.label_tgtPosData3,
@@ -405,8 +393,6 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.radioButton_motionSts4,
 			ui.radioButton_eStop4,
 			ui.radioButton_smoothStop4,
-			ui.label_actPosPluseData4,
-			ui.label_actVelPluseData4,
 			ui.label_actPosData4,
 			ui.label_actVelData4,
 			ui.label_tgtPosData4,

@@ -86,6 +86,9 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
 
 bool MotionMgr::startTrapMotion(short profile, long stepSize)
 {
+    double curPrfPos = profilePos(profile);
+    long targetPos = static_cast<long>(curPrfPos) + stepSize;
+
     if (!checkProfile(profile)) return false;
     int idx = profile - 1;
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
@@ -144,6 +147,40 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
     }
     return true;
 }
+
+bool MotionMgr::trapMotion(short profile, double lengthMm)
+{
+    if (!checkProfile(profile)) return false;
+
+    // ---- 1. 读取当量参数 ----
+    long prfAlpha = 1, prfBeta = 1;
+    long encAlpha = 1, encBeta = 1;
+    prfAlpha =  m_pTotalMgr->profileScaleAlpha(profile);
+    prfBeta = m_pTotalMgr->profileScaleBeta(profile);
+
+    if (prfBeta == 0 || encAlpha == 0) {
+        emit errorOccurred(profile, -1,
+            QStringLiteral("当量参数无效 prfAlpha=%1 prfBeta=%2 encAlpha=%3 encBeta=%4")
+            .arg(prfAlpha).arg(prfBeta).arg(encAlpha).arg(encBeta));
+        return false;
+    }
+
+    // ---- 2. mm → profile 脉冲 ----
+    double dStep = lengthMm
+        * static_cast<double>(prfAlpha) / prfBeta
+        * static_cast<double>(encBeta) / encAlpha;
+    long stepSize = static_cast<long>(dStep);
+
+    // 长度非零但换算后脉冲为 0
+    if (stepSize == 0 && lengthMm != 0.0) {
+        emit errorOccurred(profile, -1,
+            QStringLiteral("下发 %.4f mm 换算脉冲 = %1，被截断为 0，请检查当量")
+            .arg(lengthMm, 0, 'f', 4).arg(dStep, 0, 'f', 2));
+        return false;
+    }
+    return startTrapMotion(profile, stepSize);
+}
+
 
 void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 {

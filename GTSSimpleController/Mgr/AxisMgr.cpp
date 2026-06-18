@@ -71,7 +71,6 @@ bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
 }
 
 
-
 void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
     int n = m_pTotalMgr->axisCount();
@@ -87,57 +86,59 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        // ===== 规划器 =====
+        // ===== 读取当量参数 =====
+        long prfAlpha = 1, prfBeta = 1;
+        long encAlpha = 1, encBeta = 1;
+        m_pTotalMgr->axisMgr()->getProfileScale(axis, prfAlpha, prfBeta);
+        m_pTotalMgr->axisMgr()->getEncoderScale(axis, encAlpha, encBeta);
+
+        // ===== 规划器原始数据 =====
         vecAxis[idx].dPrfPos = prfPosition(axis);
         vecAxis[idx].dPrfVel = prfVelocity(axis);
         vecAxis[idx].dPrfAcc = prfAcceleration(axis);
 
-        // 实际距离计算
-        long prfAlpha = 1, prfBeta = 1;
-        prfAlpha = m_pTotalMgr->profileScaleAlpha(axis);
-        prfBeta = m_pTotalMgr->profileScaleBeta(axis);
-        GtsHal::getProfileScale(axis, &prfAlpha, &prfBeta);
-        if (prfBeta != 0) {
-            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos;
-            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel;
-            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc ;
+        // ===== 规划器 → 轴端脉冲 =====
+        double axisPulses = 0;
+        if (prfAlpha != 0) {
+            axisPulses = vecAxis[idx].dPrfPos * prfBeta / prfAlpha;
+        }
+
+        // ===== 规划器位置 → mm =====
+        if (prfAlpha != 0 && encBeta != 0) {
+            // mm = profile_pulses × (β_p/α_p) × (α_e/β_e)
+            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos
+                * prfBeta / prfAlpha
+                * encAlpha / encBeta;
         }
         else {
             vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos;
-            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel;
-            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc;
         }
-        // ===== 根据控制模式决定编码器位置来源 =====
+
+        // ===== 编码器位置 =====
         ControlMode mode = m_pTotalMgr->controlMode(axis);
-        if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation)
-        {
-            // 开环 / 模拟:编码器位置用规划器数据代替
-            vecAxis[idx].dEncPos = vecAxis[idx].dPrfPos;
-            vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel;
-            vecAxis[idx].dEncPosMm = vecAxis[idx].dPrfPosMm; 
-            vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
+        if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
+            // 模拟/开环: 编码器 = 轴端脉冲（经过 profile scale 缩放）
+            vecAxis[idx].dEncPos = axisPulses;
+            vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel * prfBeta / prfAlpha;
         }
-        else  // ClosedLoop
-        {
-            // 闭环:读取真实编码器
+        else {
+            // 闭环: 真实编码器
             vecAxis[idx].dEncPos = encoderPosition(axis);
             vecAxis[idx].dEncVel = encoderVelocity(axis);
+        }
 
-            long encAlpha = 1, encBeta = 1;
-            encAlpha = m_pTotalMgr->encoderScaleAlpha(axis);
-            encBeta = m_pTotalMgr->encoderScaleBeta(axis);
-            GtsHal::getEncoderScale(axis, &encAlpha, &encBeta);
-            if (encBeta != 0) {
-                vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos * encAlpha / encBeta;
-                vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel * encAlpha / encBeta;
-            }
-            else {
-                vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos;
-                vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel;
-            }
+        // ===== 编码器位置 → mm =====
+        if (encBeta != 0) {
+            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos * encAlpha / encBeta;
+            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel * encAlpha / encBeta;
+        }
+        else {
+            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos;
+            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel;
         }
     }
 }
+
 
 short AxisMgr::setProfileScale(short axis, long alpha, long beta)
 {

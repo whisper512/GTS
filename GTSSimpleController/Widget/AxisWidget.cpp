@@ -71,7 +71,7 @@ void CAxisWidget::connectPrivateSignal()
 	connect(ui.spinBox_trapMotionVel, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_trapStepSize, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+	connect(ui.doubleSpinBox_trapLengthMm, &QDoubleSpinBox::editingFinished,this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
 	connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
@@ -94,7 +94,7 @@ void CAxisWidget::updateUIEnable(int index)
 		ui.spinBox_trapMotionVel->setEnabled(true);
 		ui.doubleSpinBoxs_trapAcc->setEnabled(true);
 		ui.doubleSpinBoxs_trapDec->setEnabled(true);
-		ui.spinBox_trapStepSize->setEnabled(true);
+		ui.doubleSpinBox_trapLengthMm->setEnabled(true);
 		ui.spinBox_trapSmoothTime->setEnabled(true);
 		ui.spinBox_trapCycleTime->setEnabled(true);
 		ui.spinBox_TrapInPositionDelay->setEnabled(true);
@@ -113,7 +113,7 @@ void CAxisWidget::updateUIEnable(int index)
 		ui.pushButton_TarpActMotion->setEnabled(false);
 		ui.doubleSpinBoxs_trapAcc->setEnabled(false);
 		ui.doubleSpinBoxs_trapDec->setEnabled(false);
-		ui.spinBox_trapStepSize->setEnabled(false);
+		ui.doubleSpinBox_trapLengthMm->setEnabled(false);
 		ui.spinBox_trapSmoothTime->setEnabled(false);
 		ui.spinBox_trapCycleTime->setEnabled(false);
 		ui.spinBox_TrapInPositionDelay->setEnabled(false);
@@ -164,7 +164,7 @@ void CAxisWidget::onAxisParamUpdated(const std::vector<stuAxis>& axisInfo)
 
 	ui.comboBox_Mode->setCurrentIndex(axis.lPrfMode);
 	ui.spinBox_trapMotionVel->setValue((int)axis.trapParam.dMotionVel);
-	ui.spinBox_trapStepSize->setValue(axis.trapParam.stepSize);
+	ui.doubleSpinBox_trapLengthMm->setValue(axis.trapParam.lengthMm);
 	ui.doubleSpinBoxs_trapAcc->setValue(axis.trapParam.acc);
     ui.doubleSpinBoxs_trapDec->setValue(axis.trapParam.dec);
     ui.spinBox_trapSmoothTime->setValue(axis.trapParam.somoothTime);
@@ -186,15 +186,16 @@ void CAxisWidget::onTrapParamChanged()
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
 	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
-    if (!axis) return;
-    axis->trapParam.dMotionVel = ui.spinBox_trapMotionVel->value();
+	if (!axis) return;
+	axis->trapParam.dMotionVel = ui.spinBox_trapMotionVel->value();
 	axis->trapParam.acc = ui.doubleSpinBoxs_trapAcc->value();
 	axis->trapParam.dec = ui.doubleSpinBoxs_trapDec->value();
-	axis->trapParam.stepSize = ui.spinBox_trapStepSize->value();
+	axis->trapParam.lengthMm = ui.doubleSpinBox_trapLengthMm->value();  // ← 改为 double
 	axis->trapParam.somoothTime = ui.spinBox_trapSmoothTime->value();
 	axis->trapParam.cycleTimes = ui.spinBox_trapCycleTime->value();
 	axis->trapParam.Delay = ui.spinBox_TrapInPositionDelay->value();
 }
+
 
 void CAxisWidget::onJogParamChanged()
 {
@@ -299,17 +300,21 @@ void CAxisWidget::onTrapMotion()
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
 	const stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+
 	if (!axis) return;
 	short axisId = m_iAxisId;
-	bool ok = m_pTotalMgr->motionMgr()->startTrapMotion(axisId, axis->trapParam.stepSize);
+	double lengthMm = axis->trapParam.lengthMm;
+	bool ok = m_pTotalMgr->motionMgr()->trapMotion(axisId, lengthMm);
+
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 点位运动已启动").arg(axisId), Qt::darkGreen);
+			QStringLiteral("轴%1 点位运动已启动 (%2 mm)").arg(axisId).arg(lengthMm),
+			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 运动启动失败，err=%1")
-			.arg(m_pTotalMgr->motionMgr()->lastError()),
+			QStringLiteral("轴%1 运动启动失败，err=%2")
+			.arg(axisId).arg(m_pTotalMgr->motionMgr()->lastError()),
 			Qt::red);
 	}
 }
@@ -371,7 +376,7 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 			ui.spinBox_trapMotionVel->setValue(axis->trapParam.dMotionVel);
 			ui.doubleSpinBoxs_trapAcc->setValue(axis->trapParam.acc);
 			ui.doubleSpinBoxs_trapDec->setValue(axis->trapParam.dec);
-			ui.spinBox_trapStepSize->setValue(axis->trapParam.stepSize) ;
+			ui.doubleSpinBox_trapLengthMm->setValue(axis->trapParam.lengthMm) ;
 			ui.spinBox_trapSmoothTime->setValue(axis->trapParam.somoothTime);
 			ui.spinBox_trapCycleTime->setValue(axis->trapParam.cycleTimes);
 			ui.spinBox_TrapInPositionDelay->setValue(axis->trapParam.Delay);
@@ -431,9 +436,6 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	ui.radioButton_eStop->setChecked(axis.bAbruptStop);
 	ui.radioButton_smoothStop->setChecked(axis.bSmoothStop);
 	ui.radioButton_motionSts->setChecked(axis.bMotion);
-	// 编码器脉冲数值
-	ui.label_actPosPluseData->setText(QString::number(axis.dEncPos, 'f', 3));
-	ui.label_actVelPluseData->setText(QString::number(axis.dEncVel, 'f', 3));
 	// 编码器长度数值
     ui.label_actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
     ui.label_actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
