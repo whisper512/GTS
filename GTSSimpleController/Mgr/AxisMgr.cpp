@@ -74,6 +74,14 @@ bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
 void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
 {
     int n = m_pTotalMgr->axisCount();
+
+    if (n <= 0) {
+        QMessageBox::warning(nullptr,
+            QStringLiteral("排查① 结束"),
+            QStringLiteral("axisCount 为 0，直接返回"));
+        return;
+    }
+
     if ((int)vecAxis.size() < n) {
         vecAxis.resize(n);
     }
@@ -82,62 +90,41 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
     for (short axis = 1; axis <= n; ++axis) {
         int idx = axis - 1;
         vecAxis[idx].axisIndex = axis;
-
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        // ===== 读取当量参数 =====
         long prfAlpha = 1, prfBeta = 1;
         long encAlpha = 1, encBeta = 1;
-        m_pTotalMgr->axisMgr()->getProfileScale(axis, prfAlpha, prfBeta);
-        m_pTotalMgr->axisMgr()->getEncoderScale(axis, encAlpha, encBeta);
+        prfAlpha = m_pTotalMgr->profileScaleAlpha(axis);
+        prfBeta = m_pTotalMgr->profileScaleBeta(axis);
+        encAlpha = m_pTotalMgr->encoderScaleAlpha(axis);
+        encBeta = m_pTotalMgr->encoderScaleBeta(axis);
 
-        // ===== 规划器原始数据 =====
+        // 规划器原始数据
         vecAxis[idx].dPrfPos = prfPosition(axis);
         vecAxis[idx].dPrfVel = prfVelocity(axis);
         vecAxis[idx].dPrfAcc = prfAcceleration(axis);
+        // 获取到的数据已经结果当量计算
+        vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos ;
+        vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel  * 1000;
+        vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc  * 1000000;
 
-        // ===== 规划器 → 轴端脉冲 =====
-        double axisPulses = 0;
-        if (prfAlpha != 0) {
-            axisPulses = vecAxis[idx].dPrfPos * prfBeta / prfAlpha;
-        }
 
-        // ===== 规划器位置 → mm =====
-        if (prfAlpha != 0 && encBeta != 0) {
-            // mm = profile_pulses × (β_p/α_p) × (α_e/β_e)
-            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos
-                * prfBeta / prfAlpha
-                * encAlpha / encBeta;
-        }
-        else {
-            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos;
-        }
-
-        // ===== 编码器位置 =====
         ControlMode mode = m_pTotalMgr->controlMode(axis);
-        if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
-            // 模拟/开环: 编码器 = 轴端脉冲（经过 profile scale 缩放）
-            vecAxis[idx].dEncPos = axisPulses;
-            vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel * prfBeta / prfAlpha;
-        }
-        else {
-            // 闭环: 真实编码器
-            vecAxis[idx].dEncPos = encoderPosition(axis);
-            vecAxis[idx].dEncVel = encoderVelocity(axis);
-        }
 
-        // ===== 编码器位置 → mm =====
-        if (encBeta != 0) {
-            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos * encAlpha / encBeta;
-            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel * encAlpha / encBeta;
+
+        if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
+            vecAxis[idx].dEncPos = vecAxis[idx].dPrfPos;
+            vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel;
+            vecAxis[idx].dEncPosMm = vecAxis[idx].dPrfPosMm;
+            vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
         }
         else {
-            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos;
-            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel;
+            // 闭环（暂不使用）
         }
     }
 }
+
 
 
 short AxisMgr::setProfileScale(short axis, long alpha, long beta)

@@ -440,9 +440,9 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
     ui.label_actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
     ui.label_actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
 	// 规划期数值
-	ui.label_tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
-	ui.label_tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
-	ui.label_tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
+	ui.label_tgtAccData->setText(QString::number(axis.dPrfAccMm, 'f', 3));
+	ui.label_tgtPosData->setText(QString::number(axis.dPrfPosMm, 'f', 3));
+	ui.label_tgtVelData->setText(QString::number(axis.dPrfVelMm, 'f', 3));
 	if (axis.bServoOn)
 	{
 		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));

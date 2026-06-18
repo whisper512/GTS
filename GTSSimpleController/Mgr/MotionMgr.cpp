@@ -171,6 +171,8 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
         * static_cast<double>(encBeta) / encAlpha;
     long stepSize = static_cast<long>(dStep);
 
+    //emit m_pTotalMgr -> logUpdated(QStringLiteral("轴%1 脉冲数：%2").arg(profile).arg(stepSize), Qt::black);
+
     // 长度非零但换算后脉冲为 0
     if (stepSize == 0 && lengthMm != 0.0) {
         emit errorOccurred(profile, -1,

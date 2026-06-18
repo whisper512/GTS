@@ -236,8 +236,8 @@ struct stuAxis
     bool bMotion;      // 规划器运动
 
     // ===== 规划器 =====
-    double dPrfPos;    // 规划位置
-    double dPrfVel;    // 规划速度
+    double dPrfPos;    // 规划位置p
+    double dPrfVel;    // 规划速度p/ms
     double dPrfAcc;    // 规划加速度
     double dPrfPosMm;  // mm
     double dPrfVelMm;  // mm/s
@@ -246,8 +246,8 @@ struct stuAxis
     long AxisStatus;   // 轴状态
 
     // ===== 编码器 =====
-    double dEncPos;    // 编码器位置(单位:counts)
-    double dEncVel;    // 编码器速度(单位:counts/s)
+    double dEncPos;    // 编码器位置
+    double dEncVel;    // 编码器速度
     double dEncPosMm;  // 编码器换算位置(单位:mm)
     double dEncVelMm;  // 编码器换算速度(单位:mm/s)
 
@@ -272,6 +272,9 @@ struct stuAxis
         , dPrfAccMm(0.0)
         , lPrfMode(0)
         , AxisStatus(0)
+        , dEncPos(0.0)
+        , dEncVel(0.0)
+        , dEncPosMm(0.0)
         , trapParam()
         , jogParam()
     {

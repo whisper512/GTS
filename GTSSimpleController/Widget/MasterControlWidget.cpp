@@ -303,112 +303,112 @@ QString CMasterControlWidget::axisName(short axisId)
 
 void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 {
-	m_bUpdatingFromBoard = true;
+	//m_bUpdatingFromBoard = true;
 
-	auto updateOneAxis = [this](const stuAxis& axis,
-		QRadioButton* servoEnable,
-		QRadioButton* alarm,
-		QRadioButton* nLimit,
-		QRadioButton* pLimit,
-		QRadioButton* motionErr,
-		QRadioButton* motionSts,
-		QRadioButton* eStop,
-		QRadioButton* smoothStop,
-		QLabel* actPosData,
-		QLabel* actVelData,
-		QLabel* tgtPosData,
-		QLabel* tgtVelData,
-		QLabel* tgtAccData)
-		{
-			servoEnable->setChecked(axis.bServoOn);
-			alarm->setChecked(axis.bAlarm);
-			nLimit->setChecked(axis.bNegLimit);
-			pLimit->setChecked(axis.bPosLimit);
-			motionErr->setChecked(axis.bMError);
-			motionSts->setChecked(axis.bMotion);
-			eStop->setChecked(axis.bAbruptStop);
-			smoothStop->setChecked(axis.bSmoothStop);
-			actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
-			actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
-			tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
-			tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
-			tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
-		};
+	//auto updateOneAxis = [this](const stuAxis& axis,
+	//	QRadioButton* servoEnable,
+	//	QRadioButton* alarm,
+	//	QRadioButton* nLimit,
+	//	QRadioButton* pLimit,
+	//	QRadioButton* motionErr,
+	//	QRadioButton* motionSts,
+	//	QRadioButton* eStop,
+	//	QRadioButton* smoothStop,
+	//	QLabel* actPosData,
+	//	QLabel* actVelData,
+	//	QLabel* tgtPosData,
+	//	QLabel* tgtVelData,
+	//	QLabel* tgtAccData)
+	//	{
+	//		servoEnable->setChecked(axis.bServoOn);
+	//		alarm->setChecked(axis.bAlarm);
+	//		nLimit->setChecked(axis.bNegLimit);
+	//		pLimit->setChecked(axis.bPosLimit);
+	//		motionErr->setChecked(axis.bMError);
+	//		motionSts->setChecked(axis.bMotion);
+	//		eStop->setChecked(axis.bAbruptStop);
+	//		smoothStop->setChecked(axis.bSmoothStop);
+	//		actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
+	//		actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
+	//		tgtPosData->setText(QString::number(axis.dPrfPos, 'f', 3));
+	//		tgtVelData->setText(QString::number(axis.dPrfVel, 'f', 3));
+	//		tgtAccData->setText(QString::number(axis.dPrfAcc, 'f', 3));
+	//	};
 
-	if ((int)axisInfo.size() >= 1)
-		updateOneAxis(axisInfo[0],
-			ui.radioButton_servoEnable1,
-			ui.radioButton_sevorAlarm1,
-			ui.radioButton_nLimit1,
-			ui.radioButton_pLimit1,
-			ui.radioButton_motionErr1,
-			ui.radioButton_motionSts1,
-			ui.radioButton_eStop1,
-			ui.radioButton_smoothStop1,
-			ui.label_actPosData1,
-			ui.label_actVelData1,
-			ui.label_tgtPosData1,
-			ui.label_tgtVelData1,
-			ui.label_tgtAccData1);
+	//if ((int)axisInfo.size() >= 1)
+	//	updateOneAxis(axisInfo[0],
+	//		ui.radioButton_servoEnable1,
+	//		ui.radioButton_sevorAlarm1,
+	//		ui.radioButton_nLimit1,
+	//		ui.radioButton_pLimit1,
+	//		ui.radioButton_motionErr1,
+	//		ui.radioButton_motionSts1,
+	//		ui.radioButton_eStop1,
+	//		ui.radioButton_smoothStop1,
+	//		ui.label_actPosData1,
+	//		ui.label_actVelData1,
+	//		ui.label_tgtPosData1,
+	//		ui.label_tgtVelData1,
+	//		ui.label_tgtAccData1);
 
-	if ((int)axisInfo.size() >= 2)
-		updateOneAxis(axisInfo[1],
-			ui.radioButton_servoEnable2,
-			ui.radioButton_sevorAlarm2,
-			ui.radioButton_nLimit2,
-			ui.radioButton_pLimit2,
-			ui.radioButton_motionErr2,
-			ui.radioButton_motionSts2,
-			ui.radioButton_eStop2,
-			ui.radioButton_smoothStop2,
-			ui.label_actPosData2,
-			ui.label_actVelData2,
-			ui.label_tgtPosData2,
-			ui.label_tgtVelData2,
-			ui.label_tgtAccData2);
+	//if ((int)axisInfo.size() >= 2)
+	//	updateOneAxis(axisInfo[1],
+	//		ui.radioButton_servoEnable2,
+	//		ui.radioButton_sevorAlarm2,
+	//		ui.radioButton_nLimit2,
+	//		ui.radioButton_pLimit2,
+	//		ui.radioButton_motionErr2,
+	//		ui.radioButton_motionSts2,
+	//		ui.radioButton_eStop2,
+	//		ui.radioButton_smoothStop2,
+	//		ui.label_actPosData2,
+	//		ui.label_actVelData2,
+	//		ui.label_tgtPosData2,
+	//		ui.label_tgtVelData2,
+	//		ui.label_tgtAccData2);
 
-	if ((int)axisInfo.size() >= 3)
-		updateOneAxis(axisInfo[2],
-			ui.radioButton_servoEnable3,
-			ui.radioButton_sevorAlarm3,
-			ui.radioButton_nLimit3,
-			ui.radioButton_pLimit3,
-			ui.radioButton_motionErr3,
-			ui.radioButton_motionSts3,
-			ui.radioButton_eStop3,
-			ui.radioButton_smoothStop3,
-			ui.label_actPosData3,
-			ui.label_actVelData3,
-			ui.label_tgtPosData3,
-			ui.label_tgtVelData3,
-			ui.label_tgtAccData3);
+	//if ((int)axisInfo.size() >= 3)
+	//	updateOneAxis(axisInfo[2],
+	//		ui.radioButton_servoEnable3,
+	//		ui.radioButton_sevorAlarm3,
+	//		ui.radioButton_nLimit3,
+	//		ui.radioButton_pLimit3,
+	//		ui.radioButton_motionErr3,
+	//		ui.radioButton_motionSts3,
+	//		ui.radioButton_eStop3,
+	//		ui.radioButton_smoothStop3,
+	//		ui.label_actPosData3,
+	//		ui.label_actVelData3,
+	//		ui.label_tgtPosData3,
+	//		ui.label_tgtVelData3,
+	//		ui.label_tgtAccData3);
 
-	if ((int)axisInfo.size() >= 4)
-		updateOneAxis(axisInfo[3],
-			ui.radioButton_servoEnable4,
-			ui.radioButton_sevorAlarm4,
-			ui.radioButton_nLimit4,
-			ui.radioButton_pLimit4,
-			ui.radioButton_motionErr4,
-			ui.radioButton_motionSts4,
-			ui.radioButton_eStop4,
-			ui.radioButton_smoothStop4,
-			ui.label_actPosData4,
-			ui.label_actVelData4,
-			ui.label_tgtPosData4,
-			ui.label_tgtVelData4,
-			ui.label_tgtAccData4);
+	//if ((int)axisInfo.size() >= 4)
+	//	updateOneAxis(axisInfo[3],
+	//		ui.radioButton_servoEnable4,
+	//		ui.radioButton_sevorAlarm4,
+	//		ui.radioButton_nLimit4,
+	//		ui.radioButton_pLimit4,
+	//		ui.radioButton_motionErr4,
+	//		ui.radioButton_motionSts4,
+	//		ui.radioButton_eStop4,
+	//		ui.radioButton_smoothStop4,
+	//		ui.label_actPosData4,
+	//		ui.label_actVelData4,
+	//		ui.label_tgtPosData4,
+	//		ui.label_tgtVelData4,
+	//		ui.label_tgtAccData4);
 
-	if ((int)axisInfo.size() >= 1 && !ui.spinBox_curPos1->hasFocus())
-		ui.spinBox_curPos1->setValue(static_cast<int>(axisInfo[0].dEncPos));
-	if ((int)axisInfo.size() >= 2 && !ui.spinBox_curPos2->hasFocus())
-		ui.spinBox_curPos2->setValue(static_cast<int>(axisInfo[1].dEncPos));
-	if ((int)axisInfo.size() >= 3 && !ui.spinBox_curPos3->hasFocus())
-		ui.spinBox_curPos3->setValue(static_cast<int>(axisInfo[2].dEncPos));
-	if ((int)axisInfo.size() >= 4 && !ui.spinBox_curPos4->hasFocus())
-		ui.spinBox_curPos4->setValue(static_cast<int>(axisInfo[3].dEncPos));
+	//if ((int)axisInfo.size() >= 1 && !ui.spinBox_curPos1->hasFocus())
+	//	ui.spinBox_curPos1->setValue(static_cast<int>(axisInfo[0].dEncPos));
+	//if ((int)axisInfo.size() >= 2 && !ui.spinBox_curPos2->hasFocus())
+	//	ui.spinBox_curPos2->setValue(static_cast<int>(axisInfo[1].dEncPos));
+	//if ((int)axisInfo.size() >= 3 && !ui.spinBox_curPos3->hasFocus())
+	//	ui.spinBox_curPos3->setValue(static_cast<int>(axisInfo[2].dEncPos));
+	//if ((int)axisInfo.size() >= 4 && !ui.spinBox_curPos4->hasFocus())
+	//	ui.spinBox_curPos4->setValue(static_cast<int>(axisInfo[3].dEncPos));
 
-	m_bUpdatingFromBoard = false;
+	//m_bUpdatingFromBoard = false;
 }
 
 void CMasterControlWidget::onAxisParamUpdated(const std::vector<stuAxis>& axisInfo)

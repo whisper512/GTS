@@ -139,6 +139,9 @@ signals:
     void doUpdated(const stuDO& do_);
 
     void configChanged();
+
+    // 更新日志
+    void logUpdated(const QString& log, QColor color);
     
 private slots:
     // 定时读取刷新数据
