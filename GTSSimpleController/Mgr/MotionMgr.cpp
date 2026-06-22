@@ -76,7 +76,6 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
     if (!setTrapParams(axisId, prm)) {
         return false;
     }
-
     return true;
 }
 
@@ -99,13 +98,25 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize, const stuTrapParam
     if (trap.acc <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
             QStringLiteral("轴%1 加速度无效 (acc = %2)，必须 > 0")
-            .arg(profile).arg(trap.acc, 0, 'f', 3));
+            .arg(profile).arg(trap.acc, 0, 'f', 6));
+        return false;
+    }
+    if (trap.acc < 1e-4) {
+        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+            QStringLiteral("轴%1 加速度过小 (acc = %2)，换算后低于硬件有效范围")
+            .arg(profile).arg(trap.acc, 0, 'f', 6));
         return false;
     }
     if (trap.dec <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
             QStringLiteral("轴%1 减速度无效 (dec = %2)，必须 > 0")
-            .arg(profile).arg(trap.dec, 0, 'f', 3));
+            .arg(profile).arg(trap.dec, 0, 'f', 6));
+        return false;
+    }
+    if (trap.dec < 1e-4) {
+        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+            QStringLiteral("轴%1 减速度过小 (dec = %2)，换算后低于硬件有效范围")
+            .arg(profile).arg(trap.dec, 0, 'f', 6));
         return false;
     }
     if (trap.somoothTime < 0) {
@@ -155,9 +166,11 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
         return false;
     }
 
+    // 当量换算系数：pulse/mm
+    double pulsePerMm = static_cast<double>(prfAlpha) / prfBeta;
+
     // mm → profile 脉冲
-    double dStep = lengthMm
-        * static_cast<double>(prfAlpha) / prfBeta;
+    double dStep = lengthMm * pulsePerMm;
     long stepSize = static_cast<long>(dStep);
 
     // 长度非零但换算后脉冲为 0
@@ -173,7 +186,13 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
     if (!pAxis) return false;
 
-    return startTrapMotion(profile, stepSize, pAxis->trapParam);
+    // 运动参数单位换算：mm/s → pulse/ms, mm/s² → pulse/ms²
+    stuTrapParam trapPrm = pAxis->trapParam;          
+    trapPrm.dMotionVel = trapPrm.dMotionVel * pulsePerMm / 1000.0;      // mm/s → pulse/ms
+    trapPrm.acc = trapPrm.acc * pulsePerMm / 1000000.0;   // mm/s² → pulse/ms²
+    trapPrm.dec = trapPrm.dec * pulsePerMm / 1000000.0;   // mm/s² → pulse/ms²
+
+    return startTrapMotion(profile, stepSize, trapPrm);
 }
 
 

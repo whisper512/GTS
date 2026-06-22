@@ -190,7 +190,7 @@ void CAxisWidget::onTrapParamChanged()
 	axis->trapParam.dMotionVel = ui.spinBox_trapMotionVel->value();
 	axis->trapParam.acc = ui.doubleSpinBoxs_trapAcc->value();
 	axis->trapParam.dec = ui.doubleSpinBoxs_trapDec->value();
-	axis->trapParam.lengthMm = ui.doubleSpinBox_trapLengthMm->value();  // ¡û ¸ÄÎª double
+	axis->trapParam.lengthMm = ui.doubleSpinBox_trapLengthMm->value();
 	axis->trapParam.somoothTime = ui.spinBox_trapSmoothTime->value();
 	axis->trapParam.cycleTimes = ui.spinBox_trapCycleTime->value();
 	axis->trapParam.Delay = ui.spinBox_TrapInPositionDelay->value();

@@ -93,14 +93,14 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        // 规划器原始数据 经过当量计算的数据/毫秒
+        // 规划器原始数据 经过当量计算的数据/毫秒,所以只处理下时间单位
         vecAxis[idx].dPrfPosOriginal = prfPosition(axis);
         vecAxis[idx].dPrfVelOriginal = prfVelocity(axis);
         vecAxis[idx].dPrfAccOriginal = prfAcceleration(axis);
         // 换算
         vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPosOriginal ;
-        vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal  * 1000;
-        vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal  * 1000000;
+        vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal  * 1000.0;
+        vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal  * 1000000.0;
 
 
         ControlMode mode = m_pTotalMgr->controlMode(axis);

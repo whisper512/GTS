@@ -193,10 +193,10 @@ struct stuTrapParam
     int Delay;              // 到位延时
 
     stuTrapParam()
-        : dMotionVel(1.0)
-        , lengthMm(10.0)
-        , acc(1.0)
-        , dec(1.0)
+        : dMotionVel(100.0)
+        , lengthMm(1000.0)
+        , acc(10.0)
+        , dec(10.0)
         , somoothTime(0)
         , cycleTimes(0)
         , Delay(0)
