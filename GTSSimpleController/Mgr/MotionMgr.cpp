@@ -1,12 +1,8 @@
-﻿//#if _MSC_VER >= 1600
-//#pragma execution_character_set("utf-8")
-//#endif
-
-#include <QMessageBox>
+﻿#include <QMessageBox>
 #include <QCoreApplication>
+
 #include "TotalMgr.h"
 #include "MotionMgr.h"
-
 
 MotionMgr::MotionMgr(CTotalMgr* totalMgr, QObject* parent)
     : QObject(parent)
@@ -41,9 +37,9 @@ void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
         short axisIndex = axis.axisIndex;           // 轴号 1~4
-        axis.dPrfPos = axisProfilePos(axisIndex);   // 规划位置
-        axis.dPrfVel = axisProfileVel(axisIndex);   // 规划速度
-        axis.dPrfAcc = axisProfileAcc(axisIndex);   // 规划加速度
+        axis.dPrfPosOriginal = axisProfilePos(axisIndex);   // 规划位置
+        axis.dPrfVelOriginal = axisProfileVel(axisIndex);   // 规划速度
+        axis.dPrfAccOriginal = axisProfileAcc(axisIndex);   // 规划加速度
     }
 }
 
@@ -152,26 +148,22 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
 {
     if (!checkProfile(profile)) return false;
 
-    // ---- 1. 读取当量参数 ----
+    // 获取当量参数
     long prfAlpha = 1, prfBeta = 1;
-    long encAlpha = 1, encBeta = 1;
     prfAlpha =  m_pTotalMgr->profileScaleAlpha(profile);
     prfBeta = m_pTotalMgr->profileScaleBeta(profile);
 
-    if (prfBeta == 0 || encAlpha == 0) {
+    if (prfBeta == 0) {
         emit errorOccurred(profile, -1,
-            QStringLiteral("当量参数无效 prfAlpha=%1 prfBeta=%2 encAlpha=%3 encBeta=%4")
-            .arg(prfAlpha).arg(prfBeta).arg(encAlpha).arg(encBeta));
+            QStringLiteral("当量参数无效 prfAlpha=%1 prfBeta=%2")
+            .arg(prfAlpha).arg(prfBeta));
         return false;
     }
 
-    // ---- 2. mm → profile 脉冲 ----
+    // mm → profile 脉冲
     double dStep = lengthMm
-        * static_cast<double>(prfAlpha) / prfBeta
-        * static_cast<double>(encBeta) / encAlpha;
+        * static_cast<double>(prfAlpha) / prfBeta;
     long stepSize = static_cast<long>(dStep);
-
-    //emit m_pTotalMgr -> logUpdated(QStringLiteral("轴%1 脉冲数：%2").arg(profile).arg(stepSize), Qt::black);
 
     // 长度非零但换算后脉冲为 0
     if (stepSize == 0 && lengthMm != 0.0) {

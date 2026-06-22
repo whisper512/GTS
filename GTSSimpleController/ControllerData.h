@@ -236,9 +236,9 @@ struct stuAxis
     bool bMotion;      // 规划器运动
 
     // ===== 规划器 =====
-    double dPrfPos;    // 规划位置p
-    double dPrfVel;    // 规划速度p/ms
-    double dPrfAcc;    // 规划加速度
+    double dPrfPosOriginal;    // 规划位置原始数据,已经经过当量换算
+    double dPrfVelOriginal;    // 规划速度原始数据,已经经过当量换算
+    double dPrfAccOriginal;    // 规划加速度原始数据,已经经过当量换算
     double dPrfPosMm;  // mm
     double dPrfVelMm;  // mm/s
     double dPrfAccMm;  // mm/s²
@@ -264,9 +264,9 @@ struct stuAxis
         , bAbruptStop(false)
         , bServoOn(false)
         , bMotion(false)
-        , dPrfPos(0.0)
-        , dPrfVel(0.0)
-        , dPrfAcc(0.0)
+        , dPrfPosOriginal(0.0)
+        , dPrfVelOriginal(0.0)
+        , dPrfAccOriginal(0.0)
         , dPrfPosMm(0.0)
         , dPrfVelMm(0.0)
         , dPrfAccMm(0.0)

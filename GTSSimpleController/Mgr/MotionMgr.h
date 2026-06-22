@@ -30,8 +30,11 @@ private:
     CTotalMgr* m_pTotalMgr = nullptr;
 
 private:
+    // 检查规划器
     bool checkProfile(short profile) const;
+    // 点位运动脉冲单位
     bool singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel);
+    // 等待运动
     void waitMotionDone(short profile);
     // 启动点位运动(相对运动,步长可正可负)脉冲版
     bool startTrapMotion(short profile, long stepSize);

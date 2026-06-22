@@ -31,7 +31,7 @@ public:
 
 
     // 获取轴状态
-    void getAxisStatusInfo(std::vector<stuAxis>& vecAxis);
+    void getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis);
     // profile 当量
     short setProfileScale(short axis, long alpha, long beta);
     short getProfileScale(short axis, long& alpha, long& beta);

@@ -409,8 +409,7 @@ void CTotalMgr::onRefreshTimeout()
     emit boardClockUpdated(m_clocks);
 
     // 读取轴状态信息
-    m_axisMgr->getAxisStatusInfo(m_vecAxis);
-    m_motionMgr->getAxisMotionInfo(m_vecAxis);
+    m_axisMgr->getAxisStatusAndMotionInfo(m_vecAxis);
     emit axisUpdated(m_vecAxis);
 
     // 读取IO状态信息

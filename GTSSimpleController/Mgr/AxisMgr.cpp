@@ -71,13 +71,13 @@ bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
 }
 
 
-void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
+void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     int n = m_pTotalMgr->axisCount();
 
     if (n <= 0) {
         QMessageBox::warning(nullptr,
-            QStringLiteral("排查① 结束"),
+            QStringLiteral("排查结束"),
             QStringLiteral("axisCount 为 0，直接返回"));
         return;
     }
@@ -93,22 +93,22 @@ void AxisMgr::getAxisStatusInfo(std::vector<stuAxis>& vecAxis)
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        // 规划器原始数据
-        vecAxis[idx].dPrfPos = prfPosition(axis);
-        vecAxis[idx].dPrfVel = prfVelocity(axis);
-        vecAxis[idx].dPrfAcc = prfAcceleration(axis);
-        // 获取到的数据已经结果当量计算
-        vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPos ;
-        vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVel  * 1000;
-        vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAcc  * 1000000;
+        // 规划器原始数据 经过当量计算的数据/毫秒
+        vecAxis[idx].dPrfPosOriginal = prfPosition(axis);
+        vecAxis[idx].dPrfVelOriginal = prfVelocity(axis);
+        vecAxis[idx].dPrfAccOriginal = prfAcceleration(axis);
+        // 换算
+        vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPosOriginal ;
+        vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal  * 1000;
+        vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal  * 1000000;
 
 
         ControlMode mode = m_pTotalMgr->controlMode(axis);
 
 
         if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
-            vecAxis[idx].dEncPos = vecAxis[idx].dPrfPos;
-            vecAxis[idx].dEncVel = vecAxis[idx].dPrfVel;
+            vecAxis[idx].dEncPos = vecAxis[idx].dPrfPosOriginal;
+            vecAxis[idx].dEncVel = vecAxis[idx].dPrfVelOriginal;
             vecAxis[idx].dEncPosMm = vecAxis[idx].dPrfPosMm;
             vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
         }
