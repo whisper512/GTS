@@ -183,7 +183,11 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="spinBox_trapMotionVel"/>
+             <widget class="QSpinBox" name="spinBox_trapMotionVel">
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_trapLengthMm">
@@ -200,7 +204,11 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapAcc"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapAcc">
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+             </widget>
             </item>
             <item row="3" column="0">
              <widget class="QLabel" name="label_trapDec">
@@ -210,7 +218,11 @@
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapDec"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapDec">
+              <property name="maximum">
+               <double>10000.000000000000000</double>
+              </property>
+             </widget>
             </item>
             <item row="4" column="0">
              <widget class="QLabel" name="label_trapSmoothTime">
@@ -252,10 +264,10 @@
                <number>3</number>
               </property>
               <property name="minimum">
-               <double>-100.000000000000000</double>
+               <double>-10000.000000000000000</double>
               </property>
               <property name="maximum">
-               <double>100.989999999999995</double>
+               <double>10000.000000000000000</double>
               </property>
              </widget>
             </item>

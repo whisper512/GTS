@@ -80,16 +80,10 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
     return true;
 }
 
-bool MotionMgr::startTrapMotion(short profile, long stepSize)
+bool MotionMgr::startTrapMotion(short profile, long stepSize, const stuTrapParam& trap)
 {
-    double curPrfPos = profilePos(profile);
-    long targetPos = static_cast<long>(curPrfPos) + stepSize;
-
     if (!checkProfile(profile)) return false;
-    int idx = profile - 1;
-    stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
-    if (!pAxis) return false;
-    const stuTrapParam& trap = pAxis->trapParam;
+
     // 检查参数
     if (trap.dMotionVel <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
@@ -122,19 +116,19 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
     }
     // 单次模式（cycleTimes <= 0）
     if (trap.cycleTimes <= 0) {
-        return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, pAxis->trapParam.dMotionVel);
+        return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel);
     }
     // 循环模式
     long currentStep = stepSize;
     int times = trap.cycleTimes;
     for (int i = 0; i < times; ++i) {
-        if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, pAxis->trapParam.dMotionVel))
+        if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
             return false;
         waitMotionDone(profile);
         if (trap.Delay > 0) {
             GtsHal::delay(static_cast<unsigned short>(trap.Delay));
         }
-        if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, pAxis->trapParam.dMotionVel))
+        if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
             return false;
         waitMotionDone(profile);
         if (trap.Delay > 0) {
@@ -144,13 +138,14 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize)
     return true;
 }
 
+
 bool MotionMgr::trapMotion(short profile, double lengthMm)
 {
     if (!checkProfile(profile)) return false;
 
     // 获取当量参数
     long prfAlpha = 1, prfBeta = 1;
-    prfAlpha =  m_pTotalMgr->profileScaleAlpha(profile);
+    prfAlpha = m_pTotalMgr->profileScaleAlpha(profile);
     prfBeta = m_pTotalMgr->profileScaleBeta(profile);
 
     if (prfBeta == 0) {
@@ -172,8 +167,15 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
             .arg(lengthMm, 0, 'f', 4).arg(dStep, 0, 'f', 2));
         return false;
     }
-    return startTrapMotion(profile, stepSize);
+
+    // 准备运动参数：从轴对象获取 trapParam
+    int idx = profile - 1;
+    stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
+    if (!pAxis) return false;
+
+    return startTrapMotion(profile, stepSize, pAxis->trapParam);
 }
+
 
 
 void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
