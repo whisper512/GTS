@@ -205,6 +205,9 @@
             </item>
             <item row="2" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapAcc">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
               <property name="maximum">
                <double>10000.000000000000000</double>
               </property>
@@ -219,6 +222,9 @@
             </item>
             <item row="3" column="1">
              <widget class="QDoubleSpinBox" name="doubleSpinBoxs_trapDec">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
               <property name="maximum">
                <double>10000.000000000000000</double>
               </property>
@@ -312,7 +318,11 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="spinBox_jogMotionVel"/>
+             <widget class="QSpinBox" name="spinBox_jogMotionVel">
+              <property name="maximum">
+               <number>10000</number>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_jogAcc">
@@ -322,7 +332,14 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_jogAcc"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_jogAcc">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+             </widget>
             </item>
             <item row="2" column="0">
              <widget class="QLabel" name="label_jogDec">
@@ -332,7 +349,14 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_jogDec"/>
+             <widget class="QDoubleSpinBox" name="doubleSpinBoxs_jogDec">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000.000000000000000</double>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

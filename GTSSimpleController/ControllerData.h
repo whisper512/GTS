@@ -213,9 +213,9 @@ struct stuJogParam
     double smoothTime;      // 平滑时间
 
     stuJogParam()
-        : dMotionVel(5.0)
-        , acc(1.0)
-        , dec(1.0)
+        : dMotionVel(10.0)
+        , acc(5.0)
+        , dec(5.0)
         , smoothTime(0.0)
     {
     }
@@ -253,7 +253,7 @@ struct stuAxis
 
     stuTrapParam trapParam; // 点位运动(trap)参数
     stuJogParam jogParam;   // jog运动参数
-
+      
     stuAxis()
         : axisIndex(0)
         , bAlarm(false)

@@ -93,7 +93,7 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        // 规划器原始数据 经过当量计算的数据/毫秒,所以只处理下时间单位
+        // 规划器原始数据 经过当量计算的数据,所以只处理下时间单位
         vecAxis[idx].dPrfPosOriginal = prfPosition(axis);
         vecAxis[idx].dPrfVelOriginal = prfVelocity(axis);
         vecAxis[idx].dPrfAccOriginal = prfAcceleration(axis);
