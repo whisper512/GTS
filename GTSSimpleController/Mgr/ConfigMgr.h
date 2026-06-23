@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QMap>
 
 #include "ControllerData.h"
 #include "GtsHal.h"
@@ -40,6 +41,8 @@ private:
 
     // 轴配置数据引用（由 TotalMgr 注入）
     stuAxisConfig* m_pAxisCfg = nullptr;
+    QMap<int, QString> m_customDIDesc;
+    QMap<int, QString> m_customDODesc;
     int        m_axisCount = 0;
     AxisMgr* m_pAxisMgr = nullptr;
 
@@ -56,6 +59,15 @@ public:
     void readAllAxisConfigFromBoard();
     // 将所有轴配置应用到板卡
     void applyAllAxisConfigToBoard();
+
+    // ========== IO 描述配置 ==========
+    QString ioDescriptionPath() const;
+    void loadIODescriptions();
+    void saveIODescriptions() const;
+
+    const QMap<int, QString>& customDIDescriptions() const { return m_customDIDesc; }
+    const QMap<int, QString>& customDODescriptions() const { return m_customDODesc; }
+    void setIODescription(int row, const QString& desc, bool isDI);
 
     // 控制模式
     void setControlMode(short axis, ControlMode mode);

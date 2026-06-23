@@ -251,6 +251,78 @@ void ConfigMgr::applyAllAxisConfigToBoard()
 }
 
 // ============================================================
+// IO √Ë ˆ≥÷æ√ªØ
+// ============================================================
+
+QString ConfigMgr::ioDescriptionPath() const
+{
+    return QCoreApplication::applicationDirPath() + QStringLiteral("/io_description.json");
+}
+
+void ConfigMgr::loadIODescriptions()
+{
+    QFile file(ioDescriptionPath());
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &err);
+    file.close();
+    if (err.error != QJsonParseError::NoError || !doc.isObject())
+        return;
+
+    QJsonObject root = doc.object();
+
+    auto loadMap = [&](const QString& key, QMap<int, QString>& map) {
+        QJsonObject obj = root.value(key).toObject();
+        for (auto it = obj.begin(); it != obj.end(); ++it) {
+            bool ok = false;
+            int r = it.key().toInt(&ok);
+            if (ok && r >= 0) map[r] = it.value().toString();
+        }
+        };
+
+    m_customDIDesc.clear();
+    m_customDODesc.clear();
+    loadMap(QStringLiteral("di"), m_customDIDesc);
+    loadMap(QStringLiteral("do"), m_customDODesc);
+}
+
+void ConfigMgr::saveIODescriptions() const
+{
+    QJsonObject diObj, doObj;
+    for (auto it = m_customDIDesc.begin(); it != m_customDIDesc.end(); ++it)
+        diObj[QString::number(it.key())] = it.value();
+    for (auto it = m_customDODesc.begin(); it != m_customDODesc.end(); ++it)
+        doObj[QString::number(it.key())] = it.value();
+
+    QJsonObject root;
+    root[QStringLiteral("version")] = 1;
+    root[QStringLiteral("di")] = diObj;
+    root[QStringLiteral("do")] = doObj;
+
+    QDir().mkpath(QFileInfo(ioDescriptionPath()).absolutePath());
+
+    QFile file(ioDescriptionPath());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return;
+
+    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
+    file.close();
+}
+
+void ConfigMgr::setIODescription(int row, const QString& desc, bool isDI)
+{
+    if (isDI)
+        m_customDIDesc[row] = desc;
+    else
+        m_customDODesc[row] = desc;
+    saveIODescriptions();
+}
+
+
+
+// ============================================================
 // µ•◊÷∂Œ≈‰÷√∂¡–¥
 // ============================================================
 

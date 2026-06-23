@@ -1,5 +1,6 @@
 #pragma once
 #include <QWidget>
+#include <QMap>
 
 #include "ControllerData.h"
 #include "ui_IOWidget.h"
@@ -24,15 +25,17 @@ private:
 	// 本地缓存的 DO 状态
 	stuDO m_doState;
 
-
 private:
 	void InitUI();
 	void InitTableDI();
     void InitTableDO();
 	void InitTableCommon(QTableWidget* table, int totalRows, const Block* blocks, int blockCount);
-	void connectPrivateSignal();
+	void connectPrivateSignal();    
 	void RefreshTable(QTableWidget* table, const std::vector<int>& status);
 	void onDOCellClicked(int row, int col);
+	// 双击处理
+	void onDICellDoubleClicked(int row, int col);
+	void onDescriptionEdited(int row, bool isDI);
 public slots:
 	void onDIUpdated(const stuDI& di);     
 	void onDOUpdated(const stuDO& dout);  

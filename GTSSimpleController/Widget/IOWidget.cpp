@@ -5,7 +5,16 @@
 #include "GTSControllerWidget.h"
 #include "../Mgr/TotalMgr.h"
 
-// 状态列专用代理：忽略选中态，让 setBackground() 的背景始终可见
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QCoreApplication>
+#include <QInputDialog>
+
+
+// 状态列专用代理:忽略选中态，让 setBackground() 的背景始终可见
 class StatusDelegate : public QStyledItemDelegate
 {
 public:
@@ -16,7 +25,6 @@ public:
         option->state &= ~QStyle::State_Selected;
     }
 };
-
 
 CIOWidget::CIOWidget(QWidget *parent,CTotalMgr* mgr)
 	: QWidget(parent)
@@ -36,6 +44,7 @@ CIOWidget::~CIOWidget()
 
 void CIOWidget::InitUI()
 {
+    m_pTotalMgr->configMgr()->loadIODescriptions();
 	QTimer::singleShot(0, this, [this]() {
         InitTableDI();
         InitTableDO();
@@ -56,6 +65,13 @@ void CIOWidget::InitTableDI()
     };
 
     InitTableCommon(ui.tableWidget_DI, 64, blocks, sizeof(blocks) / sizeof(blocks[0]));
+
+    // 覆盖自定义描述
+    const auto& diDesc = m_pTotalMgr->configMgr()->customDIDescriptions();
+    for (auto it = diDesc.begin(); it != diDesc.end(); ++it) {
+        QTableWidgetItem * item = ui.tableWidget_DI->item(it.key(), 0);
+        if (item) item->setText(it.value());
+    }
 }
 
 void CIOWidget::InitTableDO()
@@ -67,6 +83,13 @@ void CIOWidget::InitTableDO()
     };
 
     InitTableCommon(ui.tableWidget_DO, 32, blocks, sizeof(blocks) / sizeof(blocks[0]));
+
+    // 覆盖自定义描述
+    const auto& doDesc = m_pTotalMgr->configMgr()->customDODescriptions();
+    for (auto it = doDesc.begin(); it != doDesc.end(); ++it) {
+       QTableWidgetItem * item = ui.tableWidget_DO->item(it.key(), 0);
+       if (item) item->setText(it.value());
+    }
 }
 
 void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
@@ -119,6 +142,11 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
 void CIOWidget::connectPrivateSignal()
 {
     connect(ui.tableWidget_DO, &QTableWidget::cellDoubleClicked, this, &CIOWidget::onDOCellClicked);
+
+    connect(ui.tableWidget_DI, &QTableWidget::cellDoubleClicked,
+        this, &CIOWidget::onDICellDoubleClicked);
+    connect(ui.tableWidget_DO, &QTableWidget::cellDoubleClicked,
+        this, &CIOWidget::onDOCellClicked);
 }
 
 void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status)
@@ -138,6 +166,10 @@ void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status
 }
 void CIOWidget::onDOCellClicked(int row, int col)
 {
+    if (col == 0) {
+        onDescriptionEdited(row, false);   // false = DO
+        return;
+    }
     if (col != 2) return;                          // 只响应状态列
     if (!m_pTotalMgr) return;
     IOMgr* ioMgr = m_pTotalMgr->ioMgr();
@@ -184,4 +216,35 @@ void CIOWidget::onDOUpdated(const stuDO& dout)
 {
     m_doState = dout;
     RefreshTable(ui.tableWidget_DO, dout.toFlatVector());
+}
+
+// ── 双击 DI 表格 ──
+void CIOWidget::onDICellDoubleClicked(int row, int col)
+{
+    if (col == 0)
+        onDescriptionEdited(row, true);    // true = DI
+}
+
+// ── 弹出编辑框 + 存盘 ──
+void CIOWidget::onDescriptionEdited(int row, bool isDI)
+{
+    QTableWidget* table = isDI ? ui.tableWidget_DI : ui.tableWidget_DO;
+
+    QTableWidgetItem* item = table->item(row, 0);
+    if (!item) return;
+
+    bool ok = false;
+    QString newText = QInputDialog::getText(
+        this,
+        QStringLiteral("编辑功能描述"),
+        QStringLiteral("请输入新的描述："),
+        QLineEdit::Normal,
+        item->text(),
+        &ok);
+
+    if (!ok || newText.isEmpty() || newText == item->text())
+        return;
+
+    item->setText(newText);
+    m_pTotalMgr->configMgr()->setIODescription(row, newText, isDI);
 }
