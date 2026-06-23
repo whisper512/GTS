@@ -1,8 +1,22 @@
 #include <QTimer>
+#include <QStyledItemDelegate>
 
 #include "IOWidget.h"
 #include "GTSControllerWidget.h"
 #include "../Mgr/TotalMgr.h"
+
+// 状态列专用代理：忽略选中态，让 setBackground() 的背景始终可见
+class StatusDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+    void initStyleOption(QStyleOptionViewItem* option, const QModelIndex& index) const override
+    {
+        QStyledItemDelegate::initStyleOption(option, index);
+        option->state &= ~QStyle::State_Selected;
+    }
+};
+
 
 CIOWidget::CIOWidget(QWidget *parent,CTotalMgr* mgr)
 	: QWidget(parent)
@@ -98,6 +112,7 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
         QStringLiteral(
             "QTableWidget::item:selected { background: rgba(0,160,0,40); color: inherit; }"
         ));
+    table->setItemDelegateForColumn(2, new StatusDelegate(table));
 }
 
 
