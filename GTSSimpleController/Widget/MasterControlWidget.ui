@@ -762,7 +762,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QSpinBox" name="spinBox_curPos1">
+        <widget class="QSpinBox" name="spinBox_trapStepSize1">
          <property name="minimum">
           <number>-999999</number>
          </property>
@@ -782,7 +782,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QSpinBox" name="spinBox_curPos2">
+        <widget class="QSpinBox" name="spinBox_trapStepSize2">
          <property name="minimum">
           <number>-999999</number>
          </property>
@@ -802,7 +802,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QSpinBox" name="spinBox_curPos3">
+        <widget class="QSpinBox" name="spinBox_trapStepSize3">
          <property name="minimum">
           <number>-999999</number>
          </property>
@@ -822,7 +822,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QSpinBox" name="spinBox_curPos4">
+        <widget class="QSpinBox" name="spinBox_trapStepSize4">
          <property name="minimum">
           <number>-999999</number>
          </property>

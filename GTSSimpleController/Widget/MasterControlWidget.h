@@ -35,7 +35,7 @@ private:
 
 	// 点位运动
 	void onTrapMotion();
-	bool startSingleTrap(short axisId, double curPos, double targetPos);
+	bool startSingleTrap(short axisId, double stepMm);
 
 	void onHomeButtonClicked(short axis);
 
