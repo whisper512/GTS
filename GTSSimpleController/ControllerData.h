@@ -158,7 +158,7 @@ struct stuScaleFactor
 };
 
 
-struct stuConfig
+struct stuAxisConfig
 {
     int axisCount = 4;
 

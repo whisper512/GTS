@@ -37,7 +37,7 @@ private:
     // DO
     stuDO m_do;
     // 配置
-    stuConfig m_cfg;
+    stuAxisConfig m_cfg;
 
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;

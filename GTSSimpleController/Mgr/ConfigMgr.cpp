@@ -25,7 +25,7 @@ bool ConfigMgr::isValidAxis(short axis) const {
 // 轴配置 JSON 持久化 & 板卡同步
 // ============================================================
 
-void ConfigMgr::initAxisConfig(stuConfig* cfg, int axisCount, AxisMgr* axisMgr)
+void ConfigMgr::initAxisConfig(stuAxisConfig* cfg, int axisCount, AxisMgr* axisMgr)
 {
     m_pAxisCfg = cfg;
     m_axisCount = axisCount;
@@ -38,7 +38,7 @@ QString ConfigMgr::axisConfigPath() const
 }
 
 // ---- helper: 单轴 stuConfig → QJsonObject ----
-static QJsonObject axisConfigToJson(short axis, const stuConfig& cfg)
+static QJsonObject axisConfigToJson(short axis, const stuAxisConfig& cfg)
 {
     int i = axis - 1;
 
