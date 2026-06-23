@@ -1,17 +1,10 @@
 #include <QTimer>
 #include <QStyledItemDelegate>
+#include <QInputDialog>
 
 #include "IOWidget.h"
 #include "GTSControllerWidget.h"
 #include "../Mgr/TotalMgr.h"
-
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QFile>
-#include <QFileInfo>
-#include <QDir>
-#include <QCoreApplication>
-#include <QInputDialog>
 
 
 // 状态列专用代理:忽略选中态，让 setBackground() 的背景始终可见
@@ -146,7 +139,7 @@ void CIOWidget::connectPrivateSignal()
     connect(ui.tableWidget_DI, &QTableWidget::cellDoubleClicked,
         this, &CIOWidget::onDICellDoubleClicked);
     connect(ui.tableWidget_DO, &QTableWidget::cellDoubleClicked,
-        this, &CIOWidget::onDOCellClicked);
+        this, &CIOWidget::onDOCellDoubleClicked);
 }
 
 void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status)
@@ -166,10 +159,6 @@ void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status
 }
 void CIOWidget::onDOCellClicked(int row, int col)
 {
-    if (col == 0) {
-        onDescriptionEdited(row, false);   // false = DO
-        return;
-    }
     if (col != 2) return;                          // 只响应状态列
     if (!m_pTotalMgr) return;
     IOMgr* ioMgr = m_pTotalMgr->ioMgr();
@@ -218,14 +207,12 @@ void CIOWidget::onDOUpdated(const stuDO& dout)
     RefreshTable(ui.tableWidget_DO, dout.toFlatVector());
 }
 
-// ── 双击 DI 表格 ──
 void CIOWidget::onDICellDoubleClicked(int row, int col)
 {
     if (col == 0)
-        onDescriptionEdited(row, true);    // true = DI
+        onDescriptionEdited(row, true);
 }
 
-// ── 弹出编辑框 + 存盘 ──
 void CIOWidget::onDescriptionEdited(int row, bool isDI)
 {
     QTableWidget* table = isDI ? ui.tableWidget_DI : ui.tableWidget_DO;
@@ -237,7 +224,7 @@ void CIOWidget::onDescriptionEdited(int row, bool isDI)
     QString newText = QInputDialog::getText(
         this,
         QStringLiteral("编辑功能描述"),
-        QStringLiteral("请输入新的描述："),
+        QStringLiteral("请输入新的描述:"),
         QLineEdit::Normal,
         item->text(),
         &ok);
@@ -247,4 +234,10 @@ void CIOWidget::onDescriptionEdited(int row, bool isDI)
 
     item->setText(newText);
     m_pTotalMgr->configMgr()->setIODescription(row, newText, isDI);
+}
+
+void CIOWidget::onDOCellDoubleClicked(int row, int col)
+{
+    if (col == 0)
+        onDescriptionEdited(row, false);
 }

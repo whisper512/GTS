@@ -35,6 +35,7 @@ private:
 	void onDOCellClicked(int row, int col);
 	// Ë«»÷´¦Àí
 	void onDICellDoubleClicked(int row, int col);
+	void onDOCellDoubleClicked(int row, int col);
 	void onDescriptionEdited(int row, bool isDI);
 public slots:
 	void onDIUpdated(const stuDI& di);     
