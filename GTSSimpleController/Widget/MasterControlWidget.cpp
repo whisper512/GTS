@@ -24,6 +24,11 @@ void CMasterControlWidget::initMasterControlWidget()
 	ui.spinBox_MotionVel->setValue(5.0);
 	ui.doubleSpinBoxs_Acc->setValue(1.0);
 	ui.doubleSpinBoxs_Dec->setValue(1.0);
+	ui.comboBox_axisID->addItem("1");
+    ui.comboBox_axisID->addItem("2");
+	ui.comboBox_axisID->addItem("3");
+	ui.comboBox_axisID->addItem("4");
+
 
 	ui.radioButton_servoEnable1->setAutoExclusive(false);
 	ui.radioButton_sevorAlarm1->setAutoExclusive(false);
@@ -185,10 +190,7 @@ void CMasterControlWidget::onJogReleased(short axisId)
 void CMasterControlWidget::onTrapMotion()
 {
 	if (!m_pTotalMgr) return;
-	startSingleTrap(1, ui.spinBox_trapStepSize1->value());
-	startSingleTrap(2, ui.spinBox_trapStepSize2->value());
-	startSingleTrap(3, ui.spinBox_trapStepSize3->value());
-	startSingleTrap(4, ui.spinBox_trapStepSize4->value());
+	startSingleTrap(ui.comboBox_axisID->currentIndex() + 1, ui.spinBox_trapStepSize1->value());
 }
 
 
