@@ -242,8 +242,8 @@ void CConfigWidget::onPrfAlphaChanged()
 	long  beta = ui.spinBox_prfBeta->value();
 
 	m_pTotalMgr->setProfileScale(axis, alpha, beta);
-	m_pTotalMgr->saveAxisConfig();
-
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+	
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 profile当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
 		Qt::darkGreen);
@@ -260,7 +260,7 @@ void CConfigWidget::onPrfBetaChanged()
 	long  beta = ui.spinBox_prfBeta->value();
 
 	m_pTotalMgr->setProfileScale(axis, alpha, beta);
-	m_pTotalMgr->saveAxisConfig();
+	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 profile当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
@@ -278,7 +278,7 @@ void CConfigWidget::onEncAlphaChanged()
 	long  beta = ui.spinBox_encBeta->value();
 
 	m_pTotalMgr->setEncoderScale(axis, alpha, beta);
-	m_pTotalMgr->saveAxisConfig();
+	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 encoder当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
@@ -296,7 +296,7 @@ void CConfigWidget::onEncBetaChanged()
 	long  beta = ui.spinBox_encBeta->value();
 
 	m_pTotalMgr->setEncoderScale(axis, alpha, beta);
-	m_pTotalMgr->saveAxisConfig();
+	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 encoder当量 → alpha=%2 beta=%3").arg(axis).arg(alpha).arg(beta),
@@ -326,9 +326,9 @@ void CConfigWidget::onControlModeChanged()
 	auto mode = static_cast<ControlMode>(index);
 
 	m_pTotalMgr->setControlMode(axis, mode);
-	m_pTotalMgr->saveAxisConfig();
+	m_pTotalMgr->configMgr()->saveAxisConfig();
 
-	// ✅ 用 QStringLiteral 数组，和项目其他代码一致
+	// 用 QStringLiteral 数组
 	static const QString modeNames[] = {
 		QStringLiteral("闭环"),
 		QStringLiteral("开环"),

@@ -85,12 +85,6 @@ public:
     // 板卡关闭后的清理
     void cleanupAfterBoardClosed();
 
-    // JSON 读写
-    bool loadAxisConfig(const QString& filePath = QString());
-    bool saveAxisConfig(const QString& filePath = QString()) const;
-    void readAllAxisConfigFromBoard();
-    void applyAllAxisConfigToBoard();
-    QString axisConfigPath() const;
 
     // 控制模式
     void setControlMode(short axis, ControlMode mode);

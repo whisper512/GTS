@@ -1,11 +1,7 @@
 ﻿#include "TotalMgr.h"
 #include <QMessageBox>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QFile>
-#include <QDir>
 #include <QCoreApplication>
+#include <QDebug>
 
 CTotalMgr::CTotalMgr(QObject* parent)
     : QObject(parent)
@@ -20,6 +16,7 @@ CTotalMgr::CTotalMgr(QObject* parent)
     m_ioMgr = std::make_unique<IOMgr>(this);
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
+    m_configMgr->initAxisConfig(&m_cfg, m_axisCount, m_axisMgr.get());
 
     // 创建定时器用来刷新实时数据
     m_pRefreshTimer = new QTimer(this);
@@ -52,14 +49,13 @@ void CTotalMgr::initAfterBoardOpened()
 {
     // 启动定时器开始实时获取数据
     startRefresh();
-    // 从json读取配置
-    if (!loadAxisConfig()) {
-        readAllAxisConfigFromBoard();
-        saveAxisConfig();
+    // 从 JSON 加载配置（通过 ConfigMgr）
+    if (!m_configMgr->loadAxisConfig()) {
+        m_configMgr->readAllAxisConfigFromBoard();
+        m_configMgr->saveAxisConfig();
     }
     else {
-        
-        applyAllAxisConfigToBoard();
+        m_configMgr->applyAllAxisConfigToBoard();
     }
     // 读取DAC配置
     readDacConfig();
@@ -93,222 +89,6 @@ void CTotalMgr::cleanupAfterBoardClosed()
 }
 
 
-
-QString CTotalMgr::axisConfigPath() const
-{
-    return QCoreApplication::applicationDirPath() + QStringLiteral("/axis_config.json");
-}
-
-
-static QJsonObject axisConfigToJson(short axis, const stuConfig& cfg)
-{
-    int i = axis - 1;
-
-    QJsonObject scalePrf;
-    scalePrf[QStringLiteral("alpha")] = static_cast<qint64>(cfg.profileScale[i].alpha);
-    scalePrf[QStringLiteral("beta")] = static_cast<qint64>(cfg.profileScale[i].beta);
-
-    QJsonObject scaleEnc;
-    scaleEnc[QStringLiteral("alpha")] = static_cast<qint64>(cfg.encScale[i].alpha);
-    scaleEnc[QStringLiteral("beta")] = static_cast<qint64>(cfg.encScale[i].beta);
-
-    QJsonObject scaleObj;
-    scaleObj[QStringLiteral("profile")] = scalePrf;
-    scaleObj[QStringLiteral("encoder")] = scaleEnc;
-
-    QJsonObject dacObj;
-    dacObj[QStringLiteral("bias")] = static_cast<int>(cfg.dacBias[i]);
-    dacObj[QStringLiteral("limit")] = static_cast<int>(cfg.dacLimit[i]);
-
-    QJsonObject ctrlObj;
-    ctrlObj[QStringLiteral("followErrorLimit")] = static_cast<qint64>(cfg.followingErrorLimit[i]);
-
-    QJsonObject prfObj;
-    prfObj[QStringLiteral("smoothStopDec")] = cfg.smoothStopDec[i];
-    prfObj[QStringLiteral("estopDec")] = cfg.estopDec[i];
-
-    QJsonObject modeObj;
-    modeObj[QStringLiteral("controlMode")] = static_cast<int>(cfg.ctrlMode[i]);
-
-    QJsonObject obj;
-    obj[QStringLiteral("axis")] = axis;
-    obj[QStringLiteral("scale")] = scaleObj;
-    obj[QStringLiteral("dac")] = dacObj;
-    obj[QStringLiteral("mode")] = modeObj;
-    obj[QStringLiteral("control")] = ctrlObj;
-    obj[QStringLiteral("profile")] = prfObj;
-    return obj;
-}
-
-
-bool CTotalMgr::saveAxisConfig(const QString& filePath) const
-{
-    QString path = filePath.isEmpty() ? axisConfigPath() : filePath;
-
-    QJsonArray axes;
-    for (short axis = 1; axis <= m_axisCount; ++axis)
-        axes.append(axisConfigToJson(axis, m_cfg));
-
-    QJsonObject root;
-    root[QStringLiteral("version")] = 2;
-    root[QStringLiteral("axisCount")] = m_axisCount;
-    root[QStringLiteral("axes")] = axes;
-
-    QDir().mkpath(QFileInfo(path).absolutePath());
-
-    QFile file(path);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
-        return false;
-
-    file.write(QJsonDocument(root).toJson(QJsonDocument::Indented));
-    file.close();
-    return true;
-}
-
-bool CTotalMgr::loadAxisConfig(const QString& filePath)
-{
-    QString path = filePath.isEmpty() ? axisConfigPath() : filePath;
-
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly))
-        return false;
-
-    QByteArray data = file.readAll();
-    file.close();
-
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject())
-        return false;
-
-    QJsonObject root = doc.object();
-    int ver = root.value(QStringLiteral("version")).toInt(1);
-
-    // ----- 轴数个数组 -----
-    // 先全部置默认值
-    for (int i = 0; i < m_axisCount; ++i) {
-        m_cfg.ctrlMode[i] = ControlMode::ClosedLoop;
-        m_cfg.profileScale[i] = stuScaleFactor{ 1, 1 };
-        m_cfg.encScale[i] = stuScaleFactor{ 1, 1 };
-        m_cfg.dacBias[i] = 0;
-        m_cfg.dacLimit[i] = 32767;
-        m_cfg.followingErrorLimit[i] = 32767;
-        m_cfg.smoothStopDec[i] = 100.0;
-        m_cfg.estopDec[i] = 1000.0;
-    }
-
-    QJsonArray axes = root.value(QStringLiteral("axes")).toArray();
-    for (int n = 0; n < axes.size() && n < m_axisCount; ++n) {
-        QJsonObject ax = axes[n].toObject();
-        int axis = ax.value(QStringLiteral("axis")).toInt(0);
-        if (axis < 1 || axis > m_axisCount)
-            continue;
-        int i = axis - 1;
-
-        // ---- scale ----
-        QJsonObject scaleObj = ax.value(QStringLiteral("scale")).toObject();
-        if (!scaleObj.isEmpty()) {
-            QJsonObject prf = scaleObj.value(QStringLiteral("profile")).toObject();
-            if (!prf.isEmpty()) {
-                m_cfg.profileScale[i].alpha = static_cast<long>(prf.value(QStringLiteral("alpha")).toDouble(1.0));
-                m_cfg.profileScale[i].beta = static_cast<long>(prf.value(QStringLiteral("beta")).toDouble(1.0));
-            }
-            QJsonObject enc = scaleObj.value(QStringLiteral("encoder")).toObject();
-            if (!enc.isEmpty()) {
-                m_cfg.encScale[i].alpha = static_cast<long>(enc.value(QStringLiteral("alpha")).toDouble(1.0));
-                m_cfg.encScale[i].beta = static_cast<long>(enc.value(QStringLiteral("beta")).toDouble(1.0));
-            }
-            else {
-                m_cfg.encScale[i] = m_cfg.profileScale[i];
-            }
-        }
-
-        // ---- dac ----
-        QJsonObject dacObj = ax.value(QStringLiteral("dac")).toObject();
-        if (!dacObj.isEmpty()) {
-            m_cfg.dacBias[i] = static_cast<short>(dacObj.value(QStringLiteral("bias")).toInt(0));
-            m_cfg.dacLimit[i] = static_cast<short>(dacObj.value(QStringLiteral("limit")).toInt(32767));
-        }
-
-        // ---- control ----
-        QJsonObject ctrlObj = ax.value(QStringLiteral("control")).toObject();
-        if (!ctrlObj.isEmpty()) {
-            m_cfg.followingErrorLimit[i] = static_cast<long>(ctrlObj.value(QStringLiteral("followErrorLimit")).toDouble(32767.0));
-        }
-
-        // ---- profile ----
-        QJsonObject prfObj = ax.value(QStringLiteral("profile")).toObject();
-        if (!prfObj.isEmpty()) {
-            m_cfg.smoothStopDec[i] = prfObj.value(QStringLiteral("smoothStopDec")).toDouble(100.0);
-            m_cfg.estopDec[i] = prfObj.value(QStringLiteral("estopDec")).toDouble(1000.0);
-        }
-
-        // ---- ControlMode ----
-        QJsonObject modeObj = ax.value(QStringLiteral("mode")).toObject();
-        if (!modeObj.isEmpty()) {
-            int m = modeObj.value(QStringLiteral("controlMode")).toInt(
-                static_cast<int>(ControlMode::ClosedLoop));
-            if (m >= 0 && m <= 2)
-                m_cfg.ctrlMode[i] = static_cast<ControlMode>(m);
-        }
-    }
-
-    return true;
-}
-
-
-void CTotalMgr::readAllAxisConfigFromBoard()
-{
-    for (short axis = 1; axis <= m_axisCount; ++axis) {
-        int i = axis - 1;
-
-        // scale
-        m_axisMgr->getProfileScale(axis, m_cfg.profileScale[i].alpha, m_cfg.profileScale[i].beta);
-        short ret = m_axisMgr->getEncoderScale(axis, m_cfg.encScale[i].alpha, m_cfg.encScale[i].beta);
-        if (ret != 0)
-            m_cfg.encScale[i] = m_cfg.profileScale[i];
-
-        // dac
-        m_cfg.dacBias[i] = m_axisMgr->getDacBias(axis);
-        m_cfg.dacLimit[i] = m_axisMgr->getDacLimit(axis);
-
-        // follow error
-        m_cfg.followingErrorLimit[i] = m_axisMgr->getFollowErrorLimit(axis);
-
-        // stop decel
-        double smooth = 100.0, abrupt = 1000.0;
-        m_axisMgr->getStopDecel(axis, smooth, abrupt);
-        m_cfg.smoothStopDec[i] = smooth;
-        m_cfg.estopDec[i] = abrupt;
-    }
-}
-
-void CTotalMgr::applyAllAxisConfigToBoard()
-{
-    stopRefresh();
-    QStringList results;
-    for (short axis = 1; axis <= m_axisCount; ++axis) {
-        int i = axis - 1;
-
-        short rPrf = m_axisMgr->setProfileScale(axis, m_cfg.profileScale[i].alpha, m_cfg.profileScale[i].beta);
-        short rEnc = m_axisMgr->setEncoderScale(axis, m_cfg.encScale[i].alpha, m_cfg.encScale[i].beta);
-        m_axisMgr->setDacBias(axis, m_cfg.dacBias[i]);
-        m_axisMgr->setDacLimit(axis, m_cfg.dacLimit[i]);
-        m_axisMgr->setFollowErrorLimit(axis, m_cfg.followingErrorLimit[i]);
-        m_axisMgr->setStopDecel(axis, m_cfg.smoothStopDec[i], m_cfg.estopDec[i]);
-        // 控制模式设置编码器
-        switch (m_cfg.ctrlMode[i]) {
-        case ControlMode::ClosedLoop:
-            GT_EncOn(axis);    // 读外部编码器
-            break;
-        case ControlMode::OpenLoop:
-        case ControlMode::Simulation:
-            GT_EncOff(axis);   // 脉冲计数器
-            break;
-        }
-    }
-    startRefresh();
-}
 
 void CTotalMgr::setControlMode(short axis, ControlMode mode)
 {

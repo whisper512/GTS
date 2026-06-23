@@ -26,6 +26,8 @@
 //   - 步进模式 / 输出电平
 // ============================================================
 
+class AxisMgr;
+struct stuConfig;
 
 class ConfigMgr : public QObject 
 {
@@ -34,6 +36,25 @@ class ConfigMgr : public QObject
 private:
     mutable short m_lastError = 0;
 
+    // 轴配置数据引用（由 TotalMgr 注入）
+    stuConfig* m_pAxisCfg = nullptr;
+    int        m_axisCount = 0;
+    AxisMgr* m_pAxisMgr = nullptr;
+
+public:
+    // 初始化轴配置引用（TotalMgr 构造时调用一次）
+    void initAxisConfig(stuConfig* cfg, int axisCount, AxisMgr* axisMgr);
+    // JSON 文件路径
+    QString axisConfigPath() const;
+    // 从 JSON 文件加载轴配置
+    bool loadAxisConfig(const QString& filePath = QString());
+    // 保存轴配置到 JSON 文件
+    bool saveAxisConfig(const QString& filePath = QString()) const;
+
+    // 从板卡读取所有轴配置到 m_pAxisCfg
+    void readAllAxisConfigFromBoard();
+    // 将所有轴配置应用到板卡
+    void applyAllAxisConfigToBoard();
 
 public:
     explicit ConfigMgr(QObject* parent = nullptr);
