@@ -70,7 +70,7 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
     connect(m_pTotalMgr, &CTotalMgr::logUpdated, this, &GTSControllerWidget::showLog);
-    connect(m_pTotalMgr, &CTotalMgr::configChanged, m_pConfigWidget, &CConfigWidget::onconfigChanged);
+    connect(m_pTotalMgr->configMgr(), &ConfigMgr::configChanged, m_pConfigWidget, &CConfigWidget::onconfigChanged);
     connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);

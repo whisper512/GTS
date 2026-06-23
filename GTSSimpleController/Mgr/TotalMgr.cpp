@@ -58,13 +58,13 @@ void CTotalMgr::initAfterBoardOpened()
         m_configMgr->applyAllAxisConfigToBoard();
     }
     // 读取DAC配置
-    readDacConfig();
+    m_configMgr->readDacConfig();
     // 读取control误差极限
-    readFollowErrorLimit();
+    m_configMgr->readFollowErrorLimit();
     // 读取profile停止减速度参数
-    readStopDecel();
+    m_configMgr->readStopDecel();
 
-    emit configChanged();
+    emit m_configMgr->configChanged();
 
     // 读取运动参数
     m_motionMgr->getCommonMotionInfo(m_vecAxis);
@@ -86,97 +86,6 @@ void CTotalMgr::cleanupAfterBoardClosed()
     stopRefresh();
     m_vecAxis.clear();     // 清空轴数据
     m_clocks = stuClock(); // 清空时钟
-}
-
-
-
-void CTotalMgr::setControlMode(short axis, ControlMode mode)
-{
-    if (axis < 1 || axis > m_axisCount) return;
-    int idx = axis - 1;
-    m_cfg.ctrlMode[idx] = mode;
-}
-
-ControlMode CTotalMgr::controlMode(short axis) const
-{
-    return (axis >= 1 && axis <= m_axisCount)
-        ? m_cfg.ctrlMode[axis - 1]
-        : ControlMode::ClosedLoop;
-}
-
-
-void CTotalMgr::setProfileScale(short axis, long alpha, long beta)
-{
-    if (axis < 1 || axis > m_axisCount) return;
-    int idx = axis - 1;
-    m_cfg.profileScale[idx] = { alpha, beta };
-    m_axisMgr->setProfileScale(axis, alpha, beta);
-}
-
-long CTotalMgr::profileScaleAlpha(short axis) const
-{
-    return (axis >= 1 && axis <= m_axisCount) ? m_cfg.profileScale[axis - 1].alpha : 1;
-}
-
-long CTotalMgr::profileScaleBeta(short axis) const
-{
-    return (axis >= 1 && axis <= m_axisCount) ? m_cfg.profileScale[axis - 1].beta : 1;
-}
-
-void CTotalMgr::setEncoderScale(short axis, long alpha, long beta)
-{
-    if (axis < 1 || axis > m_axisCount) return;
-    int idx = axis - 1;
-    m_cfg.encScale[idx] = { alpha, beta };
-    m_axisMgr->setEncoderScale(axis, alpha, beta);
-}
-
-long CTotalMgr::encoderScaleAlpha(short axis) const
-{
-    return (axis >= 1 && axis <= m_axisCount) ? m_cfg.encScale[axis - 1].alpha : 1;
-}
-
-long CTotalMgr::encoderScaleBeta(short axis) const
-{
-    return (axis >= 1 && axis <= m_axisCount) ? m_cfg.encScale[axis - 1].beta : 1;
-}
-
-
-
-
-void CTotalMgr::readDacConfig()
-{
-    for (short dac = 1; dac <= m_axisCount; ++dac) {
-        int idx = dac - 1;
-        m_cfg.dacBias[idx] = m_axisMgr->getDacBias(dac);
-        m_cfg.dacLimit[idx] = m_axisMgr->getDacLimit(dac);
-    }
-}
-
-void CTotalMgr::setDacBias(short dac, short bias)
-{
-    if (dac < 1 || dac > m_axisCount) return;
-    int idx = dac - 1;
-    m_cfg.dacBias[idx] = bias;
-    m_axisMgr->setDacBias(dac, bias);
-}
-
-void CTotalMgr::setDacLimit(short dac, short limit)
-{
-    if (dac < 1 || dac > m_axisCount) return;
-    int idx = dac - 1;
-    m_cfg.dacLimit[idx] = limit;
-    m_axisMgr->setDacLimit(dac, limit);
-}
-
-short CTotalMgr::dacBias(short dac) const
-{
-    return (dac >= 1 && dac <= m_axisCount) ? m_cfg.dacBias[dac - 1] : 0;
-}
-
-short CTotalMgr::dacLimit(short dac) const
-{
-    return (dac >= 1 && dac <= m_axisCount) ? m_cfg.dacLimit[dac - 1] : 32767;
 }
 
 
@@ -208,55 +117,4 @@ void CTotalMgr::onRefreshTimeout()
     m_ioMgr->getClearAlarmDO(m_do.vecAlmClear);
     emit doUpdated(m_do);
 
-}
-
-void CTotalMgr::readFollowErrorLimit()
-{
-    for (short ctrl = 1; ctrl <= m_axisCount; ++ctrl) {
-        int idx = ctrl - 1;
-        m_cfg.followingErrorLimit[idx] = m_axisMgr->getFollowErrorLimit(ctrl);
-    }
-}
-
-void CTotalMgr::setFollowErrorLimit(short control, long error)
-{
-    if (control < 1 || control > m_axisCount) return;
-    int idx = control - 1;
-    m_cfg.followingErrorLimit[idx] = error;
-    m_axisMgr->setFollowErrorLimit(control, error);
-}
-
-long CTotalMgr::followErrorLimit(short control) const
-{
-    return (control >= 1 && control <= m_axisCount) ? m_cfg.followingErrorLimit[control - 1] : 32767;
-}
-
-void CTotalMgr::readStopDecel()
-{
-    for (short profile = 1; profile <= m_axisCount; ++profile) {
-        int idx = profile - 1;
-        double smooth = 100.0, abrupt = 1000.0;
-        m_axisMgr->getStopDecel(profile, smooth, abrupt);
-        m_cfg.smoothStopDec[idx] = smooth;
-        m_cfg.estopDec[idx] = abrupt;
-    }
-}
-
-void CTotalMgr::setStopDecel(short profile, double smooth, double abrupt)
-{
-    if (profile < 1 || profile > m_axisCount) return;
-    int idx = profile - 1;
-    m_cfg.smoothStopDec[idx] = smooth;
-    m_cfg.estopDec[idx] = abrupt;
-    m_axisMgr->setStopDecel(profile, smooth, abrupt);
-}
-
-double CTotalMgr::smoothStopDec(short profile) const
-{
-    return (profile >= 1 && profile <= m_axisCount) ? m_cfg.smoothStopDec[profile - 1] : 100.0;
-}
-
-double CTotalMgr::estopDec(short profile) const
-{
-    return (profile >= 1 && profile <= m_axisCount) ? m_cfg.estopDec[profile - 1] : 1000.0;
 }

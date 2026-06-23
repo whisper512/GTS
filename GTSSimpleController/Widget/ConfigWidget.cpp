@@ -123,9 +123,9 @@ void CConfigWidget::refreshDacValues()
 	short dac = ui.comboBox_dacId->currentText().toShort();
 
 	ui.spinBox_zeroOffsetCompensation->setValue(
-		(int)m_pTotalMgr->dacBias(dac));
+		(int)m_pTotalMgr->configMgr()->dacBias(dac));
 	ui.spinBox_outputVoltageSaturationLimit->setValue(
-		(int)m_pTotalMgr->dacLimit(dac));
+		(int)m_pTotalMgr->configMgr()->dacLimit(dac));
 	m_bRefreshing = false;
 }
 
@@ -137,7 +137,7 @@ void CConfigWidget::onDacBiasChanged()
 
 	short dac = ui.comboBox_dacId->currentText().toShort();
 	short bias = (short)ui.spinBox_zeroOffsetCompensation->value();
-	m_pTotalMgr->setDacBias(dac, bias);
+	m_pTotalMgr->configMgr()->setDacBias(dac, bias);
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("DAC%1 零漂补偿 → %2").arg(dac).arg(bias),
@@ -152,7 +152,7 @@ void CConfigWidget::onDacLimitChanged()
 
 	short dac = ui.comboBox_dacId->currentText().toShort();
 	short limit = (short)ui.spinBox_outputVoltageSaturationLimit->value();
-	m_pTotalMgr->setDacLimit(dac, limit);
+	m_pTotalMgr->configMgr()->setDacLimit(dac, limit);
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("DAC%1 饱和极限 → %2").arg(dac).arg(limit),
@@ -166,7 +166,7 @@ void CConfigWidget::refreshFollowErrorLimit()
 	m_bRefreshing = true;
 	short ctrl = ui.comboBox_controlId->currentText().toShort();
 	ui.spinBox_followingErrorLimit->setValue(
-		(int)m_pTotalMgr->followErrorLimit(ctrl));
+		(int)m_pTotalMgr->configMgr()->followErrorLimit(ctrl));
 	m_bRefreshing = false;
 }
 
@@ -178,7 +178,7 @@ void CConfigWidget::onFollowErrorLimitChanged()
 
 	short ctrl = ui.comboBox_controlId->currentText().toShort();
 	long error = ui.spinBox_followingErrorLimit->value();
-	m_pTotalMgr->setFollowErrorLimit(ctrl, error);
+	m_pTotalMgr->configMgr()->setFollowErrorLimit(ctrl, error);
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("Control%1 跟随误差极限 → %2").arg(ctrl).arg(error),
@@ -192,9 +192,9 @@ void CConfigWidget::refreshStopDecel()
 	short profile = ui.comboBox_profileId->currentText().toShort();
 
 	ui.doubleSpinBox_smoothStopDec->setValue(
-		m_pTotalMgr->smoothStopDec(profile));
+		m_pTotalMgr->configMgr()->smoothStopDec(profile));
 	ui.doubleSpinBox_smoothStopDec_2->setValue(
-		m_pTotalMgr->estopDec(profile));
+		m_pTotalMgr->configMgr()->estopDec(profile));
 	m_bRefreshing = false;
 }
 
@@ -208,7 +208,7 @@ void CConfigWidget::onStopDecelChanged()
 	double smooth = ui.doubleSpinBox_smoothStopDec->value();
 	double abrupt = ui.doubleSpinBox_smoothStopDec_2->value();
 
-	m_pTotalMgr->setStopDecel(profile, smooth, abrupt);
+	m_pTotalMgr->configMgr()->setStopDecel(profile, smooth, abrupt);
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("Profile%1 停止减速度 → 平滑=%2 急停=%3")
@@ -223,10 +223,10 @@ void CConfigWidget::refreshScaleValues()
 	m_bRefreshing = true;
 	short axis = ui.comboBox_axisId->currentText().toShort();
 
-	ui.spinBox_prfAlpha->setValue((int)m_pTotalMgr->profileScaleAlpha(axis));
-	ui.spinBox_prfBeta->setValue((int)m_pTotalMgr->profileScaleBeta(axis));
-	ui.spinBox_encAlpha->setValue((int)m_pTotalMgr->encoderScaleAlpha(axis));
-	ui.spinBox_encBeta->setValue((int)m_pTotalMgr->encoderScaleBeta(axis));
+	ui.spinBox_prfAlpha->setValue((int)m_pTotalMgr->configMgr()->profileScaleAlpha(axis));
+	ui.spinBox_prfBeta->setValue((int)m_pTotalMgr->configMgr()->profileScaleBeta(axis));
+	ui.spinBox_encAlpha->setValue((int)m_pTotalMgr->configMgr()->encoderScaleAlpha(axis));
+	ui.spinBox_encBeta->setValue((int)m_pTotalMgr->configMgr()->encoderScaleBeta(axis));
 
 	m_bRefreshing = false;
 }
@@ -241,7 +241,7 @@ void CConfigWidget::onPrfAlphaChanged()
 	long  alpha = ui.spinBox_prfAlpha->value();
 	long  beta = ui.spinBox_prfBeta->value();
 
-	m_pTotalMgr->setProfileScale(axis, alpha, beta);
+	m_pTotalMgr->configMgr()->setProfileScale(axis, alpha, beta);
 	m_pTotalMgr->configMgr()->saveAxisConfig();
 	
 	m_pGTSControllerWidget->showLog(
@@ -259,7 +259,7 @@ void CConfigWidget::onPrfBetaChanged()
 	long  alpha = ui.spinBox_prfAlpha->value();
 	long  beta = ui.spinBox_prfBeta->value();
 
-	m_pTotalMgr->setProfileScale(axis, alpha, beta);
+	m_pTotalMgr->configMgr()->setProfileScale(axis, alpha, beta);
 	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	m_pGTSControllerWidget->showLog(
@@ -277,7 +277,7 @@ void CConfigWidget::onEncAlphaChanged()
 	long  alpha = ui.spinBox_encAlpha->value();
 	long  beta = ui.spinBox_encBeta->value();
 
-	m_pTotalMgr->setEncoderScale(axis, alpha, beta);
+	m_pTotalMgr->configMgr()->setEncoderScale(axis, alpha, beta);
 	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	m_pGTSControllerWidget->showLog(
@@ -295,7 +295,7 @@ void CConfigWidget::onEncBetaChanged()
 	long  alpha = ui.spinBox_encAlpha->value();
 	long  beta = ui.spinBox_encBeta->value();
 
-	m_pTotalMgr->setEncoderScale(axis, alpha, beta);
+	m_pTotalMgr->configMgr()->setEncoderScale(axis, alpha, beta);
 	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	m_pGTSControllerWidget->showLog(
@@ -309,7 +309,7 @@ void CConfigWidget::refreshControlMode()
 	m_bRefreshing = true;
 
 	short axis = ui.comboBox_axisId->currentText().toShort();
-	int  mode = static_cast<int>(m_pTotalMgr->controlMode(axis));
+	int  mode = static_cast<int>(m_pTotalMgr->configMgr()->controlMode(axis));
 	ui.comboBox_controlMode->setCurrentIndex(mode);
 
 	m_bRefreshing = false;
@@ -325,7 +325,7 @@ void CConfigWidget::onControlModeChanged()
 	int  index = ui.comboBox_controlMode->currentIndex();
 	auto mode = static_cast<ControlMode>(index);
 
-	m_pTotalMgr->setControlMode(axis, mode);
+	m_pTotalMgr->configMgr()->setControlMode(axis, mode);
 	m_pTotalMgr->configMgr()->saveAxisConfig();
 
 	// 用 QStringLiteral 数组

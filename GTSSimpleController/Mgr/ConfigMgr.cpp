@@ -250,6 +250,182 @@ void ConfigMgr::applyAllAxisConfigToBoard()
     }
 }
 
+// ============================================================
+// 单字段配置读写
+// ============================================================
+
+// ---------- 控制模式 ----------
+void ConfigMgr::setControlMode(short axis, ControlMode mode)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->ctrlMode[i] = mode;
+
+    switch (mode) {
+    case ControlMode::ClosedLoop:
+        GT_EncOn(axis);
+        break;
+    case ControlMode::OpenLoop:
+    case ControlMode::Simulation:
+        GT_EncOff(axis);
+        break;
+    }
+    emit configChanged();
+}
+
+ControlMode ConfigMgr::controlMode(short axis) const
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount)
+        return ControlMode::ClosedLoop;
+    return m_pAxisCfg->ctrlMode[axis - 1];
+}
+
+// ---------- profile 当量 ----------
+void ConfigMgr::setProfileScale(short axis, long alpha, long beta)
+{
+    if (!m_pAxisCfg || !m_pAxisMgr || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->profileScale[i] = { alpha, beta };
+    m_pAxisMgr->setProfileScale(axis, alpha, beta);
+    emit configChanged();
+}
+
+long ConfigMgr::profileScaleAlpha(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->profileScale[axis - 1].alpha : 1;
+}
+
+long ConfigMgr::profileScaleBeta(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->profileScale[axis - 1].beta : 1;
+}
+
+// ---------- encoder 当量 ----------
+void ConfigMgr::setEncoderScale(short axis, long alpha, long beta)
+{
+    if (!m_pAxisCfg || !m_pAxisMgr || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->encScale[i] = { alpha, beta };
+    m_pAxisMgr->setEncoderScale(axis, alpha, beta);
+    emit configChanged();
+}
+
+long ConfigMgr::encoderScaleAlpha(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->encScale[axis - 1].alpha : 1;
+}
+
+long ConfigMgr::encoderScaleBeta(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->encScale[axis - 1].beta : 1;
+}
+
+// ---------- DAC ----------
+void ConfigMgr::readDacConfig()
+{
+    if (!m_pAxisCfg || !m_pAxisMgr) return;
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int i = axis - 1;
+        m_pAxisCfg->dacBias[i] = m_pAxisMgr->getDacBias(axis);
+        m_pAxisCfg->dacLimit[i] = m_pAxisMgr->getDacLimit(axis);
+    }
+}
+
+void ConfigMgr::setDacBias(short axis, short bias)
+{
+    if (!m_pAxisCfg || !m_pAxisMgr || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->dacBias[i] = bias;
+    m_pAxisMgr->setDacBias(axis, bias);
+    emit configChanged();
+}
+
+void ConfigMgr::setDacLimit(short axis, short limit)
+{
+    if (!m_pAxisCfg || !m_pAxisMgr || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->dacLimit[i] = limit;
+    m_pAxisMgr->setDacLimit(axis, limit);
+    emit configChanged();
+}
+
+short ConfigMgr::dacBias(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->dacBias[axis - 1] : 0;
+}
+
+short ConfigMgr::dacLimit(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->dacLimit[axis - 1] : 32767;
+}
+
+// ---------- 跟随误差 ----------
+void ConfigMgr::readFollowErrorLimit()
+{
+    if (!m_pAxisCfg || !m_pAxisMgr) return;
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int i = axis - 1;
+        m_pAxisCfg->followingErrorLimit[i] = m_pAxisMgr->getFollowErrorLimit(axis);
+    }
+}
+
+void ConfigMgr::setFollowErrorLimit(short axis, long error)
+{
+    if (!m_pAxisCfg || !m_pAxisMgr || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->followingErrorLimit[i] = error;
+    m_pAxisMgr->setFollowErrorLimit(axis, error);
+    emit configChanged();
+}
+
+long ConfigMgr::followErrorLimit(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->followingErrorLimit[axis - 1] : 32767;
+}
+
+// ---------- 停止减速度 ----------
+void ConfigMgr::readStopDecel()
+{
+    if (!m_pAxisCfg || !m_pAxisMgr) return;
+    for (short axis = 1; axis <= m_axisCount; ++axis) {
+        int i = axis - 1;
+        double smooth = 100.0, abrupt = 1000.0;
+        m_pAxisMgr->getStopDecel(axis, smooth, abrupt);
+        m_pAxisCfg->smoothStopDec[i] = smooth;
+        m_pAxisCfg->estopDec[i] = abrupt;
+    }
+}
+
+void ConfigMgr::setStopDecel(short axis, double smoothDec, double abruptDec)
+{
+    if (!m_pAxisCfg || !m_pAxisMgr || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->smoothStopDec[i] = smoothDec;
+    m_pAxisCfg->estopDec[i] = abruptDec;
+    m_pAxisMgr->setStopDecel(axis, smoothDec, abruptDec);
+    emit configChanged();
+}
+
+double ConfigMgr::smoothStopDec(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->smoothStopDec[axis - 1] : 100.0;
+}
+
+double ConfigMgr::estopDec(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->estopDec[axis - 1] : 1000.0;
+}
+
+
 
 // ================================================================
 // 1. PID / 控制滤波

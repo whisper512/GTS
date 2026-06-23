@@ -85,41 +85,6 @@ public:
     // 板卡关闭后的清理
     void cleanupAfterBoardClosed();
 
-
-    // 控制模式
-    void setControlMode(short axis, ControlMode mode);
-    ControlMode controlMode(short axis) const;
-
-    // profile 当量
-    void setProfileScale(short axis, long alpha, long beta);
-    long profileScaleAlpha(short axis) const;
-    long profileScaleBeta(short axis) const;
-
-    // encoder 当量
-    void setEncoderScale(short axis, long alpha, long beta);
-    long encoderScaleAlpha(short axis) const;
-    long encoderScaleBeta(short axis) const;
-
-    // dac相关
-    void readDacConfig();
-    void setDacBias(short dac, short bias);
-    void setDacLimit(short dac, short limit);
-    short dacBias(short dac) const;
-    short dacLimit(short dac) const;
-
-    // 误差极限相关
-    void readFollowErrorLimit();
-    void setFollowErrorLimit(short control, long error);
-    long followErrorLimit(short control) const;
-
-    // 停止减速相关
-    void readStopDecel();
-    void setStopDecel(short profile, double smooth, double abrupt);
-    double smoothStopDec(short profile) const;
-    double estopDec(short profile) const;
-
-
-
 signals:
     // 板卡时钟更新
     void boardClockUpdated(const stuClock& clock);
@@ -131,8 +96,6 @@ signals:
     void diUpdated(const stuDI& di);
     // DO 更新
     void doUpdated(const stuDO& do_);
-
-    void configChanged();
 
     // 更新日志
     void logUpdated(const QString& log, QColor color);

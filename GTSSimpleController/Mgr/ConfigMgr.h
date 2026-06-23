@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QString>
+
+#include "ControllerData.h"
 #include "GtsHal.h"
 
 
@@ -50,11 +52,43 @@ public:
     bool loadAxisConfig(const QString& filePath = QString());
     // 保存轴配置到 JSON 文件
     bool saveAxisConfig(const QString& filePath = QString()) const;
-
     // 从板卡读取所有轴配置到 m_pAxisCfg
     void readAllAxisConfigFromBoard();
     // 将所有轴配置应用到板卡
     void applyAllAxisConfigToBoard();
+
+    // 控制模式
+    void setControlMode(short axis, ControlMode mode);
+    ControlMode controlMode(short axis) const;
+
+    // profile 当量
+    void setProfileScale(short axis, long alpha, long beta);
+    long profileScaleAlpha(short axis) const;
+    long profileScaleBeta(short axis) const;
+
+    // encoder 当量
+    void setEncoderScale(short axis, long alpha, long beta);
+    long encoderScaleAlpha(short axis) const;
+    long encoderScaleBeta(short axis) const;
+
+    // DAC
+    void readDacConfig();
+    void setDacBias(short axis, short bias);
+    void setDacLimit(short axis, short limit);
+    short dacBias(short axis) const;
+    short dacLimit(short axis) const;
+
+    // 跟随误差
+    void readFollowErrorLimit();
+    void setFollowErrorLimit(short axis, long error);
+    long followErrorLimit(short axis) const;
+
+    // 停止减速度
+    void readStopDecel();
+    void setStopDecel(short axis, double smoothDec, double abruptDec);
+    double smoothStopDec(short axis) const;
+    double estopDec(short axis) const;
+
 
 public:
     explicit ConfigMgr(QObject* parent = nullptr);
@@ -358,7 +392,8 @@ public:
 signals:
     // 发生错误 (通道号, 错误码, 描述)
     void errorOccurred(short channel, short errorCode, const QString& errorMsg);
-
+    // 配置文件改变
+    void configChanged();
 
 };
 

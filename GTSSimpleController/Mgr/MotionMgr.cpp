@@ -156,8 +156,8 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
 
     // 获取当量参数
     long prfAlpha = 1, prfBeta = 1;
-    prfAlpha = m_pTotalMgr->profileScaleAlpha(profile);
-    prfBeta = m_pTotalMgr->profileScaleBeta(profile);
+    prfAlpha = m_pTotalMgr->configMgr()->profileScaleAlpha(profile);
+    prfBeta = m_pTotalMgr->configMgr()->profileScaleBeta(profile);
 
     if (prfBeta == 0) {
         emit errorOccurred(profile, -1,
@@ -229,8 +229,8 @@ bool MotionMgr::startJogMotion(short profile, short direction)
 {
     // 获取当量参数
     long prfAlpha = 1, prfBeta = 1;
-    prfAlpha = m_pTotalMgr->profileScaleAlpha(profile);
-    prfBeta = m_pTotalMgr->profileScaleBeta(profile);
+    prfAlpha = m_pTotalMgr->configMgr()->profileScaleAlpha(profile);
+    prfBeta = m_pTotalMgr->configMgr()->profileScaleBeta(profile);
     if (prfBeta == 0) {
         emit errorOccurred(profile, -1,
             QStringLiteral("当量参数无效 prfAlpha=%1 prfBeta=%2")

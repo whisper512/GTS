@@ -103,7 +103,7 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
         vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal  * 1000000.0;
 
 
-        ControlMode mode = m_pTotalMgr->controlMode(axis);
+        ControlMode mode = m_pTotalMgr->configMgr()->controlMode(axis);
         
         // 模拟或者开环
         if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
