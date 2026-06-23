@@ -104,8 +104,8 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
 
 
         ControlMode mode = m_pTotalMgr->controlMode(axis);
-
-
+        
+        // 模拟或者开环
         if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
             vecAxis[idx].dEncPos = vecAxis[idx].dPrfPosOriginal;
             vecAxis[idx].dEncVel = vecAxis[idx].dPrfVelOriginal;
@@ -113,7 +113,12 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
             vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
         }
         else {
-            // 闭环（暂不使用）
+            // 没有编码器
+            vecAxis[idx].dEncPos = 0.0;
+            vecAxis[idx].dEncVel = 0.0;
+            vecAxis[idx].dEncPosMm = 0.0;
+            vecAxis[idx].dEncVelMm = 0.0;
+            
         }
     }
 }
