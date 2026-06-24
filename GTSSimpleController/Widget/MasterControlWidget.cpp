@@ -29,7 +29,6 @@ void CMasterControlWidget::initMasterControlWidget()
 	ui.comboBox_axisID->addItem("3");
 	ui.comboBox_axisID->addItem("4");
 
-
 	ui.radioButton_servoEnable1->setAutoExclusive(false);
 	ui.radioButton_sevorAlarm1->setAutoExclusive(false);
 	ui.radioButton_nLimit1->setAutoExclusive(false);
@@ -215,7 +214,7 @@ bool CMasterControlWidget::startSingleTrap(short axisId, double stepMm)
 	axis->trapParam.dMotionVel = ui.spinBox_MotionVel->value();
 	axis->trapParam.acc = ui.doubleSpinBoxs_Acc->value();
 	axis->trapParam.dec = ui.doubleSpinBoxs_Dec->value();
-	axis->trapParam.somoothTime = 0;
+	axis->trapParam.somoothTime = 0; 
 	axis->trapParam.cycleTimes = 0;
 	axis->trapParam.Delay = 0;
 
@@ -246,30 +245,21 @@ bool CMasterControlWidget::startSingleTrap(short axisId, double stepMm)
 
 void CMasterControlWidget::onHomeButtonClicked(short axis)
 {
-	if (!m_pTotalMgr || !m_pGTSControllerWidget) return;
-	auto axisMgr = m_pTotalMgr->axisMgr();
-	if (!axisMgr) return;
+	if (!m_pTotalMgr) return;
 
-	double vel = static_cast<double>(ui.spinBox_MotionVel->value());
-	double acc = ui.doubleSpinBoxs_Acc->value();
-
-	// 参数保护:确保速度/加速度为正
-	if (vel <= 0.0 || acc <= 0.0) {
+	bool ok = m_pTotalMgr->motionMgr()->homeStart(axis);
+	if (ok)
+	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("回零参数错误：速度=%1 加速度=%2（必须大于0）").arg(vel).arg(acc),
-			Qt::red);
-		return;
+			QStringLiteral("%1 回零已启动").arg(axisName(axis)),
+			Qt::darkGreen);
 	}
-
-
-	bool ok = axisMgr->home(axis, 200000, vel, acc, 1000);
-	if (ok) {
+	else
+	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 回零已启动").arg(axisName(axis)), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 回零失败 err=%2").arg(axisName(axis)).arg(axisMgr->lastError()),
+			QStringLiteral("%1 回零启动失败 err=%2")
+			.arg(axisName(axis))
+			.arg(m_pTotalMgr->motionMgr()->lastError()),
 			Qt::red);
 	}
 }

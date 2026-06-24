@@ -29,7 +29,7 @@ void GTSControllerWidget::Init()
         // 初始化读取配置
         m_pTotalMgr->configMgr()->loadIODescriptions();
         m_pTotalMgr->configMgr()->loadAxisConfig();
-        emit  m_pTotalMgr->configMgr()->configChanged();
+        emit m_pTotalMgr->configMgr()->configChanged();
         });
 }
 
@@ -81,6 +81,16 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pMasterControlWidget, &CMasterControlWidget::onAxisUpdated);
     connect(m_pTotalMgr, &CTotalMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
     connect(m_pTotalMgr, &CTotalMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);
+    connect(m_pTotalMgr->motionMgr(), &MotionMgr::errorOccurred, this,
+        [this](short axis, short errorCode, const QString& errorMsg) {
+            showLog(QStringLiteral("轴%1 错误 [%2] %3")
+                .arg(axis)
+                .arg(errorCode)
+                .arg(errorMsg),
+                Qt::red);
+        });
+
+
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

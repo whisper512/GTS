@@ -38,6 +38,10 @@ void CConfigWidget::InitUI()
 
 	ComboAddItems(ui.comboBox_homeMode, {
 		QStringLiteral("负限位回零"),
+        QStringLiteral("正限位回零"),
+		QStringLiteral("原点回零"),          
+		QStringLiteral("原点+Index回零"),  
+		QStringLiteral("Index回零"), 
 		});
 	ComboAddNumbers(ui.comboBox_axisIdHomeConfig, 4);
 }

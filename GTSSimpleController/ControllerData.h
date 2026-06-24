@@ -75,6 +75,10 @@ enum class ControlMode : short
 enum class homeMode : short
 {
     HomeMode_nLlimit = 0,   // 负限位回零
+    HomeMode_pLlimit = 1,   // 正限位回零
+    HomeMode_Home = 2,      // 原点回零
+    HomeMode_HomeIndex = 3, // 原点 + Index 回零
+    HomeMode_Index = 4,     // Index 回零
 };
 
 

@@ -308,6 +308,266 @@ bool MotionMgr::startJogMotion(short profile, short direction)
 }
 
 
+bool MotionMgr::homeStart(short axis)
+{
+    if (!checkProfile(axis)) return false;
+
+    ConfigMgr* cfg = m_pTotalMgr->configMgr();
+    homeMode mode = cfg->homeModeValue(axis);
+    double homeVelMm = cfg->homeVel(axis);
+    double homeAccMm = cfg->homeAcc(axis);
+    double homeRangeMm = cfg->homeRange(axis);
+    double homeOffsetMm = cfg->homeOffset(axis);
+
+    // ── 当量换算 ──
+    long prfAlpha = cfg->profileScaleAlpha(axis);
+    long prfBeta = cfg->profileScaleBeta(axis);
+    if (prfBeta == 0) {
+        emit errorOccurred(axis, -1,
+            QStringLiteral("轴%1 当量参数 prfBeta=0，无法换算").arg(axis));
+        return false;
+    }
+    double ppm = static_cast<double>(prfAlpha) / prfBeta;
+
+    double vel = homeVelMm * ppm / 1000.0;
+    double acc = homeAccMm * ppm / 1000000.0;
+    long range = static_cast<long>(homeRangeMm * ppm);
+    long offset = static_cast<long>(homeOffsetMm * ppm);
+
+    // ── 搜索方向 ──
+    bool searchPos = false;
+    switch (mode) {
+    case homeMode::HomeMode_pLlimit: searchPos = true;  break;
+    default:                         searchPos = false; break;
+    }
+    long searchStep = searchPos ? range : -range;
+
+    // ── 步骤1: 梯形模式 ──
+    m_lastError = GtsHal::prfTrap(axis);
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ── 步骤2: 梯形参数 ──
+    TTrapPrm prm;
+    prm.acc = acc;
+    prm.dec = acc;
+    prm.velStart = 0.0;
+    prm.smoothTime = 0;
+    m_lastError = GtsHal::setTrapPrm(axis, prm);
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ── 步骤3: 确定检测方式 ──
+    // DI 模式（0/1/2）: 直接读 DI，和 500ms 定时器同一套机制
+    // 捕获模式（3/4）: Index/Z 相没 DI，必须用硬件捕获
+    bool useCapture = false;
+    short captureType = 0;
+    bool useDI = false;
+    short diType = 0;       // MC_LIMIT_POSITIVE / MC_LIMIT_NEGATIVE / MC_HOME
+    int   triggerBit = 0;   // 触发值: 1=高电平触发, 0=低电平触发(脱离限位用)
+
+    switch (mode) {
+    case homeMode::HomeMode_nLlimit:
+        // 限位模式：靠限位自动停，不需要在循环里读 DI
+        break;
+    case homeMode::HomeMode_pLlimit:
+        break;
+    case homeMode::HomeMode_Home:
+        // 原点模式：用 DI 检测，无需硬件捕获
+        useDI = true;
+        diType = MC_HOME;
+        triggerBit = 1;   // 原点 DI 高电平有效
+        break;
+    case homeMode::HomeMode_HomeIndex:
+        // Index 需要硬件捕获
+        useCapture = true;
+        captureType = 1;  // CAPTURE_HOME
+        break;
+    case homeMode::HomeMode_Index:
+        useCapture = true;
+        captureType = 2;  // CAPTURE_INDEX
+        break;
+    }
+
+    if (useCapture) {
+        m_lastError = GT_SetCaptureMode(axis, captureType);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError,
+                QStringLiteral("轴%1 GT_SetCaptureMode(%2) 失败")
+                .arg(axis).arg(captureType));
+            return false;
+        }
+    }
+
+    // ── 步骤4: 启动搜索运动 ──
+    double curPos = profilePos(axis);
+    long targetPos = static_cast<long>(curPos) + searchStep;
+    long mask = 1L << (axis - 1);
+
+    m_lastError = GtsHal::setPos(axis, targetPos);
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+    m_lastError = GtsHal::setVel(axis, vel);
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+    m_lastError = GtsHal::update(mask);
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+
+    // ── 步骤5: 等待触发 ──
+    if (useDI) {
+        // === DI 检测模式（模式2: Home） ===
+        // 和 IOMgr::getHomeDI() 同一套机制：直接读 MC_HOME DI
+        long sts = 0;
+        long diVal = 0;
+        int axisBit = axis - 1;              // DI 位: 轴1→bit0, 轴2→bit1...
+
+        do {
+            GtsHal::getSts(axis, &sts);
+            GtsHal::getDi(diType, &diVal);   // ← 和 500ms 定时器相同的调用
+            QCoreApplication::processEvents(); // ← 让 500ms 定时器持续刷新 UI
+
+            if (!(sts & 0x400)) {            // 运动已停但未触发
+                emit errorOccurred(axis, -1,
+                    QStringLiteral("轴%1 回零失败：运动停止但未检测到原点信号").arg(axis));
+                return false;
+            }
+        } while (((diVal >> axisBit) & 1) != triggerBit);
+
+        // DI 触发 → 立即停止运动
+        stop(axis, 0);
+        // 等待完全停下
+        do {
+            GtsHal::getSts(axis, &sts);
+            QCoreApplication::processEvents();
+        } while (sts & 0x400);
+
+        // 记录当前编码器位置作为触发位置
+        double capPos = profilePos(axis);
+
+        // 运动到触发位置 + 偏移
+        long finalTarget = static_cast<long>(capPos) + offset;
+        m_lastError = GtsHal::setPos(axis, finalTarget);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError, lastErrorString());
+            return false;
+        }
+        m_lastError = GtsHal::update(mask);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError, lastErrorString());
+            return false;
+        }
+        waitMotionDone(axis);
+    }
+    else if (useCapture) {
+        // === 硬件捕获模式（模式3/4: Index） ===
+        short capture = 0;
+        long  capPos = 0;
+        long  sts = 0;
+
+        do {
+            GtsHal::getSts(axis, &sts);
+            GT_GetCaptureStatus(axis, &capture, &capPos);
+            QCoreApplication::processEvents();
+
+            if (!(sts & 0x400)) {
+                emit errorOccurred(axis, -1,
+                    QStringLiteral("轴%1 回零失败：运动停止但未捕获到信号").arg(axis));
+                return false;
+            }
+        } while (capture == 0);
+
+        // 运动到捕获位置 + 偏移
+        long finalTarget = capPos + offset;
+        m_lastError = GtsHal::setPos(axis, finalTarget);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError, lastErrorString());
+            return false;
+        }
+        m_lastError = GtsHal::update(mask);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError, lastErrorString());
+            return false;
+        }
+        waitMotionDone(axis);
+    }
+    else {
+        // === 限位模式（模式0/1）—— 用 DI 检测，与 500ms 定时器同机制 ===
+        long sts = 0;
+        long diVal = 0;
+        short diType = (mode == homeMode::HomeMode_nLlimit)
+            ? MC_LIMIT_NEGATIVE
+            : MC_LIMIT_POSITIVE;
+        int axisBit = axis - 1;
+
+        // 循环等限位触发或运动停止
+        do {
+            GtsHal::getSts(axis, &sts);
+            GtsHal::getDi(diType, &diVal);
+            QCoreApplication::processEvents();
+
+            if (!(sts & 0x400)) break;               // 运动已停，退出循环
+        } while (((diVal >> axisBit) & 1) == 0);     // 等限位触发
+
+        // 退出后再读一次 DI（防止运动停止和 DI 变化之间竞态）
+        GtsHal::getDi(diType, &diVal);
+
+        if (((diVal >> axisBit) & 1) == 0) {
+            emit errorOccurred(axis, -1,
+                QStringLiteral("轴%1 回零失败:未触发限位"
+                    "(搜索范围=%2 pulse, sts=0x%3, di=0x%4)")
+                .arg(axis).arg(range).arg(sts, 0, 16).arg(diVal, 0, 16));
+            return false;
+        }
+
+        // 限位已触发 → 确保完全停止 → 脱离限位 + 偏移
+        stop(axis, 0);
+        do {
+            GtsHal::getSts(axis, &sts);
+            QCoreApplication::processEvents();
+        } while (sts & 0x400);
+
+        GtsHal::clrSts(axis, axis);
+
+        long escapeStep = searchPos ? -offset : offset;
+        curPos = profilePos(axis);
+        m_lastError = GtsHal::setPos(axis, static_cast<long>(curPos) + escapeStep);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError, lastErrorString());
+            return false;
+        }
+        m_lastError = GtsHal::update(mask);
+        if (m_lastError != 0) {
+            emit errorOccurred(axis, m_lastError, lastErrorString());
+            return false;
+        }
+        waitMotionDone(axis);
+    }
+
+    // ── 步骤6: 位置清零 ──
+    m_lastError = GtsHal::zeroPos(axis, axis);
+    if (m_lastError != 0) {
+        emit errorOccurred(axis, m_lastError, lastErrorString());
+        return false;
+    }
+
+    emit motionDone(axis);
+    return true;
+}
+
+
+
+
 bool MotionMgr::checkProfile(short profile) const
 {
     if (profile < 1 || profile > m_axisCount) {

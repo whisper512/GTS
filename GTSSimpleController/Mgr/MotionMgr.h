@@ -61,6 +61,8 @@ public:
     bool setJogParam(short axisId, const stuJogParam& param);
     // 启动Jog运动（direction: +1 正方向, -1 反方向）
     bool startJogMotion(short profile, short direction);
+    // 启动回零
+    bool homeStart(short axis);
 
 public:
     // 设置规划器位置
