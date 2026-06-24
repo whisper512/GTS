@@ -50,6 +50,21 @@ void CAxisWidget::initWidget()
 	ui.radioButton_eStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_smoothStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
+	// ── 等宽字体防止数据刷新时布局抖动 ──
+	const QList<QLabel*> numLabels = {
+		ui.label_actPosData,
+		ui.label_actVelData,
+		ui.label_tgtAccData,
+		ui.label_tgtPosData,
+		ui.label_tgtVelData
+	};
+	QFont monoFont(QStringLiteral("Consolas"), 9);
+	for (QLabel* lb : numLabels)
+	{
+		lb->setFont(monoFont);
+		lb->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	}
+
 }
 
 void CAxisWidget::connectPrivateSignal()
