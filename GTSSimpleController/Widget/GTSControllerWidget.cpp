@@ -89,6 +89,12 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
                 .arg(errorMsg),
                 Qt::red);
         });
+    // 回零过程追踪
+    connect(m_pTotalMgr->motionMgr(), &MotionMgr::homeStatus, this,
+        [this](short axis, const QString& msg) {
+            showLog(QStringLiteral("轴%1 回零 %2").arg(axis).arg(msg),
+                QColor(0, 128, 0));   // 暗绿色
+        });
 
 
 }

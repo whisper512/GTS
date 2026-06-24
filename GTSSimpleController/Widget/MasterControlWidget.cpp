@@ -248,20 +248,6 @@ void CMasterControlWidget::onHomeButtonClicked(short axis)
 	if (!m_pTotalMgr) return;
 
 	bool ok = m_pTotalMgr->motionMgr()->homeStart(axis);
-	if (ok)
-	{
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 回零已启动").arg(axisName(axis)),
-			Qt::darkGreen);
-	}
-	else
-	{
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 回零启动失败 err=%2")
-			.arg(axisName(axis))
-			.arg(m_pTotalMgr->motionMgr()->lastError()),
-			Qt::red);
-	}
 }
 
 

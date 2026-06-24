@@ -224,6 +224,7 @@ signals:
     void motionDone(short profile);
     // ·¢Éú´íÎó (ÖáºÅ, ´íÎóÂë, ÃèÊö)
     void errorOccurred(short profile, short errorCode, const QString& errorMsg);
+    void homeStatus(short axis, const QString& msg);
 
 };
 

@@ -1,5 +1,6 @@
 ﻿#include <QMessageBox>
 #include <QCoreApplication>
+#include <QThread>
 
 #include "TotalMgr.h"
 #include "MotionMgr.h"
@@ -336,11 +337,19 @@ bool MotionMgr::homeStart(short axis)
 
     // ── 搜索方向 ──
     bool searchPos = false;
+    QString modeName;
     switch (mode) {
-    case homeMode::HomeMode_pLlimit: searchPos = true;  break;
-    default:                         searchPos = false; break;
+    case homeMode::HomeMode_nLlimit:   searchPos = false; modeName = QStringLiteral("负限位");  break;
+    case homeMode::HomeMode_pLlimit:   searchPos = true;  modeName = QStringLiteral("正限位");  break;
+    case homeMode::HomeMode_Home:      searchPos = false; modeName = QStringLiteral("原点DI");  break;
+    case homeMode::HomeMode_HomeIndex: searchPos = false; modeName = QStringLiteral("原点+Index"); break;
+    case homeMode::HomeMode_Index:     searchPos = false; modeName = QStringLiteral("Index");   break;
     }
     long searchStep = searchPos ? range : -range;
+
+    // ★ 回零开始
+    emit homeStatus(axis, QStringLiteral("回零开始 模式=%1 Vel=%2mm/s Acc=%3mm/s^2 Range=%4mm Offset=%5mm")
+        .arg(modeName).arg(homeVelMm).arg(homeAccMm).arg(homeRangeMm).arg(homeOffsetMm));
 
     // ── 步骤1: 梯形模式 ──
     m_lastError = GtsHal::prfTrap(axis);
@@ -362,34 +371,29 @@ bool MotionMgr::homeStart(short axis)
     }
 
     // ── 步骤3: 确定检测方式 ──
-    // DI 模式（0/1/2）: 直接读 DI，和 500ms 定时器同一套机制
-    // 捕获模式（3/4）: Index/Z 相没 DI，必须用硬件捕获
     bool useCapture = false;
     short captureType = 0;
     bool useDI = false;
-    short diType = 0;       // MC_LIMIT_POSITIVE / MC_LIMIT_NEGATIVE / MC_HOME
-    int   triggerBit = 0;   // 触发值: 1=高电平触发, 0=低电平触发(脱离限位用)
+    short diType = 0;
+    int   triggerBit = 0;
 
     switch (mode) {
     case homeMode::HomeMode_nLlimit:
-        // 限位模式：靠限位自动停，不需要在循环里读 DI
         break;
     case homeMode::HomeMode_pLlimit:
         break;
     case homeMode::HomeMode_Home:
-        // 原点模式：用 DI 检测，无需硬件捕获
         useDI = true;
         diType = MC_HOME;
-        triggerBit = 1;   // 原点 DI 高电平有效
+        triggerBit = 1;
         break;
     case homeMode::HomeMode_HomeIndex:
-        // Index 需要硬件捕获
         useCapture = true;
-        captureType = 1;  // CAPTURE_HOME
+        captureType = 1;
         break;
     case homeMode::HomeMode_Index:
         useCapture = true;
-        captureType = 2;  // CAPTURE_INDEX
+        captureType = 2;
         break;
     }
 
@@ -401,12 +405,22 @@ bool MotionMgr::homeStart(short axis)
                 .arg(axis).arg(captureType));
             return false;
         }
+        emit homeStatus(axis, QStringLiteral("硬件捕获模式已配置 captureType=%1").arg(captureType));
+    }
+    else if (useDI) {
+        emit homeStatus(axis, QStringLiteral("检测方式=DI轮询(原点信号)"));
+    }
+    else {
+        emit homeStatus(axis, QStringLiteral("检测方式=限位DI轮询"));
     }
 
     // ── 步骤4: 启动搜索运动 ──
     double curPos = profilePos(axis);
     long targetPos = static_cast<long>(curPos) + searchStep;
     long mask = 1L << (axis - 1);
+
+    emit homeStatus(axis, QStringLiteral("启动搜索运动 curPos=%1 targetPos=%2 step=%3 pulse")
+        .arg(curPos, 0, 'f', 0).arg(targetPos).arg(searchStep));
 
     m_lastError = GtsHal::setPos(axis, targetPos);
     if (m_lastError != 0) {
@@ -423,39 +437,42 @@ bool MotionMgr::homeStart(short axis)
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
     }
+    emit homeStatus(axis, QStringLiteral("搜索运动已启动 GT_Update OK"));
 
     // ── 步骤5: 等待触发 ──
     if (useDI) {
         // === DI 检测模式（模式2: Home） ===
-        // 和 IOMgr::getHomeDI() 同一套机制：直接读 MC_HOME DI
+        emit homeStatus(axis, QStringLiteral("等待原点DI触发..."));
         long sts = 0;
         long diVal = 0;
-        int axisBit = axis - 1;              // DI 位: 轴1→bit0, 轴2→bit1...
+        int axisBit = axis - 1;
 
         do {
             GtsHal::getSts(axis, &sts);
-            GtsHal::getDi(diType, &diVal);   // ← 和 500ms 定时器相同的调用
-            QCoreApplication::processEvents(); // ← 让 500ms 定时器持续刷新 UI
+            GtsHal::getDi(diType, &diVal);
+            QCoreApplication::processEvents();
 
-            if (!(sts & 0x400)) {            // 运动已停但未触发
+            if (!(sts & 0x400)) {
                 emit errorOccurred(axis, -1,
-                    QStringLiteral("轴%1 回零失败：运动停止但未检测到原点信号").arg(axis));
+                    QStringLiteral("轴%1 回零失败:运动停止但未检测到原点信号 sts=0x%2 di=0x%3")
+                    .arg(axis).arg(sts, 0, 16).arg(diVal, 0, 16));
                 return false;
             }
         } while (((diVal >> axisBit) & 1) != triggerBit);
 
-        // DI 触发 → 立即停止运动
+        emit homeStatus(axis, QStringLiteral("原点DI触发! di=0x%1 立即停止").arg(diVal, 0, 16));
+
         stop(axis, 0);
-        // 等待完全停下
         do {
             GtsHal::getSts(axis, &sts);
             QCoreApplication::processEvents();
         } while (sts & 0x400);
+        emit homeStatus(axis, QStringLiteral("轴已停止"));
 
-        // 记录当前编码器位置作为触发位置
         double capPos = profilePos(axis);
+        emit homeStatus(axis, QStringLiteral("触发位置=%1 offset=%2 → 移动到=%3")
+            .arg(capPos, 0, 'f', 0).arg(offset).arg(static_cast<long>(capPos) + offset));
 
-        // 运动到触发位置 + 偏移
         long finalTarget = static_cast<long>(capPos) + offset;
         m_lastError = GtsHal::setPos(axis, finalTarget);
         if (m_lastError != 0) {
@@ -468,9 +485,11 @@ bool MotionMgr::homeStart(short axis)
             return false;
         }
         waitMotionDone(axis);
+        emit homeStatus(axis, QStringLiteral("偏移移动完成"));
     }
     else if (useCapture) {
         // === 硬件捕获模式（模式3/4: Index） ===
+        emit homeStatus(axis, QStringLiteral("等待硬件捕获(Index/Z相)..."));
         short capture = 0;
         long  capPos = 0;
         long  sts = 0;
@@ -482,12 +501,15 @@ bool MotionMgr::homeStart(short axis)
 
             if (!(sts & 0x400)) {
                 emit errorOccurred(axis, -1,
-                    QStringLiteral("轴%1 回零失败：运动停止但未捕获到信号").arg(axis));
+                    QStringLiteral("轴%1 回零失败:运动停止但未捕获到信号 sts=0x%2 capture=%3")
+                    .arg(axis).arg(sts, 0, 16).arg(capture));
                 return false;
             }
         } while (capture == 0);
 
-        // 运动到捕获位置 + 偏移
+        emit homeStatus(axis, QStringLiteral("捕获 capPos=%1 → 移动到=%2")
+            .arg(capPos).arg(capPos + offset));
+
         long finalTarget = capPos + offset;
         m_lastError = GtsHal::setPos(axis, finalTarget);
         if (m_lastError != 0) {
@@ -500,9 +522,13 @@ bool MotionMgr::homeStart(short axis)
             return false;
         }
         waitMotionDone(axis);
+        emit homeStatus(axis, QStringLiteral("偏移移动完成"));
     }
     else {
-        // === 限位模式（模式0/1）—— 用 DI 检测，与 500ms 定时器同机制 ===
+        // === 限位模式（模式0/1）—— 与 500ms 定时器同机制的 DI 检测 ===
+        QString lmtName = (mode == homeMode::HomeMode_nLlimit) ? QStringLiteral("负限位") : QStringLiteral("正限位");
+        emit homeStatus(axis, QStringLiteral("等待%1DI触发...").arg(lmtName));
+
         long sts = 0;
         long diVal = 0;
         short diType = (mode == homeMode::HomeMode_nLlimit)
@@ -510,16 +536,14 @@ bool MotionMgr::homeStart(short axis)
             : MC_LIMIT_POSITIVE;
         int axisBit = axis - 1;
 
-        // 循环等限位触发或运动停止
         do {
             GtsHal::getSts(axis, &sts);
             GtsHal::getDi(diType, &diVal);
             QCoreApplication::processEvents();
 
-            if (!(sts & 0x400)) break;               // 运动已停，退出循环
-        } while (((diVal >> axisBit) & 1) == 0);     // 等限位触发
+            if (!(sts & 0x400)) break;
+        } while (((diVal >> axisBit) & 1) == 0);
 
-        // 退出后再读一次 DI（防止运动停止和 DI 变化之间竞态）
         GtsHal::getDi(diType, &diVal);
 
         if (((diVal >> axisBit) & 1) == 0) {
@@ -530,17 +554,23 @@ bool MotionMgr::homeStart(short axis)
             return false;
         }
 
-        // 限位已触发 → 确保完全停止 → 脱离限位 + 偏移
+        emit homeStatus(axis, QStringLiteral("%1DI触发! di=0x%2 立即停止")
+            .arg(lmtName).arg(diVal, 0, 16));
+
         stop(axis, 0);
         do {
             GtsHal::getSts(axis, &sts);
             QCoreApplication::processEvents();
         } while (sts & 0x400);
+        emit homeStatus(axis, QStringLiteral("轴已停止,清除限位状态"));
 
         GtsHal::clrSts(axis, axis);
 
         long escapeStep = searchPos ? -offset : offset;
         curPos = profilePos(axis);
+        emit homeStatus(axis, QStringLiteral("脱离限位 curPos=%1 escape=%2 → target=%3")
+            .arg(curPos, 0, 'f', 0).arg(escapeStep).arg(static_cast<long>(curPos) + escapeStep));
+
         m_lastError = GtsHal::setPos(axis, static_cast<long>(curPos) + escapeStep);
         if (m_lastError != 0) {
             emit errorOccurred(axis, m_lastError, lastErrorString());
@@ -552,18 +582,26 @@ bool MotionMgr::homeStart(short axis)
             return false;
         }
         waitMotionDone(axis);
+        emit homeStatus(axis, QStringLiteral("脱离限位+偏移完成"));
     }
 
     // ── 步骤6: 位置清零 ──
+    emit homeStatus(axis, QStringLiteral("位置清零"));
     m_lastError = GtsHal::zeroPos(axis, axis);
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
     }
 
+    // 清除状态
+    QThread::msleep(1000);
+    m_pTotalMgr->axisMgr()->clearStatus(axis);
+
+    emit homeStatus(axis, QStringLiteral("回零完成"));
     emit motionDone(axis);
     return true;
 }
+
 
 
 
