@@ -84,6 +84,13 @@ public:
     void initAfterBoardOpened();
     // 板卡关闭后的清理
     void cleanupAfterBoardClosed();
+    // ── 当量换算工具 ──
+    double pulsePerMm(short profile) const;          // 脉冲/mm 系数
+    long   mmToPulse(short profile, double mm) const; // mm → pulse
+    double mmpsToPulsePerMs(short profile, double mmps) const;   // mm/s → pulse/ms
+    double mmps2ToPulsePerMs2(short profile, double mmps2) const; // mm/s² → pulse/ms²
+    double pulseToMm(short profile, long pulse) const; // pulse → mm（显示用）
+
 
 signals:
     // 板卡时钟更新
@@ -96,7 +103,6 @@ signals:
     void diUpdated(const stuDI& di);
     // DO 更新
     void doUpdated(const stuDO& do_);
-
     // 更新日志
     void logUpdated(const QString& log, QColor color);
     

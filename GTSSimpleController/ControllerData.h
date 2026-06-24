@@ -24,7 +24,7 @@ inline QString DITypeToString(DIType type)
     case DIType::GPI:           return QStringLiteral("通用输入");
     case DIType::Arrive:        return QStringLiteral("电机到位");
     case DIType::MPG:           return QStringLiteral("手轮");
-    default:                     return QStringLiteral("未知");
+    default:                    return QStringLiteral("未知");
     }
 }
 
@@ -40,7 +40,7 @@ enum class DOType : short
 enum class PulseMode : short
 {
     PulseDir = 0,   // 脉冲 + 方向
-    CCW_CW = 1      // 双脉冲（正转/反转）
+    CCW_CW = 1      // 双脉冲(正转/反转)
 };
 
 // IO极性
@@ -81,7 +81,6 @@ enum class homeMode : short
     HomeMode_Index = 4,     // Index 回零
 };
 
-
 // 板卡信息
 struct stuCardInfo {
     short cardNum;
@@ -97,13 +96,13 @@ struct stuDriverVersion {
 // DI 状态
 struct stuDI
 {
-    std::vector<int> vecPLimit;    // 正限位，8 位
-    std::vector<int> vecNLimit;    // 负限位，8 位
-    std::vector<int> vecAlarm;     // 驱动报警，8 位
-    std::vector<int> vecHome;      // 原点信号，8 位
-    std::vector<int> vecGPI;       // 通用输入1，16 位
-    std::vector<int> vecArrive;    // 电机到位，8 位
-    std::vector<int> vecHandwheel; // 手轮输入2，8 位
+    std::vector<int> vecPLimit;    // 正限位,8 位
+    std::vector<int> vecNLimit;    // 负限位,8 位
+    std::vector<int> vecAlarm;     // 驱动报警,8 位
+    std::vector<int> vecHome;      // 原点信号,8 位
+    std::vector<int> vecGPI;       // 通用输入,16 位
+    std::vector<int> vecArrive;    // 电机到位,8 位
+    std::vector<int> vecHandwheel; // 手轮输入,8 位
 
     stuDI() {
         vecPLimit.resize(8, 0);
@@ -118,13 +117,13 @@ struct stuDI
     // 展平为 64 位，与表格行号一一对应
     std::vector<int> toFlatVector() const {
         std::vector<int> flat;
-        flat.insert(flat.end(), vecPLimit.begin(), vecPLimit.end());   // 0~7
-        flat.insert(flat.end(), vecNLimit.begin(), vecNLimit.end());   // 8~15
-        flat.insert(flat.end(), vecAlarm.begin(), vecAlarm.end());    // 16~23
-        flat.insert(flat.end(), vecHome.begin(), vecHome.end());     // 24~31
-        flat.insert(flat.end(), vecGPI.begin(), vecGPI.end());     // 32~47
-        flat.insert(flat.end(), vecArrive.begin(), vecArrive.end());   // 48~55
-        flat.insert(flat.end(), vecHandwheel.begin(), vecHandwheel.end());     // 56~63
+        flat.insert(flat.end(), vecPLimit.begin(), vecPLimit.end());        // 0~7
+        flat.insert(flat.end(), vecNLimit.begin(), vecNLimit.end());        // 8~15
+        flat.insert(flat.end(), vecAlarm.begin(), vecAlarm.end());          // 16~23
+        flat.insert(flat.end(), vecHome.begin(), vecHome.end());            // 24~31
+        flat.insert(flat.end(), vecGPI.begin(), vecGPI.end());              // 32~47
+        flat.insert(flat.end(), vecArrive.begin(), vecArrive.end());        // 48~55
+        flat.insert(flat.end(), vecHandwheel.begin(), vecHandwheel.end());  // 56~63
         return flat;
     }
 };
@@ -132,9 +131,9 @@ struct stuDI
 // DO 状态
 struct stuDO
 {
-    std::vector<int> vecServoOn;   // 伺服使能，8 位
-    std::vector<int> vecAlmClear;  // 报警清除，8 位
-    std::vector<int> vecGPO;       // 通用输出，16 位
+    std::vector<int> vecServoOn;   // 伺服使能,8 位
+    std::vector<int> vecAlmClear;  // 报警清除,8 位
+    std::vector<int> vecGPO;       // 通用输出,16 位
 
     stuDO() {
         vecServoOn.resize(8, 0);
@@ -144,9 +143,9 @@ struct stuDO
 
     std::vector<int> toFlatVector() const {
         std::vector<int> flat;
-        flat.insert(flat.end(), vecServoOn.begin(), vecServoOn.end());   // 0~7
+        flat.insert(flat.end(), vecServoOn.begin(), vecServoOn.end());    // 0~7
         flat.insert(flat.end(), vecAlmClear.begin(), vecAlmClear.end());  // 8~15
-        flat.insert(flat.end(), vecGPO.begin(), vecGPO.end());       // 16~31
+        flat.insert(flat.end(), vecGPO.begin(), vecGPO.end());            // 16~31
         return flat;
     }
 };

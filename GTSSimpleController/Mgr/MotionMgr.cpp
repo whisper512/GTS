@@ -167,18 +167,15 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
         return false;
     }
 
-    // 当量换算系数：pulse/mm
-    double pulsePerMm = static_cast<double>(prfAlpha) / prfBeta;
-
-    // mm → profile 脉冲
-    double dStep = lengthMm * pulsePerMm;
-    long stepSize = static_cast<long>(dStep);
+    if (m_pTotalMgr->pulsePerMm(profile) == 0.0) { /*报错*/ }
+    long stepSize = m_pTotalMgr->mmToPulse(profile, lengthMm);
+   
 
     // 长度非零但换算后脉冲为 0
     if (stepSize == 0 && lengthMm != 0.0) {
         emit errorOccurred(profile, -1,
             QStringLiteral("下发 %.4f mm 换算脉冲 = %1，被截断为 0，请检查当量")
-            .arg(lengthMm, 0, 'f', 4).arg(dStep, 0, 'f', 2));
+            .arg(lengthMm, 0, 'f', 4).arg(stepSize));
         return false;
     }
 
@@ -189,9 +186,9 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
 
     // 运动参数单位换算：mm/s → pulse/ms, mm/s² → pulse/ms²
     stuTrapParam trapPrm = pAxis->trapParam;          
-    trapPrm.dMotionVel = trapPrm.dMotionVel * pulsePerMm / 1000.0;      // mm/s → pulse/ms
-    trapPrm.acc = trapPrm.acc * pulsePerMm / 1000000.0;   // mm/s² → pulse/ms²
-    trapPrm.dec = trapPrm.dec * pulsePerMm / 1000000.0;   // mm/s² → pulse/ms²
+    trapPrm.dMotionVel = m_pTotalMgr->mmpsToPulsePerMs(profile, trapPrm.dMotionVel);
+    trapPrm.acc = m_pTotalMgr->mmps2ToPulsePerMs2(profile, trapPrm.acc);
+    trapPrm.dec = m_pTotalMgr->mmps2ToPulsePerMs2(profile, trapPrm.dec);
 
     return startTrapMotion(profile, stepSize, trapPrm);
 }
@@ -228,17 +225,7 @@ bool MotionMgr::setJogParam(short axisId, const stuJogParam& param)
 
 bool MotionMgr::startJogMotion(short profile, short direction)
 {
-    // 获取当量参数
-    long prfAlpha = 1, prfBeta = 1;
-    prfAlpha = m_pTotalMgr->configMgr()->profileScaleAlpha(profile);
-    prfBeta = m_pTotalMgr->configMgr()->profileScaleBeta(profile);
-    if (prfBeta == 0) {
-        emit errorOccurred(profile, -1,
-            QStringLiteral("当量参数无效 prfAlpha=%1 prfBeta=%2")
-            .arg(prfAlpha).arg(prfBeta));
-        return false;
-    }
-    double pulsePerMm = static_cast<double>(prfAlpha) / prfBeta;
+    
 
     int idx = profile - 1;
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
@@ -247,9 +234,15 @@ bool MotionMgr::startJogMotion(short profile, short direction)
     const stuJogParam& jog = pAxis->jogParam;
 
     // Jog 运动参数单位换算：mm/s → pulse/ms, mm/s² → pulse/ms²
-    double jogVel = jog.dMotionVel * pulsePerMm / 1000.0;
-    double jogAcc = jog.acc * pulsePerMm / 1000000.0;
-    double jogDec = jog.dec * pulsePerMm / 1000000.0;
+    if (m_pTotalMgr->pulsePerMm(profile) == 0.0) {
+        emit errorOccurred(profile, -1,
+            QStringLiteral("当量参数无效"));
+        return false;
+    }
+    double jogVel = m_pTotalMgr->mmpsToPulsePerMs(profile, jog.dMotionVel);
+    double jogAcc = m_pTotalMgr->mmps2ToPulsePerMs2(profile, jog.acc);
+    double jogDec = m_pTotalMgr->mmps2ToPulsePerMs2(profile, jog.dec);
+
 
     // 参数检查
     if (jogVel <= 0.0) {
@@ -321,19 +314,16 @@ bool MotionMgr::homeStart(short axis)
     double homeOffsetMm = cfg->homeOffset(axis);
 
     // ── 当量换算 ──
-    long prfAlpha = cfg->profileScaleAlpha(axis);
-    long prfBeta = cfg->profileScaleBeta(axis);
-    if (prfBeta == 0) {
+    if (m_pTotalMgr->pulsePerMm(axis) == 0.0) {
         emit errorOccurred(axis, -1,
-            QStringLiteral("轴%1 当量参数 prfBeta=0，无法换算").arg(axis));
+            QStringLiteral("轴%1 当量参数无效，无法换算").arg(axis));
         return false;
     }
-    double ppm = static_cast<double>(prfAlpha) / prfBeta;
+    double vel = m_pTotalMgr->mmpsToPulsePerMs(axis, homeVelMm);
+    double acc = m_pTotalMgr->mmps2ToPulsePerMs2(axis, homeAccMm);
+    long   range = m_pTotalMgr->mmToPulse(axis, homeRangeMm);
+    long   offset = m_pTotalMgr->mmToPulse(axis, homeOffsetMm);
 
-    double vel = homeVelMm * ppm / 1000.0;
-    double acc = homeAccMm * ppm / 1000000.0;
-    long range = static_cast<long>(homeRangeMm * ppm);
-    long offset = static_cast<long>(homeOffsetMm * ppm);
 
     // ── 搜索方向 ──
     bool searchPos = false;

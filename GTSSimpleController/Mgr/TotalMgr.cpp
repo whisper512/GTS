@@ -88,6 +88,35 @@ void CTotalMgr::cleanupAfterBoardClosed()
     m_clocks = stuClock(); // 清空时钟
 }
 
+double CTotalMgr::pulsePerMm(short profile) const
+{
+    long alpha = configMgr()->profileScaleAlpha(profile);
+    long beta = configMgr()->profileScaleBeta(profile);
+    if (beta == 0) return 0.0;
+    return static_cast<double>(alpha) / beta;
+}
+
+long CTotalMgr::mmToPulse(short profile, double mm) const
+{
+    return static_cast<long>(mm * pulsePerMm(profile));
+}
+
+double CTotalMgr::mmpsToPulsePerMs(short profile, double mmps) const
+{
+    return mmps * pulsePerMm(profile) / 1000.0;       // mm/s → pulse/ms
+}
+
+double CTotalMgr::mmps2ToPulsePerMs2(short profile, double mmps2) const
+{
+    return mmps2 * pulsePerMm(profile) / 1000000.0;   // mm/s² → pulse/ms²
+}
+
+double CTotalMgr::pulseToMm(short profile, long pulse) const
+{
+    double ppm = pulsePerMm(profile);
+    if (ppm == 0.0) return 0.0;
+    return static_cast<double>(pulse) / ppm;
+}
 
 void CTotalMgr::onRefreshTimeout()
 {
