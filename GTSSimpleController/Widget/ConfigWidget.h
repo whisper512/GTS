@@ -57,6 +57,11 @@ private:
 	void onHomeRangeChanged();
 	void onHomeOffsetChanged();
 
+	// 轴限位
+	void refreshAxisLimit();
+	void onPosLimitChanged();
+	void onNegLimitChanged();
+
 signals:
 
 private slots:

@@ -76,8 +76,11 @@
            </item>
            <item row="2" column="2">
             <widget class="QSpinBox" name="spinBox_pLimit">
+             <property name="minimum">
+              <number>-9999</number>
+             </property>
              <property name="maximum">
-              <number>32767</number>
+              <number>9999</number>
              </property>
             </widget>
            </item>
@@ -122,7 +125,7 @@
            <item row="2" column="0" colspan="2">
             <widget class="QLabel" name="label_pLimit">
              <property name="text">
-              <string>正限位:</string>
+              <string>正限位(mm):</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -165,7 +168,7 @@
            <item row="3" column="0" colspan="2">
             <widget class="QLabel" name="label_nLimit">
              <property name="text">
-              <string>负限位:</string>
+              <string>负限位(mm):</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -174,8 +177,11 @@
            </item>
            <item row="3" column="2">
             <widget class="QSpinBox" name="spinBox_nLimit">
+             <property name="minimum">
+              <number>-9999</number>
+             </property>
              <property name="maximum">
-              <number>32767</number>
+              <number>9999</number>
              </property>
             </widget>
            </item>

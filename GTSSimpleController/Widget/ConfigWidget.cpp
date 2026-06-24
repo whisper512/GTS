@@ -70,6 +70,15 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.doubleSpinBox_homeAcc, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeAccChanged);
 	connect(ui.doubleSpinBox_homeRange, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeRangeChanged);
 	connect(ui.doubleSpinBox_homeOffset, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeOffsetChanged);
+	// ===== 轴限位：轴切换刷新 =====
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
+		this, [this]() { refreshAxisLimit(); });
+	// ===== 轴限位：spinBox 修改后保存 JSON =====
+	connect(ui.spinBox_pLimit, &QAbstractSpinBox::editingFinished,
+		this, &CConfigWidget::onPosLimitChanged);
+	connect(ui.spinBox_nLimit, &QAbstractSpinBox::editingFinished,
+		this, &CConfigWidget::onNegLimitChanged);
+
 }
 
 void CConfigWidget::onBtnClicked()
@@ -117,6 +126,7 @@ void CConfigWidget::onconfigChanged()
 	refreshScaleValues();
 	refreshControlMode();
 	refreshHomeConfig();
+	refreshAxisLimit();
 }
 
 
@@ -446,5 +456,53 @@ void CConfigWidget::onHomeOffsetChanged()
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 回零偏移 → %2 mm").arg(axis).arg(offset, 0, 'f', 3),
+		Qt::darkGreen);
+}
+
+// ============================================================
+// 轴限位
+// ============================================================
+
+void CConfigWidget::refreshAxisLimit()
+{
+	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
+	short axis = ui.comboBox_axisId->currentText().toShort();
+
+	ui.spinBox_pLimit->setValue((int)m_pTotalMgr->configMgr()->posLimit(axis));
+	ui.spinBox_nLimit->setValue((int)m_pTotalMgr->configMgr()->negLimit(axis));
+
+	m_bRefreshing = false;
+}
+
+void CConfigWidget::onPosLimitChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	double limit = ui.spinBox_pLimit->value();
+
+	m_pTotalMgr->configMgr()->setPosLimit(axis, limit);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 正限位 → %2").arg(axis).arg(limit, 0, 'f', 1),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onNegLimitChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short axis = ui.comboBox_axisId->currentText().toShort();
+	double limit = ui.spinBox_nLimit->value();
+
+	m_pTotalMgr->configMgr()->setNegLimit(axis, limit);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 负限位 → %2").arg(axis).arg(limit, 0, 'f', 1),
 		Qt::darkGreen);
 }

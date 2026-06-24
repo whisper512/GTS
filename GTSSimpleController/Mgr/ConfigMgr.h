@@ -113,6 +113,12 @@ public:
     double    homeRange(short axis) const;
     double    homeOffset(short axis) const;
 
+    // ÷·œﬁŒª
+    void setPosLimit(short axis, double limit);
+    void setNegLimit(short axis, double limit);
+    double posLimit(short axis) const;
+    double negLimit(short axis) const;
+
 
 public:
     explicit ConfigMgr(QObject* parent = nullptr);

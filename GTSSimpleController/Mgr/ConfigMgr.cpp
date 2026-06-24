@@ -76,6 +76,11 @@ static QJsonObject axisConfigToJson(short axis, const stuAxisConfig& cfg)
     homeObj[QStringLiteral("range")] = cfg.axisHomeConfig[i].homeRange;
     homeObj[QStringLiteral("offset")] = cfg.axisHomeConfig[i].homeOffset;
 
+    // ===== 轴限位 =====
+    QJsonObject limitObj;
+    limitObj[QStringLiteral("posLimit")] = cfg.axisLimit[i].posLimit;
+    limitObj[QStringLiteral("negLimit")] = cfg.axisLimit[i].negLimit;
+
     QJsonObject obj;
     obj[QStringLiteral("axis")] = axis;
     obj[QStringLiteral("scale")] = scaleObj;
@@ -84,6 +89,7 @@ static QJsonObject axisConfigToJson(short axis, const stuAxisConfig& cfg)
     obj[QStringLiteral("control")] = ctrlObj;
     obj[QStringLiteral("profile")] = prfObj;
     obj[QStringLiteral("home")] = homeObj;
+    obj[QStringLiteral("limit")] = limitObj;
     return obj;
 }
 
@@ -144,6 +150,7 @@ bool ConfigMgr::loadAxisConfig(const QString& filePath)
         m_pAxisCfg->smoothStopDec[i] = 100.0;
         m_pAxisCfg->estopDec[i] = 1000.0;
         m_pAxisCfg->axisHomeConfig[i] = stuAxisHomeConfig{};
+        m_pAxisCfg->axisLimit[i] = stuAxisLimit{};
     }
 
     QJsonArray axes = root.value(QStringLiteral("axes")).toArray();
@@ -212,8 +219,14 @@ bool ConfigMgr::loadAxisConfig(const QString& filePath)
             m_pAxisCfg->axisHomeConfig[i].homeRange = homeObj.value(QStringLiteral("range")).toDouble(1000.0);
             m_pAxisCfg->axisHomeConfig[i].homeOffset = homeObj.value(QStringLiteral("offset")).toDouble(0.0);
         }
-    }
 
+        // ===== 轴限位 =====
+        QJsonObject limitObj = ax.value(QStringLiteral("limit")).toObject();
+        if (!limitObj.isEmpty()) {
+            m_pAxisCfg->axisLimit[i].posLimit = limitObj.value(QStringLiteral("posLimit")).toDouble(0.0);
+            m_pAxisCfg->axisLimit[i].negLimit = limitObj.value(QStringLiteral("negLimit")).toDouble(0.0);
+        }
+    }
     return true;
 }
 
@@ -590,6 +603,34 @@ double ConfigMgr::homeOffset(short axis) const
         ? m_pAxisCfg->axisHomeConfig[axis - 1].homeOffset : 0.0;
 }
 
+// ===== 轴限位 =====
+void ConfigMgr::setPosLimit(short axis, double limit)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisLimit[i].posLimit = limit;
+    emit configChanged();
+}
+
+void ConfigMgr::setNegLimit(short axis, double limit)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisLimit[i].negLimit = limit;
+    emit configChanged();
+}
+
+double ConfigMgr::posLimit(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisLimit[axis - 1].posLimit : 0.0;
+}
+
+double ConfigMgr::negLimit(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisLimit[axis - 1].negLimit : 0.0;
+}
 
 
 // ================================================================
