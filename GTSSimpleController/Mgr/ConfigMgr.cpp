@@ -68,6 +68,14 @@ static QJsonObject axisConfigToJson(short axis, const stuAxisConfig& cfg)
     QJsonObject modeObj;
     modeObj[QStringLiteral("controlMode")] = static_cast<int>(cfg.ctrlMode[i]);
 
+    // ===== 回零配置 =====
+    QJsonObject homeObj;
+    homeObj[QStringLiteral("mode")] = static_cast<int>(cfg.axisHomeConfig[i].homeMode);
+    homeObj[QStringLiteral("vel")] = cfg.axisHomeConfig[i].homeVel;
+    homeObj[QStringLiteral("acc")] = cfg.axisHomeConfig[i].homeAcc;
+    homeObj[QStringLiteral("range")] = cfg.axisHomeConfig[i].homeRange;
+    homeObj[QStringLiteral("offset")] = cfg.axisHomeConfig[i].homeOffset;
+
     QJsonObject obj;
     obj[QStringLiteral("axis")] = axis;
     obj[QStringLiteral("scale")] = scaleObj;
@@ -75,6 +83,7 @@ static QJsonObject axisConfigToJson(short axis, const stuAxisConfig& cfg)
     obj[QStringLiteral("mode")] = modeObj;
     obj[QStringLiteral("control")] = ctrlObj;
     obj[QStringLiteral("profile")] = prfObj;
+    obj[QStringLiteral("home")] = homeObj;
     return obj;
 }
 
@@ -134,6 +143,7 @@ bool ConfigMgr::loadAxisConfig(const QString& filePath)
         m_pAxisCfg->followingErrorLimit[i] = 32767;
         m_pAxisCfg->smoothStopDec[i] = 100.0;
         m_pAxisCfg->estopDec[i] = 1000.0;
+        m_pAxisCfg->axisHomeConfig[i] = stuAxisHomeConfig{};
     }
 
     QJsonArray axes = root.value(QStringLiteral("axes")).toArray();
@@ -189,6 +199,18 @@ bool ConfigMgr::loadAxisConfig(const QString& filePath)
                 static_cast<int>(ControlMode::ClosedLoop));
             if (m >= 0 && m <= 2)
                 m_pAxisCfg->ctrlMode[i] = static_cast<ControlMode>(m);
+        }
+
+        // ===== 回零配置 =====
+        QJsonObject homeObj = ax.value(QStringLiteral("home")).toObject();
+        if (!homeObj.isEmpty()) {
+            int hm = homeObj.value(QStringLiteral("mode")).toInt(
+                static_cast<int>(homeMode::HomeMode_nLlimit));
+            m_pAxisCfg->axisHomeConfig[i].homeMode = static_cast<homeMode>(hm);
+            m_pAxisCfg->axisHomeConfig[i].homeVel = homeObj.value(QStringLiteral("vel")).toDouble(10.0);
+            m_pAxisCfg->axisHomeConfig[i].homeAcc = homeObj.value(QStringLiteral("acc")).toDouble(5.0);
+            m_pAxisCfg->axisHomeConfig[i].homeRange = homeObj.value(QStringLiteral("range")).toDouble(1000.0);
+            m_pAxisCfg->axisHomeConfig[i].homeOffset = homeObj.value(QStringLiteral("offset")).toDouble(0.0);
         }
     }
 
@@ -495,6 +517,77 @@ double ConfigMgr::estopDec(short axis) const
 {
     return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
         ? m_pAxisCfg->estopDec[axis - 1] : 1000.0;
+}
+
+// ===== 回零参数 =====
+void ConfigMgr::setHomeMode(short axis, homeMode mode)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisHomeConfig[i].homeMode = mode;
+    emit configChanged();
+}
+
+void ConfigMgr::setHomeVel(short axis, double vel)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisHomeConfig[i].homeVel = vel;
+    emit configChanged();
+}
+
+void ConfigMgr::setHomeAcc(short axis, double acc)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisHomeConfig[i].homeAcc = acc;
+    emit configChanged();
+}
+
+void ConfigMgr::setHomeRange(short axis, double range)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisHomeConfig[i].homeRange = range;
+    emit configChanged();
+}
+
+void ConfigMgr::setHomeOffset(short axis, double offset)
+{
+    if (!m_pAxisCfg || axis < 1 || axis > m_axisCount) return;
+    int i = axis - 1;
+    m_pAxisCfg->axisHomeConfig[i].homeOffset = offset;
+    emit configChanged();
+}
+
+homeMode ConfigMgr::homeModeValue(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisHomeConfig[axis - 1].homeMode : homeMode::HomeMode_nLlimit;
+}
+
+double ConfigMgr::homeVel(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisHomeConfig[axis - 1].homeVel : 10.0;
+}
+
+double ConfigMgr::homeAcc(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisHomeConfig[axis - 1].homeAcc : 5.0;
+}
+
+double ConfigMgr::homeRange(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisHomeConfig[axis - 1].homeRange : 1000.0;
+}
+
+double ConfigMgr::homeOffset(short axis) const
+{
+    return (m_pAxisCfg && axis >= 1 && axis <= m_axisCount)
+        ? m_pAxisCfg->axisHomeConfig[axis - 1].homeOffset : 0.0;
 }
 
 

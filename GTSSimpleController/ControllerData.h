@@ -72,6 +72,10 @@ enum class ControlMode : short
     Simulation = 2    // 调试:无电机 + 脉冲计数器
 };
 
+enum class homeMode : short
+{
+    HomeMode_nLlimit = 0,   // 负限位回零
+};
 
 
 // 板卡信息
@@ -157,6 +161,20 @@ struct stuScaleFactor
     long beta = 1;
 };
 
+struct stuAxisLimit
+{
+    double posLimit = 0.0;
+    double negLimit = 0.0;
+};
+
+struct stuAxisHomeConfig
+{
+    enum homeMode homeMode = homeMode::HomeMode_nLlimit;
+    double homeVel = 10.0;
+    double homeAcc = 5.0;
+    double homeRange = 1000.0;
+    double homeOffset = 0.0;
+};
 
 struct stuAxisConfig
 {
@@ -168,6 +186,10 @@ struct stuAxisConfig
     stuScaleFactor encScale[4];
     // 控制模式
     ControlMode ctrlMode[4] = { ControlMode::ClosedLoop,ControlMode::ClosedLoop, ControlMode::ClosedLoop,ControlMode::ClosedLoop };
+    // 轴限位
+    stuAxisLimit axisLimit[4];
+    // 回零参数
+    stuAxisHomeConfig axisHomeConfig[4];
 
     // DAC
     short dacBias[4] = { 0, 0, 0, 0 };

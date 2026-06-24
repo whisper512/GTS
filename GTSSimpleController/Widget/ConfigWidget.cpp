@@ -20,10 +20,8 @@ void CConfigWidget::InitConfigWidget()
 {
 	QTimer::singleShot(100, this, [this]() {
 		InitUI();
-
+		connectSignalsAndSlots();
 		});
-	connectSignalsAndSlots();
-
 }
 
 void CConfigWidget::InitUI()
@@ -37,6 +35,11 @@ void CConfigWidget::InitUI()
 		QStringLiteral("开环"),
 		QStringLiteral("调试")
 		});
+
+	ComboAddItems(ui.comboBox_homeMode, {
+		QStringLiteral("负限位回零"),
+		});
+	ComboAddNumbers(ui.comboBox_axisIdHomeConfig, 4);
 }
 
 void CConfigWidget::connectSignalsAndSlots()
@@ -51,21 +54,22 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.spinBox_zeroOffsetCompensation, &QAbstractSpinBox::editingFinished,	this, &CConfigWidget::onDacBiasChanged);
 	connect(ui.spinBox_outputVoltageSaturationLimit, &QAbstractSpinBox::editingFinished,this, &CConfigWidget::onDacLimitChanged);
 	// ===== 轴切换刷新  =====
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, [this]() { refreshScaleValues(); });
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, [this]() { refreshControlMode(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),this, [this]() { refreshScaleValues(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),	this, [this]() { refreshControlMode(); });
 	// ===== 当量：spinBox 修改后保存 JSON + 写板卡 =====
-	connect(ui.spinBox_prfAlpha, &QAbstractSpinBox::editingFinished,
-		this, &CConfigWidget::onPrfAlphaChanged);
-	connect(ui.spinBox_prfBeta, &QAbstractSpinBox::editingFinished,
-		this, &CConfigWidget::onPrfBetaChanged);
-	connect(ui.spinBox_encAlpha, &QAbstractSpinBox::editingFinished,
-		this, &CConfigWidget::onEncAlphaChanged);
-	connect(ui.spinBox_encBeta, &QAbstractSpinBox::editingFinished,
-		this, &CConfigWidget::onEncBetaChanged);
-	connect(ui.comboBox_controlMode, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, &CConfigWidget::onControlModeChanged);
+	connect(ui.spinBox_prfAlpha, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onPrfAlphaChanged);
+	connect(ui.spinBox_prfBeta, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onPrfBetaChanged);
+	connect(ui.spinBox_encAlpha, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onEncAlphaChanged);
+	connect(ui.spinBox_encBeta, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onEncBetaChanged);
+	connect(ui.comboBox_controlMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CConfigWidget::onControlModeChanged);
+	// ===== 回零参数:轴切换刷新 =====
+	connect(ui.comboBox_axisIdHomeConfig, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshHomeConfig(); });
+	// ===== 回零参数:控件修改后保存 JSON =====
+	connect(ui.comboBox_homeMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CConfigWidget::onHomeModeChanged);
+	connect(ui.doubleSpinBox_homeVel, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeVelChanged);
+	connect(ui.doubleSpinBox_homeAcc, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeAccChanged);
+	connect(ui.doubleSpinBox_homeRange, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeRangeChanged);
+	connect(ui.doubleSpinBox_homeOffset, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeOffsetChanged);
 }
 
 void CConfigWidget::onBtnClicked()
@@ -112,6 +116,7 @@ void CConfigWidget::onconfigChanged()
 	refreshStopDecel();
 	refreshScaleValues();
 	refreshControlMode();
+	refreshHomeConfig();
 }
 
 
@@ -337,5 +342,109 @@ void CConfigWidget::onControlModeChanged()
 
 	m_pGTSControllerWidget->showLog(
 		QStringLiteral("轴%1 控制模式 → %2").arg(axis).arg(modeNames[index]),
+		Qt::darkGreen);
+}
+
+// ============================================================
+// 回零参数
+// ============================================================
+
+void CConfigWidget::refreshHomeConfig()
+{
+	if (!m_pTotalMgr) return;
+	m_bRefreshing = true;
+	short axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
+
+	int mode = static_cast<int>(m_pTotalMgr->configMgr()->homeModeValue(axis));
+	ui.comboBox_homeMode->setCurrentIndex(mode);
+	ui.doubleSpinBox_homeVel->setValue(m_pTotalMgr->configMgr()->homeVel(axis));
+	ui.doubleSpinBox_homeAcc->setValue(m_pTotalMgr->configMgr()->homeAcc(axis));
+	ui.doubleSpinBox_homeRange->setValue(m_pTotalMgr->configMgr()->homeRange(axis));
+	ui.doubleSpinBox_homeOffset->setValue(m_pTotalMgr->configMgr()->homeOffset(axis));
+
+	m_bRefreshing = false;
+}
+
+void CConfigWidget::onHomeModeChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
+	int  index = ui.comboBox_homeMode->currentIndex();
+	auto mode = static_cast<homeMode>(index);
+
+	m_pTotalMgr->configMgr()->setHomeMode(axis, mode);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	static const QString modeNames[] = {
+		QStringLiteral("负限位回零"),
+	};
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 回零模式 → %2").arg(axis).arg(modeNames[index]),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onHomeVelChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short  axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
+	double vel = ui.doubleSpinBox_homeVel->value();
+
+	m_pTotalMgr->configMgr()->setHomeVel(axis, vel);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 回零速度 → %2 mm/s").arg(axis).arg(vel, 0, 'f', 2),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onHomeAccChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short  axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
+	double acc = ui.doubleSpinBox_homeAcc->value();
+
+	m_pTotalMgr->configMgr()->setHomeAcc(axis, acc);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 回零加速度 → %2 mm/s^2").arg(axis).arg(acc, 0, 'f', 2),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onHomeRangeChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short  axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
+	double range = ui.doubleSpinBox_homeRange->value();
+
+	m_pTotalMgr->configMgr()->setHomeRange(axis, range);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 搜索范围 → %2 mm").arg(axis).arg(range, 0, 'f', 2),
+		Qt::darkGreen);
+}
+
+void CConfigWidget::onHomeOffsetChanged()
+{
+	if (m_bRefreshing) return;
+	if (!m_pTotalMgr) return;
+
+	short  axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
+	double offset = ui.doubleSpinBox_homeOffset->value();
+
+	m_pTotalMgr->configMgr()->setHomeOffset(axis, offset);
+	m_pTotalMgr->configMgr()->saveAxisConfig();
+
+	m_pGTSControllerWidget->showLog(
+		QStringLiteral("轴%1 回零偏移 → %2 mm").arg(axis).arg(offset, 0, 'f', 3),
 		Qt::darkGreen);
 }

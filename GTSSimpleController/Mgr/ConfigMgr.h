@@ -101,6 +101,18 @@ public:
     double smoothStopDec(short axis) const;
     double estopDec(short axis) const;
 
+    // ªÿ¡„≤Œ ˝
+    void setHomeMode(short axis, homeMode mode);
+    void setHomeVel(short axis, double vel);
+    void setHomeAcc(short axis, double acc);
+    void setHomeRange(short axis, double range);
+    void setHomeOffset(short axis, double offset);
+    homeMode  homeModeValue(short axis) const;
+    double    homeVel(short axis) const;
+    double    homeAcc(short axis) const;
+    double    homeRange(short axis) const;
+    double    homeOffset(short axis) const;
+
 
 public:
     explicit ConfigMgr(QObject* parent = nullptr);

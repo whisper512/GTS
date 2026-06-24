@@ -49,6 +49,14 @@ private:
 	void refreshControlMode();
 	void onControlModeChanged();
 
+	// 回零参数
+	void refreshHomeConfig();
+	void onHomeModeChanged();
+	void onHomeVelChanged();
+	void onHomeAccChanged();
+	void onHomeRangeChanged();
+	void onHomeOffsetChanged();
+
 signals:
 
 private slots:
