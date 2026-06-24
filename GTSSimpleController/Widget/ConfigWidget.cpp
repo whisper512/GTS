@@ -71,13 +71,10 @@ void CConfigWidget::connectSignalsAndSlots()
 	connect(ui.doubleSpinBox_homeRange, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeRangeChanged);
 	connect(ui.doubleSpinBox_homeOffset, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onHomeOffsetChanged);
 	// ===== 轴限位：轴切换刷新 =====
-	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged),
-		this, [this]() { refreshAxisLimit(); });
+	connect(ui.comboBox_axisId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() { refreshAxisLimit(); });
 	// ===== 轴限位：spinBox 修改后保存 JSON =====
-	connect(ui.spinBox_pLimit, &QAbstractSpinBox::editingFinished,
-		this, &CConfigWidget::onPosLimitChanged);
-	connect(ui.spinBox_nLimit, &QAbstractSpinBox::editingFinished,
-		this, &CConfigWidget::onNegLimitChanged);
+	connect(ui.spinBox_pLimit, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onPosLimitChanged);
+	connect(ui.spinBox_nLimit, &QAbstractSpinBox::editingFinished, this, &CConfigWidget::onNegLimitChanged);
 
 }
 

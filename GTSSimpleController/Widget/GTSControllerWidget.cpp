@@ -26,6 +26,10 @@ void GTSControllerWidget::Init()
         InitUI();
         InitUISignalAndSlotConnect();
         InitMgrSignalAndSlotConnect();
+        // 初始化读取配置
+        m_pTotalMgr->configMgr()->loadIODescriptions();
+        m_pTotalMgr->configMgr()->loadAxisConfig();
+        emit  m_pTotalMgr->configMgr()->configChanged();
         });
 }
 

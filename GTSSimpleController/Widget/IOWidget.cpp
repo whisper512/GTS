@@ -37,7 +37,6 @@ CIOWidget::~CIOWidget()
 
 void CIOWidget::InitUI()
 {
-    m_pTotalMgr->configMgr()->loadIODescriptions();
 	QTimer::singleShot(0, this, [this]() {
         InitTableDI();
         InitTableDO();
