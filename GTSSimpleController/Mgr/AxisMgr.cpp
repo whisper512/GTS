@@ -56,11 +56,11 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
             vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
         }
         else {
-            // 没有编码器,暂时
-            vecAxis[idx].dEncPos = 0.0;
-            vecAxis[idx].dEncVel = 0.0;
-            vecAxis[idx].dEncPosMm = 0.0;
-            vecAxis[idx].dEncVelMm = 0.0;   
+            // 编码器
+            vecAxis[idx].dEncPos = encoderPosition(axis);
+            vecAxis[idx].dEncVel = encoderVelocity(axis);
+            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos;
+            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel * 1000.0;
         }
     }
 }

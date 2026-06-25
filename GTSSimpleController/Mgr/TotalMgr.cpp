@@ -142,5 +142,4 @@ void CTotalMgr::onRefreshTimeout()
     m_ioMgr->getGPO(m_do.vecGPO);
     m_ioMgr->getClearAlarmDO(m_do.vecAlmClear);
     emit doUpdated(m_do);
-
 }
