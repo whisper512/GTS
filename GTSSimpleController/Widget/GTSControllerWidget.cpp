@@ -93,11 +93,10 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 
     connect(m_pTotalMgr->axisMgr(), &AxisMgr::errorOccurred, this, errorHandler);
     connect(m_pTotalMgr->boardMgr(), &BoardMgr::errorOccurred, this, errorHandler);
-    //connect(m_pTotalMgr->motionMgr(), &MotionMgr::errorOccurred, this, errorHandler);
-    //connect(m_pTotalMgr->configMgr() , &ConfigMgr::errorOccurred, this, errorHandler);
-    //connect(m_pTotalMgr->feedbackMgr(), &FeedbackMgr::errorOccurred, this, errorHandler);
-    //connect(m_pTotalMgr->interpolationMgr(), &InterpolationMgr::errorOccurred, this, errorHandler);
-    //connect(m_pTotalMgr->ioMgr(), &IOMgr::errorOccurred, this, errorHandler);
+    connect(m_pTotalMgr->motionMgr(), &MotionMgr::errorOccurred, this, errorHandler);
+    connect(m_pTotalMgr->configMgr() , &ConfigMgr::errorOccurred, this, errorHandler);
+    connect(m_pTotalMgr->feedbackMgr(), &FeedbackMgr::errorOccurred, this, errorHandler);
+    connect(m_pTotalMgr->interpolationMgr(), &InterpolationMgr::errorOccurred, this, errorHandler);
 
     // 回零过程追踪
     connect(m_pTotalMgr->motionMgr(), &MotionMgr::homeStatus, this,

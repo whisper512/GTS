@@ -193,8 +193,6 @@ bool MotionMgr::trapMotion(short profile, double lengthMm)
     return startTrapMotion(profile, stepSize, trapPrm);
 }
 
-
-
 void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
@@ -207,6 +205,7 @@ void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
         }
     }
 }
+
 bool MotionMgr::setJogParam(short axisId, const stuJogParam& param)
 {
     if (!checkProfile(axisId)) return false;
@@ -225,8 +224,6 @@ bool MotionMgr::setJogParam(short axisId, const stuJogParam& param)
 
 bool MotionMgr::startJogMotion(short profile, short direction)
 {
-    
-
     int idx = profile - 1;
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
     if (!pAxis) return false;
@@ -593,9 +590,6 @@ bool MotionMgr::homeStart(short axis)
 }
 
 
-
-
-
 bool MotionMgr::checkProfile(short profile) const
 {
     if (profile < 1 || profile > m_axisCount) {
@@ -662,7 +656,8 @@ void MotionMgr::waitMotionDone(short profile)
 }
 
 
-bool MotionMgr::setProfilePos(short profile, long pos) {
+bool MotionMgr::setProfilePos(short profile, long pos) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setPrfPos(profile, pos);
     if (m_lastError != 0) {
@@ -672,56 +667,64 @@ bool MotionMgr::setProfilePos(short profile, long pos) {
     return true;
 }
 
-double MotionMgr::profilePos(short profile) const {
+double MotionMgr::profilePos(short profile) const 
+{
     if (!checkProfile(profile)) return 0.0;
     double pos = 0.0;
     GtsHal::getPrfPos(profile, &pos);
     return pos;
 }
 
-double MotionMgr::profileVel(short profile) const {
+double MotionMgr::profileVel(short profile) const 
+{
     if (!checkProfile(profile)) return 0.0;
     double vel = 0.0;
     GtsHal::getPrfVel(profile, &vel);
     return vel;
 }
 
-double MotionMgr::profileAcc(short profile) const {
+double MotionMgr::profileAcc(short profile) const 
+{
     if (!checkProfile(profile)) return 0.0;
     double acc = 0.0;
     GtsHal::getPrfAcc(profile, &acc);
     return acc;
 }
 
-long MotionMgr::profileMode(short profile) const {
+long MotionMgr::profileMode(short profile) const 
+{
     if (!checkProfile(profile)) return -1;
     long mode = 0;
     GtsHal::getPrfMode(profile, &mode);
     return mode;
 }
 
-double MotionMgr::axisProfilePos(short axis) const {
+double MotionMgr::axisProfilePos(short axis) const 
+{
     if (!checkProfile(axis)) return 0.0;
     double pos = 0.0;
     GtsHal::getAxisPrfPos(axis, &pos);
     return pos;
 }
 
-double MotionMgr::axisProfileVel(short axis) const {
+double MotionMgr::axisProfileVel(short axis) const 
+{
     if (!checkProfile(axis)) return 0.0;
     double vel = 0.0;
     GtsHal::getAxisPrfVel(axis, &vel);
     return vel;
 }
 
-double MotionMgr::axisProfileAcc(short axis) const {
+double MotionMgr::axisProfileAcc(short axis) const 
+{
     if (!checkProfile(axis)) return 0.0;
     double acc = 0.0;
     GtsHal::getAxisPrfAcc(axis, &acc);
     return acc;
 }
 
-bool MotionMgr::setTargetPos(short profile, long pos) {
+bool MotionMgr::setTargetPos(short profile, long pos) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setPos(profile, pos);
     if (m_lastError != 0) {
@@ -731,7 +734,8 @@ bool MotionMgr::setTargetPos(short profile, long pos) {
     return true;
 }
 
-bool MotionMgr::setTargetVel(short profile, double vel) {
+bool MotionMgr::setTargetVel(short profile, double vel) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
@@ -741,21 +745,24 @@ bool MotionMgr::setTargetVel(short profile, double vel) {
     return true;
 }
 
-long MotionMgr::targetPos(short profile) const {
+long MotionMgr::targetPos(short profile) const 
+{
     if (!checkProfile(profile)) return 0;
     long pos = 0;
     GtsHal::getPos(profile, &pos);
     return pos;
 }
 
-double MotionMgr::targetVel(short profile) const {
+double MotionMgr::targetVel(short profile) const 
+{
     if (!checkProfile(profile)) return 0.0;
     double vel = 0.0;
     GtsHal::getVel(profile, &vel);
     return vel;
 }
 
-bool MotionMgr::update(long mask) {
+bool MotionMgr::update(long mask) 
+{
     m_lastError = GtsHal::update(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -764,20 +771,23 @@ bool MotionMgr::update(long mask) {
     return true;
 }
 
-bool MotionMgr::setProfileScale(short axis, long alpha, long beta) {
+bool MotionMgr::setProfileScale(short axis, long alpha, long beta) 
+{
     if (!checkProfile(axis)) return false;
     m_lastError = GtsHal::setProfileScale(axis, alpha, beta);
     return m_lastError == 0;
 }
 
-bool MotionMgr::getProfileScale(short axis, long& alpha, long& beta) const {
+bool MotionMgr::getProfileScale(short axis, long& alpha, long& beta) const 
+{
     if (!checkProfile(axis)) return false;
     m_lastError = GtsHal::getProfileScale(axis, &alpha, &beta);
     return m_lastError == 0;
 }
 
 
-bool MotionMgr::setTrapMode(short profile) {
+bool MotionMgr::setTrapMode(short profile) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::prfTrap(profile);
     if (m_lastError != 0) {
@@ -787,7 +797,8 @@ bool MotionMgr::setTrapMode(short profile) {
     return true;
 }
 
-bool MotionMgr::setTrapParams(short profile, const TTrapPrm& prm) {
+bool MotionMgr::setTrapParams(short profile, const TTrapPrm& prm) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setTrapPrm(profile, prm);
     if (m_lastError != 0) {
@@ -797,20 +808,23 @@ bool MotionMgr::setTrapParams(short profile, const TTrapPrm& prm) {
     return true;
 }
 
-bool MotionMgr::getTrapParams(short profile, TTrapPrm& prm) const {
+bool MotionMgr::getTrapParams(short profile, TTrapPrm& prm) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getTrapPrm(profile, &prm);
     return m_lastError == 0;
 }
 
-bool MotionMgr::getTrapTime(short profile, TTrapTime& time) const {
+bool MotionMgr::getTrapTime(short profile, TTrapTime& time) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getTrapTime(profile, &time);
     return m_lastError == 0;
 }
 
 
-bool MotionMgr::setJogMode(short profile) {
+bool MotionMgr::setJogMode(short profile) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::prfJog(profile);
     if (m_lastError != 0) {
@@ -820,7 +834,8 @@ bool MotionMgr::setJogMode(short profile) {
     return true;
 }
 
-bool MotionMgr::setJogParams(short profile, const TJogPrm& prm) {
+bool MotionMgr::setJogParams(short profile, const TJogPrm& prm) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setJogPrm(profile, prm);
     if (m_lastError != 0) {
@@ -830,14 +845,16 @@ bool MotionMgr::setJogParams(short profile, const TJogPrm& prm) {
     return true;
 }
 
-bool MotionMgr::getJogParams(short profile, TJogPrm& prm) const {
+bool MotionMgr::getJogParams(short profile, TJogPrm& prm) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getJogPrm(profile, &prm);
     return m_lastError == 0;
 }
 
 
-bool MotionMgr::moveAbsolute(short profile, long pos, double vel, double acc, double dec) {
+bool MotionMgr::moveAbsolute(short profile, long pos, double vel, double acc, double dec) 
+{
     if (!checkProfile(profile)) return false;
 
     TMoveAbsolutePrm prm;
@@ -854,7 +871,8 @@ bool MotionMgr::moveAbsolute(short profile, long pos, double vel, double acc, do
     return true;
 }
 
-bool MotionMgr::moveVelocity(short profile, double vel, double acc) {
+bool MotionMgr::moveVelocity(short profile, double vel, double acc) 
+{
     if (!checkProfile(profile)) return false;
 
     TMoveVelocityPrm prm;
@@ -869,20 +887,23 @@ bool MotionMgr::moveVelocity(short profile, double vel, double acc) {
     return true;
 }
 
-bool MotionMgr::getMoveAbsoluteParams(short profile, TMoveAbsolutePrm& prm) const {
+bool MotionMgr::getMoveAbsoluteParams(short profile, TMoveAbsolutePrm& prm) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getMoveAbsolute(profile, &prm);
     return m_lastError == 0;
 }
 
-bool MotionMgr::getMoveVelocityParams(short profile, TMoveVelocityPrm& prm) const {
+bool MotionMgr::getMoveVelocityParams(short profile, TMoveVelocityPrm& prm) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getMoveVelocity(profile, &prm);
     return m_lastError == 0;
 }
 
 
-bool MotionMgr::setPtMode(short profile, short mode) {
+bool MotionMgr::setPtMode(short profile, short mode) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::prfPt(profile, mode);
     if (m_lastError != 0) {
@@ -892,27 +913,31 @@ bool MotionMgr::setPtMode(short profile, short mode) {
     return true;
 }
 
-bool MotionMgr::setPtLoop(short profile, long loop) {
+bool MotionMgr::setPtLoop(short profile, long loop) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setPtLoop(profile, loop);
     return m_lastError == 0;
 }
 
-long MotionMgr::getPtLoop(short profile) const {
+long MotionMgr::getPtLoop(short profile) const 
+{
     if (!checkProfile(profile)) return 0;
     long loop = 0;
     GtsHal::getPtLoop(profile, &loop);
     return loop;
 }
 
-short MotionMgr::ptFreeSpace(short profile, short fifo) const {
+short MotionMgr::ptFreeSpace(short profile, short fifo) const 
+{
     if (!checkProfile(profile)) return -1;
     short space = 0;
     GtsHal::ptSpace(profile, &space, fifo);
     return space;
 }
 
-bool MotionMgr::ptAddData(short profile, double pos, long time, short type, short fifo) {
+bool MotionMgr::ptAddData(short profile, double pos, long time, short type, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::ptData(profile, pos, time, type, fifo);
     if (m_lastError != 0) {
@@ -923,7 +948,8 @@ bool MotionMgr::ptAddData(short profile, double pos, long time, short type, shor
 }
 
 bool MotionMgr::ptAddDataWithSeg(short profile, double pos, long time,
-    short type, long segNum, short fifo) {
+    short type, long segNum, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::ptDataWN(profile, pos, time, type, segNum, fifo);
     if (m_lastError != 0) {
@@ -933,13 +959,15 @@ bool MotionMgr::ptAddDataWithSeg(short profile, double pos, long time,
     return true;
 }
 
-bool MotionMgr::ptClear(short profile, short fifo) {
+bool MotionMgr::ptClear(short profile, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::ptClear(profile, fifo);
     return m_lastError == 0;
 }
 
-bool MotionMgr::ptStart(long mask, long option) {
+bool MotionMgr::ptStart(long mask, long option) 
+{
     m_lastError = GtsHal::ptStart(mask, option);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -948,27 +976,31 @@ bool MotionMgr::ptStart(long mask, long option) {
     return true;
 }
 
-bool MotionMgr::setPtMemory(short profile, short memory) {
+bool MotionMgr::setPtMemory(short profile, short memory) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setPtMemory(profile, memory);
     return m_lastError == 0;
 }
 
-short MotionMgr::getPtMemory(short profile) const {
+short MotionMgr::getPtMemory(short profile) const 
+{
     if (!checkProfile(profile)) return -1;
     short mem = 0;
     GtsHal::getPtMemory(profile, &mem);
     return mem;
 }
 
-long MotionMgr::ptCurrentSegment(short profile) const {
+long MotionMgr::ptCurrentSegment(short profile) const 
+{
     if (!checkProfile(profile)) return -1;
     long seg = 0;
     GtsHal::ptGetSegNum(profile, &seg);
     return seg;
 }
 
-bool MotionMgr::ptAddDoBit(short profile, short doType, short index, short value, short fifo) {
+bool MotionMgr::ptAddDoBit(short profile, short doType, short index, short value, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::ptDoBit(profile, doType, index, value, fifo);
     if (m_lastError != 0) {
@@ -978,7 +1010,8 @@ bool MotionMgr::ptAddDoBit(short profile, short doType, short index, short value
     return true;
 }
 
-bool MotionMgr::ptAddAo(short profile, short aoType, short index, double value, short fifo) {
+bool MotionMgr::ptAddAo(short profile, short aoType, short index, double value, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::ptAo(profile, aoType, index, value, fifo);
     if (m_lastError != 0) {
@@ -989,7 +1022,8 @@ bool MotionMgr::ptAddAo(short profile, short aoType, short index, double value, 
 }
 
 
-bool MotionMgr::setGearMode(short profile, short dir) {
+bool MotionMgr::setGearMode(short profile, short dir) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::prfGear(profile, dir);
     if (m_lastError != 0) {
@@ -999,7 +1033,8 @@ bool MotionMgr::setGearMode(short profile, short dir) {
     return true;
 }
 
-bool MotionMgr::setGearMaster(short profile, short masterIndex, short masterType, short masterItem) {
+bool MotionMgr::setGearMaster(short profile, short masterIndex, short masterType, short masterItem) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setGearMaster(profile, masterIndex, masterType, masterItem);
     if (m_lastError != 0) {
@@ -1010,13 +1045,15 @@ bool MotionMgr::setGearMaster(short profile, short masterIndex, short masterType
 }
 
 bool MotionMgr::getGearMaster(short profile, short& masterIndex,
-    short& masterType, short& masterItem) const {
+    short& masterType, short& masterItem) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getGearMaster(profile, &masterIndex, &masterType, &masterItem);
     return m_lastError == 0;
 }
 
-bool MotionMgr::setGearRatio(short profile, long masterEven, long slaveEven, long masterSlope) {
+bool MotionMgr::setGearRatio(short profile, long masterEven, long slaveEven, long masterSlope) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setGearRatio(profile, masterEven, slaveEven, masterSlope);
     if (m_lastError != 0) {
@@ -1026,13 +1063,15 @@ bool MotionMgr::setGearRatio(short profile, long masterEven, long slaveEven, lon
     return true;
 }
 
-bool MotionMgr::getGearRatio(short profile, long& masterEven, long& slaveEven, long& masterSlope) const {
+bool MotionMgr::getGearRatio(short profile, long& masterEven, long& slaveEven, long& masterSlope) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getGearRatio(profile, &masterEven, &slaveEven, &masterSlope);
     return m_lastError == 0;
 }
 
-bool MotionMgr::gearStart(long mask) {
+bool MotionMgr::gearStart(long mask) 
+{
     m_lastError = GtsHal::gearStart(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1041,7 +1080,8 @@ bool MotionMgr::gearStart(long mask) {
     return true;
 }
 
-bool MotionMgr::setGearEvent(short profile, short event, long startPara0, long startPara1) {
+bool MotionMgr::setGearEvent(short profile, short event, long startPara0, long startPara1) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setGearEvent(profile, event, startPara0, startPara1);
     if (m_lastError != 0) {
@@ -1051,14 +1091,16 @@ bool MotionMgr::setGearEvent(short profile, short event, long startPara0, long s
     return true;
 }
 
-bool MotionMgr::getGearEvent(short profile, short& event, long& startPara0, long& startPara1) const {
+bool MotionMgr::getGearEvent(short profile, short& event, long& startPara0, long& startPara1) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getGearEvent(profile, &event, &startPara0, &startPara1);
     return m_lastError == 0;
 }
 
 
-bool MotionMgr::setFollowMode(short profile, short dir) {
+bool MotionMgr::setFollowMode(short profile, short dir) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::prfFollow(profile, dir);
     if (m_lastError != 0) {
@@ -1068,7 +1110,8 @@ bool MotionMgr::setFollowMode(short profile, short dir) {
     return true;
 }
 
-bool MotionMgr::setFollowMaster(short profile, short masterIndex, short masterType, short masterItem) {
+bool MotionMgr::setFollowMaster(short profile, short masterIndex, short masterType, short masterItem) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setFollowMaster(profile, masterIndex, masterType, masterItem);
     if (m_lastError != 0) {
@@ -1079,26 +1122,30 @@ bool MotionMgr::setFollowMaster(short profile, short masterIndex, short masterTy
 }
 
 bool MotionMgr::getFollowMaster(short profile, short& masterIndex,
-    short& masterType, short& masterItem) const {
+    short& masterType, short& masterItem) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getFollowMaster(profile, &masterIndex, &masterType, &masterItem);
     return m_lastError == 0;
 }
 
-bool MotionMgr::setFollowLoop(short profile, long loop) {
+bool MotionMgr::setFollowLoop(short profile, long loop) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setFollowLoop(profile, loop);
     return m_lastError == 0;
 }
 
-long MotionMgr::getFollowLoop(short profile) const {
+long MotionMgr::getFollowLoop(short profile) const 
+{
     if (!checkProfile(profile)) return 0;
     long loop = 0;
     GtsHal::getFollowLoop(profile, &loop);
     return loop;
 }
 
-bool MotionMgr::setFollowEvent(short profile, short event, short masterDir, long pos) {
+bool MotionMgr::setFollowEvent(short profile, short event, short masterDir, long pos) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setFollowEvent(profile, event, masterDir, pos);
     if (m_lastError != 0) {
@@ -1108,13 +1155,15 @@ bool MotionMgr::setFollowEvent(short profile, short event, short masterDir, long
     return true;
 }
 
-bool MotionMgr::getFollowEvent(short profile, short& event, short& masterDir, long& pos) const {
+bool MotionMgr::getFollowEvent(short profile, short& event, short& masterDir, long& pos) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getFollowEvent(profile, &event, &masterDir, &pos);
     return m_lastError == 0;
 }
 
-short MotionMgr::followFreeSpace(short profile, short fifo) const {
+short MotionMgr::followFreeSpace(short profile, short fifo) const 
+{
     if (!checkProfile(profile)) return -1;
     short space = 0;
     GtsHal::followSpace(profile, &space, fifo);
@@ -1122,7 +1171,8 @@ short MotionMgr::followFreeSpace(short profile, short fifo) const {
 }
 
 bool MotionMgr::followAddData(short profile, long masterSegment, double slaveSegment,
-    short type, short fifo) {
+    short type, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::followData(profile, masterSegment, slaveSegment, type, fifo);
     if (m_lastError != 0) {
@@ -1132,13 +1182,15 @@ bool MotionMgr::followAddData(short profile, long masterSegment, double slaveSeg
     return true;
 }
 
-bool MotionMgr::followClear(short profile, short fifo) {
+bool MotionMgr::followClear(short profile, short fifo) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::followClear(profile, fifo);
     return m_lastError == 0;
 }
 
-bool MotionMgr::followStart(long mask, long option) {
+bool MotionMgr::followStart(long mask, long option) 
+{
     m_lastError = GtsHal::followStart(mask, option);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1147,7 +1199,8 @@ bool MotionMgr::followStart(long mask, long option) {
     return true;
 }
 
-bool MotionMgr::followSwitch(long mask) {
+bool MotionMgr::followSwitch(long mask) 
+{
     m_lastError = GtsHal::followSwitch(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1156,27 +1209,31 @@ bool MotionMgr::followSwitch(long mask) {
     return true;
 }
 
-bool MotionMgr::setFollowMemory(short profile, short memory) {
+bool MotionMgr::setFollowMemory(short profile, short memory) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setFollowMemory(profile, memory);
     return m_lastError == 0;
 }
 
-short MotionMgr::getFollowMemory(short profile) const {
+short MotionMgr::getFollowMemory(short profile) const 
+{
     if (!checkProfile(profile)) return -1;
     short mem = 0;
     GtsHal::getFollowMemory(profile, &mem);
     return mem;
 }
 
-bool MotionMgr::getFollowStatus(short profile, short& fifoNum, short& switchStatus) const {
+bool MotionMgr::getFollowStatus(short profile, short& fifoNum, short& switchStatus) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getFollowStatus(profile, &fifoNum, &switchStatus);
     return m_lastError == 0;
 }
 
 
-bool MotionMgr::setPvtMode(short profile) {
+bool MotionMgr::setPvtMode(short profile) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::prfPvt(profile);
     if (m_lastError != 0) {
@@ -1186,30 +1243,35 @@ bool MotionMgr::setPvtMode(short profile) {
     return true;
 }
 
-bool MotionMgr::setPvtLoop(short profile, long loop) {
+bool MotionMgr::setPvtLoop(short profile, long loop) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::setPvtLoop(profile, loop);
     return m_lastError == 0;
 }
 
-bool MotionMgr::getPvtLoop(short profile, long& loopCount, long& loop) const {
+bool MotionMgr::getPvtLoop(short profile, long& loopCount, long& loop) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::getPvtLoop(profile, &loopCount, &loop);
     return m_lastError == 0;
 }
 
-bool MotionMgr::pvtStatus(short profile, short& tableId, double& time) const {
+bool MotionMgr::pvtStatus(short profile, short& tableId, double& time) const 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::pvtStatus(profile, &tableId, &time);
     return m_lastError == 0;
 }
 
-bool MotionMgr::pvtTableClear(short tableId) {
+bool MotionMgr::pvtTableClear(short tableId) 
+{
     m_lastError = GtsHal::pvtTableClear(tableId);
     return m_lastError == 0;
 }
 
-bool MotionMgr::pvtStart(long mask) {
+bool MotionMgr::pvtStart(long mask) 
+{
     m_lastError = GtsHal::pvtStart(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1218,13 +1280,15 @@ bool MotionMgr::pvtStart(long mask) {
     return true;
 }
 
-bool MotionMgr::pvtTableSelect(short profile, short tableId) {
+bool MotionMgr::pvtTableSelect(short profile, short tableId) 
+{
     if (!checkProfile(profile)) return false;
     m_lastError = GtsHal::pvtTableSelect(profile, tableId);
     return m_lastError == 0;
 }
 
-bool MotionMgr::pvtTableSet(short tableId, long count, double* time, double* pos, double* vel) {
+bool MotionMgr::pvtTableSet(short tableId, long count, double* time, double* pos, double* vel) 
+{
     m_lastError = GtsHal::pvtTable(tableId, count, time, pos, vel);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1234,7 +1298,8 @@ bool MotionMgr::pvtTableSet(short tableId, long count, double* time, double* pos
 }
 
 bool MotionMgr::pvtTableSetEx(short tableId, long count, double* time, double* pos,
-    double* velBegin, double* velEnd) {
+    double* velBegin, double* velEnd) 
+{
     m_lastError = GtsHal::pvtTableEx(tableId, count, time, pos, velBegin, velEnd);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1245,7 +1310,8 @@ bool MotionMgr::pvtTableSetEx(short tableId, long count, double* time, double* p
 
 bool MotionMgr::pvtTableSetComplete(short tableId, long count, double* time, double* pos,
     double* a, double* b, double* c,
-    double velBegin, double velEnd) {
+    double velBegin, double velEnd) 
+{
     m_lastError = GtsHal::pvtTableComplete(tableId, count, time, pos, a, b, c, velBegin, velEnd);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1255,7 +1321,8 @@ bool MotionMgr::pvtTableSetComplete(short tableId, long count, double* time, dou
 }
 
 bool MotionMgr::pvtTableSetPercent(short tableId, long count, double* time, double* pos,
-    double* percent, double velBegin) {
+    double* percent, double velBegin) 
+{
     m_lastError = GtsHal::pvtTablePercent(tableId, count, time, pos, percent, velBegin);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -1265,7 +1332,8 @@ bool MotionMgr::pvtTableSetPercent(short tableId, long count, double* time, doub
 }
 
 
-bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double dec) {
+bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double dec) 
+{
     if (!checkProfile(profile)) return false;
 
     // 设置梯形模式
@@ -1312,7 +1380,8 @@ bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double d
     return true;
 }
 
-bool MotionMgr::jog(short profile, double vel, double acc) {
+bool MotionMgr::jog(short profile, double vel, double acc) 
+{
     if (!checkProfile(profile)) return false;
 
     // 设置为 Jog 模式
@@ -1343,7 +1412,8 @@ bool MotionMgr::jog(short profile, double vel, double acc) {
     return true;
 }
 
-bool MotionMgr::stop(short profile, long option) {
+bool MotionMgr::stop(short profile, long option) 
+{
     if (!checkProfile(profile)) return false;
     long mask = 1L << (profile - 1);
     m_lastError = GtsHal::stop(mask, option);
@@ -1354,6 +1424,7 @@ bool MotionMgr::stop(short profile, long option) {
     return true;
 }
 
-QString MotionMgr::lastErrorString() const {
+QString MotionMgr::lastErrorString() const 
+{
     return GtsErrorToString(m_lastError);
 }
