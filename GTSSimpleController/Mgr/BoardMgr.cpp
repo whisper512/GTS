@@ -7,7 +7,8 @@ BoardMgr::BoardMgr(CTotalMgr* totalMgr, QObject* parent)
 {
 }
 
-BoardMgr::~BoardMgr() {
+BoardMgr::~BoardMgr() 
+{
     if (m_isOpen) {
         close();
     }
@@ -64,7 +65,8 @@ bool BoardMgr::close()
     }
 }
 
-bool BoardMgr::reset() {
+bool BoardMgr::reset() 
+{
     m_lastError = GtsHal::reset();
     if (m_lastError == 0) {
         m_isOpen = false; 
@@ -76,7 +78,8 @@ bool BoardMgr::reset() {
     }
 }
 
-bool BoardMgr::setCardNo(short index) {
+bool BoardMgr::setCardNo(short index) 
+{
     m_lastError = GtsHal::setCardNo(index);
     if (m_lastError == 0) {
         m_cardNo = index;
@@ -87,13 +90,15 @@ bool BoardMgr::setCardNo(short index) {
     }
 }
 
-short BoardMgr::getCardNo() {
+short BoardMgr::getCardNo() 
+{
     short index = 0;
     GtsHal::getCardNo(&index);
     return index;
 }
 
-bool BoardMgr::loadConfig(const QString& filePath) {
+bool BoardMgr::loadConfig(const QString& filePath) 
+{
     m_lastError = GtsHal::loadConfig(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
         return false;
@@ -101,7 +106,8 @@ bool BoardMgr::loadConfig(const QString& filePath) {
     return true;
 }
 
-bool BoardMgr::saveConfig(const QString& filePath) {
+bool BoardMgr::saveConfig(const QString& filePath) 
+{
     m_lastError = GtsHal::saveConfigToFile(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
         return false;
@@ -109,7 +115,8 @@ bool BoardMgr::saveConfig(const QString& filePath) {
     return true;
 }
 
-bool BoardMgr::uploadConfig() {
+bool BoardMgr::uploadConfig() 
+{
     m_lastError = GtsHal::uploadConfig();
     if (m_lastError != 0) {
         return false;
@@ -117,7 +124,8 @@ bool BoardMgr::uploadConfig() {
     return true;
 }
 
-bool BoardMgr::downloadConfig() {
+bool BoardMgr::downloadConfig() 
+{
     m_lastError = GtsHal::downloadConfig();
     if (m_lastError != 0) {
         return false;
@@ -125,7 +133,8 @@ bool BoardMgr::downloadConfig() {
     return true;
 }
 
-QString BoardMgr::dllVersion() const {
+QString BoardMgr::dllVersion() const 
+{
     char* pVer = nullptr;
     short ret = GtsHal::getDllVersion(&pVer);
     if (ret == 0 && pVer) {
@@ -134,7 +143,8 @@ QString BoardMgr::dllVersion() const {
     return QString();
 }
 
-QString BoardMgr::firmwareVersion() const {
+QString BoardMgr::firmwareVersion() const 
+{
     char* pVer = nullptr;
     short ret = GtsHal::getVersion(&pVer);
     if (ret == 0 && pVer) {
@@ -143,25 +153,29 @@ QString BoardMgr::firmwareVersion() const {
     return QString();
 }
 
-stuCardInfo BoardMgr::cardInfo() const {
+stuCardInfo BoardMgr::cardInfo() const 
+{
     stuCardInfo info = { -1, -1 };
     GtsHal::getCardInfo(&info.cardNum, &info.cardType);
     return info;
 }
 
-stuDriverVersion BoardMgr::driverVersion() const {
+stuDriverVersion BoardMgr::driverVersion() const 
+{
     stuDriverVersion dv = { 0, 0 };
     GtsHal::getDriverVersion(&dv.mainVer, &dv.slaveVer);
     return dv;
 }
 
-short BoardMgr::interfaceBoardStatus() const {
+short BoardMgr::interfaceBoardStatus() const 
+{
     short sts = 0;
     GtsHal::getInterfaceBoardSts(&sts);
     return sts;
 }
 
-bool BoardMgr::setInterfaceBoardStatus(short type) {
+bool BoardMgr::setInterfaceBoardStatus(short type) 
+{
     m_lastError = GtsHal::setInterfaceBoardSts(type);
     if (m_lastError != 0) {
         return false;
@@ -169,29 +183,35 @@ bool BoardMgr::setInterfaceBoardStatus(short type) {
     return true;
 }
 
-unsigned long BoardMgr::clock() const {
+unsigned long BoardMgr::clock() const 
+{
     unsigned long clk = 0;
     GtsHal::getClock(&clk, nullptr);
     return clk;
 }
 
-unsigned long BoardMgr::clockHighPrecision() const {
+unsigned long BoardMgr::clockHighPrecision() const 
+{
     unsigned long clk = 0;
     GtsHal::getClockHighPrecision(&clk);
     return clk;
 }
 
-bool BoardMgr::delay(unsigned short milliseconds) {
+bool BoardMgr::delay(unsigned short milliseconds) 
+{
     m_lastError = GtsHal::delay(milliseconds);
     return m_lastError == 0;
 }
 
-bool BoardMgr::delayHighPrecision(unsigned short microseconds) {
+bool BoardMgr::delayHighPrecision(unsigned short microseconds) 
+{
     m_lastError = GtsHal::delayHighPrecision(microseconds);
     return m_lastError == 0;
 }
 
-bool BoardMgr::interruptOn(TInterruptCallback pCallback) {
+
+bool BoardMgr::interruptOn(TInterruptCallback pCallback) 
+{
     m_lastError = GtsHal::interruptOn(pCallback);
     if (m_lastError != 0) {
         return false;
@@ -199,28 +219,33 @@ bool BoardMgr::interruptOn(TInterruptCallback pCallback) {
     return true;
 }
 
-bool BoardMgr::interruptOff() {
+bool BoardMgr::interruptOff() 
+{
     m_lastError = GtsHal::interruptOff();
     return m_lastError == 0;
 }
 
-bool BoardMgr::setInterruptMask(long mask) {
+bool BoardMgr::setInterruptMask(long mask) 
+{
     m_lastError = GtsHal::setInterruptMask(mask);
     return m_lastError == 0;
 }
 
-long BoardMgr::interruptMask() const {
+long BoardMgr::interruptMask() const 
+{
     long mask = 0;
     GtsHal::getInterruptMask(&mask);
     return mask;
 }
 
-bool BoardMgr::triggerInterrupt(short param) {
+bool BoardMgr::triggerInterrupt(short param) 
+{
     m_lastError = GtsHal::interruptTrigger(param);
     return m_lastError == 0;
 }
 
-QString BoardMgr::uuid() const {
+QString BoardMgr::uuid() const 
+{
     char code[64] = { 0 };
     short ret = GtsHal::getUuid(code, 64);
     if (ret == 0) {
@@ -229,7 +254,8 @@ QString BoardMgr::uuid() const {
     return QString();
 }
 
-bool BoardMgr::setUuid(const QString& code) {
+bool BoardMgr::setUuid(const QString& code) 
+{
     QByteArray ba = code.toLocal8Bit();
     m_lastError = GtsHal::setUuid(ba.data(), static_cast<short>(ba.size()));
     if (m_lastError != 0) {
@@ -238,22 +264,26 @@ bool BoardMgr::setUuid(const QString& code) {
     return true;
 }
 
-short BoardMgr::displayDip() const {
+short BoardMgr::displayDip() const 
+{
     short mode = 0;
     GtsHal::getDisplayDip(&mode);
     return mode;
 }
 
-bool BoardMgr::setDisplayDip(short mode) {
+bool BoardMgr::setDisplayDip(short mode) 
+{
     m_lastError = GtsHal::setDisplayDip(mode);
     return m_lastError == 0;
 }
 
-bool BoardMgr::setDeviceShareMax(short count) {
+bool BoardMgr::setDeviceShareMax(short count) 
+{
     m_lastError = GtsHal::setDeviceShareMax(count);
     return m_lastError == 0;
 }
 
-QString BoardMgr::lastErrorString() const {
+QString BoardMgr::lastErrorString() const 
+{
     return GtsErrorToString(m_lastError);
 }

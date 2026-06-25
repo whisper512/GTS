@@ -8,68 +8,11 @@ AxisMgr::AxisMgr(CTotalMgr* totalMgr, QObject* parent)
 {
 }
 
-AxisMgr::~AxisMgr() {
+AxisMgr::~AxisMgr() 
+{
     // 析构时禁止所有轴
     disableAll();
 }
-
-bool AxisMgr::homeInit(short axis)
-{
-    if (!isValidAxis(axis)) return false;
-    m_lastError = GtsHal::homeInit();
-    if (m_lastError != 0) {
-        emit errorOccurred(axis, m_lastError, lastErrorString());
-        return false;
-    }
-    return true;
-}
-
-bool AxisMgr::homeInitAll()
-{
-    int n = m_pTotalMgr->axisCount();
-    bool allOk = true;
-    QStringList results;
-
-    for (short i = 1; i <= n; ++i) {
-        bool ok = homeInit(i);
-        if (!ok)
-            allOk = false;
-    }
-    return allOk;
-}
-
-bool AxisMgr::setHomeIndexMode(short axis, long indexOffset, long indexWidth)
-{
-    if (!isValidAxis(axis)) return false;
-
-    m_lastError = GT_Index(axis, indexOffset, indexWidth);
-
-    if (m_lastError != 0) {
-        return false;
-    }
-    return true;
-}
-
-bool AxisMgr::home(short axis, long pos, double vel, double acc, long offset)
-{
-    if (!isValidAxis(axis)) return false;
-
-    long sts = status(axis);
-    long indexOffset = 20000;
-    long indexWidth = 2000;
-    if (!setHomeIndexMode(axis, indexOffset, indexWidth))
-    {
-        return false;
-    }
-    m_lastError = GtsHal::home(axis, pos, vel, acc, offset);
-
-    if (m_lastError != 0) {
-        emit errorOccurred(axis, m_lastError, lastErrorString());
-        return false;
-    }
-    return true;
-}
-
 
 void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
 {
@@ -113,17 +56,14 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
             vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
         }
         else {
-            // 没有编码器
+            // 没有编码器,暂时
             vecAxis[idx].dEncPos = 0.0;
             vecAxis[idx].dEncVel = 0.0;
             vecAxis[idx].dEncPosMm = 0.0;
-            vecAxis[idx].dEncVelMm = 0.0;
-            
+            vecAxis[idx].dEncVelMm = 0.0;   
         }
     }
 }
-
-
 
 short AxisMgr::setProfileScale(short axis, long alpha, long beta)
 {
@@ -146,7 +86,8 @@ short AxisMgr::getEncoderScale(short axis, long& alpha, long& beta)
 }
 
 
-bool AxisMgr::isValidAxis(short axis)  {
+bool AxisMgr::isValidAxis(short axis)  
+{
     bool valid = (axis > 0 && axis <= m_pTotalMgr->axisCount());
     if (!valid) {
         emit errorOccurred(axis, -1, QStringLiteral("轴号无效: %1 (有效范围 1-%2)")
@@ -155,7 +96,8 @@ bool AxisMgr::isValidAxis(short axis)  {
     return valid;
 }
 
-bool AxisMgr::enable(short axis) {
+bool AxisMgr::enable(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::axisOn(axis);
@@ -175,7 +117,8 @@ bool AxisMgr::enable(short axis) {
     return true;
 }
 
-bool AxisMgr::disable(short axis) {
+bool AxisMgr::disable(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::axisOff(axis);
@@ -186,7 +129,8 @@ bool AxisMgr::disable(short axis) {
     return true;
 }
 
-bool AxisMgr::enableMulti(unsigned long mask) {
+bool AxisMgr::enableMulti(unsigned long mask) 
+{
     m_lastError = GtsHal::multiAxisOn(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -195,7 +139,8 @@ bool AxisMgr::enableMulti(unsigned long mask) {
     return true;
 }
 
-bool AxisMgr::disableMulti(unsigned long mask) {
+bool AxisMgr::disableMulti(unsigned long mask) 
+{
     m_lastError = GtsHal::multiAxisOff(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -204,17 +149,20 @@ bool AxisMgr::disableMulti(unsigned long mask) {
     return true;
 }
 
-bool AxisMgr::enableAll() {
+bool AxisMgr::enableAll() 
+{
     unsigned long mask = (1UL << m_pTotalMgr->axisCount()) - 1;
     return enableMulti(mask);
 }
 
-bool AxisMgr::disableAll() {
+bool AxisMgr::disableAll() 
+{
     unsigned long mask = (1UL << m_pTotalMgr->axisCount()) - 1;
     return disableMulti(mask);
 }
 
-bool AxisMgr::isEnabled(short axis)  {
+bool AxisMgr::isEnabled(short axis)  
+{
     if (!isValidAxis(axis)) return false;
 
     long sts = 0;
@@ -222,19 +170,22 @@ bool AxisMgr::isEnabled(short axis)  {
     return (sts & 0x200) != 0;
 }
 
-bool AxisMgr::setOnDelayTime(unsigned short ms) {
+bool AxisMgr::setOnDelayTime(unsigned short ms) 
+{
     m_lastError = GtsHal::setAxisOnDelayTime(ms);
     return m_lastError == 0;
 }
 
-unsigned short AxisMgr::onDelayTime() {
+unsigned short AxisMgr::onDelayTime() 
+{
     unsigned short ms = 0;
     GtsHal::getAxisOnDelayTime(&ms);
     return ms;
 }
 
 
-bool AxisMgr::stop(short axis, long option) {
+bool AxisMgr::stop(short axis, long option) 
+{
     if (!isValidAxis(axis)) return false;
     long mask = 1L << (axis - 1);
     m_lastError = GtsHal::stop(mask, option);
@@ -245,7 +196,8 @@ bool AxisMgr::stop(short axis, long option) {
     return true;
 }
 
-bool AxisMgr::stopAll(long option) {
+bool AxisMgr::stopAll(long option) 
+{
     long mask = (1L << m_pTotalMgr->axisCount()) - 1;
     m_lastError = GtsHal::stop(mask, option);
     if (m_lastError != 0) {
@@ -255,7 +207,8 @@ bool AxisMgr::stopAll(long option) {
     return true;
 }
 
-bool AxisMgr::stopMulti(long mask, long option) {
+bool AxisMgr::stopMulti(long mask, long option) 
+{
     m_lastError = GtsHal::stop(mask, option);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -265,7 +218,8 @@ bool AxisMgr::stopMulti(long mask, long option) {
 }
 
 
-bool AxisMgr::alarmOn(short axis) {
+bool AxisMgr::alarmOn(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::alarmOn(axis);
@@ -276,7 +230,8 @@ bool AxisMgr::alarmOn(short axis) {
     return true;
 }
 
-bool AxisMgr::alarmOff(short axis) {
+bool AxisMgr::alarmOff(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::alarmOff(axis);
@@ -287,7 +242,8 @@ bool AxisMgr::alarmOff(short axis) {
     return true;
 }
 
-bool AxisMgr::isAlarm(short axis) {
+bool AxisMgr::isAlarm(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     long sts = 0;
@@ -295,7 +251,8 @@ bool AxisMgr::isAlarm(short axis) {
     return (sts & 0x02) != 0;
 }
 
-bool AxisMgr::limitOn(short axis, short limitType) {
+bool AxisMgr::limitOn(short axis, short limitType) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::lmtsOn(axis, limitType);
@@ -306,7 +263,8 @@ bool AxisMgr::limitOn(short axis, short limitType) {
     return true;
 }
 
-bool AxisMgr::limitOff(short axis, short limitType) {
+bool AxisMgr::limitOff(short axis, short limitType) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::lmtsOff(axis, limitType);
@@ -317,12 +275,14 @@ bool AxisMgr::limitOff(short axis, short limitType) {
     return true;
 }
 
-bool AxisMgr::setLimitSense(unsigned short sense) {
+bool AxisMgr::setLimitSense(unsigned short sense) 
+{
     m_lastError = GtsHal::lmtSns(sense);
     return m_lastError == 0;
 }
 
-bool AxisMgr::setSoftLimit(short axis, long positive, long negative) {
+bool AxisMgr::setSoftLimit(short axis, long positive, long negative) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::setSoftLimit(axis, positive, negative);
@@ -333,7 +293,8 @@ bool AxisMgr::setSoftLimit(short axis, long positive, long negative) {
     return true;
 }
 
-bool AxisMgr::getSoftLimit(short axis, long& positive, long& negative) {
+bool AxisMgr::getSoftLimit(short axis, long& positive, long& negative) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::getSoftLimit(axis, &positive, &negative);
@@ -341,7 +302,8 @@ bool AxisMgr::getSoftLimit(short axis, long& positive, long& negative) {
 }
 
 
-long AxisMgr::status(short axis) {
+long AxisMgr::status(short axis) 
+{
     if (!isValidAxis(axis)) return -1;
 
     long sts = 0;
@@ -349,7 +311,8 @@ long AxisMgr::status(short axis) {
     return sts;
 }
 
-bool AxisMgr::clearStatus(short axis) {
+bool AxisMgr::clearStatus(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::clrSts(axis, axis);
@@ -360,7 +323,8 @@ bool AxisMgr::clearStatus(short axis) {
     return true;
 }
 
-bool AxisMgr::zeroPosition(short axis) {
+bool AxisMgr::zeroPosition(short axis) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::zeroPos(axis,axis);
@@ -371,7 +335,8 @@ bool AxisMgr::zeroPosition(short axis) {
     return true;
 }
 
-bool AxisMgr::syncPosition(long mask) {
+bool AxisMgr::syncPosition(long mask) 
+{
     m_lastError = GtsHal::synchAxisPos(mask);
     if (m_lastError != 0) {
         emit errorOccurred(-1, m_lastError, lastErrorString());
@@ -381,7 +346,8 @@ bool AxisMgr::syncPosition(long mask) {
 }
 
 
-bool AxisMgr::setControlMode(short axis, short mode) {
+bool AxisMgr::setControlMode(short axis, short mode) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::ctrlMode(axis, mode);
@@ -392,7 +358,8 @@ bool AxisMgr::setControlMode(short axis, short mode) {
     return true;
 }
 
-bool AxisMgr::setAxisMode(short axis, short mode) {
+bool AxisMgr::setAxisMode(short axis, short mode) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::setAxisMode(axis, mode);
@@ -403,7 +370,8 @@ bool AxisMgr::setAxisMode(short axis, short mode) {
     return true;
 }
 
-short AxisMgr::getAxisMode(short axis) {
+short AxisMgr::getAxisMode(short axis) 
+{
     if (!isValidAxis(axis)) return -1;
 
     short mode = 0;
@@ -411,7 +379,8 @@ short AxisMgr::getAxisMode(short axis) {
     return mode;
 }
 
-bool AxisMgr::setFollowErrorLimit(short control, long error) {
+bool AxisMgr::setFollowErrorLimit(short control, long error) 
+{
     m_lastError = GtsHal::setPosErr(control, error);
     if (m_lastError != 0) {
         emit errorOccurred(control, m_lastError, lastErrorString());
@@ -420,13 +389,15 @@ bool AxisMgr::setFollowErrorLimit(short control, long error) {
     return true;
 }
 
-long AxisMgr::getFollowErrorLimit(short control) {
+long AxisMgr::getFollowErrorLimit(short control) 
+{
     long error = 0;
     m_lastError = GtsHal::getPosErr(control, &error);
     return error;
 }
 
-bool AxisMgr::setFollowErrorMode(short axis, short mode) {
+bool AxisMgr::setFollowErrorMode(short axis, short mode) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::setAxisFollowErrorMode(axis, mode);
@@ -437,7 +408,8 @@ bool AxisMgr::setFollowErrorMode(short axis, short mode) {
     return true;
 }
 
-short AxisMgr::getFollowErrorMode(short axis) {
+short AxisMgr::getFollowErrorMode(short axis) 
+{
     if (!isValidAxis(axis)) return -1;
 
     short mode = 0;
@@ -446,7 +418,8 @@ short AxisMgr::getFollowErrorMode(short axis) {
 }
 
 
-bool AxisMgr::setStopDecel(short profile, double smooth, double abrupt) {
+bool AxisMgr::setStopDecel(short profile, double smooth, double abrupt) 
+{
     m_lastError = GtsHal::setStopDec(profile, smooth, abrupt);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
@@ -455,12 +428,14 @@ bool AxisMgr::setStopDecel(short profile, double smooth, double abrupt) {
     return true;
 }
 
-bool AxisMgr::getStopDecel(short profile, double& smooth, double& abrupt) {
+bool AxisMgr::getStopDecel(short profile, double& smooth, double& abrupt) 
+{
     m_lastError = GtsHal::getStopDec(profile, &smooth, &abrupt);
     return m_lastError == 0;
 }
 
-bool AxisMgr::setStopIO(short axis, short stopType, short inputType, short inputIndex) {
+bool AxisMgr::setStopIO(short axis, short stopType, short inputType, short inputIndex) 
+{
     if (!isValidAxis(axis)) return false;
 
     m_lastError = GtsHal::setStopIo(axis, stopType, inputType, inputIndex);
@@ -471,7 +446,8 @@ bool AxisMgr::setStopIO(short axis, short stopType, short inputType, short input
     return true;
 }
 
-double AxisMgr::encoderPosition(short axis) {
+double AxisMgr::encoderPosition(short axis) 
+{
     if (!isValidAxis(axis)) return 0.0;
 
     double pos = 0.0;
@@ -479,7 +455,8 @@ double AxisMgr::encoderPosition(short axis) {
     return pos;
 }
 
-double AxisMgr::encoderVelocity(short axis){
+double AxisMgr::encoderVelocity(short axis)
+{
     if (!isValidAxis(axis)) return 0.0;
 
     double vel = 0.0;
@@ -487,7 +464,8 @@ double AxisMgr::encoderVelocity(short axis){
     return vel;
 }
 
-double AxisMgr::encoderAcceleration(short axis) {
+double AxisMgr::encoderAcceleration(short axis) 
+{
     if (!isValidAxis(axis)) return 0.0;
 
     double acc = 0.0;
@@ -523,7 +501,8 @@ double AxisMgr::prfAcceleration(short axis)
 }
 
 
-double AxisMgr::trackingError(short axis) {
+double AxisMgr::trackingError(short axis) 
+{
     if (!isValidAxis(axis)) return 0.0;
 
     double err = 0.0;
@@ -532,11 +511,13 @@ double AxisMgr::trackingError(short axis) {
 }
 
 
-QString AxisMgr::lastErrorString(){
+QString AxisMgr::lastErrorString()
+{
     return GtsErrorToString(m_lastError);
 }
 
-QString AxisMgr::statusToString(long sts) {
+QString AxisMgr::statusToString(long sts) 
+{
     QStringList desc;
     if (sts & 0x0001) desc << "使能中";
     if (sts & 0x0002) desc << "报警";

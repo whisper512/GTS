@@ -68,21 +68,21 @@ public:
     bool lineXYZACUVW(short crd, long* pPos, short posMask, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // XY 平面圆弧 - 半径模式
     bool arcXYByRadius(short crd, long x, long y, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// XY 平面圆弧 - 圆心模式
+    // XY 平面圆弧 - 圆心模式
     bool arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// YZ 平面圆弧 - 半径模式
+    // YZ 平面圆弧 - 半径模式
     bool arcYZByRadius(short crd, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// YZ 平面圆弧 - 圆心模式
+    // YZ 平面圆弧 - 圆心模式
     bool arcYZByCenter(short crd, long y, long z, double yCenter, double zCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// ZX 平面圆弧 - 半径模式
+    // ZX 平面圆弧 - 半径模式
     bool arcZXByRadius(short crd, long z, long x, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// ZX 平面圆弧 - 圆心模式
+    // ZX 平面圆弧 - 圆心模式
     bool arcZXByCenter(short crd, long z, long x, double zCenter, double xCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// 3D 空间圆弧 (XYZ)
+    // 3D 空间圆弧 (XYZ)
     bool arcXYZ(short crd, long x, long y, long z, double interX, double interY, double interZ, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// XY 平面圆弧 + Z 轴螺旋 - 半径模式
+    // XY 平面圆弧 + Z 轴螺旋 - 半径模式
     bool helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    /// XY 平面圆弧 + Z 轴螺旋 - 圆心模式
+    // XY 平面圆弧 + Z 轴螺旋 - 圆心模式
     bool helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // 缓冲区 IO 操作
     bool bufIO(short crd, unsigned short doType, unsigned short doMask, unsigned short doValue, short fifo = 0);

@@ -74,21 +74,31 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
     connect(m_pTotalMgr, &CTotalMgr::logUpdated, this, &GTSControllerWidget::showLog);
-    connect(m_pTotalMgr->configMgr(), &ConfigMgr::configChanged, m_pConfigWidget, &CConfigWidget::onconfigChanged);
     connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);
     connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pMasterControlWidget, &CMasterControlWidget::onAxisUpdated);
     connect(m_pTotalMgr, &CTotalMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
     connect(m_pTotalMgr, &CTotalMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);
-    connect(m_pTotalMgr->motionMgr(), &MotionMgr::errorOccurred, this,
-        [this](short axis, short errorCode, const QString& errorMsg) {
-            showLog(QStringLiteral("轴%1 错误 [%2] %3")
-                .arg(axis)
-                .arg(errorCode)
-                .arg(errorMsg),
-                Qt::red);
-        });
+    connect(m_pTotalMgr->configMgr(), &ConfigMgr::configChanged, m_pConfigWidget, &CConfigWidget::onconfigChanged);
+
+    // 显示错误信息
+    auto errorHandler = [this](short axis, short errorCode, const QString& errorMsg) {
+        showLog(QStringLiteral("轴%1 错误 [%2] %3")
+            .arg(axis)
+            .arg(errorCode)
+            .arg(errorMsg),
+            Qt::red);
+    };
+
+    connect(m_pTotalMgr->axisMgr(), &AxisMgr::errorOccurred, this, errorHandler);
+    connect(m_pTotalMgr->boardMgr(), &BoardMgr::errorOccurred, this, errorHandler);
+    //connect(m_pTotalMgr->motionMgr(), &MotionMgr::errorOccurred, this, errorHandler);
+    //connect(m_pTotalMgr->configMgr() , &ConfigMgr::errorOccurred, this, errorHandler);
+    //connect(m_pTotalMgr->feedbackMgr(), &FeedbackMgr::errorOccurred, this, errorHandler);
+    //connect(m_pTotalMgr->interpolationMgr(), &InterpolationMgr::errorOccurred, this, errorHandler);
+    //connect(m_pTotalMgr->ioMgr(), &IOMgr::errorOccurred, this, errorHandler);
+
     // 回零过程追踪
     connect(m_pTotalMgr->motionMgr(), &MotionMgr::homeStatus, this,
         [this](short axis, const QString& msg) {

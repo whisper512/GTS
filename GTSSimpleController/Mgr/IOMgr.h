@@ -139,7 +139,7 @@ public:
     bool setOutputOff(short doType, short doIndex);
     // 快捷读取单个 DI 状态
     bool getInputBit(short diType, short diIndex) const;
-    // 读取所有 IO 状态快照（用于界面刷新）
+    // 读取所有 IO 状态快照(用于界面刷新)
     struct IOSnapshot {
         long input;
         long output;

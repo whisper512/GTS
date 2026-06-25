@@ -9,7 +9,8 @@ IOMgr::IOMgr(QObject* parent)
 {
 }
 
-IOMgr::~IOMgr() {
+IOMgr::~IOMgr() 
+{
 }
 
 void IOMgr::getPLimitDI(std::vector<int>& limitDI)
@@ -57,6 +58,7 @@ void IOMgr::getDriverAlarmDI(std::vector<int>& driverAlarm)
     //    .arg(value)
     //    .arg(split));
 }
+
 void IOMgr::getHomeDI(std::vector<int>& home)
 {
     long value = 0;
@@ -67,6 +69,7 @@ void IOMgr::getHomeDI(std::vector<int>& home)
         home[i] = (value >> i) & 1;
     }
 }
+
 void IOMgr::getGPI(std::vector<int>& gpi)
 {
     long value = 0;
@@ -77,6 +80,7 @@ void IOMgr::getGPI(std::vector<int>& gpi)
         gpi[i] = (value >> i) & 1;
     }
 }
+
 void IOMgr::getArriveDI(std::vector<int>& arrive)
 {
     long value = 0;
@@ -87,6 +91,7 @@ void IOMgr::getArriveDI(std::vector<int>& arrive)
         arrive[i] = (value >> i) & 1;
     }
 }
+
 void IOMgr::getHandwheelDI(std::vector<int>& handwheel)
 {
     long value = 0;
@@ -172,7 +177,8 @@ void IOMgr::setGPO(const std::vector<int>& gpo)
 // ================================================================
 // 1. 数字输出 (DO)
 // ================================================================
-bool IOMgr::setOutput(short doType, long value) {
+bool IOMgr::setOutput(short doType, long value) 
+{
     m_lastError = GtsHal::setDo(doType, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -181,7 +187,8 @@ bool IOMgr::setOutput(short doType, long value) {
     return true;
 }
 
-bool IOMgr::setOutputBit(short doType, short doIndex, short value) {
+bool IOMgr::setOutputBit(short doType, short doIndex, short value) 
+{
     m_lastError = GtsHal::setDoBit(doType, doIndex, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -190,13 +197,15 @@ bool IOMgr::setOutputBit(short doType, short doIndex, short value) {
     return true;
 }
 
-long IOMgr::getOutput(short doType) const {
+long IOMgr::getOutput(short doType) const 
+{
     long value = 0;
     m_lastError = GtsHal::getDo(doType, &value);
     return value;
 }
 
-bool IOMgr::setOutputBitReverse(short doType, short doIndex, short value, short reverseTime) {
+bool IOMgr::setOutputBitReverse(short doType, short doIndex, short value, short reverseTime) 
+{
     m_lastError = GtsHal::setDoBitReverse(doType, doIndex, value, reverseTime);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -205,7 +214,8 @@ bool IOMgr::setOutputBitReverse(short doType, short doIndex, short value, short 
     return true;
 }
 
-bool IOMgr::setOutputMask(short doType, unsigned short doMask, long value) {
+bool IOMgr::setOutputMask(short doType, unsigned short doMask, long value) 
+{
     m_lastError = GtsHal::setDoMask(doType, doMask, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -216,7 +226,8 @@ bool IOMgr::setOutputMask(short doType, unsigned short doMask, long value) {
 
 bool IOMgr::enableOutputBitPulse(short doType, short doIndex,
     unsigned short highLevelTime, unsigned short lowLevelTime,
-    long pulseNum, short firstLevel) {
+    long pulseNum, short firstLevel) 
+{
     m_lastError = GtsHal::enableDoBitPulse(doType, doIndex, highLevelTime, lowLevelTime,
         pulseNum, firstLevel);
     if (m_lastError != 0) {
@@ -226,7 +237,8 @@ bool IOMgr::enableOutputBitPulse(short doType, short doIndex,
     return true;
 }
 
-bool IOMgr::disableOutputBitPulse(short doType, short doIndex) {
+bool IOMgr::disableOutputBitPulse(short doType, short doIndex) 
+{
     m_lastError = GtsHal::disableDoBitPulse(doType, doIndex);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -238,26 +250,30 @@ bool IOMgr::disableOutputBitPulse(short doType, short doIndex) {
 // ================================================================
 // 2. 数字输入 (DI)
 // ================================================================
-long IOMgr::getInput(short diType) const {
+long IOMgr::getInput(short diType) const 
+{
     long value = 0;
     m_lastError = GtsHal::getDi(diType, &value);
     return value;
 }
 
-long IOMgr::getInputRaw(short diType) const {
+long IOMgr::getInputRaw(short diType) const 
+{
     long value = 0;
     m_lastError = GtsHal::getDiRaw(diType, &value);
     return value;
 }
 
 bool IOMgr::getInputReverseCount(short diType, short diIndex,
-    unsigned long* pReverseCount, short count) const {
+    unsigned long* pReverseCount, short count) const 
+{
     m_lastError = GtsHal::getDiReverseCount(diType, diIndex, pReverseCount, count);
     return m_lastError == 0;
 }
 
 bool IOMgr::setInputReverseCount(short diType, short diIndex,
-    unsigned long* pReverseCount, short count) {
+    unsigned long* pReverseCount, short count) 
+{
     m_lastError = GtsHal::setDiReverseCount(diType, diIndex, pReverseCount, count);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -269,7 +285,8 @@ bool IOMgr::setInputReverseCount(short diType, short diIndex,
 // ================================================================
 // 3. 高速 IO (HSIO)
 // ================================================================
-bool IOMgr::setHSIOOpt(unsigned short value, short channel) {
+bool IOMgr::setHSIOOpt(unsigned short value, short channel) 
+{
     m_lastError = GtsHal::setHSIOOpt(value, channel);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -278,13 +295,15 @@ bool IOMgr::setHSIOOpt(unsigned short value, short channel) {
     return true;
 }
 
-unsigned short IOMgr::getHSIOOpt(short channel) const {
+unsigned short IOMgr::getHSIOOpt(short channel) const 
+{
     unsigned short value = 0;
     GtsHal::getHSIOOpt(&value, channel);
     return value;
 }
 
-bool IOMgr::setGpiSense(unsigned short sense) {
+bool IOMgr::setGpiSense(unsigned short sense) 
+{
     m_lastError = GtsHal::gpiSns(sense);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -296,7 +315,8 @@ bool IOMgr::setGpiSense(unsigned short sense) {
 // ================================================================
 // 4. DAC 输出
 // ================================================================
-bool IOMgr::setDAC(short dac, short* pValue, short count) {
+bool IOMgr::setDAC(short dac, short* pValue, short count) 
+{
     m_lastError = GtsHal::setDac(dac, pValue, count);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -305,12 +325,14 @@ bool IOMgr::setDAC(short dac, short* pValue, short count) {
     return true;
 }
 
-bool IOMgr::getDAC(short dac, short* pValue, short count) const {
+bool IOMgr::getDAC(short dac, short* pValue, short count) const 
+{
     m_lastError = GtsHal::getDac(dac, pValue, count);
     return m_lastError == 0;
 }
 
-bool IOMgr::setMotorBias(short dac, short bias) {
+bool IOMgr::setMotorBias(short dac, short bias) 
+{
     m_lastError = GtsHal::setMtrBias(dac, bias);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -319,13 +341,15 @@ bool IOMgr::setMotorBias(short dac, short bias) {
     return true;
 }
 
-short IOMgr::getMotorBias(short dac) const {
+short IOMgr::getMotorBias(short dac) const 
+{
     short bias = 0;
     GtsHal::getMtrBias(dac, &bias);
     return bias;
 }
 
-bool IOMgr::setMotorLimit(short dac, short limit) {
+bool IOMgr::setMotorLimit(short dac, short limit) 
+{
     m_lastError = GtsHal::setMtrLmt(dac, limit);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -334,7 +358,8 @@ bool IOMgr::setMotorLimit(short dac, short limit) {
     return true;
 }
 
-short IOMgr::getMotorLimit(short dac) const {
+short IOMgr::getMotorLimit(short dac) const 
+{
     short limit = 0;
     GtsHal::getMtrLmt(dac, &limit);
     return limit;
@@ -343,17 +368,20 @@ short IOMgr::getMotorLimit(short dac) const {
 // ================================================================
 // 5. ADC 输入
 // ================================================================
-bool IOMgr::getADC(short adc, double* pValue, short count) const {
+bool IOMgr::getADC(short adc, double* pValue, short count) const 
+{
     m_lastError = GtsHal::getAdc(adc, pValue, count);
     return m_lastError == 0;
 }
 
-bool IOMgr::getADCValue(short adc, short* pValue, short count) const {
+bool IOMgr::getADCValue(short adc, short* pValue, short count) const 
+{
     m_lastError = GtsHal::getAdcValue(adc, pValue, count);
     return m_lastError == 0;
 }
 
-bool IOMgr::setADCConfig(short adc, const TAdcConfig& cfg) {
+bool IOMgr::setADCConfig(short adc, const TAdcConfig& cfg) 
+{
     m_lastError = GtsHal::setAdcConfig(adc, cfg);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -362,12 +390,14 @@ bool IOMgr::setADCConfig(short adc, const TAdcConfig& cfg) {
     return true;
 }
 
-bool IOMgr::getADCConfig(short adc, TAdcConfig& cfg) const {
+bool IOMgr::getADCConfig(short adc, TAdcConfig& cfg) const 
+{
     m_lastError = GtsHal::getAdcConfig(adc, &cfg);
     return m_lastError == 0;
 }
 
-bool IOMgr::setADCFilter(short adc, short filterTime) {
+bool IOMgr::setADCFilter(short adc, short filterTime) 
+{
     m_lastError = GtsHal::setAdcFilter(adc, filterTime);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -376,7 +406,8 @@ bool IOMgr::setADCFilter(short adc, short filterTime) {
     return true;
 }
 
-bool IOMgr::setADCFilterParam(short adc, double k) {
+bool IOMgr::setADCFilterParam(short adc, double k) 
+{
     m_lastError = GtsHal::setAdcFilterPrm(adc, k);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -385,7 +416,8 @@ bool IOMgr::setADCFilterParam(short adc, double k) {
     return true;
 }
 
-double IOMgr::getADCFilterParam(short adc) const {
+double IOMgr::getADCFilterParam(short adc) const 
+{
     double k = 0.0;
     GtsHal::getAdcFilterPrm(adc, &k);
     return k;
@@ -394,7 +426,8 @@ double IOMgr::getADCFilterParam(short adc) const {
 // ================================================================
 // 6. 扩展模块
 // ================================================================
-bool IOMgr::openExtModule(const char* pDllName) {
+bool IOMgr::openExtModule(const char* pDllName) 
+{
     m_lastError = GtsHal::openExtMdl(const_cast<char*>(pDllName));
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -403,7 +436,8 @@ bool IOMgr::openExtModule(const char* pDllName) {
     return true;
 }
 
-bool IOMgr::closeExtModule() {
+bool IOMgr::closeExtModule() 
+{
     m_lastError = GtsHal::closeExtMdl();
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -412,7 +446,8 @@ bool IOMgr::closeExtModule() {
     return true;
 }
 
-bool IOMgr::switchExtModuleCardNo(short card) {
+bool IOMgr::switchExtModuleCardNo(short card) 
+{
     m_lastError = GtsHal::switchtoCardNoExtMdl(card);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -421,7 +456,8 @@ bool IOMgr::switchExtModuleCardNo(short card) {
     return true;
 }
 
-bool IOMgr::resetExtModule() {
+bool IOMgr::resetExtModule() 
+{
     m_lastError = GtsHal::resetExtMdl();
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -430,7 +466,8 @@ bool IOMgr::resetExtModule() {
     return true;
 }
 
-bool IOMgr::loadExtConfig(const QString& filePath) {
+bool IOMgr::loadExtConfig(const QString& filePath) 
+{
     m_lastError = GtsHal::loadExtConfig(filePath.toLocal8Bit().constData());
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -439,7 +476,8 @@ bool IOMgr::loadExtConfig(const QString& filePath) {
     return true;
 }
 
-bool IOMgr::setExtOutput(short mdl, unsigned short value) {
+bool IOMgr::setExtOutput(short mdl, unsigned short value) 
+{
     m_lastError = GtsHal::setExtIoValue(mdl, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -448,13 +486,15 @@ bool IOMgr::setExtOutput(short mdl, unsigned short value) {
     return true;
 }
 
-unsigned short IOMgr::getExtOutput(short mdl) const {
+unsigned short IOMgr::getExtOutput(short mdl) const 
+{
     unsigned short value = 0;
     GtsHal::getExtIoValue(mdl, &value);
     return value;
 }
 
-bool IOMgr::setExtOutputBit(short mdl, short index, unsigned short value) {
+bool IOMgr::setExtOutputBit(short mdl, short index, unsigned short value) 
+{
     m_lastError = GtsHal::setExtIoBit(mdl, index, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -463,25 +503,29 @@ bool IOMgr::setExtOutputBit(short mdl, short index, unsigned short value) {
     return true;
 }
 
-unsigned short IOMgr::getExtOutputBit(short mdl, short index) const {
+unsigned short IOMgr::getExtOutputBit(short mdl, short index) const 
+{
     unsigned short value = 0;
     GtsHal::getExtIoBit(mdl, index, &value);
     return value;
 }
 
-unsigned short IOMgr::getExtADValue(short mdl, short chn) const {
+unsigned short IOMgr::getExtADValue(short mdl, short chn) const 
+{
     unsigned short value = 0;
     GtsHal::getExtAdValue(mdl, chn, &value);
     return value;
 }
 
-double IOMgr::getExtADVoltage(short mdl, short chn) const {
+double IOMgr::getExtADVoltage(short mdl, short chn) const 
+{
     double value = 0.0;
     GtsHal::getExtAdVoltage(mdl, chn, &value);
     return value;
 }
 
-bool IOMgr::setExtDAValue(short mdl, short chn, unsigned short value) {
+bool IOMgr::setExtDAValue(short mdl, short chn, unsigned short value) 
+{
     m_lastError = GtsHal::setExtDaValue(mdl, chn, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -490,7 +534,8 @@ bool IOMgr::setExtDAValue(short mdl, short chn, unsigned short value) {
     return true;
 }
 
-bool IOMgr::setExtDAVoltage(short mdl, short chn, double value) {
+bool IOMgr::setExtDAVoltage(short mdl, short chn, double value) 
+{
     m_lastError = GtsHal::setExtDaVoltage(mdl, chn, value);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -499,13 +544,15 @@ bool IOMgr::setExtDAVoltage(short mdl, short chn, double value) {
     return true;
 }
 
-short IOMgr::getExtModuleMode() const {
+short IOMgr::getExtModuleMode() const 
+{
     short mode = 0;
     GtsHal::getExtMdlMode(&mode);
     return mode;
 }
 
-bool IOMgr::setExtModuleMode(short mode) {
+bool IOMgr::setExtModuleMode(short mode) 
+{
     m_lastError = GtsHal::setExtMdlMode(mode);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -514,12 +561,14 @@ bool IOMgr::setExtModuleMode(short mode) {
     return true;
 }
 
-bool IOMgr::getExtConfig(short mdl, TExtMdlCfgInfo& info) const {
+bool IOMgr::getExtConfig(short mdl, TExtMdlCfgInfo& info) const 
+{
     m_lastError = GtsHal::getConfig(mdl, &info);
     return m_lastError == 0;
 }
 
-bool IOMgr::setExtConfig(short mdl, const TExtMdlCfgInfo& info) {
+bool IOMgr::setExtConfig(short mdl, const TExtMdlCfgInfo& info) 
+{
     m_lastError = GtsHal::setConfig(mdl, info);
     if (m_lastError != 0) {
         emit errorOccurred(m_lastError, lastErrorString());
@@ -531,20 +580,24 @@ bool IOMgr::setExtConfig(short mdl, const TExtMdlCfgInfo& info) {
 // ================================================================
 // 7. 便利方法
 // ================================================================
-bool IOMgr::setOutputOn(short doType, short doIndex) {
+bool IOMgr::setOutputOn(short doType, short doIndex) 
+{
     return setOutputBit(doType, doIndex, 1);
 }
 
-bool IOMgr::setOutputOff(short doType, short doIndex) {
+bool IOMgr::setOutputOff(short doType, short doIndex) 
+{
     return setOutputBit(doType, doIndex, 0);
 }
 
-bool IOMgr::getInputBit(short diType, short diIndex) const {
+bool IOMgr::getInputBit(short diType, short diIndex) const 
+{
     long value = getInput(diType);
     return (value & (1L << diIndex)) != 0;
 }
 
-IOMgr::IOSnapshot IOMgr::takeSnapshot() const {
+IOMgr::IOSnapshot IOMgr::takeSnapshot() const 
+{
     IOSnapshot snap;
     snap.input = getInput(MC_GPI);
     snap.output = getOutput(MC_GPO);
@@ -554,6 +607,7 @@ IOMgr::IOSnapshot IOMgr::takeSnapshot() const {
     return snap;
 }
 
-QString IOMgr::lastErrorString() const {
+QString IOMgr::lastErrorString() const 
+{
     return GtsErrorToString(m_lastError);
 }

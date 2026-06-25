@@ -5,6 +5,7 @@
 #include <QString>
 #include <Vector>
 #include "GtsHal.h"
+
 #include "ControllerData.h"
 
 class CTotalMgr;
@@ -21,21 +22,11 @@ public:
     ~AxisMgr();
     void setTotalMgr(CTotalMgr* mgr) { m_pTotalMgr = mgr; }
 
-    // home初始化
-    bool homeInit(short axis);
-    bool homeInitAll();
-    // 设置回零模式
-    bool setHomeIndexMode(short axis, long indexOffset = 20000, long indexWidth = 2000);
-    // 简单回零
-    bool home(short axis, long pos = 0, double vel = 10.0, double acc = 100.0, long offset = 0);
-
-
     // 获取轴状态
     void getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis);
     // profile 当量
     short setProfileScale(short axis, long alpha, long beta);
     short getProfileScale(short axis, long& alpha, long& beta);
-
     // encoder 当量
     short setEncoderScale(short axis, long alpha, long beta);
     short getEncoderScale(short axis, long& alpha, long& beta);
@@ -145,7 +136,6 @@ public:
 signals:
     // 发生错误
     void errorOccurred(short axis, short errorCode, const QString& errorMsg);
-
 };
 
 #endif // AXISMGR_H

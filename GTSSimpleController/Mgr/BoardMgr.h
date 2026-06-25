@@ -19,7 +19,6 @@ private:
     short m_cardNo = 0;
     short m_lastError = 0;
 
-
 public:
     explicit BoardMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~BoardMgr();
@@ -96,6 +95,9 @@ public:
     // 获取最后一次错误描述
     QString lastErrorString() const;
 
+signals:
+    // 发生错误
+    void errorOccurred(short axis, short errorCode, const QString& errorMsg);
 };
 
 #endif // BOARDMGR_H

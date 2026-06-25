@@ -205,7 +205,6 @@ struct stuAxisConfig
 
 };
 
-
 // 点位运动(trap)参数
 struct stuTrapParam
 {

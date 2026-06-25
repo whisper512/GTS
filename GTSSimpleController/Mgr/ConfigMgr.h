@@ -8,10 +8,9 @@
 #include "ControllerData.h"
 #include "GtsHal.h"
 
-
 // ============================================================
 // ConfigMgr — 配置管理器
-// 职责：管理所有高级配置功能
+// 职责:管理所有高级配置功能
 // ============================================================
 
 class AxisMgr;
@@ -22,14 +21,13 @@ class ConfigMgr : public QObject
     Q_OBJECT
 
 private:
+    int m_axisCount = 0;
     mutable short m_lastError = 0;
-
-    // 轴配置数据引用（由 TotalMgr 注入）
-    stuAxisConfig* m_pAxisCfg = nullptr;
     QMap<int, QString> m_customDIDesc;
     QMap<int, QString> m_customDODesc;
-    int        m_axisCount = 0;
     AxisMgr* m_pAxisMgr = nullptr;
+    // 轴配置数据引用(由 TotalMgr 注入)
+    stuAxisConfig* m_pAxisCfg = nullptr;
 
 public:
     // 初始化轴配置引用（TotalMgr 构造时调用一次）
@@ -405,7 +403,7 @@ public:
     QString lastErrorString() const;
 
 signals:
-    // 发生错误 (通道号, 错误码, 描述)
+    // 发生错误 (通道号,错误码,描述)
     void errorOccurred(short channel, short errorCode, const QString& errorMsg);
     // 配置文件改变
     void configChanged();
