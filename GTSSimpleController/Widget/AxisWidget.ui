@@ -134,7 +134,7 @@
             <item row="1" column="0">
              <widget class="QLabel" name="label_actVel">
               <property name="text">
-               <string>实际速度(mm/s):</string>
+               <string>实际速度(mm/ms):</string>
               </property>
              </widget>
             </item>
@@ -162,7 +162,7 @@
             <item row="3" column="0">
              <widget class="QLabel" name="label_tgtVel">
               <property name="text">
-               <string>规划速度(mm/s):</string>
+               <string>规划速度(mm/ms):</string>
               </property>
              </widget>
             </item>
@@ -176,7 +176,7 @@
             <item row="4" column="0">
              <widget class="QLabel" name="label_tgtAcc">
               <property name="text">
-               <string>规划加速度(mm/s^2):</string>
+               <string>规划加速度(mm/ms^2):</string>
               </property>
              </widget>
             </item>
@@ -303,7 +303,7 @@
               <item row="3" column="0">
                <widget class="QLabel" name="label_trapDec">
                 <property name="text">
-                 <string>减速度(mm/s^2):</string>
+                 <string>减速度(mm/ms^2):</string>
                 </property>
                </widget>
               </item>
@@ -374,7 +374,7 @@
               <item row="2" column="0">
                <widget class="QLabel" name="label_trapAcc">
                 <property name="text">
-                 <string>加速度(mm/s^2):</string>
+                 <string>加速度(mm/ms^2):</string>
                 </property>
                </widget>
               </item>
@@ -391,7 +391,7 @@
               <item row="0" column="0">
                <widget class="QLabel" name="label_trapMotionVel">
                 <property name="text">
-                 <string>速度(mm/s):</string>
+                 <string>速度(mm/ms):</string>
                 </property>
                </widget>
               </item>
@@ -413,6 +413,9 @@
             </item>
             <item>
              <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>
@@ -502,6 +505,9 @@
             </item>
             <item>
              <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
               <property name="sizeHint" stdset="0">
                <size>
                 <width>20</width>

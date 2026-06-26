@@ -36,10 +36,10 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
         double ppm = m_pTotalMgr->pulsePerMm(axis);  // pulse/mm
         if (ppm > 0.0) {
             vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPosOriginal * ppm;
-            // pluse/ms -> mm/s
-            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal * ppm / 1000.0;
-            // pluse/ms² -> mm/s²
-            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal * ppm / 1000000.0;
+            // pluse/ms -> mm/ms
+            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal * ppm ;
+            // pluse/ms² -> mm/ms²
+            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal * ppm ;
         }
         else {
             vecAxis[idx].dPrfPosMm = 0.0;

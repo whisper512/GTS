@@ -581,7 +581,7 @@ bool MotionMgr::singleTrapMotion(short profile, double stepSize,
         return false;
     }
 
-    // 设置梯形参数 —— acc/dec 单位 mm/s²，板卡自动换算
+    // 设置梯形参数 —— acc/dec 单位 mm/ms²，板卡自动换算
     TTrapPrm prm = {};
     prm.acc = acc;
     prm.dec = dec;
@@ -601,7 +601,7 @@ bool MotionMgr::singleTrapMotion(short profile, double stepSize,
         return false;
     }
 
-    // 设置速度 —— 单位 mm/s，板卡自动换算
+    // 设置速度 —— 单位 mm/ms，板卡自动换算
     m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
