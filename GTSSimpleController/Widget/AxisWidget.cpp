@@ -56,7 +56,10 @@ void CAxisWidget::initWidget()
 		ui.label_actVelData,
 		ui.label_tgtAccData,
 		ui.label_tgtPosData,
-		ui.label_tgtVelData
+		ui.label_tgtVelData,
+		ui.label_tgtAccDataPluse,
+		ui.label_tgtPosDataPluse,
+		ui.label_tgtVelDataPluse,
 	};
 	QFont monoFont(QStringLiteral("Consolas"), 9);
 	for (QLabel* lb : numLabels)
@@ -451,13 +454,16 @@ void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 	ui.radioButton_eStop->setChecked(axis.bAbruptStop);
 	ui.radioButton_smoothStop->setChecked(axis.bSmoothStop);
 	ui.radioButton_motionSts->setChecked(axis.bMotion);
-	// 编码器长度数值
+	// 编码器数值
     ui.label_actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
     ui.label_actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
 	// 规划期数值
 	ui.label_tgtAccData->setText(QString::number(axis.dPrfAccMm, 'f', 3));
 	ui.label_tgtPosData->setText(QString::number(axis.dPrfPosMm, 'f', 3));
 	ui.label_tgtVelData->setText(QString::number(axis.dPrfVelMm, 'f', 3));
+	ui.label_tgtPosDataPluse->setText(QString::number(axis.dPrfPosOriginal, 'f', 3));
+	ui.label_tgtVelDataPluse->setText(QString::number(axis.dPrfVelOriginal, 'f', 3));
+    ui.label_tgtAccDataPluse->setText(QString::number(axis.dPrfAccOriginal, 'f', 3));
 	if (axis.bServoOn)
 	{
 		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));

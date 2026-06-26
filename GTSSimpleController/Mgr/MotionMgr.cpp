@@ -80,43 +80,32 @@ bool MotionMgr::setTrapParam(short axisId, const stuTrapParam& param)
     return true;
 }
 
-bool MotionMgr::startTrapMotion(short profile, long stepSize, const stuTrapParam& trap)
+
+bool MotionMgr::startTrapMotion(short profile, double stepSize, const stuTrapParam& trap)
 {
     if (!checkProfile(profile)) return false;
 
-    // 检查参数
+    // ── 参数检查（单位均为 mm / mm/s / mm/s²）──
     if (trap.dMotionVel <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 运动速度无效 (dMotionVel = %2)，必须 > 0")
+            QStringLiteral("轴%1 运动速度无效 (dMotionVel = %2 mm/s)，必须 > 0")
             .arg(profile).arg(trap.dMotionVel, 0, 'f', 3));
         return false;
     }
-    if (stepSize == 0) {
+    if (stepSize == 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 步长为 0，无法运动").arg(profile));
+            QStringLiteral("轴%1 步长为 0 mm，无法运动").arg(profile));
         return false;
     }
     if (trap.acc <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 加速度无效 (acc = %2)，必须 > 0")
-            .arg(profile).arg(trap.acc, 0, 'f', 6));
-        return false;
-    }
-    if (trap.acc < 1e-4) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 加速度过小 (acc = %2)，换算后低于硬件有效范围")
+            QStringLiteral("轴%1 加速度无效 (acc = %2 mm/s^2)，必须 > 0")
             .arg(profile).arg(trap.acc, 0, 'f', 6));
         return false;
     }
     if (trap.dec <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 减速度无效 (dec = %2)，必须 > 0")
-            .arg(profile).arg(trap.dec, 0, 'f', 6));
-        return false;
-    }
-    if (trap.dec < 1e-4) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 减速度过小 (dec = %2)，换算后低于硬件有效范围")
+            QStringLiteral("轴%1 减速度无效 (dec = %2 mm/s^2)，必须 > 0")
             .arg(profile).arg(trap.dec, 0, 'f', 6));
         return false;
     }
@@ -126,21 +115,26 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize, const stuTrapParam
             .arg(profile).arg(trap.somoothTime));
         return false;
     }
-    // 单次模式（cycleTimes <= 0）
+
+    // 单次模式
     if (trap.cycleTimes <= 0) {
-        return singleTrapMotion(profile, stepSize, trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel);
+        return singleTrapMotion(profile, stepSize,
+            trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel);
     }
+
     // 循环模式
-    long currentStep = stepSize;
+    double currentStep = stepSize;
     int times = trap.cycleTimes;
     for (int i = 0; i < times; ++i) {
-        if (!singleTrapMotion(profile, currentStep, trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
+        if (!singleTrapMotion(profile, currentStep,
+            trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
             return false;
         waitMotionDone(profile);
         if (trap.Delay > 0) {
             GtsHal::delay(static_cast<unsigned short>(trap.Delay));
         }
-        if (!singleTrapMotion(profile, -currentStep, trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
+        if (!singleTrapMotion(profile, -currentStep,
+            trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
             return false;
         waitMotionDone(profile);
         if (trap.Delay > 0) {
@@ -151,47 +145,25 @@ bool MotionMgr::startTrapMotion(short profile, long stepSize, const stuTrapParam
 }
 
 
+
 bool MotionMgr::trapMotion(short profile, double lengthMm)
 {
     if (!checkProfile(profile)) return false;
 
-    // 获取当量参数
-    long prfAlpha = 1, prfBeta = 1;
-    prfAlpha = m_pTotalMgr->configMgr()->profileScaleAlpha(profile);
-    prfBeta = m_pTotalMgr->configMgr()->profileScaleBeta(profile);
-
-    if (prfBeta == 0) {
+    if (lengthMm == 0.0) {
         emit errorOccurred(profile, -1,
-            QStringLiteral("当量参数无效 prfAlpha=%1 prfBeta=%2")
-            .arg(prfAlpha).arg(prfBeta));
+            QStringLiteral("轴%1 下发长度为 0，无法运动").arg(profile));
         return false;
     }
 
-    if (m_pTotalMgr->pulsePerMm(profile) == 0.0) { /*报错*/ }
-    long stepSize = m_pTotalMgr->mmToPulse(profile, lengthMm);
-   
-
-    // 长度非零但换算后脉冲为 0
-    if (stepSize == 0 && lengthMm != 0.0) {
-        emit errorOccurred(profile, -1,
-            QStringLiteral("下发 %.4f mm 换算脉冲 = %1，被截断为 0，请检查当量")
-            .arg(lengthMm, 0, 'f', 4).arg(stepSize));
-        return false;
-    }
-
-    // 准备运动参数：从轴对象获取 trapParam
     int idx = profile - 1;
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
     if (!pAxis) return false;
 
-    // 运动参数单位换算：mm/s → pulse/ms, mm/s² → pulse/ms²
-    stuTrapParam trapPrm = pAxis->trapParam;          
-    trapPrm.dMotionVel = m_pTotalMgr->mmpsToPulsePerMs(profile, trapPrm.dMotionVel);
-    trapPrm.acc = m_pTotalMgr->mmps2ToPulsePerMs2(profile, trapPrm.acc);
-    trapPrm.dec = m_pTotalMgr->mmps2ToPulsePerMs2(profile, trapPrm.dec);
-
-    return startTrapMotion(profile, stepSize, trapPrm);
+    stuTrapParam trapPrm = pAxis->trapParam;
+    return startTrapMotion(profile, lengthMm, trapPrm);
 }
+
 
 void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 {
@@ -598,8 +570,9 @@ bool MotionMgr::checkProfile(short profile) const
     return true;
 }
 
-// 抽取的单次运动函数
-bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, double dec, int smoothTime, double vel)
+// 改动：stepSize 类型从 long → double
+bool MotionMgr::singleTrapMotion(short profile, double stepSize,
+    double acc, double dec, int smoothTime, double vel)
 {
     // 设为点位模式
     m_lastError = GtsHal::prfTrap(profile);
@@ -607,7 +580,8 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
-    // 设置梯形参数
+
+    // 设置梯形参数 —— acc/dec 单位 mm/s²，板卡自动换算
     TTrapPrm prm = {};
     prm.acc = acc;
     prm.dec = dec;
@@ -618,16 +592,16 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
         return false;
     }
 
-    // 目标位置 = 当前位置 + 步长
-    double curPos = profilePos(profile);
-    long targetPos = static_cast<long>(curPos) + stepSize;
-    m_lastError = GtsHal::setPos(profile, targetPos);
+    // ── 目标位置 = 当前位置 + 步长（全部是 mm，板卡自动换算为脉冲）──
+    double curPos = profilePos(profile);           // 板卡返回 mm
+    double targetPos = curPos + stepSize;          // 单位 mm
+    m_lastError = GtsHal::setPos(profile, static_cast<long>(targetPos));
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
     }
 
-    // 设置速度
+    // 设置速度 —— 单位 mm/s，板卡自动换算
     m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
@@ -644,6 +618,7 @@ bool MotionMgr::singleTrapMotion(short profile, long stepSize, double acc, doubl
 
     return true;
 }
+
 
 // 等待运动完成（规划停止 bit10 = 0x400）
 void MotionMgr::waitMotionDone(short profile)

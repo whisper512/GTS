@@ -17,17 +17,8 @@ AxisMgr::~AxisMgr()
 void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     int n = m_pTotalMgr->axisCount();
-
-    if (n <= 0) {
-        QMessageBox::warning(nullptr,
-            QStringLiteral("排查结束"),
-            QStringLiteral("axisCount 为 0，直接返回"));
-        return;
-    }
-
-    if ((int)vecAxis.size() < n) {
-        vecAxis.resize(n);
-    }
+    if (n <= 0) return;
+    if ((int)vecAxis.size() < n) vecAxis.resize(n);
 
     long sts = 0;
     for (short axis = 1; axis <= n; ++axis) {
@@ -36,19 +27,29 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
         GtsHal::getSts(axis, &sts);
         vecAxis[idx].parseStatus(sts);
 
-        // 规划器原始数据 经过当量计算的数据,所以只处理下时间单位
-        vecAxis[idx].dPrfPosOriginal = prfPosition(axis);
-        vecAxis[idx].dPrfVelOriginal = prfVelocity(axis);
-        vecAxis[idx].dPrfAccOriginal = prfAcceleration(axis);
-        // 换算
-        vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPosOriginal ;
-        vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal  * 1000.0;
-        vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal  * 1000000.0;
+        // 规划器原始数据
+        vecAxis[idx].dPrfPosOriginal = prfPosition(axis);   // pulse
+        vecAxis[idx].dPrfVelOriginal = prfVelocity(axis);   // pulse/ms
+        vecAxis[idx].dPrfAccOriginal = prfAcceleration(axis); // pulse/ms²
 
+        // 读取回来的规划器数据转为mm需要 * alpha / beta
+        double ppm = m_pTotalMgr->pulsePerMm(axis);  // pulse/mm
+        if (ppm > 0.0) {
+            vecAxis[idx].dPrfPosMm = vecAxis[idx].dPrfPosOriginal * ppm;
+            // pluse/ms -> mm/s
+            vecAxis[idx].dPrfVelMm = vecAxis[idx].dPrfVelOriginal * ppm / 1000.0;
+            // pluse/ms² -> mm/s²
+            vecAxis[idx].dPrfAccMm = vecAxis[idx].dPrfAccOriginal * ppm / 1000000.0;
+        }
+        else {
+            vecAxis[idx].dPrfPosMm = 0.0;
+            vecAxis[idx].dPrfVelMm = 0.0;
+            vecAxis[idx].dPrfAccMm = 0.0;
+        }
 
         ControlMode mode = m_pTotalMgr->configMgr()->controlMode(axis);
-        
-        // 模拟或者开环
+
+        // ── 开环/模拟：编码器 = 规划器 ──
         if (mode == ControlMode::OpenLoop || mode == ControlMode::Simulation) {
             vecAxis[idx].dEncPos = vecAxis[idx].dPrfPosOriginal;
             vecAxis[idx].dEncVel = vecAxis[idx].dPrfVelOriginal;
@@ -56,14 +57,17 @@ void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)
             vecAxis[idx].dEncVelMm = vecAxis[idx].dPrfVelMm;
         }
         else {
-            // 编码器
-            vecAxis[idx].dEncPos = encoderPosition(axis);
-            vecAxis[idx].dEncVel = encoderVelocity(axis);
-            vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos;
-            vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel * 1000.0;
+            // ── 闭环：读真实编码器，同样需要脉冲→mm 换算 ──
+            vecAxis[idx].dEncPos = encoderPosition(axis);   // pulse
+            vecAxis[idx].dEncVel = encoderVelocity(axis);   // pulse/ms
+            if (ppm > 0.0) {
+                vecAxis[idx].dEncPosMm = vecAxis[idx].dEncPos / ppm;
+                vecAxis[idx].dEncVelMm = vecAxis[idx].dEncVel / ppm * 1000.0;
+            }
         }
     }
 }
+
 
 short AxisMgr::setProfileScale(short axis, long alpha, long beta)
 {
