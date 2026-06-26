@@ -264,8 +264,8 @@ struct stuAxis
     double dPrfVelOriginal;    // 规划速度原始数据,已经经过当量换算
     double dPrfAccOriginal;    // 规划加速度原始数据,已经经过当量换算
     double dPrfPosMm;  // mm
-    double dPrfVelMm;  // mm/s
-    double dPrfAccMm;  // mm/s²
+    double dPrfVelMm;  // mm/ms
+    double dPrfAccMm;  // mm/ms²
     long lPrfMode;     // 运动模式
     long AxisStatus;   // 轴状态
 
@@ -273,7 +273,7 @@ struct stuAxis
     double dEncPos;    // 编码器位置
     double dEncVel;    // 编码器速度
     double dEncPosMm;  // 编码器换算位置(单位:mm)
-    double dEncVelMm;  // 编码器换算速度(单位:mm/s)
+    double dEncVelMm;  // 编码器换算速度(单位:mm/ms)
 
     stuTrapParam trapParam; // 点位运动(trap)参数
     stuJogParam jogParam;   // jog运动参数
