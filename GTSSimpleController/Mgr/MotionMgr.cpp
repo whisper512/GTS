@@ -181,55 +181,43 @@ void MotionMgr::getJogMotionInfo(std::vector<stuAxis>& vecAxis)
 bool MotionMgr::setJogParam(short axisId, const stuJogParam& param)
 {
     if (!checkProfile(axisId)) return false;
-    // 构造 TJogPrm，从 stuJobParam 映射
-    TJogPrm prm;
-    prm.acc = param.acc;     // 加速度
-    prm.dec = param.dec;     // 减速度
-    prm.smooth = 0.0;        // 平滑时间，参考 trap 给默认值 0
-    // 写入板卡
-    if (!setJogParams(axisId, prm)) {
-        return false;
-    }
+
+    // 只更新内存
+    stuAxis* pAxis = m_pTotalMgr->getAxisRef(axisId - 1);
+    if (!pAxis) return false;
+    pAxis->jogParam = param;
 
     return true;
 }
 
+
 bool MotionMgr::startJogMotion(short profile, short direction)
 {
+    if (!checkProfile(profile)) return false;
+
     int idx = profile - 1;
     stuAxis* pAxis = m_pTotalMgr->getAxisRef(idx);
     if (!pAxis) return false;
 
     const stuJogParam& jog = pAxis->jogParam;
 
-    // Jog 运动参数单位换算：mm/s → pulse/ms, mm/s² → pulse/ms²
-    if (m_pTotalMgr->pulsePerMm(profile) == 0.0) {
-        emit errorOccurred(profile, -1,
-            QStringLiteral("当量参数无效"));
-        return false;
-    }
-    double jogVel = m_pTotalMgr->mmpsToPulsePerMs(profile, jog.dMotionVel);
-    double jogAcc = m_pTotalMgr->mmps2ToPulsePerMs2(profile, jog.acc);
-    double jogDec = m_pTotalMgr->mmps2ToPulsePerMs2(profile, jog.dec);
-
-
-    // 参数检查
-    if (jogVel <= 0.0) {
+    // ── 参数检查 ——
+    if (jog.dMotionVel <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
             QStringLiteral("轴%1 Jog速度无效 (dMotionVel = %2)，必须 > 0")
             .arg(profile).arg(jog.dMotionVel, 0, 'f', 3));
         return false;
     }
-    if (jogAcc < 1e-4) {
+    if (jog.acc <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 Jog加速度过小 (acc = %2 → %3 pulse/ms^2)，低于硬件有效范围")
-            .arg(profile).arg(jog.acc, 0, 'f', 6).arg(jogAcc, 0, 'f', 6));
+            QStringLiteral("轴%1 Jog加速度无效 (acc = %2)，必须 > 0")
+            .arg(profile).arg(jog.acc, 0, 'f', 6));
         return false;
     }
-    if (jogDec < 1e-4) {
+    if (jog.dec <= 0.0) {
         QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
-            QStringLiteral("轴%1 Jog减速度过小 (dec = %2 → %3 pulse/ms^2)，低于硬件有效范围")
-            .arg(profile).arg(jog.dec, 0, 'f', 6).arg(jogDec, 0, 'f', 6));
+            QStringLiteral("轴%1 Jog减速度无效 (dec = %2)，必须 > 0")
+            .arg(profile).arg(jog.dec, 0, 'f', 6));
         return false;
     }
 
@@ -240,10 +228,10 @@ bool MotionMgr::startJogMotion(short profile, short direction)
         return false;
     }
 
-    // 设置 Jog 参数 (acc, dec, smooth) —— 已换算为 pulse/ms²
+    // 设置 Jog 参数
     TJogPrm prm;
-    prm.acc = jogAcc;
-    prm.dec = jogDec;
+    prm.acc = jog.acc;
+    prm.dec = jog.dec;
     prm.smooth = 0.0;
     m_lastError = GtsHal::setJogPrm(profile, prm);
     if (m_lastError != 0) {
@@ -251,8 +239,8 @@ bool MotionMgr::startJogMotion(short profile, short direction)
         return false;
     }
 
-    // 设置速度（方向：正方向 vel > 0，反方向 vel < 0）—— 已换算为 pulse/ms
-    double targetVel = (direction > 0) ? jogVel : -jogVel;
+    // 设置速度
+    double targetVel = (direction > 0) ? jog.dMotionVel : -jog.dMotionVel;
     m_lastError = GtsHal::setVel(profile, targetVel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
@@ -269,6 +257,7 @@ bool MotionMgr::startJogMotion(short profile, short direction)
 
     return true;
 }
+
 
 
 bool MotionMgr::homeStart(short axis)
@@ -1355,7 +1344,7 @@ bool MotionMgr::moveTo(short profile, long pos, double vel, double acc, double d
     return true;
 }
 
-bool MotionMgr::jog(short profile, double vel, double acc) 
+bool MotionMgr::jog(short profile, double vel, double acc)
 {
     if (!checkProfile(profile)) return false;
 
@@ -1369,9 +1358,16 @@ bool MotionMgr::jog(short profile, double vel, double acc)
     // 设置 Jog 参数
     TJogPrm jogPrm;
     jogPrm.acc = acc;
-    jogPrm.dec = acc;  // 减速度等于加速度
+    jogPrm.dec = acc;
+    jogPrm.smooth = 0.0;
 
     m_lastError = GtsHal::setJogPrm(profile, jogPrm);
+    if (m_lastError != 0) {
+        emit errorOccurred(profile, m_lastError, lastErrorString());
+        return false;
+    }
+
+    m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
         return false;
@@ -1386,6 +1382,7 @@ bool MotionMgr::jog(short profile, double vel, double acc)
 
     return true;
 }
+
 
 bool MotionMgr::stop(short profile, long option) 
 {
