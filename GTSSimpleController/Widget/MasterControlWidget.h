@@ -38,6 +38,8 @@ private:
 	bool startSingleTrap(short axisId, double stepMm);
 
 	void onHomeButtonClicked(short axis);
+	void onStopAll();
+
 
 	// Ó²°ó¶¨£ºÖáºÅ ¡ú Ãû³Æ
 	static QString axisName(short axisId);

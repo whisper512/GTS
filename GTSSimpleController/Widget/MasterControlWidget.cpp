@@ -21,7 +21,7 @@ CMasterControlWidget::~CMasterControlWidget()
 
 void CMasterControlWidget::initMasterControlWidget()
 {
-	ui.spinBox_MotionVel->setValue(5.0);
+	ui.doubleSpinBox_Vel->setValue(5.0);
 	ui.doubleSpinBoxs_Acc->setValue(1.0);
 	ui.doubleSpinBoxs_Dec->setValue(1.0);
 	ui.comboBox_axisID->addItem("1");
@@ -122,6 +122,8 @@ void CMasterControlWidget::connectPrivateSignal()
 	connect(ui.pushButtonHome2, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(2); });
 	connect(ui.pushButtonHome3, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(3); });
 	connect(ui.pushButtonHome4, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(4); });
+	// 停止
+	connect(ui.toolButton_Stop, &QToolButton::clicked, this, &CMasterControlWidget::onStopAll);
 }
 
 void CMasterControlWidget::onJogPressed(short axisId, int direction)
@@ -142,7 +144,7 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	}
 
 	stuJogParam jogParam;
-	jogParam.dMotionVel = ui.spinBox_MotionVel->value();
+	jogParam.dMotionVel = ui.doubleSpinBox_Vel->value();
 	jogParam.acc = ui.doubleSpinBoxs_Acc->value();
 	jogParam.dec = ui.doubleSpinBoxs_Dec->value();
 
@@ -211,7 +213,7 @@ bool CMasterControlWidget::startSingleTrap(short axisId, double stepMm)
 	if (!axis) return false;
 
 	// 写入 UI 参数到轴对象
-	axis->trapParam.dMotionVel = ui.spinBox_MotionVel->value();
+	axis->trapParam.dMotionVel = ui.doubleSpinBox_Vel->value();
 	axis->trapParam.acc = ui.doubleSpinBoxs_Acc->value();
 	axis->trapParam.dec = ui.doubleSpinBoxs_Dec->value();
 	axis->trapParam.somoothTime = 0; 
@@ -250,8 +252,22 @@ void CMasterControlWidget::onHomeButtonClicked(short axis)
 	bool ok = m_pTotalMgr->motionMgr()->homeStart(axis);
 }
 
+void CMasterControlWidget::onStopAll()
+{
+	if (!m_pTotalMgr) return;
 
-
+	bool ok = m_pTotalMgr->axisMgr()->stopAll(1);
+	if (ok)
+	{
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("全部轴 减速停止"), Qt::darkGreen);
+	}
+	else
+	{
+		m_pGTSControllerWidget->showLog(
+			QStringLiteral("全部轴 停止失败"), Qt::red);
+	}
+}
 
 QString CMasterControlWidget::axisName(short axisId)
 {
