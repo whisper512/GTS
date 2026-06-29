@@ -217,10 +217,10 @@ struct stuTrapParam
     int Delay;              // 到位延时
 
     stuTrapParam()
-        : dMotionVel(100.0)
-        , lengthMm(1000.0)
-        , acc(10.0)
-        , dec(10.0)
+        : dMotionVel(1.0)
+        , lengthMm(100.0)
+        , acc(0.5)
+        , dec(0.5)
         , somoothTime(0)
         , cycleTimes(0)
         , Delay(0)
@@ -237,9 +237,9 @@ struct stuJogParam
     double smoothTime;      // 平滑时间
 
     stuJogParam()
-        : dMotionVel(10.0)
-        , acc(5.0)
-        , dec(5.0)
+        : dMotionVel(1.0)
+        , acc(0.5)
+        , dec(0.5)
         , smoothTime(0.0)
     {
     }

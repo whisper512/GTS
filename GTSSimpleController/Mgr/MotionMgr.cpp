@@ -258,30 +258,36 @@ bool MotionMgr::startJogMotion(short profile, short direction)
     return true;
 }
 
-
-
 bool MotionMgr::homeStart(short axis)
 {
     if (!checkProfile(axis)) return false;
 
     ConfigMgr* cfg = m_pTotalMgr->configMgr();
     homeMode mode = cfg->homeModeValue(axis);
-    double homeVelMm = cfg->homeVel(axis);
-    double homeAccMm = cfg->homeAcc(axis);
-    double homeRangeMm = cfg->homeRange(axis);
-    double homeOffsetMm = cfg->homeOffset(axis);
+    double homeVel = cfg->homeVel(axis);        // 速度 (mm/ms)
+    double homeAcc = cfg->homeAcc(axis);        // 加速度 (mm/ms²)
+    double homeRange = cfg->homeRange(axis);    // 搜索范围 (mm)
+    double homeOffset = cfg->homeOffset(axis);  // 偏移量 (mm)
 
-    // ── 当量换算 ──
-    if (m_pTotalMgr->pulsePerMm(axis) == 0.0) {
+    // ── 参数检查 ──
+    if (homeVel <= 0.0) {
         emit errorOccurred(axis, -1,
-            QStringLiteral("轴%1 当量参数无效，无法换算").arg(axis));
+            QStringLiteral("轴%1 回零速度无效 (homeVel = %2)，必须 > 0")
+            .arg(axis).arg(homeVel, 0, 'f', 3));
         return false;
     }
-    double vel = m_pTotalMgr->mmpsToPulsePerMs(axis, homeVelMm);
-    double acc = m_pTotalMgr->mmps2ToPulsePerMs2(axis, homeAccMm);
-    long   range = m_pTotalMgr->mmToPulse(axis, homeRangeMm);
-    long   offset = m_pTotalMgr->mmToPulse(axis, homeOffsetMm);
-
+    if (homeAcc <= 0.0) {
+        emit errorOccurred(axis, -1,
+            QStringLiteral("轴%1 回零加速度无效 (homeAcc = %2)，必须 > 0")
+            .arg(axis).arg(homeAcc, 0, 'f', 6));
+        return false;
+    }
+    if (homeRange == 0.0) {
+        emit errorOccurred(axis, -1,
+            QStringLiteral("轴%1 回零搜索范围无效 (homeRange = %2)，不能为 0")
+            .arg(axis).arg(homeRange, 0, 'f', 0));
+        return false;
+    }
 
     // ── 搜索方向 ──
     bool searchPos = false;
@@ -292,12 +298,18 @@ bool MotionMgr::homeStart(short axis)
     case homeMode::HomeMode_Home:      searchPos = false; modeName = QStringLiteral("原点DI");  break;
     case homeMode::HomeMode_HomeIndex: searchPos = false; modeName = QStringLiteral("原点+Index"); break;
     case homeMode::HomeMode_Index:     searchPos = false; modeName = QStringLiteral("Index");   break;
+    default:
+        emit errorOccurred(axis, -1,
+            QStringLiteral("轴%1 回零模式未知 (mode = %2)")
+            .arg(axis).arg(static_cast<int>(mode)));
+        return false;
     }
-    long searchStep = searchPos ? range : -range;
+    long searchStep = searchPos ? static_cast<long>(homeRange) : -static_cast<long>(homeRange);
 
     // ★ 回零开始
-    emit homeStatus(axis, QStringLiteral("回零开始 模式=%1 Vel=%2mm/s Acc=%3mm/s^2 Range=%4mm Offset=%5mm")
-        .arg(modeName).arg(homeVelMm).arg(homeAccMm).arg(homeRangeMm).arg(homeOffsetMm));
+    emit homeStatus(axis, QStringLiteral("回零开始 模式=%1 Vel=%2 Acc=%3 Range=%4 Offset=%5")
+        .arg(modeName).arg(homeVel, 0, 'f', 3).arg(homeAcc, 0, 'f', 6)
+        .arg(homeRange, 0, 'f', 0).arg(homeOffset, 0, 'f', 0));
 
     // ── 步骤1: 梯形模式 ──
     m_lastError = GtsHal::prfTrap(axis);
@@ -308,8 +320,8 @@ bool MotionMgr::homeStart(short axis)
 
     // ── 步骤2: 梯形参数 ──
     TTrapPrm prm;
-    prm.acc = acc;
-    prm.dec = acc;
+    prm.acc = homeAcc;
+    prm.dec = homeAcc;
     prm.velStart = 0.0;
     prm.smoothTime = 0;
     m_lastError = GtsHal::setTrapPrm(axis, prm);
@@ -343,6 +355,7 @@ bool MotionMgr::homeStart(short axis)
         useCapture = true;
         captureType = 2;
         break;
+    default: break;
     }
 
     if (useCapture) {
@@ -375,7 +388,7 @@ bool MotionMgr::homeStart(short axis)
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
     }
-    m_lastError = GtsHal::setVel(axis, vel);
+    m_lastError = GtsHal::setVel(axis, homeVel);
     if (m_lastError != 0) {
         emit errorOccurred(axis, m_lastError, lastErrorString());
         return false;
@@ -388,6 +401,8 @@ bool MotionMgr::homeStart(short axis)
     emit homeStatus(axis, QStringLiteral("搜索运动已启动 GT_Update OK"));
 
     // ── 步骤5: 等待触发 ──
+    long offsetPulse = static_cast<long>(homeOffset);
+
     if (useDI) {
         // === DI 检测模式（模式2: Home） ===
         emit homeStatus(axis, QStringLiteral("等待原点DI触发..."));
@@ -419,9 +434,9 @@ bool MotionMgr::homeStart(short axis)
 
         double capPos = profilePos(axis);
         emit homeStatus(axis, QStringLiteral("触发位置=%1 offset=%2 → 移动到=%3")
-            .arg(capPos, 0, 'f', 0).arg(offset).arg(static_cast<long>(capPos) + offset));
+            .arg(capPos, 0, 'f', 0).arg(offsetPulse).arg(static_cast<long>(capPos) + offsetPulse));
 
-        long finalTarget = static_cast<long>(capPos) + offset;
+        long finalTarget = static_cast<long>(capPos) + offsetPulse;
         m_lastError = GtsHal::setPos(axis, finalTarget);
         if (m_lastError != 0) {
             emit errorOccurred(axis, m_lastError, lastErrorString());
@@ -456,9 +471,9 @@ bool MotionMgr::homeStart(short axis)
         } while (capture == 0);
 
         emit homeStatus(axis, QStringLiteral("捕获 capPos=%1 → 移动到=%2")
-            .arg(capPos).arg(capPos + offset));
+            .arg(capPos).arg(capPos + offsetPulse));
 
-        long finalTarget = capPos + offset;
+        long finalTarget = capPos + offsetPulse;
         m_lastError = GtsHal::setPos(axis, finalTarget);
         if (m_lastError != 0) {
             emit errorOccurred(axis, m_lastError, lastErrorString());
@@ -497,8 +512,8 @@ bool MotionMgr::homeStart(short axis)
         if (((diVal >> axisBit) & 1) == 0) {
             emit errorOccurred(axis, -1,
                 QStringLiteral("轴%1 回零失败:未触发限位"
-                    "(搜索范围=%2 pulse, sts=0x%3, di=0x%4)")
-                .arg(axis).arg(range).arg(sts, 0, 16).arg(diVal, 0, 16));
+                    "(搜索范围=%2 mm, sts=0x%3, di=0x%4)")
+                .arg(axis).arg(static_cast<long>(homeRange)).arg(sts, 0, 16).arg(diVal, 0, 16));
             return false;
         }
 
@@ -514,7 +529,7 @@ bool MotionMgr::homeStart(short axis)
 
         GtsHal::clrSts(axis, axis);
 
-        long escapeStep = searchPos ? -offset : offset;
+        long escapeStep = searchPos ? -offsetPulse : offsetPulse;
         curPos = profilePos(axis);
         emit homeStatus(axis, QStringLiteral("脱离限位 curPos=%1 escape=%2 → target=%3")
             .arg(curPos, 0, 'f', 0).arg(escapeStep).arg(static_cast<long>(curPos) + escapeStep));
@@ -543,12 +558,13 @@ bool MotionMgr::homeStart(short axis)
 
     // 清除状态
     QThread::msleep(1000);
-    m_pTotalMgr->axisMgr()->clearStatus(axis);
+    GtsHal::clrSts(axis, axis);
 
     emit homeStatus(axis, QStringLiteral("回零完成"));
     emit motionDone(axis);
     return true;
 }
+
 
 
 bool MotionMgr::checkProfile(short profile) const

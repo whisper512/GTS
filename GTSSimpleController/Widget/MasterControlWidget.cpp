@@ -21,9 +21,9 @@ CMasterControlWidget::~CMasterControlWidget()
 
 void CMasterControlWidget::initMasterControlWidget()
 {
-	ui.doubleSpinBox_Vel->setValue(5.0);
-	ui.doubleSpinBoxs_Acc->setValue(1.0);
-	ui.doubleSpinBoxs_Dec->setValue(1.0);
+	ui.doubleSpinBox_Vel->setValue(0.5);
+	ui.doubleSpinBoxs_Acc->setValue(0.1);
+	ui.doubleSpinBoxs_Dec->setValue(0.1);
 	ui.comboBox_axisID->addItem("1");
     ui.comboBox_axisID->addItem("2");
 	ui.comboBox_axisID->addItem("3");
