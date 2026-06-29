@@ -37,7 +37,7 @@ bool MotionMgr::setAxisMotionMode(short axis, short mode)
 void MotionMgr::getAxisMotionInfo(std::vector<stuAxis>& vecAxis)
 {
     for (auto& axis : vecAxis) {
-        short axisIndex = axis.axisIndex;           // 轴号 1~4
+        short axisIndex = axis.axisIndex;                   // 轴号 1~4
         axis.dPrfPosOriginal = axisProfilePos(axisIndex);   // 规划位置
         axis.dPrfVelOriginal = axisProfileVel(axisIndex);   // 规划速度
         axis.dPrfAccOriginal = axisProfileAcc(axisIndex);   // 规划加速度

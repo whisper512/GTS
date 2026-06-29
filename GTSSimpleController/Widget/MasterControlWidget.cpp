@@ -265,7 +265,6 @@ QString CMasterControlWidget::axisName(short axisId)
 	}
 }
 
-
 void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 {
 	m_bUpdatingFromBoard = true;
@@ -283,7 +282,10 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 		QLabel* actVelData,
 		QLabel* tgtPosData,
 		QLabel* tgtVelData,
-		QLabel* tgtAccData)
+		QLabel* tgtAccData,
+		QLabel* tgtPosDataPluse,
+		QLabel* tgtVelDataPluse,
+		QLabel* tgtAccDataPluse)
 		{
 			servoEnable->setChecked(axis.bServoOn);
 			alarm->setChecked(axis.bAlarm);
@@ -298,6 +300,9 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			tgtPosData->setText(QString::number(axis.dPrfPosMm, 'f', 3));
 			tgtVelData->setText(QString::number(axis.dPrfVelMm, 'f', 3));
 			tgtAccData->setText(QString::number(axis.dPrfAccMm, 'f', 3));
+			tgtPosDataPluse->setText(QString::number(axis.dPrfPosOriginal, 'f', 3));
+			tgtVelDataPluse->setText(QString::number(axis.dPrfVelOriginal, 'f', 3));
+			tgtAccDataPluse->setText(QString::number(axis.dPrfAccOriginal, 'f', 3));
 		};
 
 	if ((int)axisInfo.size() >= 1)
@@ -314,7 +319,10 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.label_actVelData1,
 			ui.label_tgtPosData1,
 			ui.label_tgtVelData1,
-			ui.label_tgtAccData1);
+			ui.label_tgtAccData1,
+			ui.label_tgtPosDataPluse1,
+			ui.label_tgtVelDataPluse1,
+			ui.label_tgtAccDataPluse1);
 
 	if ((int)axisInfo.size() >= 2)
 		updateOneAxis(axisInfo[1],
@@ -330,7 +338,10 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.label_actVelData2,
 			ui.label_tgtPosData2,
 			ui.label_tgtVelData2,
-			ui.label_tgtAccData2);
+			ui.label_tgtAccData2,
+			ui.label_tgtPosDataPluse2,
+			ui.label_tgtVelDataPluse2,
+			ui.label_tgtAccDataPluse2);
 
 	if ((int)axisInfo.size() >= 3)
 		updateOneAxis(axisInfo[2],
@@ -346,7 +357,10 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.label_actVelData3,
 			ui.label_tgtPosData3,
 			ui.label_tgtVelData3,
-			ui.label_tgtAccData3);
+			ui.label_tgtAccData3,
+			ui.label_tgtPosDataPluse3,
+			ui.label_tgtVelDataPluse3,
+			ui.label_tgtAccDataPluse3);
 
 	if ((int)axisInfo.size() >= 4)
 		updateOneAxis(axisInfo[3],
@@ -362,10 +376,14 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 			ui.label_actVelData4,
 			ui.label_tgtPosData4,
 			ui.label_tgtVelData4,
-			ui.label_tgtAccData4);
+			ui.label_tgtAccData4,
+			ui.label_tgtPosDataPluse4,
+			ui.label_tgtVelDataPluse4,
+			ui.label_tgtAccDataPluse4);
 
 	m_bUpdatingFromBoard = false;
 }
+
 
 void CMasterControlWidget::onAxisParamUpdated(const std::vector<stuAxis>& axisInfo)
 {
