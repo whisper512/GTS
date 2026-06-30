@@ -16,6 +16,8 @@ GTSControllerWidget::GTSControllerWidget(QWidget* parent)
 
 GTSControllerWidget::~GTSControllerWidget()
 {
+    m_bIsShuttingDown = true;
+
     if (m_pTotalMgr)
     {
         m_pTotalMgr->disconnect();
@@ -147,6 +149,9 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)
 {
+    if (m_bIsShuttingDown)
+        return;
+
     ui.plainTextEdit->moveCursor(QTextCursor::End);
     QTextCursor cursor = ui.plainTextEdit->textCursor();
 

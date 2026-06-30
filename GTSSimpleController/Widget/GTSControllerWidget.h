@@ -30,6 +30,7 @@ private:
     QWidget* m_pOthersWidget = nullptr;                     // 其他
     QButtonGroup* m_pBtnGroup = nullptr;
 
+    bool m_bIsShuttingDown = false;
 private:
     void Init();
     void InitUI();
