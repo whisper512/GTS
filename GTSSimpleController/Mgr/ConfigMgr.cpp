@@ -14,7 +14,10 @@ ConfigMgr::ConfigMgr(QObject* parent)
 {
 }
 
-ConfigMgr::~ConfigMgr() {
+ConfigMgr::~ConfigMgr() 
+{
+    m_pAxisMgr = nullptr;
+    m_pAxisCfg = nullptr;
 }
 
 bool ConfigMgr::isValidAxis(short axis) const 

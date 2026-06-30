@@ -12,6 +12,7 @@ AxisMgr::~AxisMgr()
 {
     // 析构时禁止所有轴
     disableAll();
+    m_pTotalMgr = nullptr;
 }
 
 void AxisMgr::getAxisStatusAndMotionInfo(std::vector<stuAxis>& vecAxis)

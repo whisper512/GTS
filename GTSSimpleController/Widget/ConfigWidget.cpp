@@ -14,7 +14,10 @@ CConfigWidget::CConfigWidget(QWidget *parent, CTotalMgr* mgr)
 }
 
 CConfigWidget::~CConfigWidget()
-{}
+{
+	m_pTotalMgr = nullptr;
+	m_pGTSControllerWidget = nullptr;
+}
 
 void CConfigWidget::InitConfigWidget()
 {

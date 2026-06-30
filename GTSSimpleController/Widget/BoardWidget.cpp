@@ -17,7 +17,8 @@ CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
 
 CBoardWidget::~CBoardWidget()
 {
-    
+    m_pTotalMgr = nullptr;
+    m_pGTSControllerWidget = nullptr;
 }
 
 

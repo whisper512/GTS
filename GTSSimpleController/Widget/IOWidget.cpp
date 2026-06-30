@@ -33,6 +33,8 @@ CIOWidget::CIOWidget(QWidget *parent,CTotalMgr* mgr)
 
 CIOWidget::~CIOWidget()
 {
+    m_pTotalMgr = nullptr;
+    m_pGTSControllerWidget = nullptr;
 }
 
 void CIOWidget::InitUI()

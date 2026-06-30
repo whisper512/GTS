@@ -18,6 +18,8 @@ CAxisWidget::CAxisWidget(QWidget* parent, CTotalMgr* mgr)
 
 CAxisWidget::~CAxisWidget()
 {
+	m_pTotalMgr = nullptr;
+	m_pGTSControllerWidget = nullptr;
 }
 
 

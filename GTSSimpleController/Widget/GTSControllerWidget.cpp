@@ -16,6 +16,14 @@ GTSControllerWidget::GTSControllerWidget(QWidget* parent)
 
 GTSControllerWidget::~GTSControllerWidget()
 {
+    m_pTotalMgr = nullptr;
+    m_pBoardWidget = nullptr;
+    m_pMasterControlWidget = nullptr;
+    m_pAxisWidget = nullptr;
+    m_pIOWidget = nullptr;
+    m_pConfigWidget = nullptr;
+    m_pOthersWidget = nullptr;
+    m_pBtnGroup = nullptr;
 }
 
 void GTSControllerWidget::Init()

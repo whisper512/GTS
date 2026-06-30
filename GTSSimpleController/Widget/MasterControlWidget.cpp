@@ -16,6 +16,8 @@ CMasterControlWidget::CMasterControlWidget(QWidget* parent, CTotalMgr* mgr)
 
 CMasterControlWidget::~CMasterControlWidget()
 {
+	m_pTotalMgr = nullptr;
+	m_pGTSControllerWidget = nullptr;
 }
 
 

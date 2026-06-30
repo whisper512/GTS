@@ -9,6 +9,7 @@ FeedbackMgr::FeedbackMgr(CTotalMgr* totalMgr, QObject* parent)
 
 FeedbackMgr::~FeedbackMgr() 
 {
+    m_pTotalMgr = nullptr;
 }
 
 bool FeedbackMgr::checkEncoder(short encoder) const 

@@ -12,6 +12,7 @@ BoardMgr::~BoardMgr()
     if (m_isOpen) {
         close();
     }
+    m_pTotalMgr = nullptr;
 }
 
 stuClock BoardMgr::getClocks()

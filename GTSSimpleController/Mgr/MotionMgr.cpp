@@ -12,8 +12,9 @@ MotionMgr::MotionMgr(CTotalMgr* totalMgr, QObject* parent)
 }
 
 
-MotionMgr::~MotionMgr() {
-    
+MotionMgr::~MotionMgr() 
+{
+    m_pTotalMgr = nullptr;
 }
 
 bool MotionMgr::setAxisMotionMode(short axis, short mode)

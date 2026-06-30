@@ -25,8 +25,10 @@ CTotalMgr::CTotalMgr(QObject* parent)
 
 }
 
-CTotalMgr::~CTotalMgr() {
+CTotalMgr::~CTotalMgr() 
+{
     stopRefresh();
+    m_pRefreshTimer = nullptr;
 }
 
 void CTotalMgr::startRefresh(int intervalMs)
