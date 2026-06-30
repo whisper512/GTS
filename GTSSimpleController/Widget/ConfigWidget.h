@@ -6,7 +6,7 @@
 class CTotalMgr;
 class GTSControllerWidget;
 
-class CConfigWidget : public QMainWindow
+class CConfigWidget : public QWidget
 {
 	Q_OBJECT
 

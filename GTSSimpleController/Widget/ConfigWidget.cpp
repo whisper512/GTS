@@ -5,7 +5,7 @@
 #include "../Mgr/TotalMgr.h"
 
 CConfigWidget::CConfigWidget(QWidget *parent, CTotalMgr* mgr)
-	: QMainWindow(parent)
+	: QWidget(parent)
 	, m_pTotalMgr(mgr)
 {
 	ui.setupUi(this);

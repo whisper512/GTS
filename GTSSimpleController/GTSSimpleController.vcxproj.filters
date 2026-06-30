@@ -143,13 +143,7 @@
     <QtUic Include="Widget\ConfigWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtUic Include="Widget\FeedbackWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
     <QtUic Include="Widget\GTSControllerWidget.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-    <QtUic Include="Widget\InterpWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\IOWidget.ui">

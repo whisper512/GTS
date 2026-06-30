@@ -16,14 +16,43 @@ GTSControllerWidget::GTSControllerWidget(QWidget* parent)
 
 GTSControllerWidget::~GTSControllerWidget()
 {
+    if (m_pTotalMgr)
+    {
+        m_pTotalMgr->disconnect();
+    }
+
+    if (m_pBoardWidget)
+    {
+        delete m_pBoardWidget;
+        m_pBoardWidget = nullptr;
+    }
+    if (m_pMasterControlWidget)
+    {
+        delete m_pMasterControlWidget;
+        m_pMasterControlWidget = nullptr;
+    }
+    if (m_pAxisWidget)
+    {
+        delete m_pAxisWidget;
+        m_pAxisWidget = nullptr;
+    }
+    if (m_pIOWidget)
+    {
+        delete m_pIOWidget;
+        m_pIOWidget = nullptr;
+    }
+    if (m_pConfigWidget)
+    {
+        delete m_pConfigWidget;
+        m_pConfigWidget = nullptr;
+    }
+    if (m_pOthersWidget)
+    {
+        delete m_pOthersWidget;
+        m_pOthersWidget = nullptr;
+    }
+
     m_pTotalMgr = nullptr;
-    m_pBoardWidget = nullptr;
-    m_pMasterControlWidget = nullptr;
-    m_pAxisWidget = nullptr;
-    m_pIOWidget = nullptr;
-    m_pConfigWidget = nullptr;
-    m_pOthersWidget = nullptr;
-    m_pBtnGroup = nullptr;
 }
 
 void GTSControllerWidget::Init()

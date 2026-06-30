@@ -153,9 +153,7 @@
     <QtUic Include="Widget\AxisWidget.ui" />
     <QtUic Include="Widget\BoradWidget.ui" />
     <QtUic Include="Widget\ConfigWidget.ui" />
-    <QtUic Include="Widget\FeedbackWidget.ui" />
     <QtUic Include="Widget\GTSControllerWidget.ui" />
-    <QtUic Include="Widget\InterpWidget.ui" />
     <QtUic Include="Widget\IOWidget.ui" />
     <QtUic Include="Widget\MasterControlWidget.ui" />
     <QtUic Include="Widget\OthersWidget.ui" />
