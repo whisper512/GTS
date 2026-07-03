@@ -299,6 +299,7 @@ struct stuAxis
         , dEncPos(0.0)
         , dEncVel(0.0)
         , dEncPosMm(0.0)
+        , dEncVelMm(0.0)
         , trapParam()
         , jogParam()
     {

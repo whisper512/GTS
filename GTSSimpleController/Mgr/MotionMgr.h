@@ -81,8 +81,6 @@ public:
     bool stop(short profile, long option = 0);
     // 取消循环 Trap 运动(异步安全停止)
     void cancelTrapCycle();
-    // 检查轴号是否有效
-    bool isValidProfile(short profile) const;
     // 获取最后一次错误码
     short lastError() const { return m_lastError; }
     // 获取最后一次错误描述
