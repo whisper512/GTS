@@ -60,7 +60,7 @@
 - [x] 如果设置编码器来源为脉冲计数源是不是也可以读取到编码器数据
 - [x] 当量计算函数
 - [ ] 界面因为数据变化而变化，需要占位固定
-- [ ] 单位同步
+- [x] 单位同步
 - [ ] 主控同步修改
 
 # 其他
@@ -72,18 +72,18 @@
 
 # 集成审查问题 (2026-07-02) — GTSSimpleController 点位运动 / JOG 运动
 
-## P0 — 阻断集成，修复前不建议引入其他项目
+## P0 — 阻断集成
 
-- [ ] P0-01 QMessageBox 耦合在 Manager 层 — MotionMgr::MotionTrapExecute / MotionJogStart 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。
-- [ ] P0-02 循环 Trap 忙轮询阻塞主线程 — MotionMgr::MotionTrapExecute 中 for + processEvents 忙等，无取消/超时机制。方案：改为 QTimer 异步轮询 + 超时保护 + 取消标志。
-- [ ] P0-03 MotionMgr 强依赖 CTotalMgr — MotionMgr 通过 m_pTotalMgr 获取轴参数，无法脱离 CTotalMgr 单独复用。方案：抽象轴参数接口 IAxisParamProvider，或改为直接注入参数。
+- [ ] 耦合在 Manager 层 — MotionMgr::MotionTrapExecute / MotionJogStart 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。
+- [ ] 循环 Trap 忙轮询阻塞主线程 — MotionMgr::MotionTrapExecute 中 for + processEvents 忙等，无取消/超时机制。方案：改为 QTimer 异步轮询 + 超时保护 + 取消标志。
+- [ ] MotionMgr 强依赖 CTotalMgr — MotionMgr 通过 m_pTotalMgr 获取轴参数，无法脱离 CTotalMgr 单独复用。方案：抽象轴参数接口 IAxisParamProvider，或改为直接注入参数。
 
-## P1 — 建议修复，不影响核心逻辑但降低可维护性
+## P1 — 建议修复
 
-- [ ] P1-01 全局 typo — ControllerData.h / AxisWidget.h 等文件中 `somoothTime` 应为 `smoothTime`。
-- [ ] P1-02 线程安全缺失 — AxisWidget 直接读写共享运动状态，无互斥保护，多线程场景下有竞态风险。
-- [ ] P1-03 缺少日志系统 — 运动失败时仅弹窗或静默，无持久化日志，排查问题困难。
-- [ ] P1-04 GTSSimpleController 和 GTSAdvancedController 结构不一致 — 两个模块文件组织方式差异大，后续维护成本高。
+- [ ] 全局 typo — ControllerData.h / AxisWidget.h 等文件中 `somoothTime` 应为 `smoothTime`。
+- [ ] 线程安全缺失 — AxisWidget 直接读写共享运动状态，无互斥保护，多线程场景下有竞态风险。
+- [ ] 缺少日志系统 — 运动失败时仅弹窗或静默，无持久化日志，排查问题困难。
+- [ ] GTSSimpleController 和 GTSAdvancedController 结构不一致 — 两个模块文件组织方式差异大，后续维护成本高。
 
 
 
