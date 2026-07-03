@@ -77,7 +77,6 @@
 
 - [x] 耦合在 Manager 层 — MotionMgr::startTrapMotion / startJogMotion 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。(2026-07-03 已修复，移除 QMessageBox 依赖)
 - [x] 循环 Trap 忙轮询阻塞主线程 — MotionMgr::startTrapMotion 中 for + processEvents 忙等，无取消/超时机制。方案：onTrapCycleStep 递归自调度（waitMotionDone + QMetaObject::invokeMethod Qt::QueuedConnection）+ cancelTrapCycle。(2026-07-03 已修复)
-- [ ] MotionMgr 强依赖 CTotalMgr — MotionMgr 通过 m_pTotalMgr 获取轴参数，无法脱离 CTotalMgr 单独复用。方案：抽象轴参数接口 IAxisParamProvider，或改为直接注入参数。
 
 ## P1 — 建议修复
 
