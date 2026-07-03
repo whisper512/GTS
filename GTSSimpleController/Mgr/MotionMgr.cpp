@@ -1,4 +1,5 @@
 ﻿#include <QCoreApplication>
+#include <QEventLoop>
 #include <QThread>
 
 #include "TotalMgr.h"
@@ -149,7 +150,38 @@ void MotionMgr::cancelTrapCycle()
 {
     if (!m_trapCycle.active) return;
     m_trapCycle.active = false;
+    emit motionDone(m_trapCycle.profile);  // 通知同步等待者退出
     stop(m_trapCycle.profile, 0);  // 紧急停止
+}
+
+bool MotionMgr::trapMotionSync(short profile, double lengthMm)
+{
+    // 走原有的异步入口
+    if (!trapMotion(profile, lengthMm))
+        return false;
+
+    // 单次模式: singleTrapMotion 发送完即结束
+    if (!m_trapCycle.active)
+        return true;
+
+    // 循环模式: 嵌套事件循环等待 motionDone 或 errorOccurred
+    bool completed = false;
+    QEventLoop loop;
+
+    QMetaObject::Connection c1 = connect(this, &MotionMgr::motionDone,
+        [&](short p) {
+            if (p == profile) { completed = true; loop.quit(); }
+        });
+    QMetaObject::Connection c2 = connect(this, &MotionMgr::errorOccurred,
+        [&](short p, short, const QString&) {
+            if (p == profile) { loop.quit(); }
+        });
+
+    loop.exec();  // 内部 processEvents, UI 不冻结
+
+    disconnect(c1);
+    disconnect(c2);
+    return completed;
 }
 
 void MotionMgr::onTrapCycleStep(short profile)

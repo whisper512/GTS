@@ -61,6 +61,8 @@ public:
     bool setTrapParam(short axisId, const stuTrapParam& param);
     // 启动点位运动(相对运动,步长可正可负) —— 长度版,内部自动做当量换算
     bool trapMotion(short profile, double lengthMm);
+    // 同步版 trapMotion: 阻塞等待全部运动完成, 但 UI 不冻结
+    bool trapMotionSync(short profile, double lengthMm);
     // 读取Jog 运动参数
     void getJogMotionInfo(std::vector<stuAxis>& vecAxis);
     // 设置Jog 运动参数
