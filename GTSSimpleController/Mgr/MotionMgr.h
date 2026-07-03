@@ -29,15 +29,6 @@ private:
     mutable short m_lastError = 0;
     CTotalMgr* m_pTotalMgr = nullptr;
 
-private:
-    // 检查规划器
-    bool checkProfile(short profile) const;
-    // 点位运动
-    bool singleTrapMotion(short profile, double stepSize, double acc, double dec, int smoothTime, double vel);
-    // 等待运动
-    void waitMotionDone(short profile);
-    // 启动点位运动
-    bool startTrapMotion(short profile, double stepSize, const stuTrapParam& trapParam);
 public:
     explicit MotionMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
     ~MotionMgr();
@@ -63,6 +54,16 @@ public:
     bool startJogMotion(short profile, short direction);
     // 启动回零
     bool homeStart(short axis);
+
+private:
+    // 检查规划器
+    bool checkProfile(short profile) const;
+    // 点位运动
+    bool singleTrapMotion(short profile, double stepSize, double acc, double dec, int smoothTime, double vel);
+    // 等待运动
+    void waitMotionDone(short profile);
+    // 启动点位运动
+    bool startTrapMotion(short profile, double stepSize, const stuTrapParam& trapParam);
 
 public:
     // 设置规划器位置

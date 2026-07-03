@@ -1,5 +1,4 @@
-﻿#include <QMessageBox>
-#include <QCoreApplication>
+﻿#include <QCoreApplication>
 #include <QThread>
 
 #include "TotalMgr.h"
@@ -88,30 +87,30 @@ bool MotionMgr::startTrapMotion(short profile, double stepSize, const stuTrapPar
 
     // ── 参数检查（单位均为 mm / mm/s / mm/s²）──
     if (trap.dMotionVel <= 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 运动速度无效 (dMotionVel = %2 mm/s)，必须 > 0")
             .arg(profile).arg(trap.dMotionVel, 0, 'f', 3));
         return false;
     }
     if (stepSize == 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 步长为 0 mm，无法运动").arg(profile));
         return false;
     }
     if (trap.acc <= 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 加速度无效 (acc = %2 mm/s^2)，必须 > 0")
             .arg(profile).arg(trap.acc, 0, 'f', 6));
         return false;
     }
     if (trap.dec <= 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 减速度无效 (dec = %2 mm/s^2)，必须 > 0")
             .arg(profile).arg(trap.dec, 0, 'f', 6));
         return false;
     }
     if (trap.somoothTime < 0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 平滑时间无效 (smoothTime = %2)，不能为负数")
             .arg(profile).arg(trap.somoothTime));
         return false;
@@ -204,19 +203,19 @@ bool MotionMgr::startJogMotion(short profile, short direction)
 
     // ── 参数检查 ——
     if (jog.dMotionVel <= 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 Jog速度无效 (dMotionVel = %2)，必须 > 0")
             .arg(profile).arg(jog.dMotionVel, 0, 'f', 3));
         return false;
     }
     if (jog.acc <= 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 Jog加速度无效 (acc = %2)，必须 > 0")
             .arg(profile).arg(jog.acc, 0, 'f', 6));
         return false;
     }
     if (jog.dec <= 0.0) {
-        QMessageBox::warning(nullptr, QStringLiteral("参数错误"),
+        emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 Jog减速度无效 (dec = %2)，必须 > 0")
             .arg(profile).arg(jog.dec, 0, 'f', 6));
         return false;
