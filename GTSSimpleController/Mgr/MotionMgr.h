@@ -72,6 +72,22 @@ public:
     // 启动回零
     bool homeStart(short axis);
 
+
+    // 使用梯形模式移动单轴到绝对位置
+    bool moveTo(short profile, long pos, double vel, double acc = 100.0, double dec = 100.0);
+    // 使用 Jog 模式持续运动
+    bool jog(short profile, double vel, double acc = 100.0);
+    // 停止单轴运动
+    bool stop(short profile, long option = 0);
+    // 取消循环 Trap 运动(异步安全停止)
+    void cancelTrapCycle();
+    // 检查轴号是否有效
+    bool isValidProfile(short profile) const;
+    // 获取最后一次错误码
+    short lastError() const { return m_lastError; }
+    // 获取最后一次错误描述
+    QString lastErrorString() const;
+
 private:
     // 检查规划器
     bool checkProfile(short profile) const;
@@ -223,21 +239,6 @@ public:
     // 写入 PVT 表(百分比模式)
     bool pvtTableSetPercent(short tableId, long count, double* time, double* pos, double* percent, double velBegin = 0);
 
-
-    // 使用梯形模式移动单轴到绝对位置
-    bool moveTo(short profile, long pos, double vel,  double acc = 100.0, double dec = 100.0);
-    // 使用 Jog 模式持续运动
-    bool jog(short profile, double vel, double acc = 100.0);
-    // 停止单轴运动
-    bool stop(short profile, long option = 0);
-    // 取消循环 Trap 运动(异步安全停止)
-    void cancelTrapCycle();
-    // 检查轴号是否有效
-    bool isValidProfile(short profile) const;
-    // 获取最后一次错误码
-    short lastError() const { return m_lastError; }
-    // 获取最后一次错误描述
-    QString lastErrorString() const;
 
 private slots:
     // 循环 Trap 运动状态机驱动(递归自调度)
