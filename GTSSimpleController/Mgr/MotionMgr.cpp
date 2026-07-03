@@ -85,7 +85,7 @@ bool MotionMgr::startTrapMotion(short profile, double stepSize, const stuTrapPar
 {
     if (!checkProfile(profile)) return false;
 
-    // ── 参数检查（单位均为 mm / mm/s / mm/s²）──
+    // ── 参数检查(单位均为 mm / mm/s / mm/s²)──
     if (trap.dMotionVel <= 0.0) {
         emit errorOccurred(profile, -1,
             QStringLiteral("轴%1 运动速度无效 (dMotionVel = %2 mm/s)，必须 > 0")
@@ -122,26 +122,80 @@ bool MotionMgr::startTrapMotion(short profile, double stepSize, const stuTrapPar
             trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel);
     }
 
-    // 循环模式
-    double currentStep = stepSize;
-    int times = trap.cycleTimes;
-    for (int i = 0; i < times; ++i) {
-        if (!singleTrapMotion(profile, currentStep,
-            trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
-            return false;
-        waitMotionDone(profile);
-        if (trap.Delay > 0) {
-            GtsHal::delay(static_cast<unsigned short>(trap.Delay));
-        }
-        if (!singleTrapMotion(profile, -currentStep,
-            trap.acc, trap.dec, trap.somoothTime, trap.dMotionVel))
-            return false;
-        waitMotionDone(profile);
-        if (trap.Delay > 0) {
-            GtsHal::delay(static_cast<unsigned short>(trap.Delay));
-        }
+    // 循环模式：异步状态机驱动,onTrapCycleStep 递归自调度
+    if (m_trapCycle.active) {
+        emit errorOccurred(profile, -1,
+            QStringLiteral("轴%1 循环运动已在执行，请先取消").arg(profile));
+        return false;
     }
+
+    m_trapCycle.active      = true;
+    m_trapCycle.profile     = profile;
+    m_trapCycle.stepSize    = stepSize;
+    m_trapCycle.acc         = trap.acc;
+    m_trapCycle.dec         = trap.dec;
+    m_trapCycle.smoothTime  = trap.somoothTime;
+    m_trapCycle.vel         = trap.dMotionVel;
+    m_trapCycle.totalTimes  = trap.cycleTimes;
+    m_trapCycle.currentStep = -1;   // 首次递增后为 0
+    m_trapCycle.delayMs     = trap.Delay;
+
+    // 直接触发第一步(首次无需 waitMotionDone)
+    onTrapCycleStep(profile);
     return true;
+}
+
+void MotionMgr::cancelTrapCycle()
+{
+    if (!m_trapCycle.active) return;
+    m_trapCycle.active = false;
+    stop(m_trapCycle.profile, 0);  // 紧急停止
+}
+
+void MotionMgr::onTrapCycleStep(short profile)
+{
+    if (!m_trapCycle.active || m_trapCycle.profile != profile)
+        return;
+
+    m_trapCycle.currentStep++;
+
+    // 全部完成?
+    if (m_trapCycle.currentStep >= m_trapCycle.totalTimes * 2) {
+        m_trapCycle.active = false;
+        emit motionDone(profile);
+        return;
+    }
+
+    // 偶数步正向, 奇数步反向
+    double sign = (m_trapCycle.currentStep % 2 == 0) ? 1.0 : -1.0;
+    double step = sign * m_trapCycle.stepSize;
+
+    // 下发本次运动
+    if (!singleTrapMotion(m_trapCycle.profile, step,
+        m_trapCycle.acc, m_trapCycle.dec,
+        m_trapCycle.smoothTime, m_trapCycle.vel)) {
+        m_trapCycle.active = false;
+        emit errorOccurred(profile, -1,
+            QStringLiteral("循环Trap第%1步下发失败").arg(m_trapCycle.currentStep + 1));
+        return;
+    }
+
+    // 等待运动完成(processEvents 保持 UI 响应)
+    waitMotionDone(profile);
+
+    // 等待期间可能被 cancelTrapCycle 取消
+    if (!m_trapCycle.active) return;
+
+    // 步间延时
+    if (m_trapCycle.delayMs > 0) {
+        GtsHal::delay(static_cast<unsigned short>(m_trapCycle.delayMs));
+    }
+
+    if (!m_trapCycle.active) return;
+
+    // 递归调度下一步(QueuedConnection 回到事件循环,不爆栈)
+    QMetaObject::invokeMethod(this, "onTrapCycleStep", Qt::QueuedConnection,
+                              Q_ARG(short, profile));
 }
 
 
@@ -404,7 +458,7 @@ bool MotionMgr::homeStart(short axis)
     long offsetPulse = static_cast<long>(homeOffset);
 
     if (useDI) {
-        // === DI 检测模式（模式2: Home） ===
+        // === DI 检测模式(模式2: Home) ===
         emit homeStatus(axis, QStringLiteral("等待原点DI触发..."));
         long sts = 0;
         long diVal = 0;
@@ -451,7 +505,7 @@ bool MotionMgr::homeStart(short axis)
         emit homeStatus(axis, QStringLiteral("偏移移动完成"));
     }
     else if (useCapture) {
-        // === 硬件捕获模式（模式3/4: Index） ===
+        // === 硬件捕获模式(模式3/4: Index) ===
         emit homeStatus(axis, QStringLiteral("等待硬件捕获(Index/Z相)..."));
         short capture = 0;
         long  capPos = 0;
@@ -488,7 +542,7 @@ bool MotionMgr::homeStart(short axis)
         emit homeStatus(axis, QStringLiteral("偏移移动完成"));
     }
     else {
-        // === 限位模式（模式0/1）—— 与 500ms 定时器同机制的 DI 检测 ===
+        // === 限位模式(模式0/1)—— 与 500ms 定时器同机制的 DI 检测 ===
         QString lmtName = (mode == homeMode::HomeMode_nLlimit) ? QStringLiteral("负限位") : QStringLiteral("正限位");
         emit homeStatus(axis, QStringLiteral("等待%1DI触发...").arg(lmtName));
 
@@ -586,7 +640,7 @@ bool MotionMgr::singleTrapMotion(short profile, double stepSize,
         return false;
     }
 
-    // 设置梯形参数 —— acc/dec 单位 mm/ms²，板卡自动换算
+    // 设置梯形参数 —— acc/dec 单位 mm/ms²,板卡自动换算
     TTrapPrm prm = {};
     prm.acc = acc;
     prm.dec = dec;
@@ -597,7 +651,7 @@ bool MotionMgr::singleTrapMotion(short profile, double stepSize,
         return false;
     }
 
-    // ── 目标位置 = 当前位置 + 步长（全部是 mm，板卡自动换算为脉冲）──
+    // ── 目标位置 = 当前位置 + 步长(全部是 mm,板卡自动换算为脉冲)──
     double curPos = profilePos(profile);           // 板卡返回 mm
     double targetPos = curPos + stepSize;          // 单位 mm
     m_lastError = GtsHal::setPos(profile, static_cast<long>(targetPos));
@@ -606,7 +660,7 @@ bool MotionMgr::singleTrapMotion(short profile, double stepSize,
         return false;
     }
 
-    // 设置速度 —— 单位 mm/ms，板卡自动换算
+    // 设置速度 —— 单位 mm/ms,板卡自动换算
     m_lastError = GtsHal::setVel(profile, vel);
     if (m_lastError != 0) {
         emit errorOccurred(profile, m_lastError, lastErrorString());
@@ -625,14 +679,14 @@ bool MotionMgr::singleTrapMotion(short profile, double stepSize,
 }
 
 
-// 等待运动完成（规划停止 bit10 = 0x400）
+// 等待运动完成(规划停止 bit10 = 0x400)
 void MotionMgr::waitMotionDone(short profile)
 {
     long sts = 0;
     do {
         GtsHal::getSts(profile, &sts);
         QCoreApplication::processEvents();  // 保持界面响应
-    } while (sts & 0x400);  // 0x400 = 规划中，运动未完成
+    } while (sts & 0x400);  // 0x400 = 规划中,运动未完成
 }
 
 

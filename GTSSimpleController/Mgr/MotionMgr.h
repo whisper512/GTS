@@ -8,6 +8,20 @@
 
 class CTotalMgr;
 
+// 循环 Trap 运动异步状态机
+struct TrapCycleState {
+    bool   active       = false;
+    short  profile      = 0;
+    double stepSize     = 0.0;
+    double acc          = 0.0;
+    double dec          = 0.0;
+    int    smoothTime   = 0;
+    double vel          = 0.0;
+    int    totalTimes   = 0;
+    int    currentStep  = 0;   // 已完成的步数(0=未开始, 每步正向+反向),
+    double delayMs      = 0.0;
+};
+
 // ============================================================
 // MotionMgr — 单轴运动管理器
 // 职责：管理所有单轴运动模式
@@ -28,6 +42,7 @@ private:
     short m_axisCount = 4;
     mutable short m_lastError = 0;
     CTotalMgr* m_pTotalMgr = nullptr;
+    TrapCycleState m_trapCycle;        // 循环 Trap 异步状态
 
 public:
     explicit MotionMgr(CTotalMgr* totalMgr, QObject* parent = nullptr);
@@ -44,13 +59,13 @@ public:
     void getTrapMotionInfo(std::vector<stuAxis>& vecTrap);
     // 设置点位运动相关
     bool setTrapParam(short axisId, const stuTrapParam& param);
-    // 启动点位运动(相对运动，步长可正可负) —— 长度版,内部自动做当量换算
+    // 启动点位运动(相对运动,步长可正可负) —— 长度版,内部自动做当量换算
     bool trapMotion(short profile, double lengthMm);
     // 读取Jog 运动参数
     void getJogMotionInfo(std::vector<stuAxis>& vecAxis);
     // 设置Jog 运动参数
     bool setJogParam(short axisId, const stuJogParam& param);
-    // 启动Jog运动（direction: +1 正方向, -1 反方向）
+    // 启动Jog运动(direction: +1 正方向, -1 反方向)
     bool startJogMotion(short profile, short direction);
     // 启动回零
     bool homeStart(short axis);
@@ -197,13 +212,13 @@ public:
     bool pvtStart(long mask);
     // 选择 PVT 表
     bool pvtTableSelect(short profile, short tableId);
-    // 写入 PVT 表（位置-速度模式）
+    // 写入 PVT 表(位置-速度模式)
     bool pvtTableSet(short tableId, long count, double* time, double* pos, double* vel);
-    // 写入 PVT 表（起止速度模式）
+    // 写入 PVT 表(起止速度模式)
     bool pvtTableSetEx(short tableId, long count, double* time, double* pos, double* velBegin, double* velEnd);
-    // 写入 PVT 表（完全模式：三次多项式系数）
+    // 写入 PVT 表(完全模式：三次多项式系数)
     bool pvtTableSetComplete(short tableId, long count, double* time, double* pos, double* a, double* b, double* c, double velBegin = 0, double velEnd = 0);
-    // 写入 PVT 表（百分比模式）
+    // 写入 PVT 表(百分比模式)
     bool pvtTableSetPercent(short tableId, long count, double* time, double* pos, double* percent, double velBegin = 0);
 
 
@@ -213,12 +228,18 @@ public:
     bool jog(short profile, double vel, double acc = 100.0);
     // 停止单轴运动
     bool stop(short profile, long option = 0);
+    // 取消循环 Trap 运动(异步安全停止)
+    void cancelTrapCycle();
     // 检查轴号是否有效
     bool isValidProfile(short profile) const;
     // 获取最后一次错误码
     short lastError() const { return m_lastError; }
     // 获取最后一次错误描述
     QString lastErrorString() const;
+
+private slots:
+    // 循环 Trap 运动状态机驱动(递归自调度)
+    void onTrapCycleStep(short profile);
 
 signals:
     // 运动完成(轴号)
