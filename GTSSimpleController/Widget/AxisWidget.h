@@ -1,55 +1,46 @@
 ﻿#pragma once
 #include <QWidget>
-#include "../../GtsCore/GtsAxisMgr.h"
+#include "../../GtsCore/GtsMgr.h"
 #include "ui_AxisWidget.h"
 
 class GtsMgr;
-class GTSControllerWidget;
 
 class CAxisWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CAxisWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
+	CAxisWidget(QWidget* parent = nullptr);
 	~CAxisWidget();
+	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:
 	Ui::CAxisWidgetClass ui;
-	GtsMgr* m_pTotalMgr = nullptr;
-	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
-	
-	// 更新标志位
-	bool m_bUpdatingFromBoard = false;
-	short m_iAxisId = 1; 
-	short m_iAxisMode = 0;
+	GtsMgr* m_gtsMgr = nullptr;
+
+	bool  m_updatingFromBoard = false;
+	short m_axisId = 1;
+	short m_axisMode = 0;
 
 	void initWidget();
-	void connectPrivateSignal();
+	void initConnections();
+	void connectAxisSignals();
 	void updateUIEnable(int index);
 
-	// 清除状态
+	// Axis operations
 	void onClearState();
-	// 伺服使能
 	void onServoOn();
-	// 伺服关闭
 	void onServoOff();
-	// 清空位置
 	void onClearPos();
-	// 平滑停止
 	void onSmoothStop();
-	// 紧急停止
 	void onEStop();
-	// 点位运动开始
 	void onTrapMotion();
-	void onJogPressed(int direction);   // direction: +1 正向, -1 反向
+	void onJogPressed(int direction);   // direction: +1 positive, -1 negative
 	void onJogReleased();
 
 public slots:
-	// 更新轴实时信息
 	void onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo);
-	// 更新轴通用信息
-	void onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo);
+	void onAxisSettingUpdated(const std::vector<SingleAxisInfo>& axisInfo);
 
 private slots:
 	void onBtnClick();

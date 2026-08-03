@@ -1,23 +1,37 @@
-﻿#include "AxisWidget.h"
-#include "GTSControllerWidget.h"
+﻿#include <QTimer>
+#include <QPushButton>
+#include <QFont>
+
+#include "AxisWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
-#include <QMessageBox>
-
-CAxisWidget::CAxisWidget(QWidget* parent, GtsMgr* mgr)
+CAxisWidget::CAxisWidget(QWidget* parent)
 	: QWidget(parent)
-	, m_pTotalMgr(mgr)
 {
 	ui.setupUi(this);
-	m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
 	initWidget();
-	connectPrivateSignal();
+	initConnections();
 }
 
 CAxisWidget::~CAxisWidget()
 {
-	m_pTotalMgr = nullptr;
-	m_pGTSControllerWidget = nullptr;
+	m_gtsMgr = nullptr;
+}
+
+
+void CAxisWidget::setGtsTotalMgr(GtsMgr* mgr)
+{
+	if (m_gtsMgr)
+	{
+		disconnect(m_gtsMgr, &GtsMgr::axisUpdated, this, &CAxisWidget::onAxisUpdated);
+		disconnect(m_gtsMgr, &GtsMgr::axisSettingUpdated, this, &CAxisWidget::onAxisSettingUpdated);
+	}
+	m_gtsMgr = mgr;
+	if (m_gtsMgr)
+	{
+		connect(m_gtsMgr, &GtsMgr::axisUpdated, this, &CAxisWidget::onAxisUpdated);
+		connect(m_gtsMgr, &GtsMgr::axisSettingUpdated, this, &CAxisWidget::onAxisSettingUpdated);
+	}
 }
 
 
@@ -29,85 +43,90 @@ void CAxisWidget::initWidget()
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 4"));
 
 	ui.comboBox_Mode->addItem(QStringLiteral("点位运动(trap)"));
-    ui.comboBox_Mode->addItem(QStringLiteral("Jog运动"));
+	ui.comboBox_Mode->addItem(QStringLiteral("Jog运动"));
 
-	// radiobtn禁用互斥
-	ui.radioButton_servoEnable->setAutoExclusive(false);
-	ui.radioButton_sevorAlarm->setAutoExclusive(false);
-	ui.radioButton_nLimit->setAutoExclusive(false);
-	ui.radioButton_pLimit->setAutoExclusive(false);
-	ui.radioButton_motionErr->setAutoExclusive(false);
-	ui.radioButton_motionSts->setAutoExclusive(false);
-	ui.radioButton_eStop->setAutoExclusive(false);
-	ui.radioButton_smoothStop->setAutoExclusive(false);
-	// 禁止用户点击
-	ui.radioButton_servoEnable->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_sevorAlarm->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_nLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_pLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_motionErr->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_motionSts->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_eStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-	ui.radioButton_smoothStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	// RadioButton: disable auto-exclusive, block user clicks
+	const QList<QRadioButton*> stateRadios = {
+		ui.radioButton_servoEnable, ui.radioButton_sevorAlarm,
+		ui.radioButton_nLimit,       ui.radioButton_pLimit,
+		ui.radioButton_motionErr,    ui.radioButton_motionSts,
+		ui.radioButton_eStop,        ui.radioButton_smoothStop,
+	};
+	for (QRadioButton* rb : stateRadios) {
+		rb->setAutoExclusive(false);
+		rb->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	}
 
-	// ── 等宽字体防止数据刷新时布局抖动 ──
+	// Monospace font to prevent layout jitter on data refresh
 	const QList<QLabel*> numLabels = {
 		ui.label_actPosData,
 		ui.label_actVelData,
-		ui.label_tgtAccData,
 		ui.label_tgtPosData,
 		ui.label_tgtVelData,
-		ui.label_tgtAccDataPluse,
+		ui.label_tgtAccData,
 		ui.label_tgtPosDataPluse,
 		ui.label_tgtVelDataPluse,
+		ui.label_tgtAccDataPluse,
 	};
 	QFont monoFont(QStringLiteral("Consolas"), 9);
-	for (QLabel* lb : numLabels)
-	{
+	for (QLabel* lb : numLabels) {
 		lb->setFont(monoFont);
 		lb->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 	}
-
 }
 
-void CAxisWidget::connectPrivateSignal()
+void CAxisWidget::initConnections()
 {
-	connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxCurrentIndexChanged);
-	connect(ui.comboBox_Mode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CAxisWidget::onComboBoxModeCurrentIndexChanged);
+	QTimer::singleShot(0, this, [this]() {
+		// Axis operation buttons
+		connect(ui.pushButton_clearState, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+		connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+		connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+		connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+		connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+		connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
 
-	connect(ui.pushButton_clearState, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-	connect(ui.pushButton_jogPMotion, &QPushButton::pressed, this, [this]() { onJogPressed(1); });
-	connect(ui.pushButton_jogPMotion, &QPushButton::released, this, [this]() { onJogReleased(); });
-	connect(ui.pushButton_jogNMotion, &QPushButton::pressed, this, [this]() { onJogPressed(-1); });
-	connect(ui.pushButton_jogNMotion, &QPushButton::released, this, [this]() { onJogReleased(); });
+		// Jog press/release
+		connect(ui.pushButton_jogPMotion, &QPushButton::pressed, this, [this]() { onJogPressed(1); });
+		connect(ui.pushButton_jogPMotion, &QPushButton::released, this, [this]() { onJogReleased(); });
+		connect(ui.pushButton_jogNMotion, &QPushButton::pressed, this, [this]() { onJogPressed(-1); });
+		connect(ui.pushButton_jogNMotion, &QPushButton::released, this, [this]() { onJogReleased(); });
 
-	connect(ui.spinBox_trapMotionVel, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.doubleSpinBox_trapLengthMm, &QDoubleSpinBox::editingFinished,this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-	connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		// Combo boxes
+		connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged),
+			this, &CAxisWidget::onComboBoxCurrentIndexChanged);
+		connect(ui.comboBox_Mode, QOverload<int>::of(&QComboBox::currentIndexChanged),
+			this, &CAxisWidget::onComboBoxModeCurrentIndexChanged);
 
-	connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
-	connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
+		// Trap param changes
+		connect(ui.spinBox_trapMotionVel, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.doubleSpinBox_trapLengthMm, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+
+		// Jog param changes
+		connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
+		connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
+	});
 }
+
+void CAxisWidget::connectAxisSignals()
+{
+}
+
 
 void CAxisWidget::updateUIEnable(int index)
 {
-	if (index == 0)
-	{
-		// 点位运动
+	if (index == 0) {
+		// Trap mode
 		ui.spinBox_jogMotionVel->setEnabled(false);
 		ui.doubleSpinBoxs_jogAcc->setEnabled(false);
-        ui.doubleSpinBoxs_jogDec->setEnabled(false);
+		ui.doubleSpinBoxs_jogDec->setEnabled(false);
 		ui.pushButton_jogPMotion->setEnabled(false);
-        ui.pushButton_jogNMotion->setEnabled(false);
+		ui.pushButton_jogNMotion->setEnabled(false);
 
 		ui.spinBox_trapMotionVel->setEnabled(true);
 		ui.doubleSpinBoxs_trapAcc->setEnabled(true);
@@ -118,9 +137,8 @@ void CAxisWidget::updateUIEnable(int index)
 		ui.spinBox_TrapInPositionDelay->setEnabled(true);
 		ui.pushButton_TarpActMotion->setEnabled(true);
 	}
-	else if (index == 1)
-	{
-		// jog运动
+	else {
+		// Jog mode
 		ui.spinBox_jogMotionVel->setEnabled(true);
 		ui.doubleSpinBoxs_jogAcc->setEnabled(true);
 		ui.doubleSpinBoxs_jogDec->setEnabled(true);
@@ -128,21 +146,222 @@ void CAxisWidget::updateUIEnable(int index)
 		ui.pushButton_jogNMotion->setEnabled(true);
 
 		ui.spinBox_trapMotionVel->setEnabled(false);
-		ui.pushButton_TarpActMotion->setEnabled(false);
 		ui.doubleSpinBoxs_trapAcc->setEnabled(false);
 		ui.doubleSpinBoxs_trapDec->setEnabled(false);
 		ui.doubleSpinBox_trapLengthMm->setEnabled(false);
 		ui.spinBox_trapSmoothTime->setEnabled(false);
 		ui.spinBox_trapCycleTime->setEnabled(false);
 		ui.spinBox_TrapInPositionDelay->setEnabled(false);
-        ui.pushButton_TarpActMotion->setEnabled(false);
+		ui.pushButton_TarpActMotion->setEnabled(false);
 	}
+}
+
+
+// ==================== Axis Operations ====================
+
+void CAxisWidget::onClearState()
+{
+	if (!m_gtsMgr) return;
+	m_gtsMgr->axisMgr()->clearStatus(m_axisId);
+}
+
+void CAxisWidget::onServoOn()
+{
+	if (!m_gtsMgr) return;
+	m_gtsMgr->axisMgr()->enable(m_axisId);
+}
+
+void CAxisWidget::onServoOff()
+{
+	if (!m_gtsMgr) return;
+	m_gtsMgr->axisMgr()->disable(m_axisId);
+}
+
+void CAxisWidget::onClearPos()
+{
+	if (!m_gtsMgr) return;
+	m_gtsMgr->axisMgr()->zeroPosition(m_axisId);
+}
+
+void CAxisWidget::onSmoothStop()
+{
+	if (!m_gtsMgr) return;
+	m_gtsMgr->axisMgr()->stop(m_axisId, 1);
+}
+
+void CAxisWidget::onEStop()
+{
+	if (!m_gtsMgr) return;
+	m_gtsMgr->axisMgr()->stop(m_axisId, 0);
+}
+
+void CAxisWidget::onTrapMotion()
+{
+	if (!m_gtsMgr) return;
+	int index = m_axisId - 1;
+	if (index < 0 || index >= (int)m_gtsMgr->axisCount()) return;
+	m_gtsMgr->motionMgr()->trapMotion(m_axisId,
+		m_gtsMgr->axisCfg()->axes[index].trapParam.lengthMm);
+}
+
+void CAxisWidget::onJogPressed(int direction)
+{
+	if (!m_gtsMgr) return;
+	int index = m_axisId - 1;
+	if (index < 0 || index >= (int)m_gtsMgr->axisCount()) return;
+	m_gtsMgr->motionMgr()->setJogParam(m_axisId,
+		m_gtsMgr->axisCfg()->axes[index].jogParam);
+	m_gtsMgr->motionMgr()->startJogMotion(m_axisId, direction);
+}
+
+void CAxisWidget::onJogReleased()
+{
+	if (!m_gtsMgr) return;
+	// Deceleration stop (option = 1)
+	m_gtsMgr->axisMgr()->stop(m_axisId, 1);
+}
+
+
+void CAxisWidget::onTrapParamChanged()
+{
+	if (m_updatingFromBoard) return;
+	if (!m_gtsMgr) return;
+	int index = m_axisId - 1;
+	if (index < 0 || index >= (int)m_gtsMgr->axisCount()) return;
+
+	auto& tp = m_gtsMgr->axisCfg()->axes[index].trapParam;
+	tp.motionVel = ui.spinBox_trapMotionVel->value();
+	tp.acc = ui.doubleSpinBoxs_trapAcc->value();
+	tp.dec = ui.doubleSpinBoxs_trapDec->value();
+	tp.lengthMm = ui.doubleSpinBox_trapLengthMm->value();
+	tp.somoothTime = ui.spinBox_trapSmoothTime->value();
+	tp.cycleTimes = ui.spinBox_trapCycleTime->value();
+	tp.delay = ui.spinBox_TrapInPositionDelay->value();
+}
+
+void CAxisWidget::onJogParamChanged()
+{
+	if (m_updatingFromBoard) return;
+	if (!m_gtsMgr) return;
+	int index = m_axisId - 1;
+	if (index < 0 || index >= (int)m_gtsMgr->axisCount()) return;
+
+	auto& jp = m_gtsMgr->axisCfg()->axes[index].jogParam;
+	jp.motionVel = ui.spinBox_jogMotionVel->value();
+	jp.acc = ui.doubleSpinBoxs_jogAcc->value();
+	jp.dec = ui.doubleSpinBoxs_jogDec->value();
+}
+
+
+void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
+{
+	m_axisId = index + 1;
+	if (!m_gtsMgr || !m_gtsMgr->boardMgr()->isOpen()) return;
+
+	const auto& tp = m_gtsMgr->axisCfg()->axes[index].trapParam;
+	ui.spinBox_trapMotionVel->setValue(tp.motionVel);
+	ui.doubleSpinBoxs_trapAcc->setValue(tp.acc);
+	ui.doubleSpinBoxs_trapDec->setValue(tp.dec);
+	ui.doubleSpinBox_trapLengthMm->setValue(tp.lengthMm);
+	ui.spinBox_trapSmoothTime->setValue(tp.somoothTime);
+	ui.spinBox_trapCycleTime->setValue(tp.cycleTimes);
+	ui.spinBox_TrapInPositionDelay->setValue(tp.delay);
+
+	const auto& jp = m_gtsMgr->axisCfg()->axes[index].jogParam;
+	ui.spinBox_jogMotionVel->setValue(jp.motionVel);
+	ui.doubleSpinBoxs_jogAcc->setValue(jp.acc);
+	ui.doubleSpinBoxs_jogDec->setValue(jp.dec);
+
+	SingleAxisInfo* axis = m_gtsMgr->getAxisRef(index);
+	if (axis)
+		ui.comboBox_Mode->setCurrentIndex(axis->prfMode);
+}
+
+void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
+{
+	if (!m_gtsMgr || !m_gtsMgr->boardMgr()->isOpen()) return;
+
+	int axisIdx = m_axisId - 1;
+	SingleAxisInfo* axis = m_gtsMgr->getAxisRef(axisIdx);
+	if (!axis) return;
+
+	bool ok = m_gtsMgr->motionMgr()->setAxisMotionMode(axis->axisIndex, index);
+	if (ok)
+		updateUIEnable(index);
+}
+
+
+void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
+{
+	m_updatingFromBoard = true;
+	int index = m_axisId - 1;
+	if (index < 0 || index >= (int)axisInfo.size()) return;
+	const SingleAxisInfo& axis = axisInfo[index];
+
+	// Status indicators
+	ui.radioButton_servoEnable->setChecked(axis.isServoOn);
+	ui.radioButton_nLimit->setChecked(axis.isNegLimit);
+	ui.radioButton_pLimit->setChecked(axis.isPosLimit);
+	ui.radioButton_motionErr->setChecked(axis.isMError);
+	ui.radioButton_sevorAlarm->setChecked(axis.isAlarm);
+	ui.radioButton_eStop->setChecked(axis.isAbruptStop);
+	ui.radioButton_smoothStop->setChecked(axis.isSmoothStop);
+	ui.radioButton_motionSts->setChecked(axis.isMotion);
+
+	// Encoder values
+	ui.label_actPosData->setText(QString::number(axis.encPosMm, 'f', 3));
+	ui.label_actVelData->setText(QString::number(axis.encVelMm, 'f', 3));
+
+	// Planner values (mm)
+	ui.label_tgtPosData->setText(QString::number(axis.prfPosMm, 'f', 3));
+	ui.label_tgtVelData->setText(QString::number(axis.prfVelMm, 'f', 3));
+	ui.label_tgtAccData->setText(QString::number(axis.prfAccMm, 'f', 3));
+
+	// Planner values (pulse)
+	ui.label_tgtPosDataPluse->setText(QString::number(axis.prfPosOriginal, 'f', 3));
+	ui.label_tgtVelDataPluse->setText(QString::number(axis.prfVelOriginal, 'f', 3));
+	ui.label_tgtAccDataPluse->setText(QString::number(axis.prfAccOriginal, 'f', 3));
+
+	// Servo on/off button text
+	if (axis.isServoOn)
+		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
+	else
+		ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
+
+	m_updatingFromBoard = false;
+}
+
+void CAxisWidget::onAxisSettingUpdated(const std::vector<SingleAxisInfo>& axisInfo)
+{
+	m_updatingFromBoard = true;
+	int index = m_axisId - 1;
+	if (index < 0 || index >= (int)axisInfo.size()) return;
+	const SingleAxisInfo& axis = axisInfo[index];
+
+	ui.comboBox_Mode->setCurrentIndex(axis.prfMode);
+
+	const auto& tp = m_gtsMgr->axisCfg()->axes[index].trapParam;
+	ui.spinBox_trapMotionVel->setValue((int)tp.motionVel);
+	ui.doubleSpinBox_trapLengthMm->setValue(tp.lengthMm);
+	ui.doubleSpinBoxs_trapAcc->setValue(tp.acc);
+	ui.doubleSpinBoxs_trapDec->setValue(tp.dec);
+	ui.spinBox_trapSmoothTime->setValue(tp.somoothTime);
+	ui.spinBox_trapCycleTime->setValue(tp.cycleTimes);
+	ui.spinBox_TrapInPositionDelay->setValue(tp.delay);
+
+	const auto& jp = m_gtsMgr->axisCfg()->axes[index].jogParam;
+	ui.spinBox_jogMotionVel->setValue(jp.motionVel);
+	ui.doubleSpinBoxs_jogAcc->setValue(jp.acc);
+	ui.doubleSpinBoxs_jogDec->setValue(jp.dec);
+
+	updateUIEnable(ui.comboBox_Mode->currentIndex());
+	m_updatingFromBoard = false;
 }
 
 
 void CAxisWidget::onBtnClick()
 {
-	if (!m_pTotalMgr) return;
+	if (!m_gtsMgr) return;
 	QPushButton* btn = qobject_cast<QPushButton*>(sender());
 	if (!btn) return;
 
@@ -151,13 +370,10 @@ void CAxisWidget::onBtnClick()
 		onClearState();
 	}
 	else if (objName == "pushButton_sevorOn") {
-		if (ui.pushButton_sevorOn->text() == QStringLiteral("使能")) {
+		if (ui.pushButton_sevorOn->text() == QStringLiteral("使能"))
 			onServoOn();
-		}
 		else
-		{
 			onServoOff();
-		}
 	}
 	else if (objName == "pushButton_clearPos") {
 		onClearPos();
@@ -171,308 +387,4 @@ void CAxisWidget::onBtnClick()
 	else if (objName == "pushButton_TarpActMotion") {
 		onTrapMotion();
 	}
-}
-
-void CAxisWidget::onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo)
-{
-	m_bUpdatingFromBoard = true;
-    int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)axisInfo.size()) return;
-	const SingleAxisInfo& axis = axisInfo[index];
-
-	ui.comboBox_Mode->setCurrentIndex(axis.prfMode);
-	if (m_pTotalMgr && index < (int)m_pTotalMgr->axisCfg()->axes.size()) {
-		const auto& cfg = m_pTotalMgr->axisCfg()->axes[index];
-		ui.spinBox_trapMotionVel->setValue((int)cfg.trapParam.motionVel);
-		ui.doubleSpinBox_trapLengthMm->setValue(cfg.trapParam.lengthMm);
-		ui.doubleSpinBoxs_trapAcc->setValue(cfg.trapParam.acc);
-		ui.doubleSpinBoxs_trapDec->setValue(cfg.trapParam.dec);
-		ui.spinBox_trapSmoothTime->setValue(cfg.trapParam.somoothTime);
-		ui.spinBox_trapCycleTime->setValue(cfg.trapParam.cycleTimes);
-		ui.spinBox_TrapInPositionDelay->setValue(cfg.trapParam.delay);
-		ui.spinBox_jogMotionVel->setValue(cfg.jogParam.motionVel);
-		ui.doubleSpinBoxs_jogAcc->setValue(cfg.jogParam.acc);
-		ui.doubleSpinBoxs_jogDec->setValue(cfg.jogParam.dec);
-	}
-
-	updateUIEnable(ui.comboBox_Mode->currentIndex());
-	m_bUpdatingFromBoard = false;
-}
-
-
-void CAxisWidget::onTrapParamChanged()
-{
-	if (m_bUpdatingFromBoard) return;
-	if (!m_pTotalMgr) return;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return;
-	auto& trap = m_pTotalMgr->axisCfg()->axes[index].trapParam;
-	trap.motionVel = ui.spinBox_trapMotionVel->value();
-	trap.acc = ui.doubleSpinBoxs_trapAcc->value();
-	trap.dec = ui.doubleSpinBoxs_trapDec->value();
-	trap.lengthMm = ui.doubleSpinBox_trapLengthMm->value();
-	trap.somoothTime = ui.spinBox_trapSmoothTime->value();
-	trap.cycleTimes = ui.spinBox_trapCycleTime->value();
-	trap.delay = ui.spinBox_TrapInPositionDelay->value();
-}
-
-
-void CAxisWidget::onJogParamChanged()
-{
-	if (m_bUpdatingFromBoard) return;
-	if (!m_pTotalMgr) return;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return;
-	auto& jog = m_pTotalMgr->axisCfg()->axes[index].jogParam;
-	jog.motionVel = ui.spinBox_jogMotionVel->value();
-	jog.acc = ui.doubleSpinBoxs_jogAcc->value();
-	jog.dec = ui.doubleSpinBoxs_jogDec->value();
-}
-
-void CAxisWidget::onClearState()
-{
-	short axis = m_iAxisId;
-	bool ok = m_pTotalMgr->axisMgr()->clearStatus(axis);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 状态已清除").arg(m_iAxisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 状态清除失败").arg(m_iAxisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onServoOn()
-{
-	short axis = m_iAxisId;
-	bool ok = m_pTotalMgr->axisMgr()->enable(axis);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 使能成功").arg(m_iAxisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 使能失败").arg(m_iAxisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onServoOff()
-{
-	short axis = m_iAxisId;
-	bool ok = m_pTotalMgr->axisMgr()->disable(axis);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 已禁止").arg(m_iAxisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 禁止失败").arg(m_iAxisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onClearPos()
-{
-	short axis = m_iAxisId;
-	bool ok = m_pTotalMgr->axisMgr()->zeroPosition(axis);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 位置已清零").arg(m_iAxisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 位置清零失败").arg(m_iAxisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onSmoothStop()
-{
-	short axis = m_iAxisId;
-	bool ok = m_pTotalMgr->axisMgr()->stop(axis, 1);  
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 减速停止").arg(m_iAxisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 减速停止失败").arg(m_iAxisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onEStop()
-{
-	short axis = m_iAxisId;
-	bool ok = m_pTotalMgr->axisMgr()->stop(axis, 0);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 急停已触发").arg(m_iAxisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 急停失败").arg(m_iAxisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onTrapMotion()
-{
-	if (!m_pTotalMgr) return;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	const SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
-
-	if (!axis) return;
-	short axisId = m_iAxisId;
-	double lengthMm = 0.0;
-	if (index < (int)m_pTotalMgr->axisCfg()->axes.size())
-		lengthMm = m_pTotalMgr->axisCfg()->axes[index].trapParam.lengthMm;
-	bool ok = m_pTotalMgr->motionMgr()->trapMotion(axisId, lengthMm);
-
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 点位运动已启动 (%2 mm)").arg(axisId).arg(lengthMm),
-			Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 运动启动失败，err=%2")
-			.arg(axisId).arg(m_pTotalMgr->motionMgr()->lastError()),
-			Qt::red);
-	}
-}
-
-
-void CAxisWidget::onJogPressed(int direction)
-{
-	if (!m_pTotalMgr) return;
-	int index = m_iAxisId - 1;
-	short axisId = m_iAxisId;
-	SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
-	if (!axis) return;
-	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return;
-	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->axisCfg()->axes[index].jogParam);
-	if (!ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 写入Jog参数失败").arg(axisId), Qt::red);
-		return;
-	}
-	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, direction);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 %2Jog已启动")
-			.arg(axisId)
-			.arg(direction > 0 ? QStringLiteral("正向") : QStringLiteral("反向")),
-			Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 Jog启动失败").arg(axisId), Qt::red);
-	}
-}
-
-void CAxisWidget::onJogReleased()
-{
-	if (!m_pTotalMgr) return;
-	short axisId = m_iAxisId;
-
-	// 减速停止（option = 1）
-	bool ok = m_pTotalMgr->axisMgr()->stop(axisId, 1);
-	if (ok) {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 Jog停止").arg(axisId), Qt::darkGreen);
-	}
-	else {
-		m_pGTSControllerWidget->showLog(
-			QStringLiteral("轴%1 Jog停止失败").arg(axisId), Qt::red);
-	}
-}
-
-
-void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
-{
-	m_iAxisId = index + 1;  
-
-	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
-		SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
-		if (axis) {
-			ui.comboBox_Mode->setCurrentIndex(axis->prfMode);
-		}
-		if (axis && index < (int)m_pTotalMgr->axisCfg()->axes.size()) {
-			const auto& cfg = m_pTotalMgr->axisCfg()->axes[index];
-			ui.spinBox_trapMotionVel->setValue(cfg.trapParam.motionVel);
-			ui.doubleSpinBoxs_trapAcc->setValue(cfg.trapParam.acc);
-			ui.doubleSpinBoxs_trapDec->setValue(cfg.trapParam.dec);
-			ui.doubleSpinBox_trapLengthMm->setValue(cfg.trapParam.lengthMm);
-			ui.spinBox_trapSmoothTime->setValue(cfg.trapParam.somoothTime);
-			ui.spinBox_trapCycleTime->setValue(cfg.trapParam.cycleTimes);
-			ui.spinBox_TrapInPositionDelay->setValue(cfg.trapParam.delay);
-			ui.spinBox_jogMotionVel->setValue(cfg.jogParam.motionVel);
-			ui.doubleSpinBoxs_jogAcc->setValue(cfg.jogParam.acc);
-			ui.doubleSpinBoxs_jogDec->setValue(cfg.jogParam.dec);
-		}
-	}
-}
-
-void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
-{
-	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
-
-		int axisIdx = m_iAxisId - 1;
-		SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(axisIdx);
-		if (axis) {
-			bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axis->axisIndex, index);
-			if (ok) {
-				updateUIEnable(index);
-				QString modeName = (index == 0) ? QStringLiteral("点位运动(trap)")
-					: QStringLiteral("Jog运动");
-				m_pGTSControllerWidget->showLog(
-					QStringLiteral("轴%1 切换运动模式为 %2 成功")
-					.arg(m_iAxisId).arg(modeName),
-					Qt::darkGreen);
-			}
-			else {
-				m_pGTSControllerWidget->showLog(
-					QStringLiteral("轴%1 切换运动模式失败").arg(m_iAxisId),
-					Qt::red);
-			}
-		}
-	}
-}
-
-
-void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
-{
-	m_bUpdatingFromBoard = true;
-	int index = m_iAxisId - 1;
-	if (index < 0 || index >= (int)axisInfo.size()) return;
-	const SingleAxisInfo& axis = axisInfo[index];
-
-	ui.radioButton_servoEnable->setChecked(axis.isServoOn);
-	ui.radioButton_nLimit->setChecked(axis.isNegLimit);
-	ui.radioButton_pLimit->setChecked(axis.isPosLimit);
-	ui.radioButton_motionErr->setChecked(axis.isMError);
-	ui.radioButton_sevorAlarm->setChecked(axis.isAlarm);
-	ui.radioButton_eStop->setChecked(axis.isAbruptStop);
-	ui.radioButton_smoothStop->setChecked(axis.isSmoothStop);
-	ui.radioButton_motionSts->setChecked(axis.isMotion);
-	// 编码器数值
-    ui.label_actPosData->setText(QString::number(axis.encPosMm, 'f', 3));
-    ui.label_actVelData->setText(QString::number(axis.encVelMm, 'f', 3));
-	// 规划期数值
-	ui.label_tgtAccData->setText(QString::number(axis.prfAccMm, 'f', 3));
-	ui.label_tgtPosData->setText(QString::number(axis.prfPosMm, 'f', 3));
-	ui.label_tgtVelData->setText(QString::number(axis.prfVelMm, 'f', 3));
-	ui.label_tgtPosDataPluse->setText(QString::number(axis.prfPosOriginal, 'f', 3));
-	ui.label_tgtVelDataPluse->setText(QString::number(axis.prfVelOriginal, 'f', 3));
-    ui.label_tgtAccDataPluse->setText(QString::number(axis.prfAccOriginal, 'f', 3));
-	if (axis.isServoOn)
-	{
-		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
-	}
-	else
-	{
-		ui.pushButton_sevorOn->setText(QStringLiteral("使能"));
-	}
-	m_bUpdatingFromBoard = false;
 }
