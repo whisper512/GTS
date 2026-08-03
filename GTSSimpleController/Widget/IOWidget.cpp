@@ -4,7 +4,7 @@
 
 #include "IOWidget.h"
 #include "GTSControllerWidget.h"
-#include "../Mgr/TotalMgr.h"
+#include "../../GtsCore/GtsMgr.h"
 
 
 // 状态列专用代理:忽略选中态，让 setBackground() 的背景始终可见
@@ -19,7 +19,7 @@ public:
     }
 };
 
-CIOWidget::CIOWidget(QWidget *parent,CTotalMgr* mgr)
+CIOWidget::CIOWidget(QWidget *parent,GtsMgr* mgr)
 	: QWidget(parent)
 	, m_pTotalMgr(mgr)
 {
@@ -167,20 +167,20 @@ void CIOWidget::onDOCellClicked(int row, int col)
     // 取反对应位
     if (row >= 0 && row < 8) {
         // 伺服使能 (0~7)
-        m_doState.vecServoOn[row] ^= 1;
-        ioMgr->setMotorEnableDO(m_doState.vecServoOn);
+        m_doState.servoOn[row] ^= 1;
+        ioMgr->setMotorEnableDO(m_doState.servoOn);
     }
     else if (row >= 8 && row < 16) {
         // 报警清除 (8~15)
         int idx = row - 8;
-        m_doState.vecAlmClear[idx] ^= 1;
-        ioMgr->setClearAlarmDO(m_doState.vecAlmClear);
+        m_doState.almClear[idx] ^= 1;
+        ioMgr->setClearAlarmDO(m_doState.almClear);
     }
     else if (row >= 16 && row < 32) {
         // 通用输出 (16~31)
         int idx = row - 16;
-        m_doState.vecGPO[idx] ^= 1;
-        ioMgr->setGPO(m_doState.vecGPO);
+        m_doState.GPO[idx] ^= 1;
+        ioMgr->setGPO(m_doState.GPO);
     }
     // 刷新该行显示
     auto flat = m_doState.toFlatVector();
@@ -197,12 +197,12 @@ void CIOWidget::onDOCellClicked(int row, int col)
     }
 }
 
-void CIOWidget::onDIUpdated(const stuDI& di)
+void CIOWidget::onDIUpdated(const DI& di)
 {
     RefreshTable(ui.tableWidget_DI, di.toFlatVector());
 }
 
-void CIOWidget::onDOUpdated(const stuDO& dout)
+void CIOWidget::onDOUpdated(const DO& dout)
 {
     m_doState = dout;
     RefreshTable(ui.tableWidget_DO, dout.toFlatVector());

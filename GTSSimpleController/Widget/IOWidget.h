@@ -2,10 +2,10 @@
 #include <QWidget>
 #include <QMap>
 
-#include "ControllerData.h"
+#include "../../GtsCore/ControllerData.h"
 #include "ui_IOWidget.h"
 
-class CTotalMgr;
+class GtsMgr;
 class GTSControllerWidget;
 
 struct Block { int start; int count; QString desc; };
@@ -15,15 +15,15 @@ class CIOWidget : public QWidget
 	Q_OBJECT
 
 public:
-	CIOWidget(QWidget* parent = nullptr, CTotalMgr* mgr = nullptr);
+	CIOWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
 	~CIOWidget();
 
 private:
 	Ui::CIOWidgetClass ui;
-	CTotalMgr* m_pTotalMgr = nullptr;
+	GtsMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 	// ±¾µØ»º´æµÄ DO ×´Ì¬
-	stuDO m_doState;
+	DO m_doState;
 
 private:
 	void InitUI();
@@ -38,8 +38,8 @@ private:
 	void onDOCellDoubleClicked(int row, int col);
 	void onDescriptionEdited(int row, bool isDI);
 public slots:
-	void onDIUpdated(const stuDI& di);     
-	void onDOUpdated(const stuDO& dout);  
+	void onDIUpdated(const DI& di);     
+	void onDOUpdated(const DO& dout);  
 
 };
 
