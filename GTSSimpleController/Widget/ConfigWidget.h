@@ -1,90 +1,72 @@
 ﻿#pragma once
 
-#include <QMainWindow>
+#include <QWidget>
 #include "ui_ConfigWidget.h"
 
 class GtsMgr;
-class GTSControllerWidget;
 
 class CConfigWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CConfigWidget(QWidget *parent = nullptr, GtsMgr* mgr = nullptr);
+	CConfigWidget(QWidget* parent = nullptr);
 	~CConfigWidget();
+	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:
-	Ui::CConfigWidgetClass ui;
-	GtsMgr* m_pTotalMgr = nullptr;
-	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
-	bool m_bRefreshing = false;
-
-private:
-	void InitConfigWidget();
-	void InitUI();
-	void connectSignalsAndSlots();
-	void onLoadToBoard();
-
-	//dac参数
-	void onDacBiasChanged();
-	void onDacLimitChanged();
-	// 控制器参数
-	void onFollowErrorLimitChanged();
-	// 规划期参数
-	void onStopDecelChanged();
-	
-	// 刷新
+	void initUI();
+	void connectSignals();
+	// refresh
 	void refreshDacValues();
 	void refreshFollowErrorLimit();
 	void refreshStopDecel();
-	void refreshGpiSense();
 	void refreshScaleValues();
-	void onPrfAlphaChanged();
-	void onPrfBetaChanged();
-	void onEncAlphaChanged();
-	void onEncBetaChanged();
-
-	// 控制模式
 	void refreshControlMode();
-	void onControlModeChanged();
-
-	// 回零参数
 	void refreshHomeConfig();
-	void onHomeModeChanged();
-	void onHomeVelChanged();
-	void onHomeAccChanged();
-	void onHomeRangeChanged();
-	void onHomeOffsetChanged();
-
-	// 轴限位
 	void refreshAxisLimit();
-	void onPosLimitChanged();
-	void onNegLimitChanged();
+	void refreshAxisName();
+	void refreshSoftPulseScale();
+	// commit
+	void commitDacForAxis(short dac);
+	void commitFollowErrorForAxis(short ctrl);
+	void commitStopDecelForProfile(short profile);
+	void commitScaleForAxis(short axis);
+	void commitControlModeForAxis(short axis);
+	void commitHomeForAxis(short axis);
+	void commitAxisLimitForAxis(short axis);
+	void commitAxisNameForAxis(short axis);
+	void commitSoftPulseScaleForAxis(short axis);
 
-signals:
+private:
+	Ui::CConfigWidgetClass ui;
+	GtsMgr* m_gtsMgr = nullptr;
+	bool m_refreshing = false;
+	short m_prevDacId = 1;
+	short m_prevCtrlId = 1;
+	short m_prevProfileId = 1;
+	short m_prevAxisId = 1;
+	short m_prevHomeAxisId = 1;
 
 private slots:
-	void onBtnClicked();
+	void onApplyAndSave();
+	void onApplyToBoard();
+	void onLoadConfigFile();
 
 public slots:
-	void onconfigChanged();
-
+	void onConfigChanged();
 };
 
-// 给 QComboBox 添加一组数字
-inline void ComboAddNumbers(QComboBox* cb, int n)
+inline void comboAddNumbers(QComboBox* cb, int n)
 {
 	if (!cb) return;
-	for (int i = 1; i <= n; ++i) {
+	for (int i = 1; i <= n; ++i)
 		cb->addItem(QString::number(i));
-	}
 }
-// 给 QComboBox 添加一组字符串
-inline void ComboAddItems(QComboBox* cb, std::initializer_list<QString> items)
+
+inline void comboAddItems(QComboBox* cb, std::initializer_list<QString> items)
 {
 	if (!cb) return;
-	for (const auto& s : items) {
+	for (const auto& s : items)
 		cb->addItem(s);
-	}
 }
