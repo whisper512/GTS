@@ -114,7 +114,15 @@
     <QtRcc Include="GTSControllerWidget.qrc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ControllerData.h" />
+    <ClInclude Include="..\GtsCore\ControllerData.h" />
+    <QtMoc Include="..\GtsCore\GtsAxisMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsBoardMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsConfigMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsFeedbackMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsInterpolationMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsIOMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsMotionMgr.h" />
     <QtMoc Include="Widget\MasterControlWidget.h" />
     <QtMoc Include="Widget\OthersWidget.h" />
     <QtMoc Include="Widget\IOWidget.h" />
@@ -122,25 +130,17 @@
     <QtMoc Include="Widget\ConfigWidget.h" />
     <QtMoc Include="Widget\BoardWidget.h" />
     <QtMoc Include="Widget\AxisWidget.h" />
-    <QtMoc Include="Mgr\TotalMgr.h" />
-    <QtMoc Include="Mgr\MotionMgr.h" />
-    <QtMoc Include="Mgr\IOMgr.h" />
-    <QtMoc Include="Mgr\InterpolationMgr.h" />
-    <QtMoc Include="Mgr\FeedbackMgr.h" />
-    <QtMoc Include="Mgr\ConfigMgr.h" />
-    <QtMoc Include="Mgr\BoardMgr.h" />
-    <QtMoc Include="Mgr\AxisMgr.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\GtsCore\GtsAxisMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsBoardMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsConfigMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsFeedbackMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsInterpolationMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsIOMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsMotionMgr.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mgr\AxisMgr.cpp" />
-    <ClCompile Include="Mgr\BoardMgr.cpp" />
-    <ClCompile Include="Mgr\ConfigMgr.cpp" />
-    <ClCompile Include="Mgr\FeedbackMgr.cpp" />
-    <ClCompile Include="Mgr\InterpolationMgr.cpp" />
-    <ClCompile Include="Mgr\IOMgr.cpp" />
-    <ClCompile Include="Mgr\MotionMgr.cpp" />
-    <ClCompile Include="Mgr\TotalMgr.cpp" />
     <ClCompile Include="Widget\AxisWidget.cpp" />
     <ClCompile Include="Widget\BoardWidget.cpp" />
     <ClCompile Include="Widget\ConfigWidget.cpp" />

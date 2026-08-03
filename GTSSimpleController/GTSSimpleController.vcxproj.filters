@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="ControllerData.h">
-      <Filter>Header Files\Mgr</Filter>
+    <ClInclude Include="..\GtsCore\ControllerData.h">
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -15,20 +15,20 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{0d4f3df2-77bb-4c1e-bc44-cd8a4f9a2c50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Mgr">
-      <UniqueIdentifier>{3e7aa5c8-6d9d-430a-9b07-513bd63a5eec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Widget">
       <UniqueIdentifier>{73826b2b-1386-43f3-90b0-fab942fec50b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Mgr">
-      <UniqueIdentifier>{f9d473fc-cbc4-47f9-87d5-d56558ee36a6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Widget">
       <UniqueIdentifier>{7a2fa686-e6fd-40b4-80d2-20edfc3b1b6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Form Files">
       <UniqueIdentifier>{12b8d902-66ab-41b3-aaba-151badc996a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{076d3266-08f5-4597-815b-709adc56f6b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{1f320de7-7d71-490b-84c3-36dc0bc47e65}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,30 +37,6 @@
     </QtRcc>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="Mgr\AxisMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\BoardMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\ConfigMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\FeedbackMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\InterpolationMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\IOMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\MotionMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
-    <QtMoc Include="Mgr\TotalMgr.h">
-      <Filter>Header Files\Mgr</Filter>
-    </QtMoc>
     <QtMoc Include="Widget\AxisWidget.h">
       <Filter>Header Files\Widget</Filter>
     </QtMoc>
@@ -82,32 +58,32 @@
     <QtMoc Include="Widget\MasterControlWidget.h">
       <Filter>Header Files\Widget</Filter>
     </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsAxisMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsBoardMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsConfigMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsFeedbackMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsInterpolationMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsIOMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsMotionMgr.h">
+      <Filter>Header Files\Core</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Mgr\AxisMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\BoardMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\ConfigMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\FeedbackMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\InterpolationMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\IOMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\MotionMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Mgr\TotalMgr.cpp">
-      <Filter>Source Files\Mgr</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\AxisWidget.cpp">
       <Filter>Source Files\Widget</Filter>
     </ClCompile>
@@ -131,6 +107,30 @@
     </ClCompile>
     <ClCompile Include="Widget\MasterControlWidget.cpp">
       <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsAxisMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsBoardMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsConfigMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsFeedbackMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsInterpolationMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsIOMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsMgr.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsMotionMgr.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
