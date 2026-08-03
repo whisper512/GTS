@@ -1,27 +1,35 @@
 ﻿#include <QTimer>
-#include "GTSControllerWidget.h"
+#include <QPushButton>
 #include "BoardWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
-CBoardWidget::CBoardWidget(QWidget* parent, GtsMgr* mgr)
+CBoardWidget::CBoardWidget(QWidget* parent)
     : QWidget(parent)
-    , m_pTotalMgr(mgr)
 {
     ui.setupUi(this);
-    m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
-
-    connectPrivateSignal();
-    upUIdateBoardState(false);
+    initConnections();
+    updateBoardState(false);
 }
 
 CBoardWidget::~CBoardWidget()
 {
-    m_pTotalMgr = nullptr;
-    m_pGTSControllerWidget = nullptr;
+    m_gtsMgr = nullptr;
 }
 
+void CBoardWidget::setGtsTotalMgr(GtsMgr* mgr)
+{
+    if (m_gtsMgr)
+    {
+        disconnect(m_gtsMgr, &GtsMgr::boardClockUpdated, this, &CBoardWidget::onBoardClockUpdated);
+    }
+    m_gtsMgr = mgr;
+    if (m_gtsMgr)
+    {
+        connect(m_gtsMgr, &GtsMgr::boardClockUpdated, this, &CBoardWidget::onBoardClockUpdated);
+    }
+}
 
-void CBoardWidget::connectPrivateSignal()
+void CBoardWidget::initConnections()
 {
     ui.radioButton_boardState->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -29,10 +37,10 @@ void CBoardWidget::connectPrivateSignal()
         connect(ui.pushButton_openBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
         connect(ui.pushButton_closeBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
         connect(ui.pushButton_resetBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
-        });
+    });
 }
 
-void CBoardWidget::upUIdateBoardState(bool isOpen)
+void CBoardWidget::updateBoardState(bool isOpen)
 {
     ui.radioButton_boardState->setChecked(isOpen);
     if (isOpen) {
@@ -49,52 +57,30 @@ void CBoardWidget::upUIdateBoardState(bool isOpen)
 
 void CBoardWidget::onOpen()
 {
-    bool ok = m_pTotalMgr->boardMgr()->open(0, 1);
+    if (!m_gtsMgr) return;
+    bool ok = m_gtsMgr->boardMgr()->open(0, 1);
     if (ok) {
-        upUIdateBoardState(true);
-        m_pGTSControllerWidget->showLog(QStringLiteral("打开板卡成功"), Qt::darkGreen);
+        updateBoardState(true);
+        short id = m_gtsMgr->boardMgr()->getCardNo();
+        ui.label_boardIDData->setText(QString::number(id));
+        QString fwVersion = m_gtsMgr->boardMgr()->firmwareVersion();
+        ui.label_hardwareVerData->setText(fwVersion);
     }
-    else {
-        m_pGTSControllerWidget->showLog(QStringLiteral("打开板卡失败"), Qt::red);
-        return;
-    }
-
-    // 获取并显示板卡编号
-    short id = m_pTotalMgr->boardMgr()->getCardNo();
-    ui.label_boardIDData->setText(QString::number(id));
-    m_pGTSControllerWidget->showLog(QStringLiteral("板卡编号: %1").arg(id), Qt::darkGreen);
-
-    // 获取并显示固件版本
-    QString fwVersion = m_pTotalMgr->boardMgr()->firmwareVersion();
-    ui.label_hardwareVerData->setText(fwVersion);
-    m_pGTSControllerWidget->showLog(QStringLiteral("固件版本: %1").arg(fwVersion), Qt::darkGreen);
-
 }
 
 void CBoardWidget::onClose()
 {
-    bool ok = m_pTotalMgr->boardMgr()->close();
-    if (ok) {
-        upUIdateBoardState(false);
-        m_pGTSControllerWidget->showLog(QStringLiteral("关闭板卡成功"), Qt::darkGreen);
-    }
-    else {
-        m_pGTSControllerWidget->showLog(QStringLiteral("关闭板卡失败"), Qt::red);
-    }
+    if (!m_gtsMgr) return;
+    bool ok = m_gtsMgr->boardMgr()->close();
+    if (ok) updateBoardState(false);
 }
 
 void CBoardWidget::onReset()
 {
-    bool ok = m_pTotalMgr->boardMgr()->reset(); 
-    if (ok) {
-        upUIdateBoardState(false);
-        m_pGTSControllerWidget->showLog(QStringLiteral("复位板卡成功"), Qt::darkGreen);
-    }
-    else {
-        m_pGTSControllerWidget->showLog(QStringLiteral("复位板卡失败"), Qt::red);
-    }
+    if (!m_gtsMgr) return;
+    bool ok = m_gtsMgr->boardMgr()->reset();
+    if (ok) updateBoardState(false);
 }
-
 
 void CBoardWidget::onBoardClockUpdated(const Clock& clock)
 {
@@ -104,7 +90,7 @@ void CBoardWidget::onBoardClockUpdated(const Clock& clock)
 
 void CBoardWidget::onBtnClick()
 {
-    if (!m_pTotalMgr) return;
+    if (!m_gtsMgr) return;
     QPushButton* btn = qobject_cast<QPushButton*>(sender());
     if (!btn) return;
     QString objName = btn->objectName();

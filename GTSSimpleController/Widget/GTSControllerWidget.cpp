@@ -74,7 +74,8 @@ void GTSControllerWidget::Init()
 
 void GTSControllerWidget::InitUI()
 {
-    m_pBoardWidget = new CBoardWidget(this,this->m_pTotalMgr);
+    m_pBoardWidget = new CBoardWidget(this);
+    m_pBoardWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pBoardWidget);
     m_pMasterControlWidget = new CMasterControlWidget(this, this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pMasterControlWidget);
@@ -114,7 +115,6 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
     connect(m_pTotalMgr, &GtsMgr::logMessage, this, &GTSControllerWidget::showLog);
-    connect(m_pTotalMgr, &GtsMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
     connect(m_pTotalMgr, &GtsMgr::axisUpdated, m_pMasterControlWidget, &CMasterControlWidget::onAxisUpdated);
     connect(m_pTotalMgr, &GtsMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
     connect(m_pTotalMgr, &GtsMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);

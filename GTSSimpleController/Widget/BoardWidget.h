@@ -4,23 +4,22 @@
 #include "ui_BoradWidget.h"
 
 class GtsMgr;
-class GTSControllerWidget;
 
 class CBoardWidget : public QWidget 
 {
 	Q_OBJECT
 
 public:
-	CBoardWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
+	CBoardWidget(QWidget* parent = nullptr);
 	~CBoardWidget();
+	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:
 	Ui::BoardWidgetClass ui;
-	GtsMgr* m_pTotalMgr = nullptr;
-	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
+	GtsMgr* m_gtsMgr = nullptr;
 
-	void connectPrivateSignal();
-	void upUIdateBoardState(bool isOpen);
+	void initConnections();
+	void updateBoardState(bool isOpen);
 	void onOpen();
 	void onClose();
 	void onReset();
