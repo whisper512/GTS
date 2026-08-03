@@ -3,7 +3,7 @@
 #include <QMainWindow>
 #include "ui_ConfigWidget.h"
 
-class CTotalMgr;
+class GtsMgr;
 class GTSControllerWidget;
 
 class CConfigWidget : public QWidget
@@ -11,12 +11,12 @@ class CConfigWidget : public QWidget
 	Q_OBJECT
 
 public:
-	CConfigWidget(QWidget *parent = nullptr, CTotalMgr* mgr = nullptr);
+	CConfigWidget(QWidget *parent = nullptr, GtsMgr* mgr = nullptr);
 	~CConfigWidget();
 
 private:
 	Ui::CConfigWidgetClass ui;
-	CTotalMgr* m_pTotalMgr = nullptr;
+	GtsMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 	bool m_bRefreshing = false;
 

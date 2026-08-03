@@ -2,9 +2,9 @@
 
 #include <QWidget>
 #include "ui_MasterControlWidget.h"
-#include "../Mgr/AxisMgr.h"
+#include "../../GtsCore/GtsAxisMgr.h"
 
-class CTotalMgr;
+class GtsMgr;
 class GTSControllerWidget;
 
 class CMasterControlWidget : public QWidget
@@ -12,16 +12,16 @@ class CMasterControlWidget : public QWidget
 	Q_OBJECT
 
 public:
-	CMasterControlWidget(QWidget* parent = nullptr, CTotalMgr* mgr = nullptr);
+	CMasterControlWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
 	~CMasterControlWidget();
 
 public slots:
-	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
-	void onAxisParamUpdated(const std::vector<stuAxis>& axisInfo);
+	void onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo);
+	void onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo);
 
 private:
 	Ui::CMasterControlWidgetClass ui;
-	CTotalMgr* m_pTotalMgr;
+	GtsMgr* m_pTotalMgr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 	bool m_bUpdatingFromBoard = false;
 

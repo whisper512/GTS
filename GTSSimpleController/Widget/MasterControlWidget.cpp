@@ -1,10 +1,10 @@
 #include "MasterControlWidget.h"
 #include "GTSControllerWidget.h"
-#include "../Mgr/TotalMgr.h"
+#include "../../GtsCore/GtsMgr.h"
 
 #include <cmath>
 
-CMasterControlWidget::CMasterControlWidget(QWidget* parent, CTotalMgr* mgr)
+CMasterControlWidget::CMasterControlWidget(QWidget* parent, GtsMgr* mgr)
 	: QWidget(parent)
 	, m_pTotalMgr(mgr)
 {
@@ -119,12 +119,12 @@ void CMasterControlWidget::connectPrivateSignal()
 	connect(ui.toolButton_Minus4, &QToolButton::pressed, this, [this]() { onJogPressed(4, -1); });
 	connect(ui.toolButton_Minus4, &QToolButton::released, this, [this]() { onJogReleased(4); });
 	connect(ui.pushButton_ActMotion, &QPushButton::clicked, this, &CMasterControlWidget::onTrapMotion);
-	// »ØÁã°´Å¥
+	// å›é›¶æŒ‰é’®
 	connect(ui.pushButtonHome1, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(1); });
 	connect(ui.pushButtonHome2, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(2); });
 	connect(ui.pushButtonHome3, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(3); });
 	connect(ui.pushButtonHome4, &QPushButton::clicked, this, [this]() { onHomeButtonClicked(4); });
-	// Í£Ö¹
+	// åœæ­¢
 	connect(ui.toolButton_Stop, &QToolButton::clicked, this, &CMasterControlWidget::onStopAll);
 }
 
@@ -134,19 +134,19 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	int index = axisId - 1;
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
 
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
 	if (!axis) return;
 
 	bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axisId, 1);
 	if (!ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 ÇĞ»»JogÄ£Ê½Ê§°Ü").arg(axisName(axisId)), Qt::red);
+			QStringLiteral("%1 åˆ‡æ¢Jogæ¨¡å¼å¤±è´¥").arg(axisName(axisId)), Qt::red);
 		return;
 	}
 
-	stuJogParam jogParam;
-	jogParam.dMotionVel = ui.doubleSpinBox_Vel->value();
+	JogParam jogParam;
+	jogParam.motionVel = ui.doubleSpinBox_Vel->value();
 	jogParam.acc = ui.doubleSpinBoxs_Acc->value();
 	jogParam.dec = ui.doubleSpinBoxs_Dec->value();
 
@@ -154,7 +154,7 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	if (!ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 Ğ´ÈëJog²ÎÊıÊ§°Ü").arg(axisName(axisId)), Qt::red);
+			QStringLiteral("%1 å†™å…¥Jogå‚æ•°å¤±è´¥").arg(axisName(axisId)), Qt::red);
 		return;
 	}
 
@@ -162,15 +162,15 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 %2JogÒÑÆô¶¯")
+			QStringLiteral("%1 %2Jogå·²å¯åŠ¨")
 			.arg(axisName(axisId))
-			.arg(direction > 0 ? QStringLiteral("ÕıÏò") : QStringLiteral("·´Ïò")),
+			.arg(direction > 0 ? QStringLiteral("æ­£å‘") : QStringLiteral("åå‘")),
 			Qt::darkGreen);
 	}
 	else
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 JogÆô¶¯Ê§°Ü").arg(axisName(axisId)), Qt::red);
+			QStringLiteral("%1 Jogå¯åŠ¨å¤±è´¥").arg(axisName(axisId)), Qt::red);
 	}
 }
 
@@ -181,12 +181,12 @@ void CMasterControlWidget::onJogReleased(short axisId)
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 JogÍ£Ö¹").arg(axisName(axisId)), Qt::darkGreen);
+			QStringLiteral("%1 Jogåœæ­¢").arg(axisName(axisId)), Qt::darkGreen);
 	}
 	else
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 JogÍ£Ö¹Ê§°Ü").arg(axisName(axisId)), Qt::red);
+			QStringLiteral("%1 Jogåœæ­¢å¤±è´¥").arg(axisName(axisId)), Qt::red);
 	}
 }
 
@@ -201,44 +201,44 @@ bool CMasterControlWidget::startSingleTrap(short axisId, double stepMm)
 {
 	if (!m_pTotalMgr) return false;
 
-	// ²½³¤Îª 0 ²»ÔË¶¯
+	// æ­¥é•¿ä¸º 0 ä¸è¿åŠ¨
 	if (std::fabs(stepMm) < 1e-9)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 ²½³¤Îª 0£¬ÎŞĞèÒÆ¶¯").arg(axisName(axisId)),
+			QStringLiteral("%1 æ­¥é•¿ä¸º 0ï¼Œæ— éœ€ç§»åŠ¨").arg(axisName(axisId)),
 			Qt::darkGreen);
 		return false;
 	}
 
 	int index = axisId - 1;
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
 	if (!axis) return false;
+	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return false;
+	auto& trap = m_pTotalMgr->axisCfg()->axes[index].trapParam;
+	trap.motionVel = ui.doubleSpinBox_Vel->value();
+	trap.acc = ui.doubleSpinBoxs_Acc->value();
+	trap.dec = ui.doubleSpinBoxs_Dec->value();
+	trap.somoothTime = 0;
+	trap.cycleTimes = 0;
+	trap.delay = 0;
 
-	// Ğ´Èë UI ²ÎÊıµ½Öá¶ÔÏó
-	axis->trapParam.dMotionVel = ui.doubleSpinBox_Vel->value();
-	axis->trapParam.acc = ui.doubleSpinBoxs_Acc->value();
-	axis->trapParam.dec = ui.doubleSpinBoxs_Dec->value();
-	axis->trapParam.somoothTime = 0; 
-	axis->trapParam.cycleTimes = 0;
-	axis->trapParam.Delay = 0;
-
-	// Í¨¹ı MotionMgr Íê³É£¨ÄÚ²¿×Ô¶¯£ºÄ£Ê½ÇĞ»» + µ±Á¿»»Ëã + ²ÎÊı¼ì²é + ÆôÍ££©
+	// Í¨ï¿½ï¿½ MotionMgr ï¿½ï¿½É£ï¿½ï¿½Ú²ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½Ä£Ê½ï¿½Ğ»ï¿½ + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½Í£ï¿½ï¿½
 	bool ok = m_pTotalMgr->motionMgr()->trapMotion(axisId, stepMm);
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 µãÎ»ÔË¶¯ÒÑÆô¶¯  ²½³¤=%2 mm  ËÙ¶È=%3  ¼ÓËÙ¶È=%4")
+			QStringLiteral("%1 ï¿½ï¿½Î»ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½=%2 mm  ï¿½Ù¶ï¿½=%3  ï¿½ï¿½ï¿½Ù¶ï¿½=%4")
 			.arg(axisName(axisId))
 			.arg(stepMm, 0, 'f', 3)
-			.arg(axis->trapParam.dMotionVel)
-			.arg(axis->trapParam.acc, 0, 'f', 3),
+			.arg(trap.motionVel)
+			.arg(trap.acc, 0, 'f', 3),
 			Qt::darkGreen);
 		return true;
 	}
 	else
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 µãÎ»ÔË¶¯Æô¶¯Ê§°Ü err=%2")
+			QStringLiteral("%1 ï¿½ï¿½Î»ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½ err=%2")
 			.arg(axisName(axisId))
 			.arg(m_pTotalMgr->motionMgr()->lastError()),
 			Qt::red);
@@ -262,12 +262,12 @@ void CMasterControlWidget::onStopAll()
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("È«²¿Öá ¼õËÙÍ£Ö¹"), Qt::darkGreen);
+			QStringLiteral("È«ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í£Ö¹"), Qt::darkGreen);
 	}
 	else
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("È«²¿Öá Í£Ö¹Ê§°Ü"), Qt::red);
+			QStringLiteral("È«ï¿½ï¿½ï¿½ï¿½ Í£Ö¹Ê§ï¿½ï¿½"), Qt::red);
 	}
 }
 
@@ -275,19 +275,19 @@ QString CMasterControlWidget::axisName(short axisId)
 {
 	switch (axisId)
 	{
-	case 1: return QStringLiteral("Öá1");
-	case 2: return QStringLiteral("Öá2");
-	case 3: return QStringLiteral("Öá3");
-	case 4: return QStringLiteral("Öá4");
-	default: return QStringLiteral("Öá%1").arg(axisId);
+	case 1: return QStringLiteral("ï¿½ï¿½1");
+	case 2: return QStringLiteral("ï¿½ï¿½2");
+	case 3: return QStringLiteral("ï¿½ï¿½3");
+	case 4: return QStringLiteral("ï¿½ï¿½4");
+	default: return QStringLiteral("ï¿½ï¿½%1").arg(axisId);
 	}
 }
 
-void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
+void CMasterControlWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
 	m_bUpdatingFromBoard = true;
 
-	auto updateOneAxis = [this](const stuAxis& axis,
+	auto updateOneAxis = [this](const SingleAxisInfo& axis,
 		QRadioButton* servoEnable,
 		QRadioButton* alarm,
 		QRadioButton* nLimit,
@@ -305,22 +305,22 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 		QLabel* tgtVelDataPluse,
 		QLabel* tgtAccDataPluse)
 		{
-			servoEnable->setChecked(axis.bServoOn);
-			alarm->setChecked(axis.bAlarm);
-			nLimit->setChecked(axis.bNegLimit);
-			pLimit->setChecked(axis.bPosLimit);
-			motionErr->setChecked(axis.bMError);
-			motionSts->setChecked(axis.bMotion);
-			eStop->setChecked(axis.bAbruptStop);
-			smoothStop->setChecked(axis.bSmoothStop);
-			actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
-			actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
-			tgtPosData->setText(QString::number(axis.dPrfPosMm, 'f', 3));
-			tgtVelData->setText(QString::number(axis.dPrfVelMm, 'f', 3));
-			tgtAccData->setText(QString::number(axis.dPrfAccMm, 'f', 3));
-			tgtPosDataPluse->setText(QString::number(axis.dPrfPosOriginal, 'f', 3));
-			tgtVelDataPluse->setText(QString::number(axis.dPrfVelOriginal, 'f', 3));
-			tgtAccDataPluse->setText(QString::number(axis.dPrfAccOriginal, 'f', 3));
+			servoEnable->setChecked(axis.isServoOn);
+			alarm->setChecked(axis.isAlarm);
+			nLimit->setChecked(axis.isNegLimit);
+			pLimit->setChecked(axis.isPosLimit);
+			motionErr->setChecked(axis.isMError);
+			motionSts->setChecked(axis.isMotion);
+			eStop->setChecked(axis.isAbruptStop);
+			smoothStop->setChecked(axis.isSmoothStop);
+			actPosData->setText(QString::number(axis.encPosMm, 'f', 3));
+			actVelData->setText(QString::number(axis.encVelMm, 'f', 3));
+			tgtPosData->setText(QString::number(axis.prfPosMm, 'f', 3));
+			tgtVelData->setText(QString::number(axis.prfVelMm, 'f', 3));
+			tgtAccData->setText(QString::number(axis.prfAccMm, 'f', 3));
+			tgtPosDataPluse->setText(QString::number(axis.prfPosOriginal, 'f', 3));
+			tgtVelDataPluse->setText(QString::number(axis.prfVelOriginal, 'f', 3));
+			tgtAccDataPluse->setText(QString::number(axis.prfAccOriginal, 'f', 3));
 		};
 
 	if ((int)axisInfo.size() >= 1)
@@ -403,7 +403,7 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
 }
 
 
-void CMasterControlWidget::onAxisParamUpdated(const std::vector<stuAxis>& axisInfo)
+void CMasterControlWidget::onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
 	Q_UNUSED(axisInfo);
 }

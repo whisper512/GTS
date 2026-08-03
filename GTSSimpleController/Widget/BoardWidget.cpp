@@ -1,10 +1,9 @@
 #include <QTimer>
 #include "GTSControllerWidget.h"
 #include "BoardWidget.h"
-#include "../Mgr/TotalMgr.h"
-#include "../Mgr/BoardMgr.h"
+#include "../../GtsCore/GtsMgr.h"
 
-CBoardWidget::CBoardWidget(QWidget* parent, CTotalMgr* mgr)
+CBoardWidget::CBoardWidget(QWidget* parent, GtsMgr* mgr)
     : QWidget(parent)
     , m_pTotalMgr(mgr)
 {
@@ -97,7 +96,7 @@ void CBoardWidget::onReset()
 }
 
 
-void CBoardWidget::onBoardClockUpdated(const stuClock& clock)
+void CBoardWidget::onBoardClockUpdated(const Clock& clock)
 {
     ui.label_clockData->setText(QString::number(clock.sysClock));
     ui.label_highPrecisionClockData->setText(QString::number(clock.highPrecClock));

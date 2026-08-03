@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include <QWidget>
-#include "../Mgr/AxisMgr.h"
+#include "../../GtsCore/GtsAxisMgr.h"
 #include "ui_AxisWidget.h"
 
-class CTotalMgr;
+class GtsMgr;
 class GTSControllerWidget;
 
 class CAxisWidget : public QWidget
@@ -11,12 +11,12 @@ class CAxisWidget : public QWidget
 	Q_OBJECT
 
 public:
-	CAxisWidget(QWidget* parent = nullptr, CTotalMgr* mgr = nullptr);
+	CAxisWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
 	~CAxisWidget();
 
 private:
 	Ui::CAxisWidgetClass ui;
-	CTotalMgr* m_pTotalMgr = nullptr;
+	GtsMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 	
 	// 更新标志位
@@ -47,9 +47,9 @@ private:
 
 public slots:
 	// 更新轴实时信息
-	void onAxisUpdated(const std::vector<stuAxis>& axisInfo);
+	void onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo);
 	// 更新轴通用信息
-	void onAxisParamUpdated(const std::vector<stuAxis>& axisInfo);
+	void onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo);
 
 private slots:
 	void onBtnClick();

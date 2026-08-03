@@ -43,7 +43,7 @@ private:
     Ui::GTSControllerWidgetClass ui;
 
 public slots:
-    void showLog(const QString& log, QColor color);
+    void showLog(const QString& log = "", QColor color = Qt::black);
 
 private slots:
     void OnBtnClicked(int id);

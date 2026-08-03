@@ -60,7 +60,7 @@ GTSControllerWidget::~GTSControllerWidget()
 void GTSControllerWidget::Init()
 {
     QTimer::singleShot(100, this, [this]() {
-        m_pTotalMgr = new CTotalMgr(this);
+        m_pTotalMgr = new GtsMgr(this);
 
         InitUI();
         InitUISignalAndSlotConnect();
@@ -112,13 +112,13 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
-    connect(m_pTotalMgr, &CTotalMgr::logUpdated, this, &GTSControllerWidget::showLog);
-    connect(m_pTotalMgr, &CTotalMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
-    connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
-    connect(m_pTotalMgr, &CTotalMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);
-    connect(m_pTotalMgr, &CTotalMgr::axisUpdated, m_pMasterControlWidget, &CMasterControlWidget::onAxisUpdated);
-    connect(m_pTotalMgr, &CTotalMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
-    connect(m_pTotalMgr, &CTotalMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);
+    connect(m_pTotalMgr, &GtsMgr::logMessage, this, &GTSControllerWidget::showLog);
+    connect(m_pTotalMgr, &GtsMgr::boardClockUpdated, m_pBoardWidget, &CBoardWidget::onBoardClockUpdated);
+    connect(m_pTotalMgr, &GtsMgr::axisUpdated, m_pAxisWidget, &CAxisWidget::onAxisUpdated);
+    connect(m_pTotalMgr, &GtsMgr::axisSettingUpdated, m_pAxisWidget, &CAxisWidget::onAxisParamUpdated);
+    connect(m_pTotalMgr, &GtsMgr::axisUpdated, m_pMasterControlWidget, &CMasterControlWidget::onAxisUpdated);
+    connect(m_pTotalMgr, &GtsMgr::diUpdated, m_pIOWidget, &CIOWidget::onDIUpdated);
+    connect(m_pTotalMgr, &GtsMgr::doUpdated, m_pIOWidget, &CIOWidget::onDOUpdated);
     connect(m_pTotalMgr->configMgr(), &ConfigMgr::configChanged, m_pConfigWidget, &CConfigWidget::onconfigChanged);
 
     // 显示错误信息
@@ -136,15 +136,6 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
     connect(m_pTotalMgr->configMgr() , &ConfigMgr::errorOccurred, this, errorHandler);
     connect(m_pTotalMgr->feedbackMgr(), &FeedbackMgr::errorOccurred, this, errorHandler);
     connect(m_pTotalMgr->interpolationMgr(), &InterpolationMgr::errorOccurred, this, errorHandler);
-
-    // 回零过程追踪
-    connect(m_pTotalMgr->motionMgr(), &MotionMgr::homeStatus, this,
-        [this](short axis, const QString& msg) {
-            showLog(QStringLiteral("轴%1 回零 %2").arg(axis).arg(msg),
-                QColor(0, 128, 0));   // 暗绿色
-        });
-
-
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

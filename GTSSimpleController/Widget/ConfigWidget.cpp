@@ -2,9 +2,9 @@
 #include <QFileDialog>
 #include "ConfigWidget.h"
 #include "GTSControllerWidget.h"
-#include "../Mgr/TotalMgr.h"
+#include "../../GtsCore/GtsMgr.h"
 
-CConfigWidget::CConfigWidget(QWidget *parent, CTotalMgr* mgr)
+CConfigWidget::CConfigWidget(QWidget *parent, GtsMgr* mgr)
 	: QWidget(parent)
 	, m_pTotalMgr(mgr)
 {
@@ -386,7 +386,7 @@ void CConfigWidget::onHomeModeChanged()
 
 	short axis = ui.comboBox_axisIdHomeConfig->currentText().toShort();
 	int  index = ui.comboBox_homeMode->currentIndex();
-	auto mode = static_cast<homeMode>(index);
+	auto mode = static_cast<HomeMode>(index);
 
 	m_pTotalMgr->configMgr()->setHomeMode(axis, mode);
 	m_pTotalMgr->configMgr()->saveAxisConfig();

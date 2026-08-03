@@ -1,9 +1,9 @@
 #pragma once
 #include <QWidget>
-#include "../Mgr/BoardMgr.h"
+#include "../../GtsCore/GtsBoardMgr.h"
 #include "ui_BoradWidget.h"
 
-class CTotalMgr;
+class GtsMgr;
 class GTSControllerWidget;
 
 class CBoardWidget : public QWidget 
@@ -11,12 +11,12 @@ class CBoardWidget : public QWidget
 	Q_OBJECT
 
 public:
-	CBoardWidget(QWidget* parent = nullptr, CTotalMgr* mgr = nullptr);
+	CBoardWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
 	~CBoardWidget();
 
 private:
 	Ui::BoardWidgetClass ui;
-	CTotalMgr* m_pTotalMgr = nullptr;
+	GtsMgr* m_pTotalMgr = nullptr;
 	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
 
 	void connectPrivateSignal();
@@ -29,7 +29,7 @@ signals:
 
 
 public slots:
-	void onBoardClockUpdated(const stuClock& clock);
+	void onBoardClockUpdated(const Clock& clock);
 private slots:
 	void onBtnClick();
 

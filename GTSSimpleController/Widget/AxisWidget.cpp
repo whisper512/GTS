@@ -1,12 +1,10 @@
 #include "AxisWidget.h"
 #include "GTSControllerWidget.h"
-#include "../Mgr/TotalMgr.h"
-#include "../Mgr/BoardMgr.h"
-#include "../Mgr/AxisMgr.h"
+#include "../../GtsCore/GtsMgr.h"
 
 #include <QMessageBox>
 
-CAxisWidget::CAxisWidget(QWidget* parent, CTotalMgr* mgr)
+CAxisWidget::CAxisWidget(QWidget* parent, GtsMgr* mgr)
 	: QWidget(parent)
 	, m_pTotalMgr(mgr)
 {
@@ -175,24 +173,27 @@ void CAxisWidget::onBtnClick()
 	}
 }
 
-void CAxisWidget::onAxisParamUpdated(const std::vector<stuAxis>& axisInfo)
+void CAxisWidget::onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
 	m_bUpdatingFromBoard = true;
     int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)axisInfo.size()) return;
-	const stuAxis& axis = axisInfo[index];
+	const SingleAxisInfo& axis = axisInfo[index];
 
-	ui.comboBox_Mode->setCurrentIndex(axis.lPrfMode);
-	ui.spinBox_trapMotionVel->setValue((int)axis.trapParam.dMotionVel);
-	ui.doubleSpinBox_trapLengthMm->setValue(axis.trapParam.lengthMm);
-	ui.doubleSpinBoxs_trapAcc->setValue(axis.trapParam.acc);
-    ui.doubleSpinBoxs_trapDec->setValue(axis.trapParam.dec);
-    ui.spinBox_trapSmoothTime->setValue(axis.trapParam.somoothTime);
-	ui.spinBox_trapCycleTime->setValue(axis.trapParam.cycleTimes);
-    ui.spinBox_TrapInPositionDelay->setValue(axis.trapParam.Delay);
-	ui.spinBox_jogMotionVel->setValue(axis.jogParam.dMotionVel);
-	ui.doubleSpinBoxs_jogAcc->setValue(axis.jogParam.acc);
-    ui.doubleSpinBoxs_jogDec->setValue(axis.jogParam.dec);
+	ui.comboBox_Mode->setCurrentIndex(axis.prfMode);
+	if (m_pTotalMgr && index < (int)m_pTotalMgr->axisCfg()->axes.size()) {
+		const auto& cfg = m_pTotalMgr->axisCfg()->axes[index];
+		ui.spinBox_trapMotionVel->setValue((int)cfg.trapParam.motionVel);
+		ui.doubleSpinBox_trapLengthMm->setValue(cfg.trapParam.lengthMm);
+		ui.doubleSpinBoxs_trapAcc->setValue(cfg.trapParam.acc);
+		ui.doubleSpinBoxs_trapDec->setValue(cfg.trapParam.dec);
+		ui.spinBox_trapSmoothTime->setValue(cfg.trapParam.somoothTime);
+		ui.spinBox_trapCycleTime->setValue(cfg.trapParam.cycleTimes);
+		ui.spinBox_TrapInPositionDelay->setValue(cfg.trapParam.delay);
+		ui.spinBox_jogMotionVel->setValue(cfg.jogParam.motionVel);
+		ui.doubleSpinBoxs_jogAcc->setValue(cfg.jogParam.acc);
+		ui.doubleSpinBoxs_jogDec->setValue(cfg.jogParam.dec);
+	}
 
 	updateUIEnable(ui.comboBox_Mode->currentIndex());
 	m_bUpdatingFromBoard = false;
@@ -205,15 +206,15 @@ void CAxisWidget::onTrapParamChanged()
 	if (!m_pTotalMgr) return;
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
-	if (!axis) return;
-	axis->trapParam.dMotionVel = ui.spinBox_trapMotionVel->value();
-	axis->trapParam.acc = ui.doubleSpinBoxs_trapAcc->value();
-	axis->trapParam.dec = ui.doubleSpinBoxs_trapDec->value();
-	axis->trapParam.lengthMm = ui.doubleSpinBox_trapLengthMm->value();
-	axis->trapParam.somoothTime = ui.spinBox_trapSmoothTime->value();
-	axis->trapParam.cycleTimes = ui.spinBox_trapCycleTime->value();
-	axis->trapParam.Delay = ui.spinBox_TrapInPositionDelay->value();
+	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return;
+	auto& trap = m_pTotalMgr->axisCfg()->axes[index].trapParam;
+	trap.motionVel = ui.spinBox_trapMotionVel->value();
+	trap.acc = ui.doubleSpinBoxs_trapAcc->value();
+	trap.dec = ui.doubleSpinBoxs_trapDec->value();
+	trap.lengthMm = ui.doubleSpinBox_trapLengthMm->value();
+	trap.somoothTime = ui.spinBox_trapSmoothTime->value();
+	trap.cycleTimes = ui.spinBox_trapCycleTime->value();
+	trap.delay = ui.spinBox_TrapInPositionDelay->value();
 }
 
 
@@ -223,11 +224,11 @@ void CAxisWidget::onJogParamChanged()
 	if (!m_pTotalMgr) return;
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
-	if (!axis) return;
-    axis->jogParam.dMotionVel = ui.spinBox_jogMotionVel->value();
-    axis->jogParam.acc = ui.doubleSpinBoxs_jogAcc->value();
-    axis->jogParam.dec = ui.doubleSpinBoxs_jogDec->value();
+	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return;
+	auto& jog = m_pTotalMgr->axisCfg()->axes[index].jogParam;
+	jog.motionVel = ui.spinBox_jogMotionVel->value();
+	jog.acc = ui.doubleSpinBoxs_jogAcc->value();
+	jog.dec = ui.doubleSpinBoxs_jogDec->value();
 }
 
 void CAxisWidget::onClearState()
@@ -319,11 +320,13 @@ void CAxisWidget::onTrapMotion()
 	if (!m_pTotalMgr) return;
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)m_pTotalMgr->axisCount()) return;
-	const stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	const SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
 
 	if (!axis) return;
 	short axisId = m_iAxisId;
-	double lengthMm = axis->trapParam.lengthMm;
+	double lengthMm = 0.0;
+	if (index < (int)m_pTotalMgr->axisCfg()->axes.size())
+		lengthMm = m_pTotalMgr->axisCfg()->axes[index].trapParam.lengthMm;
 	bool ok = m_pTotalMgr->motionMgr()->trapMotion(axisId, lengthMm);
 
 	if (ok) {
@@ -345,9 +348,10 @@ void CAxisWidget::onJogPressed(int direction)
 	if (!m_pTotalMgr) return;
 	int index = m_iAxisId - 1;
 	short axisId = m_iAxisId;
-	stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+	SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
 	if (!axis) return;
-	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, axis->jogParam);
+	if (index >= (int)m_pTotalMgr->axisCfg()->axes.size()) return;
+	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->axisCfg()->axes[index].jogParam);
 	if (!ok) {
 		m_pGTSControllerWidget->showLog(
 			QStringLiteral("轴%1 写入Jog参数失败").arg(axisId), Qt::red);
@@ -390,26 +394,22 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 	m_iAxisId = index + 1;  
 
 	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
-		// 切换到对应轴时，刷新点位运动参数显示
-		stuAxis* axis = m_pTotalMgr->getAxisRef(index);
+		SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(index);
 		if (axis) {
-			ui.spinBox_trapMotionVel->setValue(axis->trapParam.dMotionVel);
-			ui.doubleSpinBoxs_trapAcc->setValue(axis->trapParam.acc);
-			ui.doubleSpinBoxs_trapDec->setValue(axis->trapParam.dec);
-			ui.doubleSpinBox_trapLengthMm->setValue(axis->trapParam.lengthMm) ;
-			ui.spinBox_trapSmoothTime->setValue(axis->trapParam.somoothTime);
-			ui.spinBox_trapCycleTime->setValue(axis->trapParam.cycleTimes);
-			ui.spinBox_TrapInPositionDelay->setValue(axis->trapParam.Delay);
+			ui.comboBox_Mode->setCurrentIndex(axis->prfMode);
 		}
-		// 刷新jog运动参数
-		if (axis){
-			ui.spinBox_jogMotionVel->setValue(axis->jogParam.dMotionVel);
-            ui.doubleSpinBoxs_jogAcc->setValue(axis->jogParam.acc);
-            ui.doubleSpinBoxs_jogDec->setValue(axis->jogParam.dec);
-		}
-		if (axis)
-		{
-			ui.comboBox_Mode->setCurrentIndex(axis->lPrfMode);
+		if (axis && index < (int)m_pTotalMgr->axisCfg()->axes.size()) {
+			const auto& cfg = m_pTotalMgr->axisCfg()->axes[index];
+			ui.spinBox_trapMotionVel->setValue(cfg.trapParam.motionVel);
+			ui.doubleSpinBoxs_trapAcc->setValue(cfg.trapParam.acc);
+			ui.doubleSpinBoxs_trapDec->setValue(cfg.trapParam.dec);
+			ui.doubleSpinBox_trapLengthMm->setValue(cfg.trapParam.lengthMm);
+			ui.spinBox_trapSmoothTime->setValue(cfg.trapParam.somoothTime);
+			ui.spinBox_trapCycleTime->setValue(cfg.trapParam.cycleTimes);
+			ui.spinBox_TrapInPositionDelay->setValue(cfg.trapParam.delay);
+			ui.spinBox_jogMotionVel->setValue(cfg.jogParam.motionVel);
+			ui.doubleSpinBoxs_jogAcc->setValue(cfg.jogParam.acc);
+			ui.doubleSpinBoxs_jogDec->setValue(cfg.jogParam.dec);
 		}
 	}
 }
@@ -419,7 +419,7 @@ void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
 	if (m_pTotalMgr && m_pTotalMgr->boardMgr()->isOpen()) {
 
 		int axisIdx = m_iAxisId - 1;
-		stuAxis* axis = m_pTotalMgr->getAxisRef(axisIdx);
+		SingleAxisInfo* axis = m_pTotalMgr->getAxisRef(axisIdx);
 		if (axis) {
 			bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axis->axisIndex, index);
 			if (ok) {
@@ -441,32 +441,32 @@ void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
 }
 
 
-void CAxisWidget::onAxisUpdated(const std::vector<stuAxis>& axisInfo)
+void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
 	m_bUpdatingFromBoard = true;
 	int index = m_iAxisId - 1;
 	if (index < 0 || index >= (int)axisInfo.size()) return;
-	const stuAxis& axis = axisInfo[index];
+	const SingleAxisInfo& axis = axisInfo[index];
 
-	ui.radioButton_servoEnable->setChecked(axis.bServoOn);
-	ui.radioButton_nLimit->setChecked(axis.bNegLimit);
-	ui.radioButton_pLimit->setChecked(axis.bPosLimit);
-	ui.radioButton_motionErr->setChecked(axis.bMError);
-	ui.radioButton_sevorAlarm->setChecked(axis.bAlarm);
-	ui.radioButton_eStop->setChecked(axis.bAbruptStop);
-	ui.radioButton_smoothStop->setChecked(axis.bSmoothStop);
-	ui.radioButton_motionSts->setChecked(axis.bMotion);
+	ui.radioButton_servoEnable->setChecked(axis.isServoOn);
+	ui.radioButton_nLimit->setChecked(axis.isNegLimit);
+	ui.radioButton_pLimit->setChecked(axis.isPosLimit);
+	ui.radioButton_motionErr->setChecked(axis.isMError);
+	ui.radioButton_sevorAlarm->setChecked(axis.isAlarm);
+	ui.radioButton_eStop->setChecked(axis.isAbruptStop);
+	ui.radioButton_smoothStop->setChecked(axis.isSmoothStop);
+	ui.radioButton_motionSts->setChecked(axis.isMotion);
 	// 编码器数值
-    ui.label_actPosData->setText(QString::number(axis.dEncPosMm, 'f', 3));
-    ui.label_actVelData->setText(QString::number(axis.dEncVelMm, 'f', 3));
+    ui.label_actPosData->setText(QString::number(axis.encPosMm, 'f', 3));
+    ui.label_actVelData->setText(QString::number(axis.encVelMm, 'f', 3));
 	// 规划期数值
-	ui.label_tgtAccData->setText(QString::number(axis.dPrfAccMm, 'f', 3));
-	ui.label_tgtPosData->setText(QString::number(axis.dPrfPosMm, 'f', 3));
-	ui.label_tgtVelData->setText(QString::number(axis.dPrfVelMm, 'f', 3));
-	ui.label_tgtPosDataPluse->setText(QString::number(axis.dPrfPosOriginal, 'f', 3));
-	ui.label_tgtVelDataPluse->setText(QString::number(axis.dPrfVelOriginal, 'f', 3));
-    ui.label_tgtAccDataPluse->setText(QString::number(axis.dPrfAccOriginal, 'f', 3));
-	if (axis.bServoOn)
+	ui.label_tgtAccData->setText(QString::number(axis.prfAccMm, 'f', 3));
+	ui.label_tgtPosData->setText(QString::number(axis.prfPosMm, 'f', 3));
+	ui.label_tgtVelData->setText(QString::number(axis.prfVelMm, 'f', 3));
+	ui.label_tgtPosDataPluse->setText(QString::number(axis.prfPosOriginal, 'f', 3));
+	ui.label_tgtVelDataPluse->setText(QString::number(axis.prfVelOriginal, 'f', 3));
+    ui.label_tgtAccDataPluse->setText(QString::number(axis.prfAccOriginal, 'f', 3));
+	if (axis.isServoOn)
 	{
 		ui.pushButton_sevorOn->setText(QStringLiteral("失能"));
 	}
