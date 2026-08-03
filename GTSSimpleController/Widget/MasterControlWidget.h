@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <QWidget>
 #include "ui_MasterControlWidget.h"
@@ -29,11 +29,11 @@ private:
 	void initMasterControlWidget();
 	void connectPrivateSignal();
 
-	// Jog ÔË¶¯
+	// Jog è¿åŠ¨
 	void onJogPressed(short axisId, int direction);
 	void onJogReleased(short axisId);
 
-	// µãÎ»ÔË¶¯
+	// ç‚¹ä½è¿åŠ¨
 	void onTrapMotion();
 	bool startSingleTrap(short axisId, double stepMm);
 
@@ -41,6 +41,6 @@ private:
 	void onStopAll();
 
 
-	// Ó²°ó¶¨£ºÖáºÅ ¡ú Ãû³Æ
+	// ç¡¬ç»‘å®šï¼šè½´å· â†’ åç§°
 	static QString axisName(short axisId);
 };

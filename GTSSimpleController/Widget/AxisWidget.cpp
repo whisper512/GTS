@@ -1,4 +1,4 @@
-#include "AxisWidget.h"
+ï»¿#include "AxisWidget.h"
 #include "GTSControllerWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
@@ -23,15 +23,15 @@ CAxisWidget::~CAxisWidget()
 
 void CAxisWidget::initWidget()
 {
-	ui.comboBox_axisID->addItem(QStringLiteral("Öá 1"));
-	ui.comboBox_axisID->addItem(QStringLiteral("Öá 2"));
-	ui.comboBox_axisID->addItem(QStringLiteral("Öá 3"));
-	ui.comboBox_axisID->addItem(QStringLiteral("Öá 4"));
+	ui.comboBox_axisID->addItem(QStringLiteral("è½´ 1"));
+	ui.comboBox_axisID->addItem(QStringLiteral("è½´ 2"));
+	ui.comboBox_axisID->addItem(QStringLiteral("è½´ 3"));
+	ui.comboBox_axisID->addItem(QStringLiteral("è½´ 4"));
 
-	ui.comboBox_Mode->addItem(QStringLiteral("µãÎ»ÔË¶¯(trap)"));
-    ui.comboBox_Mode->addItem(QStringLiteral("JogÔË¶¯"));
+	ui.comboBox_Mode->addItem(QStringLiteral("ç‚¹ä½è¿åŠ¨(trap)"));
+    ui.comboBox_Mode->addItem(QStringLiteral("Jogè¿åŠ¨"));
 
-	// radiobtn½ûÓÃ»¥³â
+	// radiobtnç¦ç”¨äº’æ–¥
 	ui.radioButton_servoEnable->setAutoExclusive(false);
 	ui.radioButton_sevorAlarm->setAutoExclusive(false);
 	ui.radioButton_nLimit->setAutoExclusive(false);
@@ -40,7 +40,7 @@ void CAxisWidget::initWidget()
 	ui.radioButton_motionSts->setAutoExclusive(false);
 	ui.radioButton_eStop->setAutoExclusive(false);
 	ui.radioButton_smoothStop->setAutoExclusive(false);
-	// ½ûÖ¹ÓÃ»§µã»÷
+	// ç¦æ­¢ç”¨æˆ·ç‚¹å‡»
 	ui.radioButton_servoEnable->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_sevorAlarm->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_nLimit->setAttribute(Qt::WA_TransparentForMouseEvents, true);
@@ -50,7 +50,7 @@ void CAxisWidget::initWidget()
 	ui.radioButton_eStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 	ui.radioButton_smoothStop->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-	// ©¤©¤ µÈ¿í×ÖÌå·ÀÖ¹Êı¾İË¢ĞÂÊ±²¼¾Ö¶¶¶¯ ©¤©¤
+	// â”€â”€ ç­‰å®½å­—ä½“é˜²æ­¢æ•°æ®åˆ·æ–°æ—¶å¸ƒå±€æŠ–åŠ¨ â”€â”€
 	const QList<QLabel*> numLabels = {
 		ui.label_actPosData,
 		ui.label_actVelData,
@@ -102,7 +102,7 @@ void CAxisWidget::updateUIEnable(int index)
 {
 	if (index == 0)
 	{
-		// µãÎ»ÔË¶¯
+		// ç‚¹ä½è¿åŠ¨
 		ui.spinBox_jogMotionVel->setEnabled(false);
 		ui.doubleSpinBoxs_jogAcc->setEnabled(false);
         ui.doubleSpinBoxs_jogDec->setEnabled(false);
@@ -120,7 +120,7 @@ void CAxisWidget::updateUIEnable(int index)
 	}
 	else if (index == 1)
 	{
-		// jogÔË¶¯
+		// jogè¿åŠ¨
 		ui.spinBox_jogMotionVel->setEnabled(true);
 		ui.doubleSpinBoxs_jogAcc->setEnabled(true);
 		ui.doubleSpinBoxs_jogDec->setEnabled(true);
@@ -151,7 +151,7 @@ void CAxisWidget::onBtnClick()
 		onClearState();
 	}
 	else if (objName == "pushButton_sevorOn") {
-		if (ui.pushButton_sevorOn->text() == QStringLiteral("Ê¹ÄÜ")) {
+		if (ui.pushButton_sevorOn->text() == QStringLiteral("ä½¿èƒ½")) {
 			onServoOn();
 		}
 		else
@@ -237,11 +237,11 @@ void CAxisWidget::onClearState()
 	bool ok = m_pTotalMgr->axisMgr()->clearStatus(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ×´Ì¬ÒÑÇå³ı").arg(m_iAxisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 çŠ¶æ€å·²æ¸…é™¤").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ×´Ì¬Çå³ıÊ§°Ü").arg(m_iAxisId), Qt::red);
+			QStringLiteral("è½´%1 çŠ¶æ€æ¸…é™¤å¤±è´¥").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -251,11 +251,11 @@ void CAxisWidget::onServoOn()
 	bool ok = m_pTotalMgr->axisMgr()->enable(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Ê¹ÄÜ³É¹¦").arg(m_iAxisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 ä½¿èƒ½æˆåŠŸ").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Ê¹ÄÜÊ§°Ü").arg(m_iAxisId), Qt::red);
+			QStringLiteral("è½´%1 ä½¿èƒ½å¤±è´¥").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -265,11 +265,11 @@ void CAxisWidget::onServoOff()
 	bool ok = m_pTotalMgr->axisMgr()->disable(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ÒÑ½ûÖ¹").arg(m_iAxisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 å·²ç¦æ­¢").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ½ûÖ¹Ê§°Ü").arg(m_iAxisId), Qt::red);
+			QStringLiteral("è½´%1 ç¦æ­¢å¤±è´¥").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -279,11 +279,11 @@ void CAxisWidget::onClearPos()
 	bool ok = m_pTotalMgr->axisMgr()->zeroPosition(axis);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Î»ÖÃÒÑÇåÁã").arg(m_iAxisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 ä½ç½®å·²æ¸…é›¶").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Î»ÖÃÇåÁãÊ§°Ü").arg(m_iAxisId), Qt::red);
+			QStringLiteral("è½´%1 ä½ç½®æ¸…é›¶å¤±è´¥").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -293,11 +293,11 @@ void CAxisWidget::onSmoothStop()
 	bool ok = m_pTotalMgr->axisMgr()->stop(axis, 1);  
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼õËÙÍ£Ö¹").arg(m_iAxisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 å‡é€Ÿåœæ­¢").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼õËÙÍ£Ö¹Ê§°Ü").arg(m_iAxisId), Qt::red);
+			QStringLiteral("è½´%1 å‡é€Ÿåœæ­¢å¤±è´¥").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -307,11 +307,11 @@ void CAxisWidget::onEStop()
 	bool ok = m_pTotalMgr->axisMgr()->stop(axis, 0);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼±Í£ÒÑ´¥·¢").arg(m_iAxisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 æ€¥åœå·²è§¦å‘").arg(m_iAxisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ¼±Í£Ê§°Ü").arg(m_iAxisId), Qt::red);
+			QStringLiteral("è½´%1 æ€¥åœå¤±è´¥").arg(m_iAxisId), Qt::red);
 	}
 }
 
@@ -331,12 +331,12 @@ void CAxisWidget::onTrapMotion()
 
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 µãÎ»ÔË¶¯ÒÑÆô¶¯ (%2 mm)").arg(axisId).arg(lengthMm),
+			QStringLiteral("è½´%1 ç‚¹ä½è¿åŠ¨å·²å¯åŠ¨ (%2 mm)").arg(axisId).arg(lengthMm),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 ÔË¶¯Æô¶¯Ê§°Ü£¬err=%2")
+			QStringLiteral("è½´%1 è¿åŠ¨å¯åŠ¨å¤±è´¥ï¼Œerr=%2")
 			.arg(axisId).arg(m_pTotalMgr->motionMgr()->lastError()),
 			Qt::red);
 	}
@@ -354,20 +354,20 @@ void CAxisWidget::onJogPressed(int direction)
 	bool ok = m_pTotalMgr->motionMgr()->setJogParam(axisId, m_pTotalMgr->axisCfg()->axes[index].jogParam);
 	if (!ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 Ğ´ÈëJog²ÎÊıÊ§°Ü").arg(axisId), Qt::red);
+			QStringLiteral("è½´%1 å†™å…¥Jogå‚æ•°å¤±è´¥").arg(axisId), Qt::red);
 		return;
 	}
 	ok = m_pTotalMgr->motionMgr()->startJogMotion(axisId, direction);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 %2JogÒÑÆô¶¯")
+			QStringLiteral("è½´%1 %2Jogå·²å¯åŠ¨")
 			.arg(axisId)
-			.arg(direction > 0 ? QStringLiteral("ÕıÏò") : QStringLiteral("·´Ïò")),
+			.arg(direction > 0 ? QStringLiteral("æ­£å‘") : QStringLiteral("åå‘")),
 			Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 JogÆô¶¯Ê§°Ü").arg(axisId), Qt::red);
+			QStringLiteral("è½´%1 Jogå¯åŠ¨å¤±è´¥").arg(axisId), Qt::red);
 	}
 }
 
@@ -376,15 +376,15 @@ void CAxisWidget::onJogReleased()
 	if (!m_pTotalMgr) return;
 	short axisId = m_iAxisId;
 
-	// ¼õËÙÍ£Ö¹£¨option = 1£©
+	// å‡é€Ÿåœæ­¢ï¼ˆoption = 1ï¼‰
 	bool ok = m_pTotalMgr->axisMgr()->stop(axisId, 1);
 	if (ok) {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 JogÍ£Ö¹").arg(axisId), Qt::darkGreen);
+			QStringLiteral("è½´%1 Jogåœæ­¢").arg(axisId), Qt::darkGreen);
 	}
 	else {
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("Öá%1 JogÍ£Ö¹Ê§°Ü").arg(axisId), Qt::red);
+			QStringLiteral("è½´%1 Jogåœæ­¢å¤±è´¥").arg(axisId), Qt::red);
 	}
 }
 
@@ -424,16 +424,16 @@ void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
 			bool ok = m_pTotalMgr->motionMgr()->setAxisMotionMode(axis->axisIndex, index);
 			if (ok) {
 				updateUIEnable(index);
-				QString modeName = (index == 0) ? QStringLiteral("µãÎ»ÔË¶¯(trap)")
-					: QStringLiteral("JogÔË¶¯");
+				QString modeName = (index == 0) ? QStringLiteral("ç‚¹ä½è¿åŠ¨(trap)")
+					: QStringLiteral("Jogè¿åŠ¨");
 				m_pGTSControllerWidget->showLog(
-					QStringLiteral("Öá%1 ÇĞ»»ÔË¶¯Ä£Ê½Îª %2 ³É¹¦")
+					QStringLiteral("è½´%1 åˆ‡æ¢è¿åŠ¨æ¨¡å¼ä¸º %2 æˆåŠŸ")
 					.arg(m_iAxisId).arg(modeName),
 					Qt::darkGreen);
 			}
 			else {
 				m_pGTSControllerWidget->showLog(
-					QStringLiteral("Öá%1 ÇĞ»»ÔË¶¯Ä£Ê½Ê§°Ü").arg(m_iAxisId),
+					QStringLiteral("è½´%1 åˆ‡æ¢è¿åŠ¨æ¨¡å¼å¤±è´¥").arg(m_iAxisId),
 					Qt::red);
 			}
 		}
@@ -456,10 +456,10 @@ void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 	ui.radioButton_eStop->setChecked(axis.isAbruptStop);
 	ui.radioButton_smoothStop->setChecked(axis.isSmoothStop);
 	ui.radioButton_motionSts->setChecked(axis.isMotion);
-	// ±àÂëÆ÷ÊıÖµ
+	// ç¼–ç å™¨æ•°å€¼
     ui.label_actPosData->setText(QString::number(axis.encPosMm, 'f', 3));
     ui.label_actVelData->setText(QString::number(axis.encVelMm, 'f', 3));
-	// ¹æ»®ÆÚÊıÖµ
+	// è§„åˆ’æœŸæ•°å€¼
 	ui.label_tgtAccData->setText(QString::number(axis.prfAccMm, 'f', 3));
 	ui.label_tgtPosData->setText(QString::number(axis.prfPosMm, 'f', 3));
 	ui.label_tgtVelData->setText(QString::number(axis.prfVelMm, 'f', 3));
@@ -468,11 +468,11 @@ void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
     ui.label_tgtAccDataPluse->setText(QString::number(axis.prfAccOriginal, 'f', 3));
 	if (axis.isServoOn)
 	{
-		ui.pushButton_sevorOn->setText(QStringLiteral("Ê§ÄÜ"));
+		ui.pushButton_sevorOn->setText(QStringLiteral("å¤±èƒ½"));
 	}
 	else
 	{
-		ui.pushButton_sevorOn->setText(QStringLiteral("Ê¹ÄÜ"));
+		ui.pushButton_sevorOn->setText(QStringLiteral("ä½¿èƒ½"));
 	}
 	m_bUpdatingFromBoard = false;
 }

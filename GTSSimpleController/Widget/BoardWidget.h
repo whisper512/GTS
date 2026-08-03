@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <QWidget>
 #include "../../GtsCore/GtsBoardMgr.h"
 #include "ui_BoradWidget.h"

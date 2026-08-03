@@ -1,4 +1,4 @@
-#include "MasterControlWidget.h"
+﻿#include "MasterControlWidget.h"
 #include "GTSControllerWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
@@ -222,12 +222,12 @@ bool CMasterControlWidget::startSingleTrap(short axisId, double stepMm)
 	trap.cycleTimes = 0;
 	trap.delay = 0;
 
-	// ͨ�� MotionMgr ��ɣ��ڲ��Զ���ģʽ�л� + �������� + ������� + ��ͣ��
+	// 通过 MotionMgr 完成（内部自动：模式切换 + 当量换算 + 参数检查 + 启停）
 	bool ok = m_pTotalMgr->motionMgr()->trapMotion(axisId, stepMm);
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 ��λ�˶�������  ����=%2 mm  �ٶ�=%3  ���ٶ�=%4")
+			QStringLiteral("%1 点位运动已启动  步长=%2 mm  速度=%3  加速度=%4")
 			.arg(axisName(axisId))
 			.arg(stepMm, 0, 'f', 3)
 			.arg(trap.motionVel)
@@ -238,7 +238,7 @@ bool CMasterControlWidget::startSingleTrap(short axisId, double stepMm)
 	else
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("%1 ��λ�˶�����ʧ�� err=%2")
+			QStringLiteral("%1 点位运动启动失败 err=%2")
 			.arg(axisName(axisId))
 			.arg(m_pTotalMgr->motionMgr()->lastError()),
 			Qt::red);
@@ -262,12 +262,12 @@ void CMasterControlWidget::onStopAll()
 	if (ok)
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("ȫ���� ����ֹͣ"), Qt::darkGreen);
+			QStringLiteral("全部轴 减速停止"), Qt::darkGreen);
 	}
 	else
 	{
 		m_pGTSControllerWidget->showLog(
-			QStringLiteral("ȫ���� ֹͣʧ��"), Qt::red);
+			QStringLiteral("全部轴 停止失败"), Qt::red);
 	}
 }
 
@@ -275,11 +275,11 @@ QString CMasterControlWidget::axisName(short axisId)
 {
 	switch (axisId)
 	{
-	case 1: return QStringLiteral("��1");
-	case 2: return QStringLiteral("��2");
-	case 3: return QStringLiteral("��3");
-	case 4: return QStringLiteral("��4");
-	default: return QStringLiteral("��%1").arg(axisId);
+	case 1: return QStringLiteral("轴1");
+	case 2: return QStringLiteral("轴2");
+	case 3: return QStringLiteral("轴3");
+	case 4: return QStringLiteral("轴4");
+	default: return QStringLiteral("轴%1").arg(axisId);
 	}
 }
 

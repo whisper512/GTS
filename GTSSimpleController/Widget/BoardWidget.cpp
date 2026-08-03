@@ -1,4 +1,4 @@
-#include <QTimer>
+ï»¿#include <QTimer>
 #include "GTSControllerWidget.h"
 #include "BoardWidget.h"
 #include "../../GtsCore/GtsMgr.h"
@@ -36,12 +36,12 @@ void CBoardWidget::upUIdateBoardState(bool isOpen)
 {
     ui.radioButton_boardState->setChecked(isOpen);
     if (isOpen) {
-        ui.radioButton_boardState->setText(QStringLiteral("ÒÑ´ò¿ª"));
+        ui.radioButton_boardState->setText(QStringLiteral("å·²æ‰“å¼€"));
         ui.radioButton_boardState->setStyleSheet(
             "QRadioButton { color: green; font-weight: bold; }");
     }
     else {
-        ui.radioButton_boardState->setText(QStringLiteral("ÒÑ¹Ø±Õ"));
+        ui.radioButton_boardState->setText(QStringLiteral("å·²å…³é—­"));
         ui.radioButton_boardState->setStyleSheet(
             "QRadioButton { color: red; }");
     }
@@ -52,22 +52,22 @@ void CBoardWidget::onOpen()
     bool ok = m_pTotalMgr->boardMgr()->open(0, 1);
     if (ok) {
         upUIdateBoardState(true);
-        m_pGTSControllerWidget->showLog(QStringLiteral("´ò¿ª°å¿¨³É¹¦"), Qt::darkGreen);
+        m_pGTSControllerWidget->showLog(QStringLiteral("æ‰“å¼€æ¿å¡æˆåŠŸ"), Qt::darkGreen);
     }
     else {
-        m_pGTSControllerWidget->showLog(QStringLiteral("´ò¿ª°å¿¨Ê§°Ü"), Qt::red);
+        m_pGTSControllerWidget->showLog(QStringLiteral("æ‰“å¼€æ¿å¡å¤±è´¥"), Qt::red);
         return;
     }
 
-    // »ñÈ¡²¢ÏÔÊ¾°å¿¨±àºÅ
+    // è·å–å¹¶æ˜¾ç¤ºæ¿å¡ç¼–å·
     short id = m_pTotalMgr->boardMgr()->getCardNo();
     ui.label_boardIDData->setText(QString::number(id));
-    m_pGTSControllerWidget->showLog(QStringLiteral("°å¿¨±àºÅ: %1").arg(id), Qt::darkGreen);
+    m_pGTSControllerWidget->showLog(QStringLiteral("æ¿å¡ç¼–å·: %1").arg(id), Qt::darkGreen);
 
-    // »ñÈ¡²¢ÏÔÊ¾¹Ì¼ş°æ±¾
+    // è·å–å¹¶æ˜¾ç¤ºå›ºä»¶ç‰ˆæœ¬
     QString fwVersion = m_pTotalMgr->boardMgr()->firmwareVersion();
     ui.label_hardwareVerData->setText(fwVersion);
-    m_pGTSControllerWidget->showLog(QStringLiteral("¹Ì¼ş°æ±¾: %1").arg(fwVersion), Qt::darkGreen);
+    m_pGTSControllerWidget->showLog(QStringLiteral("å›ºä»¶ç‰ˆæœ¬: %1").arg(fwVersion), Qt::darkGreen);
 
 }
 
@@ -76,10 +76,10 @@ void CBoardWidget::onClose()
     bool ok = m_pTotalMgr->boardMgr()->close();
     if (ok) {
         upUIdateBoardState(false);
-        m_pGTSControllerWidget->showLog(QStringLiteral("¹Ø±Õ°å¿¨³É¹¦"), Qt::darkGreen);
+        m_pGTSControllerWidget->showLog(QStringLiteral("å…³é—­æ¿å¡æˆåŠŸ"), Qt::darkGreen);
     }
     else {
-        m_pGTSControllerWidget->showLog(QStringLiteral("¹Ø±Õ°å¿¨Ê§°Ü"), Qt::red);
+        m_pGTSControllerWidget->showLog(QStringLiteral("å…³é—­æ¿å¡å¤±è´¥"), Qt::red);
     }
 }
 
@@ -88,10 +88,10 @@ void CBoardWidget::onReset()
     bool ok = m_pTotalMgr->boardMgr()->reset(); 
     if (ok) {
         upUIdateBoardState(false);
-        m_pGTSControllerWidget->showLog(QStringLiteral("¸´Î»°å¿¨³É¹¦"), Qt::darkGreen);
+        m_pGTSControllerWidget->showLog(QStringLiteral("å¤ä½æ¿å¡æˆåŠŸ"), Qt::darkGreen);
     }
     else {
-        m_pGTSControllerWidget->showLog(QStringLiteral("¸´Î»°å¿¨Ê§°Ü"), Qt::red);
+        m_pGTSControllerWidget->showLog(QStringLiteral("å¤ä½æ¿å¡å¤±è´¥"), Qt::red);
     }
 }
 
