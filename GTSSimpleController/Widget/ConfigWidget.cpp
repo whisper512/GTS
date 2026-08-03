@@ -11,6 +11,7 @@ CConfigWidget::CConfigWidget(QWidget* parent)
 	QTimer::singleShot(100, this, [this]() {
 		initUI();
 		connectSignals();
+		onConfigChanged();
 	});
 }
 
