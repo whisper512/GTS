@@ -1,13 +1,12 @@
-#include <QTimer>
+ï»¿#include <QTimer>
 #include <QStyledItemDelegate>
 #include <QInputDialog>
 
 #include "IOWidget.h"
-#include "GTSControllerWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
 
-// ×´Ì¬ÁĞ×¨ÓÃ´úÀí:ºöÂÔÑ¡ÖĞÌ¬£¬ÈÃ setBackground() µÄ±³¾°Ê¼ÖÕ¿É¼û
+// çŠ¶æ€åˆ—ä¸“ç”¨ä»£ç†:å¿½ç•¥é€‰ä¸­æ€ï¼Œè®© setBackground() çš„èƒŒæ™¯å§‹ç»ˆå¯è§
 class StatusDelegate : public QStyledItemDelegate
 {
 public:
@@ -19,51 +18,58 @@ public:
     }
 };
 
-CIOWidget::CIOWidget(QWidget *parent,GtsMgr* mgr)
-	: QWidget(parent)
-	, m_pTotalMgr(mgr)
+CIOWidget::CIOWidget(QWidget* parent)
+    : QWidget(parent)
 {
-	ui.setupUi(this);
-	m_pGTSControllerWidget = qobject_cast<GTSControllerWidget*>(parent);
-
-	InitUI();
-	connectPrivateSignal();
-
+    ui.setupUi(this);
+    InitUI();
+    connectPrivateSignal();
 }
 
 CIOWidget::~CIOWidget()
 {
-    m_pTotalMgr = nullptr;
-    m_pGTSControllerWidget = nullptr;
+    m_gtsMgr = nullptr;
+}
+
+void CIOWidget::setGtsTotalMgr(GtsMgr* mgr)
+{
+    if (m_gtsMgr) {
+        disconnect(m_gtsMgr, &GtsMgr::diUpdated, this, &CIOWidget::onDIUpdated);
+        disconnect(m_gtsMgr, &GtsMgr::doUpdated, this, &CIOWidget::onDOUpdated);
+    }
+    m_gtsMgr = mgr;
+    if (m_gtsMgr) {
+        connect(m_gtsMgr, &GtsMgr::diUpdated, this, &CIOWidget::onDIUpdated);
+        connect(m_gtsMgr, &GtsMgr::doUpdated, this, &CIOWidget::onDOUpdated);
+    }
 }
 
 void CIOWidget::InitUI()
 {
-	QTimer::singleShot(0, this, [this]() {
+    QTimer::singleShot(0, this, [this]() {
         InitTableDI();
         InitTableDO();
-		
-		});
+    });
 }
 
 void CIOWidget::InitTableDI()
 {
     const Block blocks[] = {
-        {  0,  8, QStringLiteral("ÕıÏŞÎ»ĞÅºÅ0xF")    },
-        {  8,  8, QStringLiteral("¸ºÏŞÎ»ĞÅºÅ0xF")    },
-        { 16,  8, QStringLiteral("Çı¶¯±¨¾¯0xF")      },
-        { 24,  8, QStringLiteral("Ô­µãĞÅºÅ0xF")      },
-        { 32, 16, QStringLiteral("Í¨ÓÃÊäÈë0xFFFF")   },
-        { 48,  8, QStringLiteral("µç»úµ½Î»0xF")      },
-        { 56,  7, QStringLiteral("ÊÖÂÖÊäÈë0x7F")     },
+        {  0,  8, QStringLiteral("æ­£é™ä½ä¿¡å·0xF")    },
+        {  8,  8, QStringLiteral("è´Ÿé™ä½ä¿¡å·0xF")    },
+        { 16,  8, QStringLiteral("é©±åŠ¨æŠ¥è­¦0xF")      },
+        { 24,  8, QStringLiteral("åŸç‚¹ä¿¡å·0xF")      },
+        { 32, 16, QStringLiteral("é€šç”¨è¾“å…¥0xFFFF")   },
+        { 48,  8, QStringLiteral("ç”µæœºåˆ°ä½0xF")      },
+        { 56,  7, QStringLiteral("æ‰‹è½®è¾“å…¥0x7F")     },
     };
 
     InitTableCommon(ui.tableWidget_DI, 64, blocks, sizeof(blocks) / sizeof(blocks[0]));
 
-    // ¸²¸Ç×Ô¶¨ÒåÃèÊö
-    const auto& diDesc = m_pTotalMgr->configMgr()->customDIDescriptions();
+    // è¦†ç›–è‡ªå®šä¹‰æè¿°
+    const auto& diDesc = m_gtsMgr->configMgr()->customDIDescriptions();
     for (auto it = diDesc.begin(); it != diDesc.end(); ++it) {
-        QTableWidgetItem * item = ui.tableWidget_DI->item(it.key(), 0);
+        QTableWidgetItem* item = ui.tableWidget_DI->item(it.key(), 0);
         if (item) item->setText(it.value());
     }
 }
@@ -71,18 +77,18 @@ void CIOWidget::InitTableDI()
 void CIOWidget::InitTableDO()
 {
     const Block blocks[] = {
-        {  0,  8, QStringLiteral("ËÅ·şÊ¹ÄÜ0xF")      },
-        {  8,  8, QStringLiteral("±¨¾¯Çå³ı0xFF")     },
-        { 16, 16, QStringLiteral("Í¨ÓÃÊä³ö0xFFFF")   },
+        {  0,  8, QStringLiteral("ä¼ºæœä½¿èƒ½0xF")      },
+        {  8,  8, QStringLiteral("æŠ¥è­¦æ¸…é™¤0xFF")     },
+        { 16, 16, QStringLiteral("é€šç”¨è¾“å‡º0xFFFF")   },
     };
 
     InitTableCommon(ui.tableWidget_DO, 32, blocks, sizeof(blocks) / sizeof(blocks[0]));
 
-    // ¸²¸Ç×Ô¶¨ÒåÃèÊö
-    const auto& doDesc = m_pTotalMgr->configMgr()->customDODescriptions();
+    // è¦†ç›–è‡ªå®šä¹‰æè¿°
+    const auto& doDesc = m_gtsMgr->configMgr()->customDODescriptions();
     for (auto it = doDesc.begin(); it != doDesc.end(); ++it) {
-       QTableWidgetItem * item = ui.tableWidget_DO->item(it.key(), 0);
-       if (item) item->setText(it.value());
+        QTableWidgetItem* item = ui.tableWidget_DO->item(it.key(), 0);
+        if (item) item->setText(it.value());
     }
 }
 
@@ -91,9 +97,9 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
 {
     table->setColumnCount(3);
     table->setHorizontalHeaderLabels({
-        QStringLiteral("¹¦ÄÜÃèÊö"),
-        QStringLiteral("ĞòºÅ"),
-        QStringLiteral("×´Ì¬")
+        QStringLiteral("åŠŸèƒ½æè¿°"),
+        QStringLiteral("åºå·"),
+        QStringLiteral("çŠ¶æ€")
         });
     table->verticalHeader()->setVisible(false);
     table->setRowCount(totalRows);
@@ -101,22 +107,22 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
     for (int b = 0; b < blockCount; ++b) {
         int No = 1;
         for (int i = blocks[b].start; i < blocks[b].start + blocks[b].count; ++i) {
-            // ¹¦ÄÜÃèÊö
+            // åŠŸèƒ½æè¿°
             table->setItem(i, 0, new QTableWidgetItem(blocks[b].desc));
 
-            // ĞòºÅ
+            // åºå·
             auto* idxItem = new QTableWidgetItem(QString::number(No++));
             idxItem->setTextAlignment(Qt::AlignCenter);
             table->setItem(i, 1, idxItem);
 
-            // ×´Ì¬£¨Ä¬ÈÏ¹Ø£©
-            auto* stsItem = new QTableWidgetItem(QStringLiteral("¡ñ ¹Ø"));
+            // çŠ¶æ€ï¼ˆé»˜è®¤å…³ï¼‰
+            auto* stsItem = new QTableWidgetItem(QStringLiteral("â— å…³"));
             stsItem->setTextAlignment(Qt::AlignCenter);
             table->setItem(i, 2, stsItem);
         }
     }
 
-    // ÑùÊ½
+    // æ ·å¼
     table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
     table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
@@ -135,7 +141,7 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
 
 void CIOWidget::connectPrivateSignal()
 {
-    connect(ui.tableWidget_DO, &QTableWidget::cellDoubleClicked, this, &CIOWidget::onDOCellClicked);
+    connect(ui.tableWidget_DO, &QTableWidget::cellClicked, this, &CIOWidget::onDOCellClicked);
 
     connect(ui.tableWidget_DI, &QTableWidget::cellDoubleClicked,
         this, &CIOWidget::onDICellDoubleClicked);
@@ -149,49 +155,50 @@ void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status
         QTableWidgetItem* item = table->item(i, 2);
         if (!item) continue;
         if (status[i]) {
-            item->setText(QStringLiteral("¡ñ ¿ª"));
-            item->setBackground(Qt::green);   // ±³¾°±äÂÌ
+            item->setText(QStringLiteral("â— å¼€"));
+            item->setBackground(Qt::green);
         }
         else {
-            item->setText(QStringLiteral("¡ñ ¹Ø"));
-            item->setBackground(Qt::white);   // ±³¾°»Ö¸´°×É«
+            item->setText(QStringLiteral("â— å…³"));
+            item->setBackground(Qt::white);
         }
     }
 }
+
 void CIOWidget::onDOCellClicked(int row, int col)
 {
-    if (col != 2) return;                          // Ö»ÏìÓ¦×´Ì¬ÁĞ
-    if (!m_pTotalMgr) return;
-    IOMgr* ioMgr = m_pTotalMgr->ioMgr();
+    if (col != 2) return;
+    if (!m_gtsMgr) return;
+    IOMgr* ioMgr = m_gtsMgr->ioMgr();
     if (!ioMgr) return;
-    // È¡·´¶ÔÓ¦Î»
+    // å–åå¯¹åº”ä½
     if (row >= 0 && row < 8) {
-        // ËÅ·şÊ¹ÄÜ (0~7)
+        // ä¼ºæœä½¿èƒ½ (0~7)
         m_doState.servoOn[row] ^= 1;
         ioMgr->setMotorEnableDO(m_doState.servoOn);
     }
     else if (row >= 8 && row < 16) {
-        // ±¨¾¯Çå³ı (8~15)
+        // æŠ¥è­¦æ¸…é™¤ (8~15)
         int idx = row - 8;
         m_doState.almClear[idx] ^= 1;
         ioMgr->setClearAlarmDO(m_doState.almClear);
     }
     else if (row >= 16 && row < 32) {
-        // Í¨ÓÃÊä³ö (16~31)
+        // é€šç”¨è¾“å‡º (16~31)
         int idx = row - 16;
         m_doState.GPO[idx] ^= 1;
         ioMgr->setGPO(m_doState.GPO);
     }
-    // Ë¢ĞÂ¸ÃĞĞÏÔÊ¾
+    // åˆ·æ–°è¯¥è¡Œæ˜¾ç¤º
     auto flat = m_doState.toFlatVector();
     QTableWidgetItem* item = ui.tableWidget_DO->item(row, 2);
     if (item) {
         if (flat[row]) {
-            item->setText(QStringLiteral("¡ñ ¿ª"));
+            item->setText(QStringLiteral("â— å¼€"));
             item->setBackground(Qt::green);
         }
         else {
-            item->setText(QStringLiteral("¡ñ ¹Ø"));
+            item->setText(QStringLiteral("â— å…³"));
             item->setBackground(Qt::white);
         }
     }
@@ -224,8 +231,8 @@ void CIOWidget::onDescriptionEdited(int row, bool isDI)
     bool ok = false;
     QString newText = QInputDialog::getText(
         this,
-        QStringLiteral("±à¼­¹¦ÄÜÃèÊö"),
-        QStringLiteral("ÇëÊäÈëĞÂµÄÃèÊö:"),
+        QStringLiteral("ç¼–è¾‘åŠŸèƒ½æè¿°"),
+        QStringLiteral("è¯·è¾“å…¥æ–°çš„æè¿°:"),
         QLineEdit::Normal,
         item->text(),
         &ok);
@@ -234,11 +241,18 @@ void CIOWidget::onDescriptionEdited(int row, bool isDI)
         return;
 
     item->setText(newText);
-    m_pTotalMgr->configMgr()->setIODescription(row, newText, isDI);
+    m_gtsMgr->configMgr()->setIODescription(row, newText, isDI);
 }
 
 void CIOWidget::onDOCellDoubleClicked(int row, int col)
 {
     if (col == 0)
         onDescriptionEdited(row, false);
+}
+
+void CIOWidget::onConfigReloaded()
+{
+    // é‡å»ºè¡¨æ ¼ä»¥åˆ·æ–°æè¿°
+    InitTableDI();
+    InitTableDO();
 }
