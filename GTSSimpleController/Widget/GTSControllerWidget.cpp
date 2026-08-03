@@ -77,7 +77,8 @@ void GTSControllerWidget::InitUI()
     m_pBoardWidget = new CBoardWidget(this);
     m_pBoardWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pBoardWidget);
-    m_pMasterControlWidget = new CMasterControlWidget(this, this->m_pTotalMgr);
+    m_pMasterControlWidget = new CMasterControlWidget(this);
+    m_pMasterControlWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pMasterControlWidget);
     m_pAxisWidget = new CAxisWidget(this);
     m_pAxisWidget->setGtsTotalMgr(this->m_pTotalMgr);
@@ -117,7 +118,6 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
 void GTSControllerWidget::InitMgrSignalAndSlotConnect()
 {
     connect(m_pTotalMgr, &GtsMgr::logMessage, this, &GTSControllerWidget::showLog);
-    connect(m_pTotalMgr, &GtsMgr::axisUpdated, m_pMasterControlWidget, &CMasterControlWidget::onAxisUpdated);
 
     // 显示错误信息
     auto errorHandler = [this](short axis, short errorCode, const QString& errorMsg) {

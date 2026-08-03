@@ -3,44 +3,34 @@
 #include <QWidget>
 #include "ui_MasterControlWidget.h"
 #include "../../GtsCore/GtsAxisMgr.h"
+#include "../../GtsCore/ControllerData.h"
 
 class GtsMgr;
-class GTSControllerWidget;
 
 class CMasterControlWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CMasterControlWidget(QWidget* parent = nullptr, GtsMgr* mgr = nullptr);
+	CMasterControlWidget(QWidget* parent = nullptr);
 	~CMasterControlWidget();
-
-public slots:
-	void onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo);
-	void onAxisParamUpdated(const std::vector<SingleAxisInfo>& axisInfo);
+	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:
 	Ui::CMasterControlWidgetClass ui;
-	GtsMgr* m_pTotalMgr;
-	GTSControllerWidget* m_pGTSControllerWidget = nullptr;
-	bool m_bUpdatingFromBoard = false;
+	GtsMgr* m_gtsMgr = nullptr;
+	short m_axisId = 1;
+	bool m_connectionsInitialized = false;
 
-private:
-	void initMasterControlWidget();
-	void connectPrivateSignal();
+	void initConnections();
+	short axisIdByName(AxisName name) const;
 
-	// Jog 运动
 	void onJogPressed(short axisId, int direction);
 	void onJogReleased(short axisId);
-
-	// 点位运动
-	void onTrapMotion();
-	bool startSingleTrap(short axisId, double stepMm);
-
-	void onHomeButtonClicked(short axis);
 	void onStopAll();
+	void onHome(short axisId);
+	void onActMotion();
 
-
-	// 硬绑定：轴号 → 名称
-	static QString axisName(short axisId);
+public slots:
+	void onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo);
 };
