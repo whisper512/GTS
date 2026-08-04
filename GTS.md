@@ -37,7 +37,6 @@
 # 编码器
 
 - [x] 编码器界面
-- [ ] 三菱驱动器编码器没有回馈数据，检查驱动和接线等
 - [ ] 闭环编码器读取和当量换算
 - [ ] 闭环回零方式
 
@@ -61,7 +60,6 @@
 - [x] 当量计算函数
 - [ ] 界面因为数据变化而变化，需要占位固定
 - [x] 单位同步
-- [ ] 主控同步修改
 - [ ] 加入轴激活参数,axiscount也根据这个计算
 
 # 其他
@@ -78,14 +76,5 @@
 
 - [x] 耦合在 Manager 层 — MotionMgr::startTrapMotion / startJogMotion 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。(2026-07-03 已修复，移除 QMessageBox 依赖)
 - [x] 循环 Trap 忙轮询阻塞主线程 — MotionMgr::startTrapMotion 中 for + processEvents 忙等，无取消/超时机制。方案：onTrapCycleStep 递归自调度（waitMotionDone + QMetaObject::invokeMethod Qt::QueuedConnection）+ cancelTrapCycle。(2026-07-03 已修复)
-
-## P1 — 建议修复
-
-- [ ] 全局 typo — ControllerData.h / AxisWidget.h 等文件中 `somoothTime` 应为 `smoothTime`。
-- [ ] 线程安全缺失 — AxisWidget 直接读写共享运动状态，无互斥保护，多线程场景下有竞态风险。
-- [ ] 缺少日志系统 — 运动失败时仅弹窗或静默，无持久化日志，排查问题困难。
-- [ ] GTSSimpleController 和 GTSAdvancedController 结构不一致 — 两个模块文件组织方式差异大，后续维护成本高。
-
-
 
 # GTS400 复杂插补类封装
