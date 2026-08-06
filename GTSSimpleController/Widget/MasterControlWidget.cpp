@@ -1,7 +1,7 @@
 ﻿#include "MasterControlWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
-CMasterControlWidget::CMasterControlWidget(QWidget* parent)
+MasterControlWidget::MasterControlWidget(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
@@ -32,19 +32,19 @@ CMasterControlWidget::CMasterControlWidget(QWidget* parent)
     }
 }
 
-CMasterControlWidget::~CMasterControlWidget()
+MasterControlWidget::~MasterControlWidget()
 {
     m_gtsMgr = nullptr;
 }
 
-void CMasterControlWidget::setGtsTotalMgr(GtsMgr* mgr)
+void MasterControlWidget::setGtsTotalMgr(GtsMgr* mgr)
 {
     if (m_gtsMgr) {
-        disconnect(m_gtsMgr, &GtsMgr::axisUpdated, this, &CMasterControlWidget::onAxisUpdated);
+        disconnect(m_gtsMgr, &GtsMgr::axisUpdated, this, &MasterControlWidget::onAxisUpdated);
     }
     m_gtsMgr = mgr;
     if (m_gtsMgr) {
-        connect(m_gtsMgr, &GtsMgr::axisUpdated, this, &CMasterControlWidget::onAxisUpdated);
+        connect(m_gtsMgr, &GtsMgr::axisUpdated, this, &MasterControlWidget::onAxisUpdated);
         connect(m_gtsMgr, &GtsMgr::configChanged, this, [this]() {
             if (!m_connectionsInitialized) {
                 initConnections();
@@ -54,7 +54,7 @@ void CMasterControlWidget::setGtsTotalMgr(GtsMgr* mgr)
     }
 }
 
-void CMasterControlWidget::initConnections()
+void MasterControlWidget::initConnections()
 {
     // 用 ConfigMgr 轴名填充 comboBox
     ui.comboBox_axisID->clear();
@@ -110,11 +110,11 @@ void CMasterControlWidget::initConnections()
         connect(ui.pushButtonHome4, &QPushButton::clicked, this, [this, idA]() { onHome(idA); });
     }
 
-    connect(ui.toolButton_Stop, &QToolButton::clicked, this, &CMasterControlWidget::onStopAll);
-    connect(ui.pushButton_ActMotion, &QPushButton::clicked, this, &CMasterControlWidget::onActMotion);
+    connect(ui.toolButton_Stop, &QToolButton::clicked, this, &MasterControlWidget::onStopAll);
+    connect(ui.pushButton_ActMotion, &QPushButton::clicked, this, &MasterControlWidget::onActMotion);
 }
 
-void CMasterControlWidget::onJogPressed(short axisId, int direction)
+void MasterControlWidget::onJogPressed(short axisId, int direction)
 {
     if (!m_gtsMgr) return;
     int index = axisId - 1;
@@ -124,13 +124,13 @@ void CMasterControlWidget::onJogPressed(short axisId, int direction)
     m_gtsMgr->motionMgr()->startJogMotion(axisId, direction);
 }
 
-void CMasterControlWidget::onJogReleased(short axisId)
+void MasterControlWidget::onJogReleased(short axisId)
 {
     if (!m_gtsMgr) return;
     m_gtsMgr->axisMgr()->stop(axisId, 0);
 }
 
-void CMasterControlWidget::onStopAll()
+void MasterControlWidget::onStopAll()
 {
     if (!m_gtsMgr) return;
     for (short id = 1; id <= m_gtsMgr->axisCount(); ++id) {
@@ -138,13 +138,13 @@ void CMasterControlWidget::onStopAll()
     }
 }
 
-void CMasterControlWidget::onHome(short axisId)
+void MasterControlWidget::onHome(short axisId)
 {
     if (!m_gtsMgr) return;
     m_gtsMgr->motionMgr()->homeStart(axisId);
 }
 
-void CMasterControlWidget::onActMotion()
+void MasterControlWidget::onActMotion()
 {
     if (!m_gtsMgr) return;
     int index = m_axisId - 1;
@@ -157,7 +157,7 @@ void CMasterControlWidget::onActMotion()
     m_gtsMgr->motionMgr()->trapMotion(m_axisId, tp.lengthMm);
 }
 
-void CMasterControlWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
+void MasterControlWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
     auto updateOneAxis = [this](const SingleAxisInfo& axis,
         QRadioButton* servoEnable, QRadioButton* alarm,
@@ -224,7 +224,7 @@ void CMasterControlWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axis
             ui.label_tgtPosDataPluse4, ui.label_tgtVelDataPluse4, ui.label_tgtAccDataPluse4);
 }
 
-short CMasterControlWidget::axisIdByName(AxisName name) const
+short MasterControlWidget::axisIdByName(AxisName name) const
 {
     if (!m_gtsMgr) return 0;
     auto* cfg = m_gtsMgr->axisCfg();

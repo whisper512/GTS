@@ -74,22 +74,22 @@ void GTSControllerWidget::Init()
 
 void GTSControllerWidget::InitUI()
 {
-    m_pBoardWidget = new CBoardWidget(this);
+    m_pBoardWidget = new BoardWidget(this);
     m_pBoardWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pBoardWidget);
-    m_pMasterControlWidget = new CMasterControlWidget(this);
+    m_pMasterControlWidget = new MasterControlWidget(this);
     m_pMasterControlWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pMasterControlWidget);
-    m_pAxisWidget = new CAxisWidget(this);
+    m_pAxisWidget = new AxisWidget(this);
     m_pAxisWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pAxisWidget);
-    m_pIOWidget = new CIOWidget(this);
+    m_pIOWidget = new IOWidget(this);
     m_pIOWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pIOWidget);
-    m_pConfigWidget = new CConfigWidget(this);
+    m_pConfigWidget = new ConfigWidget(this);
     m_pConfigWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pConfigWidget);
-    m_pOthersWidget = new COthersWidget(this);
+    m_pOthersWidget = new OthersWidget(this);
     ui.stackedWidget->addWidget(m_pOthersWidget);
     // 默认显示板卡页面
     ui.stackedWidget->setCurrentIndex(0);

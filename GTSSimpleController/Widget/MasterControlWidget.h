@@ -7,13 +7,13 @@
 
 class GtsMgr;
 
-class CMasterControlWidget : public QWidget
+class MasterControlWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CMasterControlWidget(QWidget* parent = nullptr);
-	~CMasterControlWidget();
+	MasterControlWidget(QWidget* parent = nullptr);
+	~MasterControlWidget();
 	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:

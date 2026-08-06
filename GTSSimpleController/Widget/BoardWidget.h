@@ -5,13 +5,13 @@
 
 class GtsMgr;
 
-class CBoardWidget : public QWidget 
+class BoardWidget : public QWidget 
 {
 	Q_OBJECT
 
 public:
-	CBoardWidget(QWidget* parent = nullptr);
-	~CBoardWidget();
+	BoardWidget(QWidget* parent = nullptr);
+	~BoardWidget();
 	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:

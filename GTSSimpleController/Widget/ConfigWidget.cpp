@@ -4,7 +4,7 @@
 #include "ConfigWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
-CConfigWidget::CConfigWidget(QWidget* parent)
+ConfigWidget::ConfigWidget(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -15,23 +15,23 @@ CConfigWidget::CConfigWidget(QWidget* parent)
 	});
 }
 
-CConfigWidget::~CConfigWidget()
+ConfigWidget::~ConfigWidget()
 {
 	m_gtsMgr = nullptr;
 }
 
-void CConfigWidget::setGtsTotalMgr(GtsMgr* mgr)
+void ConfigWidget::setGtsTotalMgr(GtsMgr* mgr)
 {
 	if (m_gtsMgr) {
-		disconnect(m_gtsMgr, &GtsMgr::configChanged, this, &CConfigWidget::onConfigChanged);
+		disconnect(m_gtsMgr, &GtsMgr::configChanged, this, &ConfigWidget::onConfigChanged);
 	}
 	m_gtsMgr = mgr;
 	if (m_gtsMgr) {
-		connect(m_gtsMgr, &GtsMgr::configChanged, this, &CConfigWidget::onConfigChanged);
+		connect(m_gtsMgr, &GtsMgr::configChanged, this, &ConfigWidget::onConfigChanged);
 	}
 }
 
-void CConfigWidget::initUI()
+void ConfigWidget::initUI()
 {
 	comboAddNumbers(ui.comboBox_axisId, 4);
 	comboAddNumbers(ui.comboBox_dacId, 4);
@@ -66,12 +66,12 @@ void CConfigWidget::initUI()
 		});
 }
 
-void CConfigWidget::connectSignals()
+void ConfigWidget::connectSignals()
 {
 	// buttons
-	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &CConfigWidget::onLoadConfigFile);
-	connect(ui.pushButton_save, &QPushButton::clicked, this, &CConfigWidget::onApplyAndSave);
-	connect(ui.pushButton_applyToBoard, &QPushButton::clicked, this, &CConfigWidget::onApplyToBoard);
+	connect(ui.pushButton_loadToBoard, &QPushButton::clicked, this, &ConfigWidget::onLoadConfigFile);
+	connect(ui.pushButton_save, &QPushButton::clicked, this, &ConfigWidget::onApplyAndSave);
+	connect(ui.pushButton_applyToBoard, &QPushButton::clicked, this, &ConfigWidget::onApplyToBoard);
 
 	// DAC channel switch
 	connect(ui.comboBox_dacId, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {
@@ -137,7 +137,7 @@ void CConfigWidget::connectSignals()
 	});
 }
 
-void CConfigWidget::onLoadConfigFile()
+void ConfigWidget::onLoadConfigFile()
 {
 	if (!m_gtsMgr) return;
 	QString filePath = QFileDialog::getOpenFileName(this,
@@ -147,7 +147,7 @@ void CConfigWidget::onLoadConfigFile()
 	m_gtsMgr->configMgr()->loadConfigFile(filePath);
 }
 
-void CConfigWidget::onConfigChanged()
+void ConfigWidget::onConfigChanged()
 {
 	if (m_refreshing) return;
 	refreshDacValues();
@@ -161,7 +161,7 @@ void CConfigWidget::onConfigChanged()
 	refreshSoftPulseScale();
 }
 
-void CConfigWidget::onApplyAndSave()
+void ConfigWidget::onApplyAndSave()
 {
 	if (!m_gtsMgr) return;
 	commitDacForAxis(ui.comboBox_dacId->currentText().toShort());
@@ -176,7 +176,7 @@ void CConfigWidget::onApplyAndSave()
 	m_gtsMgr->configMgr()->saveAxisConfig();
 }
 
-void CConfigWidget::onApplyToBoard()
+void ConfigWidget::onApplyToBoard()
 {
 	if (!m_gtsMgr) return;
 	if (!m_gtsMgr->boardMgr()->isOpen()) return;
@@ -194,7 +194,7 @@ void CConfigWidget::onApplyToBoard()
 
 // ===== refresh =====
 
-void CConfigWidget::refreshDacValues()
+void ConfigWidget::refreshDacValues()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -205,7 +205,7 @@ void CConfigWidget::refreshDacValues()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshFollowErrorLimit()
+void ConfigWidget::refreshFollowErrorLimit()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -215,7 +215,7 @@ void CConfigWidget::refreshFollowErrorLimit()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshStopDecel()
+void ConfigWidget::refreshStopDecel()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -226,7 +226,7 @@ void CConfigWidget::refreshStopDecel()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshScaleValues()
+void ConfigWidget::refreshScaleValues()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -239,7 +239,7 @@ void CConfigWidget::refreshScaleValues()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshControlMode()
+void ConfigWidget::refreshControlMode()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -250,7 +250,7 @@ void CConfigWidget::refreshControlMode()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshHomeConfig()
+void ConfigWidget::refreshHomeConfig()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -265,7 +265,7 @@ void CConfigWidget::refreshHomeConfig()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshAxisLimit()
+void ConfigWidget::refreshAxisLimit()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -276,7 +276,7 @@ void CConfigWidget::refreshAxisLimit()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshAxisName()
+void ConfigWidget::refreshAxisName()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -287,7 +287,7 @@ void CConfigWidget::refreshAxisName()
 	m_refreshing = false;
 }
 
-void CConfigWidget::refreshSoftPulseScale()
+void ConfigWidget::refreshSoftPulseScale()
 {
 	if (m_refreshing) return;
 	if (!m_gtsMgr) return;
@@ -300,7 +300,7 @@ void CConfigWidget::refreshSoftPulseScale()
 
 // ===== commit =====
 
-void CConfigWidget::commitDacForAxis(short dac)
+void ConfigWidget::commitDacForAxis(short dac)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -309,7 +309,7 @@ void CConfigWidget::commitDacForAxis(short dac)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitFollowErrorForAxis(short ctrl)
+void ConfigWidget::commitFollowErrorForAxis(short ctrl)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -317,7 +317,7 @@ void CConfigWidget::commitFollowErrorForAxis(short ctrl)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitStopDecelForProfile(short profile)
+void ConfigWidget::commitStopDecelForProfile(short profile)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -327,7 +327,7 @@ void CConfigWidget::commitStopDecelForProfile(short profile)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitScaleForAxis(short axis)
+void ConfigWidget::commitScaleForAxis(short axis)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -340,7 +340,7 @@ void CConfigWidget::commitScaleForAxis(short axis)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitControlModeForAxis(short axis)
+void ConfigWidget::commitControlModeForAxis(short axis)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -348,7 +348,7 @@ void CConfigWidget::commitControlModeForAxis(short axis)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitHomeForAxis(short axis)
+void ConfigWidget::commitHomeForAxis(short axis)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -360,7 +360,7 @@ void CConfigWidget::commitHomeForAxis(short axis)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitAxisLimitForAxis(short axis)
+void ConfigWidget::commitAxisLimitForAxis(short axis)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -369,7 +369,7 @@ void CConfigWidget::commitAxisLimitForAxis(short axis)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitAxisNameForAxis(short axis)
+void ConfigWidget::commitAxisNameForAxis(short axis)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);
@@ -379,7 +379,7 @@ void CConfigWidget::commitAxisNameForAxis(short axis)
 	cfg->blockSignals(false);
 }
 
-void CConfigWidget::commitSoftPulseScaleForAxis(short axis)
+void ConfigWidget::commitSoftPulseScaleForAxis(short axis)
 {
 	auto* cfg = m_gtsMgr->configMgr();
 	cfg->blockSignals(true);

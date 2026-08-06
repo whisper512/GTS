@@ -3,7 +3,7 @@
 #include "BoardWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
-CBoardWidget::CBoardWidget(QWidget* parent)
+BoardWidget::BoardWidget(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
@@ -11,36 +11,36 @@ CBoardWidget::CBoardWidget(QWidget* parent)
     updateBoardState(false);
 }
 
-CBoardWidget::~CBoardWidget()
+BoardWidget::~BoardWidget()
 {
     m_gtsMgr = nullptr;
 }
 
-void CBoardWidget::setGtsTotalMgr(GtsMgr* mgr)
+void BoardWidget::setGtsTotalMgr(GtsMgr* mgr)
 {
     if (m_gtsMgr)
     {
-        disconnect(m_gtsMgr, &GtsMgr::boardClockUpdated, this, &CBoardWidget::onBoardClockUpdated);
+        disconnect(m_gtsMgr, &GtsMgr::boardClockUpdated, this, &BoardWidget::onBoardClockUpdated);
     }
     m_gtsMgr = mgr;
     if (m_gtsMgr)
     {
-        connect(m_gtsMgr, &GtsMgr::boardClockUpdated, this, &CBoardWidget::onBoardClockUpdated);
+        connect(m_gtsMgr, &GtsMgr::boardClockUpdated, this, &BoardWidget::onBoardClockUpdated);
     }
 }
 
-void CBoardWidget::initConnections()
+void BoardWidget::initConnections()
 {
     ui.radioButton_boardState->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
     QTimer::singleShot(0, this, [this]() {
-        connect(ui.pushButton_openBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
-        connect(ui.pushButton_closeBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
-        connect(ui.pushButton_resetBoard, &QPushButton::clicked, this, &CBoardWidget::onBtnClick);
+        connect(ui.pushButton_openBoard, &QPushButton::clicked, this, &BoardWidget::onBtnClick);
+        connect(ui.pushButton_closeBoard, &QPushButton::clicked, this, &BoardWidget::onBtnClick);
+        connect(ui.pushButton_resetBoard, &QPushButton::clicked, this, &BoardWidget::onBtnClick);
     });
 }
 
-void CBoardWidget::updateBoardState(bool isOpen)
+void BoardWidget::updateBoardState(bool isOpen)
 {
     ui.radioButton_boardState->setChecked(isOpen);
     if (isOpen) {
@@ -55,7 +55,7 @@ void CBoardWidget::updateBoardState(bool isOpen)
     }
 }
 
-void CBoardWidget::onOpen()
+void BoardWidget::onOpen()
 {
     if (!m_gtsMgr) return;
     bool ok = m_gtsMgr->boardMgr()->open(0, 1);
@@ -68,27 +68,27 @@ void CBoardWidget::onOpen()
     }
 }
 
-void CBoardWidget::onClose()
+void BoardWidget::onClose()
 {
     if (!m_gtsMgr) return;
     bool ok = m_gtsMgr->boardMgr()->close();
     if (ok) updateBoardState(false);
 }
 
-void CBoardWidget::onReset()
+void BoardWidget::onReset()
 {
     if (!m_gtsMgr) return;
     bool ok = m_gtsMgr->boardMgr()->reset();
     if (ok) updateBoardState(false);
 }
 
-void CBoardWidget::onBoardClockUpdated(const Clock& clock)
+void BoardWidget::onBoardClockUpdated(const Clock& clock)
 {
     ui.label_clockData->setText(QString::number(clock.sysClock));
     ui.label_highPrecisionClockData->setText(QString::number(clock.highPrecClock));
 }
 
-void CBoardWidget::onBtnClick()
+void BoardWidget::onBtnClick()
 {
     if (!m_gtsMgr) return;
     QPushButton* btn = qobject_cast<QPushButton*>(sender());

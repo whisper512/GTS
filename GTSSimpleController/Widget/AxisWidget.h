@@ -5,13 +5,13 @@
 
 class GtsMgr;
 
-class CAxisWidget : public QWidget
+class AxisWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CAxisWidget(QWidget* parent = nullptr);
-	~CAxisWidget();
+	AxisWidget(QWidget* parent = nullptr);
+	~AxisWidget();
 	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:

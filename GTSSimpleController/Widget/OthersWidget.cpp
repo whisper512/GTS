@@ -1,11 +1,11 @@
 #include "OthersWidget.h"
 
-COthersWidget::COthersWidget(QWidget *parent)
+OthersWidget::OthersWidget(QWidget *parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
 }
 
-COthersWidget::~COthersWidget()
+OthersWidget::~OthersWidget()
 {}
 

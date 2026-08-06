@@ -23,11 +23,11 @@ public:
 
 private:
     GtsMgr* m_pTotalMgr = nullptr;                          // 总管理
-    CBoardWidget* m_pBoardWidget = nullptr;                 // 板卡
-    CMasterControlWidget* m_pMasterControlWidget = nullptr; // 主控
-    CAxisWidget* m_pAxisWidget = nullptr;                   // 单轴
-    CIOWidget* m_pIOWidget = nullptr;                       // IO
-    CConfigWidget* m_pConfigWidget = nullptr;               // 设置
+    BoardWidget* m_pBoardWidget = nullptr;                 // 板卡
+    MasterControlWidget* m_pMasterControlWidget = nullptr; // 主控
+    AxisWidget* m_pAxisWidget = nullptr;                   // 单轴
+    IOWidget* m_pIOWidget = nullptr;                       // IO
+    ConfigWidget* m_pConfigWidget = nullptr;               // 设置
     QWidget* m_pOthersWidget = nullptr;                     // 其他
     QButtonGroup* m_pBtnGroup = nullptr;
 

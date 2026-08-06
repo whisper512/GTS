@@ -9,13 +9,13 @@ class GtsMgr;
 
 struct Block { int start; int count; QString desc; };
 
-class CIOWidget : public QWidget
+class IOWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	CIOWidget(QWidget* parent = nullptr);
-	~CIOWidget();
+	IOWidget(QWidget* parent = nullptr);
+	~IOWidget();
 	void setGtsTotalMgr(GtsMgr* mgr);
 
 private:

@@ -3,13 +3,13 @@
 #include <QWidget>
 #include "ui_OthersWidget.h"
 
-class COthersWidget : public QWidget
+class OthersWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	COthersWidget(QWidget *parent = nullptr);
-	~COthersWidget();
+	OthersWidget(QWidget *parent = nullptr);
+	~OthersWidget();
 
 private:
 	Ui::COthersWidgetClass ui;

@@ -5,7 +5,7 @@
 #include "AxisWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
-CAxisWidget::CAxisWidget(QWidget* parent)
+AxisWidget::AxisWidget(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
@@ -13,29 +13,29 @@ CAxisWidget::CAxisWidget(QWidget* parent)
 	initConnections();
 }
 
-CAxisWidget::~CAxisWidget()
+AxisWidget::~AxisWidget()
 {
 	m_gtsMgr = nullptr;
 }
 
 
-void CAxisWidget::setGtsTotalMgr(GtsMgr* mgr)
+void AxisWidget::setGtsTotalMgr(GtsMgr* mgr)
 {
 	if (m_gtsMgr)
 	{
-		disconnect(m_gtsMgr, &GtsMgr::axisUpdated, this, &CAxisWidget::onAxisUpdated);
-		disconnect(m_gtsMgr, &GtsMgr::axisSettingUpdated, this, &CAxisWidget::onAxisSettingUpdated);
+		disconnect(m_gtsMgr, &GtsMgr::axisUpdated, this, &AxisWidget::onAxisUpdated);
+		disconnect(m_gtsMgr, &GtsMgr::axisSettingUpdated, this, &AxisWidget::onAxisSettingUpdated);
 	}
 	m_gtsMgr = mgr;
 	if (m_gtsMgr)
 	{
-		connect(m_gtsMgr, &GtsMgr::axisUpdated, this, &CAxisWidget::onAxisUpdated);
-		connect(m_gtsMgr, &GtsMgr::axisSettingUpdated, this, &CAxisWidget::onAxisSettingUpdated);
+		connect(m_gtsMgr, &GtsMgr::axisUpdated, this, &AxisWidget::onAxisUpdated);
+		connect(m_gtsMgr, &GtsMgr::axisSettingUpdated, this, &AxisWidget::onAxisSettingUpdated);
 	}
 }
 
 
-void CAxisWidget::initWidget()
+void AxisWidget::initWidget()
 {
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 1"));
 	ui.comboBox_axisID->addItem(QStringLiteral("轴 2"));
@@ -75,16 +75,16 @@ void CAxisWidget::initWidget()
 	}
 }
 
-void CAxisWidget::initConnections()
+void AxisWidget::initConnections()
 {
 	QTimer::singleShot(0, this, [this]() {
 		// Axis operation buttons
-		connect(ui.pushButton_clearState, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-		connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-		connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-		connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-		connect(ui.pushButton_eStop, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
-		connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &CAxisWidget::onBtnClick);
+		connect(ui.pushButton_clearState, &QPushButton::clicked, this, &AxisWidget::onBtnClick);
+		connect(ui.pushButton_sevorOn, &QPushButton::clicked, this, &AxisWidget::onBtnClick);
+		connect(ui.pushButton_clearPos, &QPushButton::clicked, this, &AxisWidget::onBtnClick);
+		connect(ui.pushButton_smoothStop, &QPushButton::clicked, this, &AxisWidget::onBtnClick);
+		connect(ui.pushButton_eStop, &QPushButton::clicked, this, &AxisWidget::onBtnClick);
+		connect(ui.pushButton_TarpActMotion, &QPushButton::clicked, this, &AxisWidget::onBtnClick);
 
 		// Jog press/release
 		connect(ui.pushButton_jogPMotion, &QPushButton::pressed, this, [this]() { onJogPressed(1); });
@@ -94,31 +94,31 @@ void CAxisWidget::initConnections()
 
 		// Combo boxes
 		connect(ui.comboBox_axisID, QOverload<int>::of(&QComboBox::currentIndexChanged),
-			this, &CAxisWidget::onComboBoxCurrentIndexChanged);
+			this, &AxisWidget::onComboBoxCurrentIndexChanged);
 		connect(ui.comboBox_Mode, QOverload<int>::of(&QComboBox::currentIndexChanged),
-			this, &CAxisWidget::onComboBoxModeCurrentIndexChanged);
+			this, &AxisWidget::onComboBoxModeCurrentIndexChanged);
 
 		// Trap param changes
-		connect(ui.spinBox_trapMotionVel, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-		connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-		connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-		connect(ui.doubleSpinBox_trapLengthMm, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-		connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-		connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
-		connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished, this, &CAxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_trapMotionVel, &QSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
+		connect(ui.doubleSpinBoxs_trapAcc, &QDoubleSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
+		connect(ui.doubleSpinBoxs_trapDec, &QDoubleSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
+		connect(ui.doubleSpinBox_trapLengthMm, &QDoubleSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_trapSmoothTime, &QSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_trapCycleTime, &QSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
+		connect(ui.spinBox_TrapInPositionDelay, &QSpinBox::editingFinished, this, &AxisWidget::onTrapParamChanged);
 
 		// Jog param changes
-		connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
-		connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished, this, &CAxisWidget::onJogParamChanged);
+		connect(ui.doubleSpinBoxs_jogAcc, &QDoubleSpinBox::editingFinished, this, &AxisWidget::onJogParamChanged);
+		connect(ui.doubleSpinBoxs_jogDec, &QDoubleSpinBox::editingFinished, this, &AxisWidget::onJogParamChanged);
 	});
 }
 
-void CAxisWidget::connectAxisSignals()
+void AxisWidget::connectAxisSignals()
 {
 }
 
 
-void CAxisWidget::updateUIEnable(int index)
+void AxisWidget::updateUIEnable(int index)
 {
 	if (index == 0) {
 		// Trap mode
@@ -159,43 +159,43 @@ void CAxisWidget::updateUIEnable(int index)
 
 // ==================== Axis Operations ====================
 
-void CAxisWidget::onClearState()
+void AxisWidget::onClearState()
 {
 	if (!m_gtsMgr) return;
 	m_gtsMgr->axisMgr()->clearStatus(m_axisId);
 }
 
-void CAxisWidget::onServoOn()
+void AxisWidget::onServoOn()
 {
 	if (!m_gtsMgr) return;
 	m_gtsMgr->axisMgr()->enable(m_axisId);
 }
 
-void CAxisWidget::onServoOff()
+void AxisWidget::onServoOff()
 {
 	if (!m_gtsMgr) return;
 	m_gtsMgr->axisMgr()->disable(m_axisId);
 }
 
-void CAxisWidget::onClearPos()
+void AxisWidget::onClearPos()
 {
 	if (!m_gtsMgr) return;
 	m_gtsMgr->axisMgr()->zeroPosition(m_axisId);
 }
 
-void CAxisWidget::onSmoothStop()
+void AxisWidget::onSmoothStop()
 {
 	if (!m_gtsMgr) return;
 	m_gtsMgr->axisMgr()->stop(m_axisId, 1);
 }
 
-void CAxisWidget::onEStop()
+void AxisWidget::onEStop()
 {
 	if (!m_gtsMgr) return;
 	m_gtsMgr->axisMgr()->stop(m_axisId, 0);
 }
 
-void CAxisWidget::onTrapMotion()
+void AxisWidget::onTrapMotion()
 {
 	if (!m_gtsMgr) return;
 	int index = m_axisId - 1;
@@ -204,7 +204,7 @@ void CAxisWidget::onTrapMotion()
 		m_gtsMgr->axisCfg()->axes[index].trapParam.lengthMm);
 }
 
-void CAxisWidget::onJogPressed(int direction)
+void AxisWidget::onJogPressed(int direction)
 {
 	if (!m_gtsMgr) return;
 	int index = m_axisId - 1;
@@ -214,7 +214,7 @@ void CAxisWidget::onJogPressed(int direction)
 	m_gtsMgr->motionMgr()->startJogMotion(m_axisId, direction);
 }
 
-void CAxisWidget::onJogReleased()
+void AxisWidget::onJogReleased()
 {
 	if (!m_gtsMgr) return;
 	// Deceleration stop (option = 1)
@@ -222,7 +222,7 @@ void CAxisWidget::onJogReleased()
 }
 
 
-void CAxisWidget::onTrapParamChanged()
+void AxisWidget::onTrapParamChanged()
 {
 	if (m_updatingFromBoard) return;
 	if (!m_gtsMgr) return;
@@ -239,7 +239,7 @@ void CAxisWidget::onTrapParamChanged()
 	tp.delay = ui.spinBox_TrapInPositionDelay->value();
 }
 
-void CAxisWidget::onJogParamChanged()
+void AxisWidget::onJogParamChanged()
 {
 	if (m_updatingFromBoard) return;
 	if (!m_gtsMgr) return;
@@ -253,7 +253,7 @@ void CAxisWidget::onJogParamChanged()
 }
 
 
-void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
+void AxisWidget::onComboBoxCurrentIndexChanged(int index)
 {
 	m_axisId = index + 1;
 	if (!m_gtsMgr || !m_gtsMgr->boardMgr()->isOpen()) return;
@@ -277,7 +277,7 @@ void CAxisWidget::onComboBoxCurrentIndexChanged(int index)
 		ui.comboBox_Mode->setCurrentIndex(axis->prfMode);
 }
 
-void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
+void AxisWidget::onComboBoxModeCurrentIndexChanged(int index)
 {
 	if (!m_gtsMgr || !m_gtsMgr->boardMgr()->isOpen()) return;
 
@@ -291,7 +291,7 @@ void CAxisWidget::onComboBoxModeCurrentIndexChanged(int index)
 }
 
 
-void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
+void AxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
 	m_updatingFromBoard = true;
 	int index = m_axisId - 1;
@@ -331,7 +331,7 @@ void CAxisWidget::onAxisUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 	m_updatingFromBoard = false;
 }
 
-void CAxisWidget::onAxisSettingUpdated(const std::vector<SingleAxisInfo>& axisInfo)
+void AxisWidget::onAxisSettingUpdated(const std::vector<SingleAxisInfo>& axisInfo)
 {
 	m_updatingFromBoard = true;
 	int index = m_axisId - 1;
@@ -359,7 +359,7 @@ void CAxisWidget::onAxisSettingUpdated(const std::vector<SingleAxisInfo>& axisIn
 }
 
 
-void CAxisWidget::onBtnClick()
+void AxisWidget::onBtnClick()
 {
 	if (!m_gtsMgr) return;
 	QPushButton* btn = qobject_cast<QPushButton*>(sender());

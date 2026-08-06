@@ -18,7 +18,7 @@ public:
     }
 };
 
-CIOWidget::CIOWidget(QWidget* parent)
+IOWidget::IOWidget(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
@@ -26,25 +26,25 @@ CIOWidget::CIOWidget(QWidget* parent)
     connectPrivateSignal();
 }
 
-CIOWidget::~CIOWidget()
+IOWidget::~IOWidget()
 {
     m_gtsMgr = nullptr;
 }
 
-void CIOWidget::setGtsTotalMgr(GtsMgr* mgr)
+void IOWidget::setGtsTotalMgr(GtsMgr* mgr)
 {
     if (m_gtsMgr) {
-        disconnect(m_gtsMgr, &GtsMgr::diUpdated, this, &CIOWidget::onDIUpdated);
-        disconnect(m_gtsMgr, &GtsMgr::doUpdated, this, &CIOWidget::onDOUpdated);
+        disconnect(m_gtsMgr, &GtsMgr::diUpdated, this, &IOWidget::onDIUpdated);
+        disconnect(m_gtsMgr, &GtsMgr::doUpdated, this, &IOWidget::onDOUpdated);
     }
     m_gtsMgr = mgr;
     if (m_gtsMgr) {
-        connect(m_gtsMgr, &GtsMgr::diUpdated, this, &CIOWidget::onDIUpdated);
-        connect(m_gtsMgr, &GtsMgr::doUpdated, this, &CIOWidget::onDOUpdated);
+        connect(m_gtsMgr, &GtsMgr::diUpdated, this, &IOWidget::onDIUpdated);
+        connect(m_gtsMgr, &GtsMgr::doUpdated, this, &IOWidget::onDOUpdated);
     }
 }
 
-void CIOWidget::InitUI()
+void IOWidget::InitUI()
 {
     QTimer::singleShot(0, this, [this]() {
         InitTableDI();
@@ -52,7 +52,7 @@ void CIOWidget::InitUI()
     });
 }
 
-void CIOWidget::InitTableDI()
+void IOWidget::InitTableDI()
 {
     const Block blocks[] = {
         {  0,  8, QStringLiteral("正限位信号0xF")    },
@@ -74,7 +74,7 @@ void CIOWidget::InitTableDI()
     }
 }
 
-void CIOWidget::InitTableDO()
+void IOWidget::InitTableDO()
 {
     const Block blocks[] = {
         {  0,  8, QStringLiteral("伺服使能0xF")      },
@@ -92,7 +92,7 @@ void CIOWidget::InitTableDO()
     }
 }
 
-void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
+void IOWidget::InitTableCommon(QTableWidget* table, int totalRows,
     const Block* blocks, int blockCount)
 {
     table->setColumnCount(3);
@@ -139,17 +139,17 @@ void CIOWidget::InitTableCommon(QTableWidget* table, int totalRows,
 }
 
 
-void CIOWidget::connectPrivateSignal()
+void IOWidget::connectPrivateSignal()
 {
-    connect(ui.tableWidget_DO, &QTableWidget::cellClicked, this, &CIOWidget::onDOCellClicked);
+    connect(ui.tableWidget_DO, &QTableWidget::cellClicked, this, &IOWidget::onDOCellClicked);
 
     connect(ui.tableWidget_DI, &QTableWidget::cellDoubleClicked,
-        this, &CIOWidget::onDICellDoubleClicked);
+        this, &IOWidget::onDICellDoubleClicked);
     connect(ui.tableWidget_DO, &QTableWidget::cellDoubleClicked,
-        this, &CIOWidget::onDOCellDoubleClicked);
+        this, &IOWidget::onDOCellDoubleClicked);
 }
 
-void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status)
+void IOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status)
 {
     for (int i = 0; i < (int)status.size(); ++i) {
         QTableWidgetItem* item = table->item(i, 2);
@@ -165,7 +165,7 @@ void CIOWidget::RefreshTable(QTableWidget* table, const std::vector<int>& status
     }
 }
 
-void CIOWidget::onDOCellClicked(int row, int col)
+void IOWidget::onDOCellClicked(int row, int col)
 {
     if (col != 2) return;
     if (!m_gtsMgr) return;
@@ -204,24 +204,24 @@ void CIOWidget::onDOCellClicked(int row, int col)
     }
 }
 
-void CIOWidget::onDIUpdated(const DI& di)
+void IOWidget::onDIUpdated(const DI& di)
 {
     RefreshTable(ui.tableWidget_DI, di.toFlatVector());
 }
 
-void CIOWidget::onDOUpdated(const DO& dout)
+void IOWidget::onDOUpdated(const DO& dout)
 {
     m_doState = dout;
     RefreshTable(ui.tableWidget_DO, dout.toFlatVector());
 }
 
-void CIOWidget::onDICellDoubleClicked(int row, int col)
+void IOWidget::onDICellDoubleClicked(int row, int col)
 {
     if (col == 0)
         onDescriptionEdited(row, true);
 }
 
-void CIOWidget::onDescriptionEdited(int row, bool isDI)
+void IOWidget::onDescriptionEdited(int row, bool isDI)
 {
     QTableWidget* table = isDI ? ui.tableWidget_DI : ui.tableWidget_DO;
 
@@ -244,13 +244,13 @@ void CIOWidget::onDescriptionEdited(int row, bool isDI)
     m_gtsMgr->configMgr()->setIODescription(row, newText, isDI);
 }
 
-void CIOWidget::onDOCellDoubleClicked(int row, int col)
+void IOWidget::onDOCellDoubleClicked(int row, int col)
 {
     if (col == 0)
         onDescriptionEdited(row, false);
 }
 
-void CIOWidget::onConfigReloaded()
+void IOWidget::onConfigReloaded()
 {
     // 重建表格以刷新描述
     InitTableDI();
