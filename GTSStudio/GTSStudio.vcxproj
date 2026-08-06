@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GtsCore\ControllerData.h" />
+    <ClInclude Include="..\GtsCore\CoordData.h" />
     <QtMoc Include="Widget\CoordWidget.h" />
     <QtMoc Include="..\GtsCore\GtsAxisMgr.h" />
     <QtMoc Include="..\GtsCore\GtsBoardMgr.h" />

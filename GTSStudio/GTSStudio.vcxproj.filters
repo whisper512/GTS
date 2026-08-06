@@ -4,6 +4,9 @@
     <ClInclude Include="..\GtsCore\ControllerData.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="..\GtsCore\CoordData.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
