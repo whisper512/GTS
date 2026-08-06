@@ -154,7 +154,6 @@ void CoordWidget::initTable()
     tw->setItemDelegateForColumn(5, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(6, new DirDelegate(tw));
 
-    // 添加 4 条示例行
     auto addRow = [&](int seq, const QString& type, double x, double y, double f, double r, const QString& dir) {
         int row = tw->rowCount();
         tw->insertRow(row);
