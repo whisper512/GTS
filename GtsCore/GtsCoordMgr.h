@@ -8,14 +8,14 @@
 
 
 // ============================================================
-// CoordMgr ¡ª ¶àÖá×ø±êÏµ²å²¹ÔË¶¯¹ÜÀíÆ÷
-// Ö°Ôğ£º¹ÜÀí×ø±êÏµÖĞµÄ¶àÖáÁª¶¯²å²¹
-//   - ×ø±êÏµÅäÖÃ
-//   - Ö±Ïß²å²¹(2Öá/3Öá/4Öá)
-//   - Ô²»¡²å²¹(XY/YZ/ZX/3D)
-//   - ÂİĞı²å²¹
-//   - »º³åÇøÄÚ²Ù×÷ (IO/ÑÓÊ±/DA)
-//   - Æô¶¯/Í£Ö¹/×´Ì¬²éÑ¯
+// CoordMgr â€” å¤šè½´åæ ‡ç³»æ’è¡¥è¿åŠ¨ç®¡ç†å™¨
+// èŒè´£: ç®¡ç†åæ ‡ç³»ä¸­çš„å¤šè½´è”åŠ¨æ’è¡¥
+//   - åæ ‡ç³»é…ç½®
+//   - ç›´çº¿æ’è¡¥(2è½´/3è½´/4è½´)
+//   - åœ†å¼§æ’è¡¥(XY/YZ/ZX/3D)
+//   - èºæ—‹æ’è¡¥
+//   - ç¼“å†²åŒºå†…æ“ä½œ (IO/å»¶æ—¶/DA)
+//   - å¯åŠ¨/åœæ­¢/çŠ¶æ€æŸ¥è¯¢
 // ============================================================
 
 
@@ -31,123 +31,123 @@ public:
     ~CoordMgr();
 
 
-    // ÉèÖÃ×ø±êÏµ²ÎÊı
+    // è®¾ç½®åæ ‡ç³»å‚æ•°
     bool setCrdParams(short crd, const TCrdPrm& prm);
-    // »ñÈ¡×ø±êÏµ²ÎÊı
+    // è·å–åæ ‡ç³»å‚æ•°
     bool getCrdParams(short crd, TCrdPrm& prm) const;
-    // ÉèÖÃ×ø±êÏµÆ½»¬²ÎÊı
+    // è®¾ç½®åæ ‡ç³»å¹³æ»‘å‚æ•°
     bool setCrdSmooth(short crd, const TCrdSmooth& smooth);
-    // »ñÈ¡×ø±êÏµÆ½»¬²ÎÊı
+    // è·å–åæ ‡ç³»å¹³æ»‘å‚æ•°
     bool getCrdSmooth(short crd, TCrdSmooth& smooth) const;
-    // ÉèÖÃ×ø±êÏµ¼Ó¼ÓËÙ¶È
+    // è®¾ç½®åæ ‡ç³»åŠ åŠ é€Ÿåº¦
     bool setCrdJerk(short crd, double jerkMax);
-    // »ñÈ¡×ø±êÏµ¼Ó¼ÓËÙ¶È
+    // è·å–åæ ‡ç³»åŠ åŠ é€Ÿåº¦
     double getCrdJerk(short crd) const;
-    // ÉèÖÃ×ø±êÏµÓ³Éä»ùÖá
+    // è®¾ç½®åæ ‡ç³»æ˜ å°„åŸºè½´
     bool setCrdMapBase(short crd, short base);
-    // »ñÈ¡×ø±êÏµÓ³Éä»ùÖá
+    // è·å–åæ ‡ç³»æ˜ å°„åŸºè½´
     short getCrdMapBase(short crd) const;
-    // ÉèÖÃÔ²»¡ÔÊĞíÎó²î
+    // è®¾ç½®åœ†å¼§å…è®¸è¯¯å·®
     bool setArcAllowError(short crd, double error);
-    // ÉèÖÃ×ø±êÏµÍ£Ö¹¼õËÙ¶È
+    // è®¾ç½®åæ ‡ç³»åœæ­¢å‡é€Ÿåº¦
     bool setCrdStopDecel(short crd, double decSmooth, double decAbrupt);
-    // »ñÈ¡×ø±êÏµÍ£Ö¹¼õËÙ¶È
+    // è·å–åæ ‡ç³»åœæ­¢å‡é€Ÿåº¦
     bool getCrdStopDecel(short crd, double& decSmooth, double& decAbrupt) const;
-    // 2D Ö±Ïß²å²¹ (XY)
+    // 2D ç›´çº¿æ’è¡¥ (XY)
     bool lineXY(short crd, long x, long y, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // 3D Ö±Ïß²å²¹ (XYZ)
+    // 3D ç›´çº¿æ’è¡¥ (XYZ)
     bool lineXYZ(short crd, long x, long y, long z, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // 4D Ö±Ïß²å²¹ (XYZA)
+    // 4D ç›´çº¿æ’è¡¥ (XYZA)
     bool lineXYZA(short crd, long x, long y, long z, long a, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // 2D Ö±Ïß²å²¹ - G0 ¿ìËÙ¶¨Î»Ä£Ê½
+    // 2D ç›´çº¿æ’è¡¥ - G0 å¿«é€Ÿå®šä½æ¨¡å¼
     bool lineXYG0(short crd, long x, long y, double synVel, double synAcc, short fifo = 0);
-    // 3D Ö±Ïß²å²¹ - G0 ¿ìËÙ¶¨Î»Ä£Ê½
+    // 3D ç›´çº¿æ’è¡¥ - G0 å¿«é€Ÿå®šä½æ¨¡å¼
     bool lineXYZG0(short crd, long x, long y, long z, double synVel, double synAcc, short fifo = 0);
-    // 4D Ö±Ïß²å²¹ - G0 ¿ìËÙ¶¨Î»Ä£Ê½
+    // 4D ç›´çº¿æ’è¡¥ - G0 å¿«é€Ÿå®šä½æ¨¡å¼
     bool lineXYZAG0(short crd, long x, long y, long z, long a, double synVel, double synAcc, short fifo = 0);
-    // Í¨ÓÃ¶àÖáÖ±Ïß²å²¹ (XYZACUVW)
+    // é€šç”¨å¤šè½´ç›´çº¿æ’è¡¥ (XYZACUVW)
     bool lineXYZACUVW(short crd, long* pPos, short posMask, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // XY Æ½ÃæÔ²»¡ - °ë¾¶Ä£Ê½
+    // XY å¹³é¢åœ†å¼§ - åŠå¾„æ¨¡å¼
     bool arcXYByRadius(short crd, long x, long y, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // XY Æ½ÃæÔ²»¡ - Ô²ĞÄÄ£Ê½
+    // XY å¹³é¢åœ†å¼§ - åœ†å¿ƒæ¨¡å¼
     bool arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // YZ Æ½ÃæÔ²»¡ - °ë¾¶Ä£Ê½
+    // YZ å¹³é¢åœ†å¼§ - åŠå¾„æ¨¡å¼
     bool arcYZByRadius(short crd, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // YZ Æ½ÃæÔ²»¡ - Ô²ĞÄÄ£Ê½
+    // YZ å¹³é¢åœ†å¼§ - åœ†å¿ƒæ¨¡å¼
     bool arcYZByCenter(short crd, long y, long z, double yCenter, double zCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // ZX Æ½ÃæÔ²»¡ - °ë¾¶Ä£Ê½
+    // ZX å¹³é¢åœ†å¼§ - åŠå¾„æ¨¡å¼
     bool arcZXByRadius(short crd, long z, long x, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // ZX Æ½ÃæÔ²»¡ - Ô²ĞÄÄ£Ê½
+    // ZX å¹³é¢åœ†å¼§ - åœ†å¿ƒæ¨¡å¼
     bool arcZXByCenter(short crd, long z, long x, double zCenter, double xCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // 3D ¿Õ¼äÔ²»¡ (XYZ)
+    // 3D ç©ºé—´åœ†å¼§ (XYZ)
     bool arcXYZ(short crd, long x, long y, long z, double interX, double interY, double interZ, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // XY Æ½ÃæÔ²»¡ + Z ÖáÂİĞı - °ë¾¶Ä£Ê½
+    // XY å¹³é¢åœ†å¼§ + Z è½´èºæ—‹ - åŠå¾„æ¨¡å¼
     bool helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // XY Æ½ÃæÔ²»¡ + Z ÖáÂİĞı - Ô²ĞÄÄ£Ê½
+    // XY å¹³é¢åœ†å¼§ + Z è½´èºæ—‹ - åœ†å¿ƒæ¨¡å¼
     bool helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // »º³åÇø IO ²Ù×÷
+    // ç¼“å†²åŒº IO æ“ä½œ
     bool bufIO(short crd, unsigned short doType, unsigned short doMask, unsigned short doValue, short fifo = 0);
-    // »º³åÇøÑÓÊ±
+    // ç¼“å†²åŒºå»¶æ—¶
     bool bufDelay(short crd, unsigned short delayTime, short fifo = 0);
-    // »º³åÇø DA Êä³ö
+    // ç¼“å†²åŒº DA è¾“å‡º
     bool bufDA(short crd, short chn, short daValue, short fifo = 0);
-    // »º³åÇøµ¥ÖáÒÆ¶¯
+    // ç¼“å†²åŒºå•è½´ç§»åŠ¨
     bool bufMove(short crd, short moveAxis, long pos, double vel, double acc, short modal, short fifo = 0);
-    // »º³åÇø³İÂÖÒÆ¶¯
+    // ç¼“å†²åŒºé½¿è½®ç§»åŠ¨
     bool bufGear(short crd, short gearAxis, long pos, short fifo = 0);
-    // »º³åÇøÍ£Ö¹
+    // ç¼“å†²åŒºåœæ­¢
     bool bufStop(short crd, long mask, long option, short fifo = 0);
-    // »º³åÇø Jog ÒÆ¶¯
+    // ç¼“å†²åŒº Jog ç§»åŠ¨
     bool bufMoveJog(short crd, short moveAxis, double vel, double acc, short modal, short fifo = 0);
-    // Æô¶¯²å²¹ÔË¶¯
+    // å¯åŠ¨æ’è¡¥è¿åŠ¨
     bool start(short mask, short option = 0);
-    // µ¥²½Æô¶¯²å²¹
+    // å•æ­¥å¯åŠ¨æ’è¡¥
     bool startStep(short mask, short option = 0);
-    // ÉèÖÃµ¥²½Ä£Ê½
+    // è®¾ç½®å•æ­¥æ¨¡å¼
     bool setStepMode(short mask, short option = 0);
-    // Çå³ı²å²¹»º³åÇø
+    // æ¸…é™¤æ’è¡¥ç¼“å†²åŒº
     bool clear(short crd, short fifo = 0);
-    // ²éÑ¯²å²¹ FIFO Ê£Óà¿Õ¼ä
+    // æŸ¥è¯¢æ’è¡¥ FIFO å‰©ä½™ç©ºé—´
     long freeSpace(short crd, short fifo = 0) const;
-    // ²éÑ¯²å²¹×´Ì¬
+    // æŸ¥è¯¢æ’è¡¥çŠ¶æ€
     bool status(short crd, short& running, long& segment, short fifo = 0) const;
-    // »ñÈ¡×ø±êÏµµ±Ç°Î»ÖÃ
+    // è·å–åæ ‡ç³»å½“å‰ä½ç½®
     bool getCrdPosition(short crd, double* pPos) const;
-    // »ñÈ¡×ø±êÏµµ±Ç°ËÙ¶È
+    // è·å–åæ ‡ç³»å½“å‰é€Ÿåº¦
     double getCrdVelocity(short crd) const;
-    // ÉèÖÃËÙ¶È±¶ÂÊ
+    // è®¾ç½®é€Ÿåº¦å€ç‡
     bool setOverride(short crd, double synVelRatio);
-    // ÉèÖÃËÙ¶È±¶ÂÊ (°æ±¾2)
+    // è®¾ç½®é€Ÿåº¦å€ç‡ (ç‰ˆæœ¬2)
     bool setOverride2(short crd, double synVelRatio);
-    // ÉèÖÃ×î´óËÙ¶È±¶ÂÊ (LA)
+    // è®¾ç½®æœ€å¤§é€Ÿåº¦å€ç‡ (LA)
     bool setMaxOverrideLA(double maxSynVelRatio);
-    // ÉèÖÃÓÃ»§¶ÎºÅ
+    // è®¾ç½®ç”¨æˆ·æ®µå·
     bool setUserSegment(short crd, long segNum, short fifo = 0);
-    // »ñÈ¡ÓÃ»§¶ÎºÅ
+    // è·å–ç”¨æˆ·æ®µå·
     long getUserSegment(short crd, short fifo = 0) const;
-    // »ñÈ¡Ê£Óà¶ÎÊı
+    // è·å–å‰©ä½™æ®µæ•°
     long getRemainingSegment(short crd, short fifo = 0) const;
-    // ÉèÖÃ»º³åÇøÄ£Ê½
+    // è®¾ç½®ç¼“å†²åŒºæ¨¡å¼
     bool setBufferMode(short crd, short bufferMode, short fifo = 0);
-    // »ñÈ¡»º³åÇøÄ£Ê½
+    // è·å–ç¼“å†²åŒºæ¨¡å¼
     short getBufferMode(short crd, short fifo = 0) const;
-    // ¿ìËÙÖ±Ïß²å²¹ (×î³£ÓÃ£ºXY ÒÆ¶¯µ½Ö¸¶¨Î»ÖÃ)
+    // å¿«é€Ÿç›´çº¿æ’è¡¥ (æœ€å¸¸ç”¨: XY ç§»åŠ¨åˆ°æŒ‡å®šä½ç½®)
     bool moveToXY(short crd, long x, long y, double vel, double acc);
-    // Í£Ö¹²å²¹ÔË¶¯
+    // åœæ­¢æ’è¡¥è¿åŠ¨
     bool stop(short crd, long option = 0);
-    // ×ø±êÏµºÅÊÇ·ñÓĞĞ§
+    // åæ ‡ç³»å·æ˜¯å¦æœ‰æ•ˆ
     bool isValidCrd(short crd) const;
-    // »ñÈ¡×îºóÒ»´Î´íÎóÂë
+    // è·å–æœ€åä¸€æ¬¡é”™è¯¯ç 
     short lastError() const { return m_lastError; }
-    // »ñÈ¡×îºóÒ»´Î´íÎóÃèÊö
+    // è·å–æœ€åä¸€æ¬¡é”™è¯¯æè¿°
     QString lastErrorString() const;
 
 signals:
-    // ²å²¹ÔË¶¯Íê³É (×ø±êÏµºÅ)
+    // æ’è¡¥è¿åŠ¨å®Œæˆ (åæ ‡ç³»å·)
     void interpolationDone(short crd);
-    // ·¢Éú´íÎó (×ø±êÏµºÅ, ´íÎóÂë, ÃèÊö)
+    // å‘ç”Ÿé”™è¯¯ (åæ ‡ç³»å·, é”™è¯¯ç , æè¿°)
     void errorOccurred(short crd, short errorCode, const QString& errorMsg);
-    // ÈÕÖ¾ÏûÏ¢
+    // æ—¥å¿—æ¶ˆæ¯
     void logMessage(const QString& message, QColor color = Qt::black, const QString& source = "Gts");
 
 };

@@ -82,9 +82,11 @@
     <QtMoc Include="..\GtsCore\GtsMotionMgr.h">
       <Filter>Header Files\Core</Filter>
     </QtMoc>
-    <QtMoc Include="..\GtsCore\GtsCoordMgr.h" />
     <QtMoc Include="Widget\CoordWidget.h">
       <Filter>Header Files\Widget</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsCoordMgr.h">
+      <Filter>Header Files\Core</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -133,9 +135,11 @@
     <ClCompile Include="..\GtsCore\GtsMotionMgr.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\GtsCore\GtsCoordMgr.cpp" />
     <ClCompile Include="Widget\CoordWidget.cpp">
       <Filter>Source Files\Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsCoordMgr.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
