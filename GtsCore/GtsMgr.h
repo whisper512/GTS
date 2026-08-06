@@ -10,7 +10,7 @@
 #include "GtsBoardMgr.h"
 #include "GtsAxisMgr.h"
 #include "GtsMotionMgr.h"
-#include "GtsInterpolationMgr.h"
+#include "GtsCoordMgr.h"
 #include "GtsIOMgr.h"
 #include "GtsFeedbackMgr.h"
 #include "GtsConfigMgr.h"
@@ -44,7 +44,7 @@ private:
     std::unique_ptr<BoardMgr> m_boardMgr;
     std::unique_ptr<AxisMgr> m_axisMgr;
     std::unique_ptr<MotionMgr> m_motionMgr;
-    std::unique_ptr<InterpolationMgr> m_interpolationMgr;
+    std::unique_ptr<CoordMgr> m_coordMgr;
     std::unique_ptr<IOMgr> m_ioMgr;
     std::unique_ptr<ConfigMgr> m_configMgr;
     std::unique_ptr<FeedbackMgr> m_feedbackMgr;
@@ -60,7 +60,7 @@ public:
     // 运动管理器
     MotionMgr* motionMgr() const { return m_motionMgr.get(); }
     // 插补管理器
-    InterpolationMgr* interpolationMgr() const { return m_interpolationMgr.get(); }
+    CoordMgr* coordMgr() const { return m_coordMgr.get(); }
     // IO管理器
     IOMgr* ioMgr() const { return m_ioMgr.get(); }
     // 写 DO 值（自动处理电平反转）

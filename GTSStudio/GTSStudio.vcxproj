@@ -119,7 +119,7 @@
     <QtMoc Include="..\GtsCore\GtsBoardMgr.h" />
     <QtMoc Include="..\GtsCore\GtsConfigMgr.h" />
     <QtMoc Include="..\GtsCore\GtsFeedbackMgr.h" />
-    <QtMoc Include="..\GtsCore\GtsInterpolationMgr.h" />
+    <QtMoc Include="..\GtsCore\GtsCoordMgr.h" />
     <QtMoc Include="..\GtsCore\GtsIOMgr.h" />
     <QtMoc Include="..\GtsCore\GtsMgr.h" />
     <QtMoc Include="..\GtsCore\GtsMotionMgr.h" />
@@ -136,7 +136,7 @@
     <ClCompile Include="..\GtsCore\GtsBoardMgr.cpp" />
     <ClCompile Include="..\GtsCore\GtsConfigMgr.cpp" />
     <ClCompile Include="..\GtsCore\GtsFeedbackMgr.cpp" />
-    <ClCompile Include="..\GtsCore\GtsInterpolationMgr.cpp" />
+    <ClCompile Include="..\GtsCore\GtsCoordMgr.cpp" />
     <ClCompile Include="..\GtsCore\GtsIOMgr.cpp" />
     <ClCompile Include="..\GtsCore\GtsMgr.cpp" />
     <ClCompile Include="..\GtsCore\GtsMotionMgr.cpp" />

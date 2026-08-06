@@ -133,7 +133,7 @@ void GTSControllerWidget::InitMgrSignalAndSlotConnect()
     connect(m_pTotalMgr->motionMgr(), &MotionMgr::errorOccurred, this, errorHandler);
     connect(m_pTotalMgr->configMgr() , &ConfigMgr::errorOccurred, this, errorHandler);
     connect(m_pTotalMgr->feedbackMgr(), &FeedbackMgr::errorOccurred, this, errorHandler);
-    connect(m_pTotalMgr->interpolationMgr(), &InterpolationMgr::errorOccurred, this, errorHandler);
+    connect(m_pTotalMgr->coordMgr(), &CoordMgr::errorOccurred, this, errorHandler);
 }
 
 void GTSControllerWidget::showLog(const QString& log, QColor color)

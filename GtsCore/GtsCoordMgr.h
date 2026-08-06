@@ -1,5 +1,5 @@
-#ifndef INTERPOLATIONMGR_H
-#define INTERPOLATIONMGR_H
+ï»¿#ifndef COORDMGR_H
+#define COORDMGR_H
 
 #include <QObject>
 #include <QString>
@@ -8,7 +8,7 @@
 
 
 // ============================================================
-// InterpolationMgr ¡ª ¶àÖá²å²¹ÔË¶¯¹ÜÀíÆ÷
+// CoordMgr ¡ª ¶àÖá×ø±êÏµ²å²¹ÔË¶¯¹ÜÀíÆ÷
 // Ö°Ôğ£º¹ÜÀí×ø±êÏµÖĞµÄ¶àÖáÁª¶¯²å²¹
 //   - ×ø±êÏµÅäÖÃ
 //   - Ö±Ïß²å²¹(2Öá/3Öá/4Öá)
@@ -19,7 +19,7 @@
 // ============================================================
 
 
-class InterpolationMgr : public QObject {
+class CoordMgr : public QObject {
     Q_OBJECT
 
 private:
@@ -27,8 +27,8 @@ private:
     bool checkCrd(short crd) const;
 
 public:
-    explicit InterpolationMgr(QObject* parent = nullptr);
-    ~InterpolationMgr();
+    explicit CoordMgr(QObject* parent = nullptr);
+    ~CoordMgr();
 
 
     // ÉèÖÃ×ø±êÏµ²ÎÊı
@@ -152,4 +152,4 @@ signals:
 
 };
 
-#endif // INTERPOLATIONMGR_H
+#endif // COORDMGR_H

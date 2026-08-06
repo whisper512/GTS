@@ -1,11 +1,11 @@
-﻿#include "GtsInterpolationMgr.h"
+﻿#include "GtsCoordMgr.h"
 
-InterpolationMgr::InterpolationMgr(QObject* parent)
+CoordMgr::CoordMgr(QObject* parent)
     : QObject(parent)
 {
 }
 
-InterpolationMgr::~InterpolationMgr() 
+CoordMgr::~CoordMgr() 
 {
     // 停止所有坐标系
     for (short crd = 0; crd < 2; crd++) {
@@ -13,13 +13,13 @@ InterpolationMgr::~InterpolationMgr()
     }
 }
 
-bool InterpolationMgr::checkCrd(short crd) const 
+bool CoordMgr::checkCrd(short crd) const 
 {
     return (crd >= 0 && crd < CRD_MAX);
 }
 
 
-bool InterpolationMgr::setCrdParams(short crd, const TCrdPrm& prm) 
+bool CoordMgr::setCrdParams(short crd, const TCrdPrm& prm) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -33,14 +33,14 @@ bool InterpolationMgr::setCrdParams(short crd, const TCrdPrm& prm)
     return true;
 }
 
-bool InterpolationMgr::getCrdParams(short crd, TCrdPrm& prm) const 
+bool CoordMgr::getCrdParams(short crd, TCrdPrm& prm) const 
 {
     if (!checkCrd(crd)) return false;
     m_lastError = GtsHal::getCrdPrm(crd, &prm);
     return m_lastError == 0;
 }
 
-bool InterpolationMgr::setCrdSmooth(short crd, const TCrdSmooth& smooth) 
+bool CoordMgr::setCrdSmooth(short crd, const TCrdSmooth& smooth) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -54,14 +54,14 @@ bool InterpolationMgr::setCrdSmooth(short crd, const TCrdSmooth& smooth)
     return true;
 }
 
-bool InterpolationMgr::getCrdSmooth(short crd, TCrdSmooth& smooth) const 
+bool CoordMgr::getCrdSmooth(short crd, TCrdSmooth& smooth) const 
 {
     if (!checkCrd(crd)) return false;
     m_lastError = GtsHal::getCrdSmooth(crd, &smooth);
     return m_lastError == 0;
 }
 
-bool InterpolationMgr::setCrdJerk(short crd, double jerkMax) 
+bool CoordMgr::setCrdJerk(short crd, double jerkMax) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -75,7 +75,7 @@ bool InterpolationMgr::setCrdJerk(short crd, double jerkMax)
     return true;
 }
 
-double InterpolationMgr::getCrdJerk(short crd) const 
+double CoordMgr::getCrdJerk(short crd) const 
 {
     if (!checkCrd(crd)) return 0.0;
     double jerk = 0.0;
@@ -83,7 +83,7 @@ double InterpolationMgr::getCrdJerk(short crd) const
     return jerk;
 }
 
-bool InterpolationMgr::setCrdMapBase(short crd, short base) 
+bool CoordMgr::setCrdMapBase(short crd, short base) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -97,7 +97,7 @@ bool InterpolationMgr::setCrdMapBase(short crd, short base)
     return true;
 }
 
-short InterpolationMgr::getCrdMapBase(short crd) const 
+short CoordMgr::getCrdMapBase(short crd) const 
 {
     if (!checkCrd(crd)) return -1;
     short base = 0;
@@ -105,7 +105,7 @@ short InterpolationMgr::getCrdMapBase(short crd) const
     return base;
 }
 
-bool InterpolationMgr::setArcAllowError(short crd, double error) 
+bool CoordMgr::setArcAllowError(short crd, double error) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -119,7 +119,7 @@ bool InterpolationMgr::setArcAllowError(short crd, double error)
     return true;
 }
 
-bool InterpolationMgr::setCrdStopDecel(short crd, double decSmooth, double decAbrupt) 
+bool CoordMgr::setCrdStopDecel(short crd, double decSmooth, double decAbrupt) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -133,14 +133,14 @@ bool InterpolationMgr::setCrdStopDecel(short crd, double decSmooth, double decAb
     return true;
 }
 
-bool InterpolationMgr::getCrdStopDecel(short crd, double& decSmooth, double& decAbrupt) const 
+bool CoordMgr::getCrdStopDecel(short crd, double& decSmooth, double& decAbrupt) const 
 {
     if (!checkCrd(crd)) return false;
     m_lastError = GtsHal::getCrdStopDec(crd, &decSmooth, &decAbrupt);
     return m_lastError == 0;
 }
 
-bool InterpolationMgr::lineXY(short crd, long x, long y, double synVel, double synAcc,
+bool CoordMgr::lineXY(short crd, long x, long y, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -155,7 +155,7 @@ bool InterpolationMgr::lineXY(short crd, long x, long y, double synVel, double s
     return true;
 }
 
-bool InterpolationMgr::lineXYZ(short crd, long x, long y, long z, double synVel, double synAcc,
+bool CoordMgr::lineXYZ(short crd, long x, long y, long z, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -170,7 +170,7 @@ bool InterpolationMgr::lineXYZ(short crd, long x, long y, long z, double synVel,
     return true;
 }
 
-bool InterpolationMgr::lineXYZA(short crd, long x, long y, long z, long a,
+bool CoordMgr::lineXYZA(short crd, long x, long y, long z, long a,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -185,7 +185,7 @@ bool InterpolationMgr::lineXYZA(short crd, long x, long y, long z, long a,
     return true;
 }
 
-bool InterpolationMgr::lineXYG0(short crd, long x, long y, double synVel, double synAcc, short fifo) 
+bool CoordMgr::lineXYG0(short crd, long x, long y, double synVel, double synAcc, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -199,7 +199,7 @@ bool InterpolationMgr::lineXYG0(short crd, long x, long y, double synVel, double
     return true;
 }
 
-bool InterpolationMgr::lineXYZG0(short crd, long x, long y, long z, double synVel, double synAcc, short fifo) 
+bool CoordMgr::lineXYZG0(short crd, long x, long y, long z, double synVel, double synAcc, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -213,7 +213,7 @@ bool InterpolationMgr::lineXYZG0(short crd, long x, long y, long z, double synVe
     return true;
 }
 
-bool InterpolationMgr::lineXYZAG0(short crd, long x, long y, long z, long a,
+bool CoordMgr::lineXYZAG0(short crd, long x, long y, long z, long a,
     double synVel, double synAcc, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -228,7 +228,7 @@ bool InterpolationMgr::lineXYZAG0(short crd, long x, long y, long z, long a,
     return true;
 }
 
-bool InterpolationMgr::lineXYZACUVW(short crd, long* pPos, short posMask,
+bool CoordMgr::lineXYZACUVW(short crd, long* pPos, short posMask,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -243,7 +243,7 @@ bool InterpolationMgr::lineXYZACUVW(short crd, long* pPos, short posMask,
     return true;
 }
 
-bool InterpolationMgr::arcXYByRadius(short crd, long x, long y, double radius, short circleDir,
+bool CoordMgr::arcXYByRadius(short crd, long x, long y, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -258,7 +258,7 @@ bool InterpolationMgr::arcXYByRadius(short crd, long x, long y, double radius, s
     return true;
 }
 
-bool InterpolationMgr::arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter,
+bool CoordMgr::arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -274,7 +274,7 @@ bool InterpolationMgr::arcXYByCenter(short crd, long x, long y, double xCenter, 
     return true;
 }
 
-bool InterpolationMgr::arcYZByRadius(short crd, long y, long z, double radius, short circleDir,
+bool CoordMgr::arcYZByRadius(short crd, long y, long z, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -289,7 +289,7 @@ bool InterpolationMgr::arcYZByRadius(short crd, long y, long z, double radius, s
     return true;
 }
 
-bool InterpolationMgr::arcYZByCenter(short crd, long y, long z, double yCenter, double zCenter,
+bool CoordMgr::arcYZByCenter(short crd, long y, long z, double yCenter, double zCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -305,7 +305,7 @@ bool InterpolationMgr::arcYZByCenter(short crd, long y, long z, double yCenter, 
     return true;
 }
 
-bool InterpolationMgr::arcZXByRadius(short crd, long z, long x, double radius, short circleDir,
+bool CoordMgr::arcZXByRadius(short crd, long z, long x, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -320,7 +320,7 @@ bool InterpolationMgr::arcZXByRadius(short crd, long z, long x, double radius, s
     return true;
 }
 
-bool InterpolationMgr::arcZXByCenter(short crd, long z, long x, double zCenter, double xCenter,
+bool CoordMgr::arcZXByCenter(short crd, long z, long x, double zCenter, double xCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -336,7 +336,7 @@ bool InterpolationMgr::arcZXByCenter(short crd, long z, long x, double zCenter, 
     return true;
 }
 
-bool InterpolationMgr::arcXYZ(short crd, long x, long y, long z,
+bool CoordMgr::arcXYZ(short crd, long x, long y, long z,
     double interX, double interY, double interZ,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
@@ -352,7 +352,7 @@ bool InterpolationMgr::arcXYZ(short crd, long x, long y, long z,
     return true;
 }
 
-bool InterpolationMgr::helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir,
+bool CoordMgr::helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -367,7 +367,7 @@ bool InterpolationMgr::helixXYRZ(short crd, long x, long y, long z, double radiu
     return true;
 }
 
-bool InterpolationMgr::helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter,
+bool CoordMgr::helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -383,7 +383,7 @@ bool InterpolationMgr::helixXYCZ(short crd, long x, long y, long z, double xCent
     return true;
 }
 
-bool InterpolationMgr::bufIO(short crd, unsigned short doType, unsigned short doMask,
+bool CoordMgr::bufIO(short crd, unsigned short doType, unsigned short doMask,
     unsigned short doValue, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -398,7 +398,7 @@ bool InterpolationMgr::bufIO(short crd, unsigned short doType, unsigned short do
     return true;
 }
 
-bool InterpolationMgr::bufDelay(short crd, unsigned short delayTime, short fifo) 
+bool CoordMgr::bufDelay(short crd, unsigned short delayTime, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -412,7 +412,7 @@ bool InterpolationMgr::bufDelay(short crd, unsigned short delayTime, short fifo)
     return true;
 }
 
-bool InterpolationMgr::bufDA(short crd, short chn, short daValue, short fifo) 
+bool CoordMgr::bufDA(short crd, short chn, short daValue, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -426,7 +426,7 @@ bool InterpolationMgr::bufDA(short crd, short chn, short daValue, short fifo)
     return true;
 }
 
-bool InterpolationMgr::bufMove(short crd, short moveAxis, long pos, double vel, double acc,
+bool CoordMgr::bufMove(short crd, short moveAxis, long pos, double vel, double acc,
     short modal, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -441,7 +441,7 @@ bool InterpolationMgr::bufMove(short crd, short moveAxis, long pos, double vel, 
     return true;
 }
 
-bool InterpolationMgr::bufGear(short crd, short gearAxis, long pos, short fifo) 
+bool CoordMgr::bufGear(short crd, short gearAxis, long pos, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -455,7 +455,7 @@ bool InterpolationMgr::bufGear(short crd, short gearAxis, long pos, short fifo)
     return true;
 }
 
-bool InterpolationMgr::bufStop(short crd, long mask, long option, short fifo) 
+bool CoordMgr::bufStop(short crd, long mask, long option, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -469,7 +469,7 @@ bool InterpolationMgr::bufStop(short crd, long mask, long option, short fifo)
     return true;
 }
 
-bool InterpolationMgr::bufMoveJog(short crd, short moveAxis, double vel, double acc,
+bool CoordMgr::bufMoveJog(short crd, short moveAxis, double vel, double acc,
     short modal, short fifo) 
 {
     if (!checkCrd(crd)) {
@@ -484,7 +484,7 @@ bool InterpolationMgr::bufMoveJog(short crd, short moveAxis, double vel, double 
     return true;
 }
 
-bool InterpolationMgr::start(short mask, short option) 
+bool CoordMgr::start(short mask, short option) 
 {
     m_lastError = GtsHal::crdStart(mask, option);
     if (m_lastError != 0) {
@@ -494,7 +494,7 @@ bool InterpolationMgr::start(short mask, short option)
     return true;
 }
 
-bool InterpolationMgr::startStep(short mask, short option) 
+bool CoordMgr::startStep(short mask, short option) 
 {
     m_lastError = GtsHal::crdStartStep(mask, option);
     if (m_lastError != 0) {
@@ -504,7 +504,7 @@ bool InterpolationMgr::startStep(short mask, short option)
     return true;
 }
 
-bool InterpolationMgr::setStepMode(short mask, short option) 
+bool CoordMgr::setStepMode(short mask, short option) 
 {
     m_lastError = GtsHal::crdStepMode(mask, option);
     if (m_lastError != 0) {
@@ -514,7 +514,7 @@ bool InterpolationMgr::setStepMode(short mask, short option)
     return true;
 }
 
-bool InterpolationMgr::clear(short crd, short fifo) 
+bool CoordMgr::clear(short crd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -528,7 +528,7 @@ bool InterpolationMgr::clear(short crd, short fifo)
     return true;
 }
 
-long InterpolationMgr::freeSpace(short crd, short fifo) const 
+long CoordMgr::freeSpace(short crd, short fifo) const 
 {
     if (!checkCrd(crd)) return -1;
     long space = 0;
@@ -536,21 +536,21 @@ long InterpolationMgr::freeSpace(short crd, short fifo) const
     return space;
 }
 
-bool InterpolationMgr::status(short crd, short& running, long& segment, short fifo) const 
+bool CoordMgr::status(short crd, short& running, long& segment, short fifo) const 
 {
     if (!checkCrd(crd)) return false;
     m_lastError = GtsHal::crdStatus(crd, &running, &segment, fifo);
     return m_lastError == 0;
 }
 
-bool InterpolationMgr::getCrdPosition(short crd, double* pPos) const 
+bool CoordMgr::getCrdPosition(short crd, double* pPos) const 
 {
     if (!checkCrd(crd)) return false;
     m_lastError = GtsHal::getCrdPos(crd, pPos);
     return m_lastError == 0;
 }
 
-double InterpolationMgr::getCrdVelocity(short crd) const 
+double CoordMgr::getCrdVelocity(short crd) const 
 {
     if (!checkCrd(crd)) return 0.0;
     double vel = 0.0;
@@ -558,7 +558,7 @@ double InterpolationMgr::getCrdVelocity(short crd) const
     return vel;
 }
 
-bool InterpolationMgr::setOverride(short crd, double synVelRatio) 
+bool CoordMgr::setOverride(short crd, double synVelRatio) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -572,7 +572,7 @@ bool InterpolationMgr::setOverride(short crd, double synVelRatio)
     return true;
 }
 
-bool InterpolationMgr::setOverride2(short crd, double synVelRatio) 
+bool CoordMgr::setOverride2(short crd, double synVelRatio) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -586,7 +586,7 @@ bool InterpolationMgr::setOverride2(short crd, double synVelRatio)
     return true;
 }
 
-bool InterpolationMgr::setMaxOverrideLA(double maxSynVelRatio) 
+bool CoordMgr::setMaxOverrideLA(double maxSynVelRatio) 
 {
     m_lastError = GtsHal::setMaxOverrideLA(maxSynVelRatio);
     if (m_lastError != 0) {
@@ -597,7 +597,7 @@ bool InterpolationMgr::setMaxOverrideLA(double maxSynVelRatio)
 }
 
 
-bool InterpolationMgr::setUserSegment(short crd, long segNum, short fifo) 
+bool CoordMgr::setUserSegment(short crd, long segNum, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -611,7 +611,7 @@ bool InterpolationMgr::setUserSegment(short crd, long segNum, short fifo)
     return true;
 }
 
-long InterpolationMgr::getUserSegment(short crd, short fifo) const 
+long CoordMgr::getUserSegment(short crd, short fifo) const 
 {
     if (!checkCrd(crd)) return -1;
     long seg = 0;
@@ -619,7 +619,7 @@ long InterpolationMgr::getUserSegment(short crd, short fifo) const
     return seg;
 }
 
-long InterpolationMgr::getRemainingSegment(short crd, short fifo) const 
+long CoordMgr::getRemainingSegment(short crd, short fifo) const 
 {
     if (!checkCrd(crd)) return -1;
     long seg = 0;
@@ -627,7 +627,7 @@ long InterpolationMgr::getRemainingSegment(short crd, short fifo) const
     return seg;
 }
 
-bool InterpolationMgr::setBufferMode(short crd, short bufferMode, short fifo) 
+bool CoordMgr::setBufferMode(short crd, short bufferMode, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -641,7 +641,7 @@ bool InterpolationMgr::setBufferMode(short crd, short bufferMode, short fifo)
     return true;
 }
 
-short InterpolationMgr::getBufferMode(short crd, short fifo) const 
+short CoordMgr::getBufferMode(short crd, short fifo) const 
 {
     if (!checkCrd(crd)) return -1;
     short mode = 0;
@@ -650,7 +650,7 @@ short InterpolationMgr::getBufferMode(short crd, short fifo) const
 }
 
 
-bool InterpolationMgr::moveToXY(short crd, long x, long y, double vel, double acc) 
+bool CoordMgr::moveToXY(short crd, long x, long y, double vel, double acc) 
 {
     // 快速直线移动：先清空缓冲区，添加直线段，启动
     if (!checkCrd(crd)) {
@@ -679,7 +679,7 @@ bool InterpolationMgr::moveToXY(short crd, long x, long y, double vel, double ac
     return true;
 }
 
-bool InterpolationMgr::stop(short crd, long option) 
+bool CoordMgr::stop(short crd, long option) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
@@ -694,7 +694,7 @@ bool InterpolationMgr::stop(short crd, long option)
     return true;
 }
 
-QString InterpolationMgr::lastErrorString() const 
+QString CoordMgr::lastErrorString() const 
 {
     return GtsErrorToString(m_lastError);
 }

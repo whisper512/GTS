@@ -14,7 +14,7 @@ GtsMgr::GtsMgr(QObject* parent)
     m_boardMgr = std::make_unique<BoardMgr>(this);
     m_axisMgr = std::make_unique<AxisMgr>(this);
     m_motionMgr = std::make_unique<MotionMgr>(this, this);
-    m_interpolationMgr = std::make_unique<InterpolationMgr>(this);
+    m_coordMgr = std::make_unique<CoordMgr>(this);
     m_ioMgr = std::make_unique<IOMgr>(this);
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
