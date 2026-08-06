@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <QWidget>
+#include <QGraphicsScene>
 #include "ui_CoordWidget.h"
 
 class GtsMgr;
@@ -17,6 +18,7 @@ public:
 private:
 	Ui::CCoordWidgetClass ui;
 	GtsMgr* m_gtsMgr = nullptr;
+	QGraphicsScene* m_scene = nullptr;
 
 private slots:
 };
