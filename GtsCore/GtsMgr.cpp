@@ -201,6 +201,23 @@ void GtsMgr::onRefreshTimeout()
     emit doUpdated(m_do);
 }
 
+void GtsMgr::setDOValue(const DO& doVal)
+{
+    if (!m_configMgr || !m_ioMgr) return;
+
+    auto applyInvert = [this](std::vector<int> dst, int baseIndex, int count) {
+        for (int i = 0; i < count && i < (int)dst.size(); ++i) {
+            if (m_configMgr->doInvertMap().value(baseIndex + i))
+                dst[i] ^= 1;
+        }
+        return dst;
+    };
+
+    m_ioMgr->setMotorEnableDO(applyInvert(doVal.servoOn, 0, 8));
+    m_ioMgr->setClearAlarmDO(applyInvert(doVal.almClear, 8, 8));
+    m_ioMgr->setGPO(applyInvert(doVal.GPO, 16, 16));
+}
+
 void GtsMgr::onErrorOccurred(short axis, short errorCode, const QString& errorMsg)
 {
     emit errorOccurred(axis, errorCode, errorMsg);

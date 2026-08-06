@@ -63,6 +63,8 @@ public:
     InterpolationMgr* interpolationMgr() const { return m_interpolationMgr.get(); }
     // IO管理器
     IOMgr* ioMgr() const { return m_ioMgr.get(); }
+    // 写 DO 值（自动处理电平反转）
+    void setDOValue(const DO& doVal);
     // 反馈管理器
     FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器

@@ -173,41 +173,18 @@ void IOWidget::onDOCellClicked(int row, int col)
 {
     if (col != 2) return;
     if (!m_gtsMgr) return;
-    IOMgr* ioMgr = m_gtsMgr->ioMgr();
-    if (!ioMgr) return;
     // 取反对应位
     if (row >= 0 && row < 8) {
-        // 伺服使能 (0~7)
         m_doState.servoOn[row] ^= 1;
-        auto hwVec = m_doState.servoOn;
-        for (int i = 0; i < (int)hwVec.size(); ++i) {
-            if (m_gtsMgr->configMgr()->doInvertMap().value(i))
-                hwVec[i] ^= 1;
-        }
-        ioMgr->setMotorEnableDO(hwVec);
     }
     else if (row >= 8 && row < 16) {
-        // 报警清除 (8~15)
-        int idx = row - 8;
-        m_doState.almClear[idx] ^= 1;
-        auto hwVec = m_doState.almClear;
-        for (int i = 0; i < (int)hwVec.size(); ++i) {
-            if (m_gtsMgr->configMgr()->doInvertMap().value(8 + i))
-                hwVec[i] ^= 1;
-        }
-        ioMgr->setClearAlarmDO(hwVec);
+        m_doState.almClear[row - 8] ^= 1;
     }
     else if (row >= 16 && row < 32) {
-        // 通用输出 (16~31)
-        int idx = row - 16;
-        m_doState.GPO[idx] ^= 1;
-        auto hwVec = m_doState.GPO;
-        for (int i = 0; i < (int)hwVec.size(); ++i) {
-            if (m_gtsMgr->configMgr()->doInvertMap().value(16 + i))
-                hwVec[i] ^= 1;
-        }
-        ioMgr->setGPO(hwVec);
+        m_doState.GPO[row - 16] ^= 1;
     }
+
+    m_gtsMgr->setDOValue(m_doState);
     // 刷新该行显示
     auto flat = m_doState.toFlatVector();
     QTableWidgetItem* item = ui.tableWidget_DO->item(row, 2);
