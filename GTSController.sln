@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.37012.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTSSimpleController", "GTSSimpleController\GTSSimpleController.vcxproj", "{04D6A4B8-7A1D-4C89-944A-B551E79BE241}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTSStudio", "GTSStudio\GTSStudio.vcxproj", "{04D6A4B8-7A1D-4C89-944A-B551E79BE241}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GTSControllerDemo", "GTSControllerDemo\GTSControllerDemo.vcxproj", "{0A657EE4-357A-4612-B65D-B75136B3ABF1}"
 EndProject
