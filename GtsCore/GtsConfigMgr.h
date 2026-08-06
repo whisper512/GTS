@@ -26,6 +26,8 @@ private:
     mutable short m_lastError = 0;
     QMap<int, QString> m_customDIDesc;
     QMap<int, QString> m_customDODesc;
+    QMap<int, bool> m_diInvert;
+    QMap<int, bool> m_doInvert;
     GtsMgr* m_gtsMgr = nullptr;
     AxisMgr* m_axisMgr = nullptr;
     AxisConfig* m_axisCfg = nullptr;
@@ -56,7 +58,10 @@ public:
 
     const QMap<int, QString>& customDIDescriptions() const { return m_customDIDesc; }
     const QMap<int, QString>& customDODescriptions() const { return m_customDODesc; }
+    const QMap<int, bool>& diInvertMap() const { return m_diInvert; }
+    const QMap<int, bool>& doInvertMap() const { return m_doInvert; }
     void setIODescription(int row, const QString& desc, bool isDI);
+    void setIOConfig(int row, const QString& desc, bool invert, bool isDI);
     QString getDIDescription(int row) const;
     QString getDODescription(int row) const;
 

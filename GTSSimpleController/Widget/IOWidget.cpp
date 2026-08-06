@@ -1,6 +1,10 @@
 ﻿#include <QTimer>
 #include <QStyledItemDelegate>
 #include <QInputDialog>
+#include <QCheckBox>
+#include <QDialogButtonBox>
+#include <QVBoxLayout>
+#include <QLabel>
 
 #include "IOWidget.h"
 #include "../../GtsCore/GtsMgr.h"
@@ -175,19 +179,34 @@ void IOWidget::onDOCellClicked(int row, int col)
     if (row >= 0 && row < 8) {
         // 伺服使能 (0~7)
         m_doState.servoOn[row] ^= 1;
-        ioMgr->setMotorEnableDO(m_doState.servoOn);
+        auto hwVec = m_doState.servoOn;
+        for (int i = 0; i < (int)hwVec.size(); ++i) {
+            if (m_gtsMgr->configMgr()->doInvertMap().value(i))
+                hwVec[i] ^= 1;
+        }
+        ioMgr->setMotorEnableDO(hwVec);
     }
     else if (row >= 8 && row < 16) {
         // 报警清除 (8~15)
         int idx = row - 8;
         m_doState.almClear[idx] ^= 1;
-        ioMgr->setClearAlarmDO(m_doState.almClear);
+        auto hwVec = m_doState.almClear;
+        for (int i = 0; i < (int)hwVec.size(); ++i) {
+            if (m_gtsMgr->configMgr()->doInvertMap().value(8 + i))
+                hwVec[i] ^= 1;
+        }
+        ioMgr->setClearAlarmDO(hwVec);
     }
     else if (row >= 16 && row < 32) {
         // 通用输出 (16~31)
         int idx = row - 16;
         m_doState.GPO[idx] ^= 1;
-        ioMgr->setGPO(m_doState.GPO);
+        auto hwVec = m_doState.GPO;
+        for (int i = 0; i < (int)hwVec.size(); ++i) {
+            if (m_gtsMgr->configMgr()->doInvertMap().value(16 + i))
+                hwVec[i] ^= 1;
+        }
+        ioMgr->setGPO(hwVec);
     }
     // 刷新该行显示
     auto flat = m_doState.toFlatVector();
@@ -228,20 +247,40 @@ void IOWidget::onDescriptionEdited(int row, bool isDI)
     QTableWidgetItem* item = table->item(row, 0);
     if (!item) return;
 
-    bool ok = false;
-    QString newText = QInputDialog::getText(
-        this,
-        QStringLiteral("编辑功能描述"),
-        QStringLiteral("请输入新的描述:"),
-        QLineEdit::Normal,
-        item->text(),
-        &ok);
+    // 查询当前反转状态
+    bool currentInvert = isDI
+        ? m_gtsMgr->configMgr()->diInvertMap().value(row, false)
+        : m_gtsMgr->configMgr()->doInvertMap().value(row, false);
 
-    if (!ok || newText.isEmpty() || newText == item->text())
+    // 构建自定义对话框
+    QDialog dlg(this);
+    dlg.setWindowTitle(QStringLiteral("编辑IO配置"));
+    auto* layout = new QVBoxLayout(&dlg);
+
+    auto* le = new QLineEdit(item->text(), &dlg);
+    layout->addWidget(new QLabel(QStringLiteral("功能描述:"), &dlg));
+    layout->addWidget(le);
+
+    auto* cb = new QCheckBox(QStringLiteral("反转电平"), &dlg);
+    cb->setChecked(currentInvert);
+    layout->addWidget(cb);
+
+    auto* bbox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dlg);
+    connect(bbox, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(bbox, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+    layout->addWidget(bbox);
+
+    if (dlg.exec() != QDialog::Accepted)
+        return;
+
+    QString newText = le->text().trimmed();
+    bool newInvert = cb->isChecked();
+
+    if (newText.isEmpty())
         return;
 
     item->setText(newText);
-    m_gtsMgr->configMgr()->setIODescription(row, newText, isDI);
+    m_gtsMgr->configMgr()->setIOConfig(row, newText, newInvert, isDI);
 }
 
 void IOWidget::onDOCellDoubleClicked(int row, int col)

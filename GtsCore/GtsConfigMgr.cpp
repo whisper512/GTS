@@ -392,8 +392,23 @@ void ConfigMgr::loadIODescriptions()
 
     m_customDIDesc.clear();
     m_customDODesc.clear();
+    m_diInvert.clear();
+    m_doInvert.clear();
     loadMap(QStringLiteral("di"), m_customDIDesc);
     loadMap(QStringLiteral("do"), m_customDODesc);
+
+    // 加载电平反转映射
+    auto loadInvertMap = [&](const QString& key, QMap<int, bool>& map) {
+        QJsonObject obj = root.value(key).toObject();
+        for (auto it = obj.begin(); it != obj.end(); ++it) {
+            bool ok = false;
+            int r = it.key().toInt(&ok);
+            if (ok && r >= 0 && it.value().isBool())
+                map[r] = it.value().toBool();
+        }
+    };
+    loadInvertMap(QStringLiteral("diInvert"), m_diInvert);
+    loadInvertMap(QStringLiteral("doInvert"), m_doInvert);
     emit configChanged();
 }
 
@@ -407,10 +422,18 @@ void ConfigMgr::saveIODescriptions() const
     for (auto it = m_customDODesc.begin(); it != m_customDODesc.end(); ++it)
         doObj[QString::number(it.key())] = it.value();
 
+    QJsonObject diInv, doInv;
+    for (auto it = m_diInvert.begin(); it != m_diInvert.end(); ++it)
+        diInv[QString::number(it.key())] = it.value();
+    for (auto it = m_doInvert.begin(); it != m_doInvert.end(); ++it)
+        doInv[QString::number(it.key())] = it.value();
+
     QJsonObject root;
-    root[QStringLiteral("version")] = 1;
+    root[QStringLiteral("version")] = 2;
     root[QStringLiteral("di")] = diObj;
     root[QStringLiteral("do")] = doObj;
+    root[QStringLiteral("diInvert")] = diInv;
+    root[QStringLiteral("doInvert")] = doInv;
 
     QDir().mkpath(QFileInfo(ioDescriptionPath()).absolutePath());
 
@@ -435,6 +458,31 @@ void ConfigMgr::setIODescription(int row, const QString& desc, bool isDI)
             m_customDODesc.remove(row);
         else
             m_customDODesc[row] = desc;
+    }
+    saveIODescriptions();
+}
+
+void ConfigMgr::setIOConfig(int row, const QString& desc, bool invert, bool isDI)
+{
+    if (isDI) {
+        if (desc == defaultDIDescription(row))
+            m_customDIDesc.remove(row);
+        else
+            m_customDIDesc[row] = desc;
+        if (invert)
+            m_diInvert[row] = true;
+        else
+            m_diInvert.remove(row);
+    }
+    else {
+        if (desc == defaultDODescription(row))
+            m_customDODesc.remove(row);
+        else
+            m_customDODesc[row] = desc;
+        if (invert)
+            m_doInvert[row] = true;
+        else
+            m_doInvert.remove(row);
     }
     saveIODescriptions();
 }

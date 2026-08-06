@@ -2,7 +2,6 @@
 
 - [x] 完成HAL抽象层
 - [x] lib改为相对位置
-- [ ] 样式表改造界面
 
 # 板卡界面
 
@@ -33,6 +32,7 @@
 - [x] IO 界面
 - [x] 表格状态不明显
 - [x] 配置界面编码器当量好像无法读取
+- [ ] GPI 电平极性设置
 
 # 编码器
 
@@ -58,9 +58,7 @@
 - [x] 回零修改和测试
 - [x] 如果设置编码器来源为脉冲计数源是不是也可以读取到编码器数据
 - [x] 当量计算函数
-- [ ] 界面因为数据变化而变化，需要占位固定
 - [x] 单位同步
-- [ ] 加入轴激活参数,axiscount也根据这个计算
 
 # 其他
 
@@ -77,4 +75,3 @@
 - [x] 耦合在 Manager 层 — MotionMgr::startTrapMotion / startJogMotion 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。(2026-07-03 已修复，移除 QMessageBox 依赖)
 - [x] 循环 Trap 忙轮询阻塞主线程 — MotionMgr::startTrapMotion 中 for + processEvents 忙等，无取消/超时机制。方案：onTrapCycleStep 递归自调度（waitMotionDone + QMetaObject::invokeMethod Qt::QueuedConnection）+ cancelTrapCycle。(2026-07-03 已修复)
 
-# GTS400 复杂插补类封装

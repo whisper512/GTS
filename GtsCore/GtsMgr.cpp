@@ -164,12 +164,40 @@ void GtsMgr::onRefreshTimeout()
     m_ioMgr->getGPI(m_di.GPI);
     m_ioMgr->getArriveDI(m_di.arrive);
     m_ioMgr->getHandwheelDI(m_di.handwheel);
+
+    // 应用 DI 电平反转
+    auto applyDiInvert = [this](std::vector<int>& vec, int baseIndex) {
+        if (!m_configMgr) return;
+        for (int i = 0; i < (int)vec.size(); ++i) {
+            if (m_configMgr->diInvertMap().value(baseIndex + i))
+                vec[i] ^= 1;
+        }
+    };
+    applyDiInvert(m_di.posLimit, 0);
+    applyDiInvert(m_di.negLimit, 8);
+    applyDiInvert(m_di.alarm, 16);
+    applyDiInvert(m_di.home, 24);
+    applyDiInvert(m_di.GPI, 32);
+    applyDiInvert(m_di.arrive, 48);
+    applyDiInvert(m_di.handwheel, 56);
     emit diUpdated(m_di);
 
     // 读取DO状态信息
     m_ioMgr->getMotorEnableDO(m_do.servoOn);
     m_ioMgr->getGPO(m_do.GPO);
     m_ioMgr->getClearAlarmDO(m_do.almClear);
+
+    // 应用 DO 电平反转 (显示用)
+    auto applyDoInvert = [this](std::vector<int>& vec, int baseIndex) {
+        if (!m_configMgr) return;
+        for (int i = 0; i < (int)vec.size(); ++i) {
+            if (m_configMgr->doInvertMap().value(baseIndex + i))
+                vec[i] ^= 1;
+        }
+    };
+    applyDoInvert(m_do.servoOn, 0);
+    applyDoInvert(m_do.almClear, 8);
+    applyDoInvert(m_do.GPO, 16);
     emit doUpdated(m_do);
 }
 
