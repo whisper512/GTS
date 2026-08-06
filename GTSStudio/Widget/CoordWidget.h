@@ -20,5 +20,7 @@ private:
 	GtsMgr* m_gtsMgr = nullptr;
 	QGraphicsScene* m_scene = nullptr;
 
+	void initTable();
+
 private slots:
 };
