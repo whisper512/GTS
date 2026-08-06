@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GtsCore\ControllerData.h" />
+    <QtMoc Include="Widget\CoordWidget.h" />
     <QtMoc Include="..\GtsCore\GtsAxisMgr.h" />
     <QtMoc Include="..\GtsCore\GtsBoardMgr.h" />
     <QtMoc Include="..\GtsCore\GtsConfigMgr.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Widget\AxisWidget.cpp" />
     <ClCompile Include="Widget\BoardWidget.cpp" />
     <ClCompile Include="Widget\ConfigWidget.cpp" />
+    <ClCompile Include="Widget\CoordWidget.cpp" />
     <ClCompile Include="Widget\GTSControllerWidget.cpp" />
     <ClCompile Include="Widget\IOWidget.cpp" />
     <ClCompile Include="Widget\MasterControlWidget.cpp" />
@@ -153,6 +155,7 @@
     <QtUic Include="Widget\AxisWidget.ui" />
     <QtUic Include="Widget\BoradWidget.ui" />
     <QtUic Include="Widget\ConfigWidget.ui" />
+    <QtUic Include="Widget\CoordWidget.ui" />
     <QtUic Include="Widget\GTSControllerWidget.ui" />
     <QtUic Include="Widget\IOWidget.ui" />
     <QtUic Include="Widget\MasterControlWidget.ui" />

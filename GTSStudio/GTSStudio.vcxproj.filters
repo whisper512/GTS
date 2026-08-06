@@ -70,9 +70,6 @@
     <QtMoc Include="..\GtsCore\GtsFeedbackMgr.h">
       <Filter>Header Files\Core</Filter>
     </QtMoc>
-    <QtMoc Include="..\GtsCore\GtsCoordMgr.h">
-      <Filter>Header Files\Core</Filter>
-    </QtMoc>
     <QtMoc Include="..\GtsCore\GtsIOMgr.h">
       <Filter>Header Files\Core</Filter>
     </QtMoc>
@@ -81,6 +78,10 @@
     </QtMoc>
     <QtMoc Include="..\GtsCore\GtsMotionMgr.h">
       <Filter>Header Files\Core</Filter>
+    </QtMoc>
+    <QtMoc Include="..\GtsCore\GtsCoordMgr.h" />
+    <QtMoc Include="Widget\CoordWidget.h">
+      <Filter>Header Files\Widget</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +121,6 @@
     <ClCompile Include="..\GtsCore\GtsFeedbackMgr.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\GtsCore\GtsCoordMgr.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\GtsCore\GtsIOMgr.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
@@ -131,6 +129,10 @@
     </ClCompile>
     <ClCompile Include="..\GtsCore\GtsMotionMgr.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\GtsCore\GtsCoordMgr.cpp" />
+    <ClCompile Include="Widget\CoordWidget.cpp">
+      <Filter>Source Files\Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +155,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="Widget\MasterControlWidget.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Widget\CoordWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

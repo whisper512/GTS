@@ -8,6 +8,7 @@
 #include "BoardWidget.h"
 #include "MasterControlWidget.h"
 #include "AxisWidget.h"
+#include "CoordWidget.h"
 #include "IOWidget.h"
 #include "ConfigWidget.h"
 #include "OthersWidget.h"
@@ -26,6 +27,7 @@ private:
     BoardWidget* m_pBoardWidget = nullptr;                 // 板卡
     MasterControlWidget* m_pMasterControlWidget = nullptr; // 主控
     AxisWidget* m_pAxisWidget = nullptr;                   // 单轴
+    CoordWidget* m_pCoordWidget = nullptr;                 // 插补
     IOWidget* m_pIOWidget = nullptr;                       // IO
     ConfigWidget* m_pConfigWidget = nullptr;               // 设置
     QWidget* m_pOthersWidget = nullptr;                     // 其他

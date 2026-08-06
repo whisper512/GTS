@@ -38,6 +38,11 @@ GTSControllerWidget::~GTSControllerWidget()
         delete m_pAxisWidget;
         m_pAxisWidget = nullptr;
     }
+    if (m_pCoordWidget)
+    {
+        delete m_pCoordWidget;
+        m_pCoordWidget = nullptr;
+    }
     if (m_pIOWidget)
     {
         delete m_pIOWidget;
@@ -83,6 +88,9 @@ void GTSControllerWidget::InitUI()
     m_pAxisWidget = new AxisWidget(this);
     m_pAxisWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pAxisWidget);
+    m_pCoordWidget = new CoordWidget(this);
+    m_pCoordWidget->setGtsTotalMgr(this->m_pTotalMgr);
+    ui.stackedWidget->addWidget(m_pCoordWidget);
     m_pIOWidget = new IOWidget(this);
     m_pIOWidget->setGtsTotalMgr(this->m_pTotalMgr);
     ui.stackedWidget->addWidget(m_pIOWidget);
@@ -100,6 +108,7 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
     ui.toolButton_Board->setCheckable(true);
     ui.toolButton_masterControl->setCheckable(true);
     ui.toolButton_Axis->setCheckable(true);
+    ui.toolButton_Coord->setCheckable(true);
     ui.toolButton_IO->setCheckable(true);
     ui.toolButton_Config->setCheckable(true);
     ui.toolButton_Others->setCheckable(true);
@@ -107,9 +116,10 @@ void GTSControllerWidget::InitUISignalAndSlotConnect()
     m_pBtnGroup->addButton(ui.toolButton_Board, 0);
     m_pBtnGroup->addButton(ui.toolButton_masterControl, 1);
     m_pBtnGroup->addButton(ui.toolButton_Axis, 2);
-    m_pBtnGroup->addButton(ui.toolButton_IO, 3);
-    m_pBtnGroup->addButton(ui.toolButton_Config, 4);
-    m_pBtnGroup->addButton(ui.toolButton_Others, 5);
+    m_pBtnGroup->addButton(ui.toolButton_Coord, 3);
+    m_pBtnGroup->addButton(ui.toolButton_IO, 4);
+    m_pBtnGroup->addButton(ui.toolButton_Config, 5);
+    m_pBtnGroup->addButton(ui.toolButton_Others, 6);
 
     ui.toolButton_Board->setChecked(true);
     connect(m_pBtnGroup, &QButtonGroup::idClicked, this, &GTSControllerWidget::OnBtnClicked);
