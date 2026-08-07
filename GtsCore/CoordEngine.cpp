@@ -107,3 +107,7 @@ void CoordEngine::executeSegment(int index)
 
     emit segmentStarted(index);
 }
+
+void CoordEngine::advance()
+{
+}
