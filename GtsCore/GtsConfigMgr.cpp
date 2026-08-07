@@ -39,7 +39,7 @@ void ConfigMgr::injectDependencies(AxisConfig* cfg, GtsMgr* totalMgr, AxisMgr* a
 
 QString ConfigMgr::axisConfigPath() const
 {
-    return QCoreApplication::applicationDirPath() + QStringLiteral("/Prospect/gtsConfig.json");
+    return QCoreApplication::applicationDirPath() + QStringLiteral("/Cfg/gtsConfig.json");
 }
 
 // 单轴 stuConfig → QJsonObject
@@ -337,7 +337,7 @@ bool ConfigMgr::loadConfigFile(const QString& filePath)
 
 QString ConfigMgr::ioDescriptionPath() const
 {
-    return QCoreApplication::applicationDirPath() + QStringLiteral("/Prospect/ioDescription.json");
+    return QCoreApplication::applicationDirPath() + QStringLiteral("/Cfg/IO.json");
 }
 
 void ConfigMgr::loadIODescriptions()
