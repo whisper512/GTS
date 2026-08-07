@@ -21,6 +21,7 @@ private:
 	QGraphicsScene* m_scene = nullptr;
 
 	void initTable();
+	void addRowToTable();
 
 private slots:
 };

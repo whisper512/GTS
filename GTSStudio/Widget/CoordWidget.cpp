@@ -113,6 +113,8 @@ CoordWidget::CoordWidget(QWidget* parent)
     ui.graphicsView->scale(1, -1); // Y 轴向上
 
     initTable();
+
+    connect(ui.btnAdd, &QPushButton::clicked, this, &CoordWidget::addRowToTable);
 }
 
 CoordWidget::~CoordWidget()
@@ -153,20 +155,29 @@ void CoordWidget::initTable()
     tw->setItemDelegateForColumn(4, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(5, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(6, new DirDelegate(tw));
+}
 
-    auto addRow = [&](int seq, const QString& type, double x, double y, double f, double r, const QString& dir) {
-        int row = tw->rowCount();
-        tw->insertRow(row);
-        auto* noItem = new QTableWidgetItem(QString::number(seq));
-        noItem->setFlags(noItem->flags() & ~Qt::ItemIsEditable);
-        noItem->setTextAlignment(Qt::AlignCenter);
-        tw->setItem(row, 0, noItem);
-        tw->setItem(row, 1, new QTableWidgetItem(type));
-        tw->setItem(row, 2, new QTableWidgetItem(QString::number(x, 'f', 2)));
-        tw->setItem(row, 3, new QTableWidgetItem(QString::number(y, 'f', 2)));
-        tw->setItem(row, 4, new QTableWidgetItem(QString::number(f, 'f', 2)));
-        tw->setItem(row, 5, new QTableWidgetItem(QString::number(r, 'f', 2)));
-        tw->setItem(row, 6, new QTableWidgetItem(dir));
-    };
+void CoordWidget::addRowToTable()
+{
+    auto* tw = ui.tableWidget;
+    int row = tw->rowCount();
+    tw->insertRow(row);
 
+    // 段号
+    auto* noItem = new QTableWidgetItem(QString::number(row + 1));
+    noItem->setFlags(noItem->flags() & ~Qt::ItemIsEditable);
+    noItem->setTextAlignment(Qt::AlignCenter);
+    tw->setItem(row, 0, noItem);
+
+    // 默认值: 直线, (0,0), F=200, R=0, CW
+    tw->setItem(row, 1, new QTableWidgetItem(QStringLiteral("直线")));
+    tw->setItem(row, 2, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 3, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 4, new QTableWidgetItem(QStringLiteral("200")));
+    tw->setItem(row, 5, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 6, new QTableWidgetItem(QStringLiteral("CW")));
+
+    // 选中新行，打开编辑
+    tw->selectRow(row);
+    tw->edit(tw->model()->index(row, 1));
 }

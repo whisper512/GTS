@@ -7,6 +7,9 @@
     <ClInclude Include="..\GtsCore\CoordData.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Widget\CoordScene.h">
+      <Filter>Header Files\Widget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -146,6 +149,9 @@
     </ClCompile>
     <ClCompile Include="..\GtsCore\CoordEngine.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\CoordScene.cpp">
+      <Filter>Source Files\Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
