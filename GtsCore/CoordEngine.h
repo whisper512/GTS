@@ -37,12 +37,6 @@ public:
     int totalSegments() const { return (int)m_table.size(); }
 
 signals:
-    void started();
-    void segmentStarted(int index);
-    void segmentDone(int index);
-    void allDone();
-    void stopped();
-    void errorOccurred(int index, const QString& msg);
 
 private slots:
     void onPoll();
