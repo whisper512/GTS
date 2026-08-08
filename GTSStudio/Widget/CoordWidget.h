@@ -23,12 +23,15 @@ private:
 	// 当前行索引
 	int m_executingIndex = -1;
 
+	void initTable();
+	void addRowToTable();
+	void deleteRow();
+	void clearAll();
+
 	// 更新表格行状态
 	void updateRowState(int row);
 	// 同步表格数据到场景
 	void syncTableToScene();
-	void initTable();
-	void addRowToTable();
 	// 验证圆弧半径
 	void validateArcR(int row);
 

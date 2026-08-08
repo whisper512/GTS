@@ -1,7 +1,7 @@
 ﻿#pragma once
-
 #include <QGraphicsScene>
 #include <QPainter>
+
 #include "../../GtsCore/CoordData.h"
 
 // ============================================================

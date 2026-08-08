@@ -1,7 +1,7 @@
 ﻿#pragma once
-
 #include <QObject>
 #include <QTimer>
+
 #include "CoordData.h"
 
 class CoordMgr;

@@ -93,6 +93,8 @@ CoordWidget::CoordWidget(QWidget* parent)
     initTable();
 
     connect(ui.btnAdd, &QPushButton::clicked, this, &CoordWidget::addRowToTable);
+    connect(ui.btnDel, &QPushButton::clicked, this, &CoordWidget::deleteRow);
+    connect(ui.btnClear, &QPushButton::clicked, this, &CoordWidget::clearAll);
 }
 
 CoordWidget::~CoordWidget()
@@ -162,6 +164,28 @@ void CoordWidget::addRowToTable()
     updateRowState(row);
     syncTableToScene();
     tw->edit(tw->model()->index(row, 1));
+}
+
+void CoordWidget::deleteRow()
+{
+    auto* tw = ui.tableWidget;
+    int row = tw->currentRow();
+    if (row < 0) return;
+    tw->removeRow(row);
+
+    // 重编号
+    for (int i = row; i < tw->rowCount(); ++i) {
+        auto* item = tw->item(i, 0);
+        if (item) item->setText(QString::number(i + 1));
+    }
+    syncTableToScene();
+}
+
+void CoordWidget::clearAll()
+{
+    ui.tableWidget->setRowCount(0);
+    m_executingIndex = -1;
+    m_scene->clear();
 }
 
 void CoordWidget::onCellChanged(int row, int col)
