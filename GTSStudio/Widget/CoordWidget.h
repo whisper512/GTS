@@ -27,6 +27,7 @@ private:
 	void addRowToTable();
 	void deleteRow();
 	void clearAll();
+	void addDemoStar();
 
 	// 更新表格行状态
 	void updateRowState(int row);
@@ -37,4 +38,5 @@ private:
 
 private slots:
 	void onCellChanged(int row, int col);
+	void onAddStar();
 };

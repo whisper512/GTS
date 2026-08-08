@@ -95,6 +95,7 @@ CoordWidget::CoordWidget(QWidget* parent)
     connect(ui.btnAdd, &QPushButton::clicked, this, &CoordWidget::addRowToTable);
     connect(ui.btnDel, &QPushButton::clicked, this, &CoordWidget::deleteRow);
     connect(ui.btnClear, &QPushButton::clicked, this, &CoordWidget::clearAll);
+    connect(ui.btnAddStar, &QPushButton::clicked, this, &CoordWidget::onAddStar);
 }
 
 CoordWidget::~CoordWidget()
@@ -186,6 +187,56 @@ void CoordWidget::clearAll()
     ui.tableWidget->setRowCount(0);
     m_executingIndex = -1;
     m_scene->clear();
+}
+
+void CoordWidget::addDemoStar()
+{
+    auto* tw = ui.tableWidget;
+
+    auto add = [&](const QString& type, double x, double y, double f, double r, const QString& dir) {
+        int row = tw->rowCount();
+        tw->insertRow(row);
+        auto* no = new QTableWidgetItem(QString::number(row + 1));
+        no->setFlags(no->flags() & ~Qt::ItemIsEditable);
+        no->setTextAlignment(Qt::AlignCenter);
+        tw->setItem(row, 0, no);
+        tw->setItem(row, 1, new QTableWidgetItem(type));
+        tw->setItem(row, 2, new QTableWidgetItem(QString::number(x, 'f', 2)));
+        tw->setItem(row, 3, new QTableWidgetItem(QString::number(y, 'f', 2)));
+        tw->setItem(row, 4, new QTableWidgetItem(QString::number(f, 'f', 2)));
+        tw->setItem(row, 5, new QTableWidgetItem(QString::number(r, 'f', 2)));
+        tw->setItem(row, 6, new QTableWidgetItem(dir));
+        updateRowState(row);
+    };
+
+    const double R = 100.0;
+    const double PI = 3.141592653589793;
+    auto v = [R, PI](int k) -> std::pair<double,double> {
+        double deg = (90.0 - k * 72.0) * PI / 180.0;
+        return {R * std::cos(deg), R * std::sin(deg)};
+    };
+    std::pair<double,double> p0 = v(0); double x0 = p0.first,  y0 = p0.second;
+    std::pair<double,double> p1 = v(1); double x1 = p1.first,  y1 = p1.second;
+    std::pair<double,double> p2 = v(2); double x2 = p2.first,  y2 = p2.second;
+    std::pair<double,double> p3 = v(3); double x3 = p3.first,  y3 = p3.second;
+    std::pair<double,double> p4 = v(4); double x4 = p4.first,  y4 = p4.second;
+
+    add(QStringLiteral("直线"), x0, y0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x2, y2, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x4, y4, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x1, y1, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x3, y3, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x0, y0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("圆弧"),  0, -R, 200, R, QStringLiteral("CW"));
+    add(QStringLiteral("圆弧"), x0, y0, 200, R, QStringLiteral("CW"));
+
+    syncTableToScene();
+}
+
+void CoordWidget::onAddStar()
+{
+    clearAll();
+    addDemoStar();
 }
 
 void CoordWidget::onCellChanged(int row, int col)
