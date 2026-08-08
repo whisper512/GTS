@@ -31,4 +31,5 @@ protected:
 
 private:
     Projection m_projection = Projection::XY;
+    bool m_hasData = false;
 };

@@ -193,6 +193,7 @@ void CoordWidget::clearAll()
     ui.tableWidget->setRowCount(0);
     m_executingIndex = -1;
     m_scene->clear();
+    syncTableToScene();
 }
 
 void CoordWidget::addDemoStar()

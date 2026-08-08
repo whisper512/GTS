@@ -28,6 +28,7 @@ void GridScene::drawBackground(QPainter* painter, const QRectF& rect)
 void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection proj)
 {
     m_projection = proj;
+    m_hasData = !table.empty();
 
     // 清除前景图形，保留背景网格
     auto items = this->items();
@@ -113,6 +114,7 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection
 
 void GridScene::drawForeground(QPainter* painter, const QRectF& rect)
 {
+    if (!m_hasData) return;
     const double len = 30.0;
     double ox = rect.left() + 40.0;
     double oy = rect.bottom() - 40.0;
