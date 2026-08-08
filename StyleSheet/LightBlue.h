@@ -3,24 +3,25 @@
 
 QString LightBlue = (R"(
     /* 中央控件背景 – 柔和灰蓝渐变 */
-    QWidget#centralWidget {
+    QWidget {
         background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
                       stop:0 #e6eff5, stop:0.5 #dce4ec, stop:1 #e6eff5);
     }
     /* 所有标签文字颜色 – 深色保证对比度 */
     QLabel {
         color: #2c3e50;
-        font-size: 12px;
+        font-size: 13px;
+        background: #f0f4f8;
     }
     /* 分组框标题 – 浅蓝色突出 */
     QGroupBox {
         color: #2980b9;
-        border: 1px solid #aab7c4;
+        border: 1px solid #2980b9;
         border-radius: 6px;
         margin-top: 8px;
         font-weight: bold;
         padding-top: 16px;
-        background: rgba(255,255,255,100);
+        background: #f0f4f8;
     }
     QGroupBox::title {
         subcontrol-origin: margin;
@@ -47,15 +48,15 @@ QString LightBlue = (R"(
         min-width: 100px;
     }
     QComboBox::down-arrow {
-        image: url(:/StyleSheet/StyleSheetRes/combox.png);
+        image: url(:/StyleSheet/StyleSheetRes/down.png);
         width: 24px;
         height: 24px;
         right: 5px;        /* 在 drop-down 内的位置 */
-        background: transparent;
+        background: #f0f4f8;
     }
     QComboBox::drop-down {
         width: 24px;
-        background: transparent;
+        background: #f0f4f8;
         border: none;
         subcontrol-origin: padding;
         subcontrol-position: top right;
@@ -68,7 +69,7 @@ QString LightBlue = (R"(
     }
     /* 按钮 */
     QPushButton {
-        background: transparent;
+        background: #f0f4f8;
         border: 1px solid #5dade2;
         color: #2c3e50;
         padding: 6px 18px;
@@ -88,7 +89,7 @@ QString LightBlue = (R"(
     }
     /* 工具栏按钮 – 侧边导航 */
     QToolButton {
-        background: transparent;
+        background: #f0f4f8;
         border: 1px solid #5dade2;
         color: #2c3e50;
         padding: 8px 12px;

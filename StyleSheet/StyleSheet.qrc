@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/StyleSheet">
-        <file>StyleSheetRes/combox.png</file>
+        <file>StyleSheetRes/down.png</file>
+        <file>StyleSheetRes/up.png</file>
     </qresource>
 </RCC>
