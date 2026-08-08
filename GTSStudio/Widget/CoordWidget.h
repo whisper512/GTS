@@ -1,7 +1,7 @@
 ﻿#pragma once
-
 #include <QWidget>
-#include <QGraphicsScene>
+
+#include "CoordScene.h"
 #include "ui_CoordWidget.h"
 
 class GtsMgr;
@@ -18,10 +18,18 @@ public:
 private:
 	Ui::CCoordWidgetClass ui;
 	GtsMgr* m_gtsMgr = nullptr;
-	QGraphicsScene* m_scene = nullptr;
+	// 绘图场景
+	GridScene* m_scene = nullptr;
+	// 当前行索引
+	int m_executingIndex = -1;
 
+	// 更新表格行状态
+	void updateRowState(int row);
+	// 同步表格数据到场景
+	void syncTableToScene();
 	void initTable();
 	void addRowToTable();
 
 private slots:
+	void onCellChanged(int row, int col);
 };

@@ -29,7 +29,7 @@
 
 # 插补
 - [x] ui和基础数据结构
-- [ ] 实时绘制和数据添加修改等 
+- [ ] 实时绘制和数据添加修改等
 
 # IO
 
@@ -71,11 +71,6 @@
 - [x] 关闭软件有溢出问题
 - [ ] 添加同步trap方法,未测试
 - [x] 修改为gstcore的管理类
-
-# 集成审查问题 (2026-07-02) — GTSSimpleController 点位运动 / JOG 运动
-
-## P0 — 阻断集成
-
 - [x] 耦合在 Manager 层 — MotionMgr::startTrapMotion / startJogMotion 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。(2026-07-03 已修复，移除 QMessageBox 依赖)
 - [x] 循环 Trap 忙轮询阻塞主线程 — MotionMgr::startTrapMotion 中 for + processEvents 忙等，无取消/超时机制。方案：onTrapCycleStep 递归自调度（waitMotionDone + QMetaObject::invokeMethod Qt::QueuedConnection）+ cancelTrapCycle。(2026-07-03 已修复)
 

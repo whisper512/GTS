@@ -1,38 +1,12 @@
-﻿#include "CoordWidget.h"
-#include "../../GtsCore/GtsMgr.h"
-#include <QPainter>
-#include <QHeaderView>
+﻿#include <QHeaderView>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QStyledItemDelegate>
-#include <cmath>
 
-class GridScene : public QGraphicsScene
-{
-public:
-    using QGraphicsScene::QGraphicsScene;
-protected:
-    void drawBackground(QPainter* painter, const QRectF& rect) override
-    {
-        // 浅黑背景
-        painter->fillRect(rect, QColor(35, 35, 38));
+#include "CoordWidget.h"
+#include "../../GtsCore/GtsMgr.h"
 
-        const double gridSize = 100.0;
-        double left  = std::floor(rect.left()   / gridSize) * gridSize;
-        double top   = std::floor(rect.top()    / gridSize) * gridSize;
-        double right = rect.right();
-        double bottom = rect.bottom();
-
-        QPen pen(QColor(55, 55, 60), 1);
-        painter->setPen(pen);
-
-        for (double x = left; x < right; x += gridSize)
-            painter->drawLine(QPointF(x, top), QPointF(x, bottom));
-        for (double y = top; y < bottom; y += gridSize)
-            painter->drawLine(QPointF(left, y), QPointF(right, y));
-    }
-};
-
+// 插补类型comboBox代理
 class TypeDelegate : public QStyledItemDelegate
 {
 public:
@@ -56,6 +30,7 @@ public:
     }
 };
 
+// 圆弧方向comboBox代理
 class DirDelegate : public QStyledItemDelegate
 {
 public:
@@ -79,6 +54,7 @@ public:
     }
 };
 
+// 数值编辑器代理
 class DoubleDelegate : public QStyledItemDelegate
 {
 public:
@@ -155,6 +131,8 @@ void CoordWidget::initTable()
     tw->setItemDelegateForColumn(4, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(5, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(6, new DirDelegate(tw));
+
+    connect(tw, &QTableWidget::cellChanged, this, &CoordWidget::onCellChanged);
 }
 
 void CoordWidget::addRowToTable()
@@ -179,5 +157,58 @@ void CoordWidget::addRowToTable()
 
     // 选中新行，打开编辑
     tw->selectRow(row);
+    updateRowState(row);
+    syncTableToScene();
     tw->edit(tw->model()->index(row, 1));
+}
+
+void CoordWidget::onCellChanged(int row, int col)
+{
+    if (col == 1) updateRowState(row);
+    syncTableToScene();
+}
+
+void CoordWidget::updateRowState(int row)
+{
+    auto* tw = ui.tableWidget;
+    auto* typeItem = tw->item(row, 1);
+    bool isArc = typeItem && typeItem->text() == QStringLiteral("圆弧");
+
+    for (int col : {5, 6}) {
+        auto* item = tw->item(row, col);
+        if (!item) continue;
+
+        if (isArc) {
+            item->setFlags(item->flags() | Qt::ItemIsEditable);
+            item->setBackground(Qt::white);
+        }
+        else {
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            item->setBackground(QColor(220, 220, 220));
+        }
+    }
+}
+
+void CoordWidget::syncTableToScene()
+{
+    auto* tw = ui.tableWidget;
+    int n = tw->rowCount();
+    CoordTable table;
+
+    for (int i = 0; i < n; ++i) {
+        CoordSegment seg;
+        auto* typeItem = tw->item(i, 1);
+        seg.type = (typeItem && typeItem->text() == QStringLiteral("圆弧"))
+            ? SegmentType::Arc : SegmentType::Line;
+        seg.x = tw->item(i, 2) ? tw->item(i, 2)->text().toDouble() : 0;
+        seg.y = tw->item(i, 3) ? tw->item(i, 3)->text().toDouble() : 0;
+        seg.f = tw->item(i, 4) ? tw->item(i, 4)->text().toDouble() : 200;
+        seg.r = tw->item(i, 5) ? tw->item(i, 5)->text().toDouble() : 0;
+        auto* dirItem = tw->item(i, 6);
+        seg.dir = (dirItem && dirItem->text() == QStringLiteral("CCW")) ? ArcDir::CCW : ArcDir::CW;
+        table.push_back(seg);
+    }
+
+    m_scene->drawPath(table, m_executingIndex);
+    ui.graphicsView->fitInView(m_scene->sceneRect().adjusted(-20, -20, 20, 20), Qt::KeepAspectRatio);
 }

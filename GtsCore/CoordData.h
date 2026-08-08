@@ -1,11 +1,10 @@
 ﻿#pragma once
+#include <vector>
 
 // ============================================================
 // CoordData — 插补段数据结构
 // 描述单段运动指令，多段按顺序组成一条完整路径
 // ============================================================
-
-#include <vector>
 
 // 段类型
 enum class SegmentType : short
@@ -32,5 +31,5 @@ struct CoordSegment
     ArcDir      dir  = ArcDir::CW;         // 圆弧方向 (仅 Arc 有效)
 };
 
-// 插补表 = 段数组
+// 插补表,段数组
 using CoordTable = std::vector<CoordSegment>;
