@@ -27,6 +27,8 @@ void GridScene::drawBackground(QPainter* painter, const QRectF& rect)
 
 void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection proj)
 {
+    m_projection = proj;
+
     // 清除前景图形，保留背景网格
     auto items = this->items();
     for (auto* item : items)
@@ -107,4 +109,39 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection
 
         cx = ex; cy = ey;
     }
+}
+
+void GridScene::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    const double len = 30.0;
+    double ox = rect.left() + 40.0;
+    double oy = rect.bottom() - 40.0;
+
+    // 切换到设备坐标, 避免 scale(1,-1) 导致文字倒置
+    painter->save();
+    QPointF dp = painter->combinedTransform().map(QPointF(ox, oy));
+    painter->resetTransform();
+
+    QFont font;
+    font.setPixelSize(12);
+    painter->setFont(font);
+
+    QString hLabel, vLabel;
+    switch (m_projection) {
+    case Projection::XY: hLabel = "X"; vLabel = "Y"; break;
+    case Projection::YZ: hLabel = "Y"; vLabel = "Z"; break;
+    case Projection::ZX: hLabel = "Z"; vLabel = "X"; break;
+    }
+
+    // 横轴 - 红色 (右)
+    painter->setPen(QPen(Qt::red, 3));
+    painter->drawLine(QPointF(dp.x(), dp.y()), QPointF(dp.x() + len, dp.y()));
+    painter->drawText(QPointF(dp.x() + len + 4, dp.y() + 12), hLabel);
+
+    // 纵轴 - 绿色 (上, 设备坐标中 y 减小)
+    painter->setPen(QPen(Qt::green, 3));
+    painter->drawLine(QPointF(dp.x(), dp.y()), QPointF(dp.x(), dp.y() - len));
+    painter->drawText(QPointF(dp.x() - 14, dp.y() - len - 2), vLabel);
+
+    painter->restore();
 }

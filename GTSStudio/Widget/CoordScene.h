@@ -23,6 +23,12 @@ public:
     void drawPath(const CoordTable& table, int executingIndex = -1,
                   Projection proj = Projection::XY);
 
+    Projection currentProjection() const { return m_projection; }
+
 protected:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
+    void drawForeground(QPainter* painter, const QRectF& rect) override;
+
+private:
+    Projection m_projection = Projection::XY;
 };

@@ -96,8 +96,7 @@ CoordWidget::CoordWidget(QWidget* parent)
     connect(ui.btnDel, &QPushButton::clicked, this, &CoordWidget::deleteRow);
     connect(ui.btnClear, &QPushButton::clicked, this, &CoordWidget::clearAll);
     connect(ui.btnAddStar, &QPushButton::clicked, this, &CoordWidget::onAddStar);
-    connect(ui.comboBox_plane, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &CoordWidget::onProjectionChanged);
+    connect(ui.comboBox_plane, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &CoordWidget::onProjectionChanged);
 
     initProjection();
 }
