@@ -111,13 +111,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="..\StyleSheet\StyleSheet.qrc" />
     <QtRcc Include="GTSControllerWidget.qrc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\GtsCore\ControllerData.h" />
     <ClInclude Include="..\GtsCore\CoordData.h" />
-    <ClInclude Include="..\StyleSheet\LightBlue.h" />
     <ClInclude Include="Widget\CoordScene.h" />
     <QtMoc Include="..\GtsCore\CoordEngine.h" />
     <QtMoc Include="Widget\CoordWidget.h" />
