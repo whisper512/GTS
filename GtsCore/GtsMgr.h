@@ -14,6 +14,7 @@
 #include "GtsIOMgr.h"
 #include "GtsFeedbackMgr.h"
 #include "GtsConfigMgr.h"
+#include "CoordEngine.h"
 
 // GtsMgr — 总管理器
 class GtsMgr : public QObject 
@@ -48,6 +49,7 @@ private:
     std::unique_ptr<IOMgr> m_ioMgr;
     std::unique_ptr<ConfigMgr> m_configMgr;
     std::unique_ptr<FeedbackMgr> m_feedbackMgr;
+    std::unique_ptr<CoordEngine> m_coordEngine;
 
 public:
     explicit GtsMgr(QObject* parent = nullptr);
@@ -69,6 +71,8 @@ public:
     FeedbackMgr* feedbackMgr() const { return m_feedbackMgr.get(); }
     // 配置管理器
     ConfigMgr* configMgr() const { return m_configMgr.get(); }
+    // 插补引擎
+    CoordEngine* coordEngine() const { return m_coordEngine.get(); }
     // 轴配置数据
     AxisConfig* axisCfg() { return &m_cfg; }
     // 板卡模式

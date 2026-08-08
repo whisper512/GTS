@@ -15,12 +15,16 @@ GtsMgr::GtsMgr(QObject* parent)
     m_axisMgr = std::make_unique<AxisMgr>(this);
     m_motionMgr = std::make_unique<MotionMgr>(this, this);
     m_coordMgr = std::make_unique<CoordMgr>(this);
+    m_coordEngine = std::make_unique<CoordEngine>(this);
     m_ioMgr = std::make_unique<IOMgr>(this);
     m_feedbackMgr = std::make_unique<FeedbackMgr>(this);
     m_configMgr = std::make_unique<ConfigMgr>(this);
 
     // 注入依赖
     m_configMgr->injectDependencies(&m_cfg, this, m_axisMgr.get());
+    // 注入依赖
+    m_coordEngine->setCoordMgr(m_coordMgr.get());
+    m_coordEngine->setCrd(0);
 
     // 创建定时器用来刷新实时数据
     m_refreshTimer = new QTimer(this);

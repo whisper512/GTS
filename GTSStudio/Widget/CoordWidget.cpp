@@ -7,6 +7,7 @@
 
 #include "CoordWidget.h"
 #include "../../GtsCore/GtsMgr.h"
+#include "../../GtsCore/CoordEngine.h"
 
 // 插补类型comboBox代理
 class TypeDelegate : public QStyledItemDelegate
@@ -109,6 +110,22 @@ CoordWidget::~CoordWidget()
 void CoordWidget::setGtsTotalMgr(GtsMgr* mgr)
 {
     m_gtsMgr = mgr;
+    m_engine = mgr->coordEngine();
+
+    connect(m_engine, &CoordEngine::segmentStarted, this, [this](int i) {
+        m_executingIndex = i;
+        syncTableToScene();
+    });
+    connect(m_engine, &CoordEngine::segmentDone, this, [this](int) {
+        syncTableToScene();
+    });
+    connect(m_engine, &CoordEngine::allDone, this, [this] {
+        m_executingIndex = -1;
+        syncTableToScene();
+    });
+
+    connect(ui.btnExec, &QPushButton::clicked, this, &CoordWidget::onExec);
+    connect(ui.btnStop, &QPushButton::clicked, m_engine, &CoordEngine::stop);
 }
 
 void CoordWidget::initTable()
@@ -259,6 +276,33 @@ void CoordWidget::onAddStar()
 {
     clearAll();
     addDemoStar();
+}
+
+void CoordWidget::onExec()
+{
+    if (!m_engine || m_engine->isRunning()) return;
+
+    auto* tw = ui.tableWidget;
+    int n = tw->rowCount();
+    CoordTable table;
+
+    for (int i = 0; i < n; ++i) {
+        CoordSegment seg;
+        auto* typeItem = tw->item(i, 1);
+        seg.type = (typeItem && typeItem->text() == QStringLiteral("圆弧"))
+            ? SegmentType::Arc : SegmentType::Line;
+        seg.x = tw->item(i, 2) ? tw->item(i, 2)->text().toDouble() : 0;
+        seg.y = tw->item(i, 3) ? tw->item(i, 3)->text().toDouble() : 0;
+        seg.z = tw->item(i, 4) ? tw->item(i, 4)->text().toDouble() : 0;
+        seg.f = tw->item(i, 5) ? tw->item(i, 5)->text().toDouble() : 200;
+        seg.r = tw->item(i, 6) ? tw->item(i, 6)->text().toDouble() : 0;
+        auto* dirItem = tw->item(i, 7);
+        seg.dir = (dirItem && dirItem->text() == QStringLiteral("CCW")) ? ArcDir::CCW : ArcDir::CW;
+        table.push_back(seg);
+    }
+
+    m_engine->loadTable(table);
+    m_engine->start();
 }
 
 void CoordWidget::onCellChanged(int row, int col)

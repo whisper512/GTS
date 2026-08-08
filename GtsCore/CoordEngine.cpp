@@ -29,6 +29,7 @@ void CoordEngine::start()
     m_current = 0;
     m_running = true;
     executeSegment(m_current);
+    m_coord->start(1 << m_crd);
     m_pollTimer->start(50);
     emit started();
 }

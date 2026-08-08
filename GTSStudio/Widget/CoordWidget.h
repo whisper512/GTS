@@ -5,6 +5,7 @@
 #include "ui_CoordWidget.h"
 
 class GtsMgr;
+class CoordEngine;
 
 class CoordWidget : public QWidget
 {
@@ -20,6 +21,8 @@ private:
 	GtsMgr* m_gtsMgr = nullptr;
 	// 绘图场景
 	GridScene* m_scene = nullptr;
+	// 插补引擎
+	CoordEngine* m_engine = nullptr;
 	// 当前行索引
 	int m_executingIndex = -1;
 	Projection m_projection = Projection::XY;
@@ -41,4 +44,5 @@ private slots:
 	void onCellChanged(int row, int col);
 	void onAddStar();
 	void onProjectionChanged();
+	void onExec();
 };
