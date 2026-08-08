@@ -5,12 +5,14 @@
 #include <QTime>
 
 #include "GTSControllerWidget.h"
+#include "../../StyleSheet/LightBlue.h"
 
 GTSControllerWidget::GTSControllerWidget(QWidget* parent)
     : QWidget(parent)
 {
     ui.setupUi(this);
     this->setWindowTitle("GTS400");
+    this->setStyleSheet(LightBlue);
     Init();
 }
 

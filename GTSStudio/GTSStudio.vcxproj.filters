@@ -10,6 +10,9 @@
     <ClInclude Include="Widget\CoordScene.h">
       <Filter>Header Files\Widget</Filter>
     </ClInclude>
+    <ClInclude Include="..\StyleSheet\LightBlue.h">
+      <Filter>Header Files\Widget</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
@@ -39,6 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="GTSControllerWidget.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+    <QtRcc Include="..\StyleSheet\StyleSheet.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
   </ItemGroup>

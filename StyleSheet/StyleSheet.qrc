@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/StyleSheet">
+        <file>StyleSheetRes/combox.png</file>
+    </qresource>
+</RCC>
