@@ -2,6 +2,7 @@
 
 - [x] 完成HAL抽象层
 - [x] lib改为相对位置
+- [ ] 样式表QssStylesheetEditor
 
 # 板卡界面
 
