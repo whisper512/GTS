@@ -41,14 +41,14 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection
         switch (proj) {
         case Projection::XY: return s.x;
         case Projection::YZ: return s.y;
-        case Projection::ZX: return s.z;
+        case Projection::ZX: return s.x;
         } return s.x;
     };
     auto getY = [proj](const CoordSegment& s) -> double {
         switch (proj) {
         case Projection::XY: return s.y;
         case Projection::YZ: return s.z;
-        case Projection::ZX: return s.x;
+        case Projection::ZX: return s.z;
         } return s.y;
     };
 
@@ -68,7 +68,7 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection
 
         QPen pen(color, 2);
 
-        if (seg.type != SegmentType::Arc || std::fabs(seg.r) < 0.01) {
+        if (seg.type != SegmentType::Arc || std::fabs(seg.r) < 0.01 || proj != Projection::XY) {
             addLine(sx * scale, sy * scale, ex * scale, ey * scale, pen);
         }
         else {
@@ -130,7 +130,7 @@ void GridScene::drawForeground(QPainter* painter, const QRectF& rect)
     switch (m_projection) {
     case Projection::XY: hLabel = "X"; vLabel = "Y"; break;
     case Projection::YZ: hLabel = "Y"; vLabel = "Z"; break;
-    case Projection::ZX: hLabel = "Z"; vLabel = "X"; break;
+    case Projection::ZX: hLabel = "X"; vLabel = "Z"; break;
     }
 
     // 横轴 - 红色 (右)
