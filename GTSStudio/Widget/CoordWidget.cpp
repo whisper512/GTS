@@ -2,6 +2,8 @@
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QStyledItemDelegate>
+#include <QMessageBox>
+#include <cmath>
 
 #include "CoordWidget.h"
 #include "../../GtsCore/GtsMgr.h"
@@ -165,6 +167,7 @@ void CoordWidget::addRowToTable()
 void CoordWidget::onCellChanged(int row, int col)
 {
     if (col == 1) updateRowState(row);
+    if (col == 5) validateArcR(row);
     syncTableToScene();
 }
 
@@ -186,6 +189,41 @@ void CoordWidget::updateRowState(int row)
             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
             item->setBackground(QColor(220, 220, 220));
         }
+    }
+}
+
+void CoordWidget::validateArcR(int row)
+{
+    auto* tw = ui.tableWidget;
+    auto* typeItem = tw->item(row, 1);
+    if (!typeItem || typeItem->text() != QStringLiteral("圆弧"))
+        return;
+
+    // 当前段终点
+    double ex = tw->item(row, 2) ? tw->item(row, 2)->text().toDouble() : 0;
+    double ey = tw->item(row, 3) ? tw->item(row, 3)->text().toDouble() : 0;
+
+    // 上一段终点 (= 当前段起点)
+    double sx = 0, sy = 0;
+    if (row > 0) {
+        sx = tw->item(row - 1, 2) ? tw->item(row - 1, 2)->text().toDouble() : 0;
+        sy = tw->item(row - 1, 3) ? tw->item(row - 1, 3)->text().toDouble() : 0;
+    }
+
+    double chord = std::sqrt((ex - sx) * (ex - sx) + (ey - sy) * (ey - sy));
+    double minR = chord / 2.0;
+
+    auto* rItem = tw->item(row, 5);
+    if (!rItem) return;
+    double r = rItem->text().toDouble();
+
+    if (r > 0 && r < minR - 0.01) {
+        rItem->setText(QString::number(minR, 'f', 2));
+        QMessageBox::information(this,
+            QStringLiteral("半径修正"),
+            QStringLiteral("圆弧半径不得小于弦长的一半 (%1 mm),\n已自动修正为 %2 mm")
+                .arg(chord, 0, 'f', 2)
+                .arg(minR, 0, 'f', 2));
     }
 }
 

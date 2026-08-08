@@ -29,6 +29,8 @@ private:
 	void syncTableToScene();
 	void initTable();
 	void addRowToTable();
+	// 验证圆弧半径
+	void validateArcR(int row);
 
 private slots:
 	void onCellChanged(int row, int col);
