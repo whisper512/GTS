@@ -22,8 +22,9 @@ private:
 	GridScene* m_scene = nullptr;
 	// 当前行索引
 	int m_executingIndex = -1;
+	Projection m_projection = Projection::XY;
 
-	void initTable();
+	void initProjection();	void initTable();
 	void addRowToTable();
 	void deleteRow();
 	void clearAll();
@@ -39,4 +40,5 @@ private:
 private slots:
 	void onCellChanged(int row, int col);
 	void onAddStar();
+	void onProjectionChanged();
 };

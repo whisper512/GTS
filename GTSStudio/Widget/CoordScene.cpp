@@ -25,7 +25,7 @@ void GridScene::drawBackground(QPainter* painter, const QRectF& rect)
         painter->drawLine(QPointF(left, y), QPointF(right, y));
 }
 
-void GridScene::drawPath(const CoordTable& table, int executingIndex)
+void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection proj)
 {
     // 清除前景图形，保留背景网格
     auto items = this->items();
@@ -34,13 +34,29 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex)
 
     if (table.empty()) return;
 
+    // 根据投影提取 XY
+    auto getX = [proj](const CoordSegment& s) -> double {
+        switch (proj) {
+        case Projection::XY: return s.x;
+        case Projection::YZ: return s.y;
+        case Projection::ZX: return s.z;
+        } return s.x;
+    };
+    auto getY = [proj](const CoordSegment& s) -> double {
+        switch (proj) {
+        case Projection::XY: return s.y;
+        case Projection::YZ: return s.z;
+        case Projection::ZX: return s.x;
+        } return s.y;
+    };
+
     double cx = 0, cy = 0;
     const double scale = 1.0;
 
     for (int i = 0; i < (int)table.size(); ++i) {
         const auto& seg = table[i];
         double sx = cx, sy = cy;
-        double ex = seg.x, ey = seg.y;
+        double ex = getX(seg), ey = getY(seg);
 
         QColor color = Qt::cyan;
         if (executingIndex >= 0) {

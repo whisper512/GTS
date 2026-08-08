@@ -96,6 +96,10 @@ CoordWidget::CoordWidget(QWidget* parent)
     connect(ui.btnDel, &QPushButton::clicked, this, &CoordWidget::deleteRow);
     connect(ui.btnClear, &QPushButton::clicked, this, &CoordWidget::clearAll);
     connect(ui.btnAddStar, &QPushButton::clicked, this, &CoordWidget::onAddStar);
+    connect(ui.comboBox_plane, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &CoordWidget::onProjectionChanged);
+
+    initProjection();
 }
 
 CoordWidget::~CoordWidget()
@@ -111,12 +115,13 @@ void CoordWidget::setGtsTotalMgr(GtsMgr* mgr)
 void CoordWidget::initTable()
 {
     auto* tw = ui.tableWidget;
-    tw->setColumnCount(7);
+    tw->setColumnCount(8);
     tw->setHorizontalHeaderLabels({
         QStringLiteral("段号"),
         QStringLiteral("类型"),
         QStringLiteral("X (mm)"),
         QStringLiteral("Y (mm)"),
+        QStringLiteral("Z (mm)"),
         QStringLiteral("F (mm/s)"),
         QStringLiteral("R (mm)"),
         QStringLiteral("方向")
@@ -135,7 +140,8 @@ void CoordWidget::initTable()
     tw->setItemDelegateForColumn(3, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(4, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(5, new DoubleDelegate(tw));
-    tw->setItemDelegateForColumn(6, new DirDelegate(tw));
+    tw->setItemDelegateForColumn(6, new DoubleDelegate(tw));
+    tw->setItemDelegateForColumn(7, new DirDelegate(tw));
 
     connect(tw, &QTableWidget::cellChanged, this, &CoordWidget::onCellChanged);
 }
@@ -156,9 +162,10 @@ void CoordWidget::addRowToTable()
     tw->setItem(row, 1, new QTableWidgetItem(QStringLiteral("直线")));
     tw->setItem(row, 2, new QTableWidgetItem(QStringLiteral("0")));
     tw->setItem(row, 3, new QTableWidgetItem(QStringLiteral("0")));
-    tw->setItem(row, 4, new QTableWidgetItem(QStringLiteral("200")));
-    tw->setItem(row, 5, new QTableWidgetItem(QStringLiteral("0")));
-    tw->setItem(row, 6, new QTableWidgetItem(QStringLiteral("CW")));
+    tw->setItem(row, 4, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 5, new QTableWidgetItem(QStringLiteral("200")));
+    tw->setItem(row, 6, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 7, new QTableWidgetItem(QStringLiteral("CW")));
 
     // 选中新行，打开编辑
     tw->selectRow(row);
@@ -193,7 +200,7 @@ void CoordWidget::addDemoStar()
 {
     auto* tw = ui.tableWidget;
 
-    auto add = [&](const QString& type, double x, double y, double f, double r, const QString& dir) {
+    auto add = [&](const QString& type, double x, double y, double z, double f, double r, const QString& dir) {
         int row = tw->rowCount();
         tw->insertRow(row);
         auto* no = new QTableWidgetItem(QString::number(row + 1));
@@ -203,9 +210,10 @@ void CoordWidget::addDemoStar()
         tw->setItem(row, 1, new QTableWidgetItem(type));
         tw->setItem(row, 2, new QTableWidgetItem(QString::number(x, 'f', 2)));
         tw->setItem(row, 3, new QTableWidgetItem(QString::number(y, 'f', 2)));
-        tw->setItem(row, 4, new QTableWidgetItem(QString::number(f, 'f', 2)));
-        tw->setItem(row, 5, new QTableWidgetItem(QString::number(r, 'f', 2)));
-        tw->setItem(row, 6, new QTableWidgetItem(dir));
+        tw->setItem(row, 4, new QTableWidgetItem(QString::number(z, 'f', 2)));
+        tw->setItem(row, 5, new QTableWidgetItem(QString::number(f, 'f', 2)));
+        tw->setItem(row, 6, new QTableWidgetItem(QString::number(r, 'f', 2)));
+        tw->setItem(row, 7, new QTableWidgetItem(dir));
         updateRowState(row);
     };
 
@@ -221,15 +229,29 @@ void CoordWidget::addDemoStar()
     std::pair<double,double> p3 = v(3); double x3 = p3.first,  y3 = p3.second;
     std::pair<double,double> p4 = v(4); double x4 = p4.first,  y4 = p4.second;
 
-    add(QStringLiteral("直线"), x0, y0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x2, y2, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x4, y4, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x1, y1, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x3, y3, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x0, y0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("圆弧"),  0, -R, 200, R, QStringLiteral("CW"));
-    add(QStringLiteral("圆弧"), x0, y0, 200, R, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x0, y0, 0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x2, y2, 0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x4, y4, 0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x1, y1, 0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x3, y3, 0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x0, y0, 0, 200, 0, QStringLiteral("CW"));
+    add(QStringLiteral("圆弧"),  0, -R, 0, 200, R, QStringLiteral("CW"));
+    add(QStringLiteral("圆弧"), x0, y0, 0, 200, R, QStringLiteral("CW"));
 
+    syncTableToScene();
+}
+
+void CoordWidget::initProjection()
+{
+    ui.comboBox_plane->addItem(QStringLiteral("XY"));
+    ui.comboBox_plane->addItem(QStringLiteral("YZ"));
+    ui.comboBox_plane->addItem(QStringLiteral("ZX"));
+    ui.comboBox_plane->setCurrentIndex(0);
+}
+
+void CoordWidget::onProjectionChanged()
+{
+    m_projection = static_cast<Projection>(ui.comboBox_plane->currentIndex());
     syncTableToScene();
 }
 
@@ -242,7 +264,7 @@ void CoordWidget::onAddStar()
 void CoordWidget::onCellChanged(int row, int col)
 {
     if (col == 1) updateRowState(row);
-    if (col == 5) validateArcR(row);
+    if (col == 6) validateArcR(row);
     syncTableToScene();
 }
 
@@ -252,7 +274,7 @@ void CoordWidget::updateRowState(int row)
     auto* typeItem = tw->item(row, 1);
     bool isArc = typeItem && typeItem->text() == QStringLiteral("圆弧");
 
-    for (int col : {5, 6}) {
+    for (int col : {6, 7}) {
         auto* item = tw->item(row, col);
         if (!item) continue;
 
@@ -288,7 +310,7 @@ void CoordWidget::validateArcR(int row)
     double chord = std::sqrt((ex - sx) * (ex - sx) + (ey - sy) * (ey - sy));
     double minR = chord / 2.0;
 
-    auto* rItem = tw->item(row, 5);
+    auto* rItem = tw->item(row, 6);
     if (!rItem) return;
     double r = rItem->text().toDouble();
 
@@ -315,13 +337,14 @@ void CoordWidget::syncTableToScene()
             ? SegmentType::Arc : SegmentType::Line;
         seg.x = tw->item(i, 2) ? tw->item(i, 2)->text().toDouble() : 0;
         seg.y = tw->item(i, 3) ? tw->item(i, 3)->text().toDouble() : 0;
-        seg.f = tw->item(i, 4) ? tw->item(i, 4)->text().toDouble() : 200;
-        seg.r = tw->item(i, 5) ? tw->item(i, 5)->text().toDouble() : 0;
-        auto* dirItem = tw->item(i, 6);
+        seg.z = tw->item(i, 4) ? tw->item(i, 4)->text().toDouble() : 0;
+        seg.f = tw->item(i, 5) ? tw->item(i, 5)->text().toDouble() : 200;
+        seg.r = tw->item(i, 6) ? tw->item(i, 6)->text().toDouble() : 0;
+        auto* dirItem = tw->item(i, 7);
         seg.dir = (dirItem && dirItem->text() == QStringLiteral("CCW")) ? ArcDir::CCW : ArcDir::CW;
         table.push_back(seg);
     }
 
-    m_scene->drawPath(table, m_executingIndex);
+    m_scene->drawPath(table, m_executingIndex, m_projection);
     ui.graphicsView->fitInView(m_scene->sceneRect().adjusted(-20, -20, 20, 20), Qt::KeepAspectRatio);
 }

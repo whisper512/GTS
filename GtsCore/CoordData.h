@@ -26,6 +26,7 @@ struct CoordSegment
     SegmentType type = SegmentType::Line;   // 段类型
     double      x    = 0.0;                // 终点 X mm (绝对坐标)
     double      y    = 0.0;                // 终点 Y mm (绝对坐标)
+    double      z    = 0.0;                // 终点 Z mm (绝对坐标)
     double      f    = 200.0;              // 进给速度 mm/s
     double      r    = 0.0;                // 半径 mm (仅 Arc 有效, Line 时为 0)
     ArcDir      dir  = ArcDir::CW;         // 圆弧方向 (仅 Arc 有效)
