@@ -15,14 +15,14 @@ CoordEngine::~CoordEngine()
     m_coord = nullptr;
 }
 
-bool CoordEngine::simMode() const
-{
-    return sim();
-}
-
 bool CoordEngine::sim() const
 {
     return m_coordCfg ? m_coordCfg->enableSim : true;
+}
+
+bool CoordEngine::staticMode() const
+{
+    return m_coordCfg && m_coordCfg->mode == CoordMode::Static;
 }
 
 void CoordEngine::loadTable(const CoordTable& table)
@@ -51,11 +51,30 @@ void CoordEngine::start()
     m_coord->clear(m_crd);
     m_current = 0;
     m_running = true;
-    executeSegment(m_current);
-    m_coord->start(1 << m_crd);
+
+    if (staticMode()) {
+        // 静态模式: 一次性把所有段塞满缓冲区
+        for (int i = 0; i < (int)m_table.size(); ++i) {
+            if (!executeSegment(i)) {
+                stop();
+                return;
+            }
+        }
+        m_coord->start(1 << m_crd);
+    }
+    else {
+        // 动态模式: 先塞第一段再启动
+        if (!executeSegment(m_current)) {
+            stop();
+            return;
+        }
+        m_coord->start(1 << m_crd);
+    }
+
     // 插补状态轮询定时器
     m_pollTimer->start(50);
     emit started();
+    emit segmentStarted(0);
 }
 
 void CoordEngine::stop()
@@ -98,6 +117,30 @@ void CoordEngine::onPoll()
 
     if (!m_coord) return;
 
+    // 静态模式: 查询剩余段数反推执行进度
+    if (staticMode()) {
+        long remain = m_coord->getRemainingSegment(m_crd);
+        if (remain < 0) return; // 查询失败, 等待下次轮询
+
+        int completed = (int)m_table.size() - (int)remain;
+        while (m_current < completed) {
+            emit segmentDone(m_current);
+            m_current++;
+            if (m_current < (int)m_table.size()) {
+                emit segmentStarted(m_current);
+            }
+        }
+
+        if (m_current >= (int)m_table.size()) {
+            m_pollTimer->stop();
+            m_current = -1;
+            m_running = false;
+            emit allDone();
+        }
+        return;
+    }
+
+    // 动态模式: 查询插补状态, 完成一段补下一段
     short running = 0;
     long segment = 0;
     if (!m_coord->status(m_crd, running, segment)) {
@@ -121,12 +164,13 @@ void CoordEngine::onPoll()
         }
 
         executeSegment(m_current);
+        emit segmentStarted(m_current);
     }
 }
 
-void CoordEngine::executeSegment(int index)
+bool CoordEngine::executeSegment(int index)
 {
-    if (index < 0 || index >= (int)m_table.size()) return;
+    if (index < 0 || index >= (int)m_table.size()) return false;
 
     const auto& seg = m_table[index];
 
@@ -144,12 +188,10 @@ void CoordEngine::executeSegment(int index)
     }
 
     if (!ok) {
-        stop();
         emit errorOccurred(index, QStringLiteral("插补段 %1 加载失败").arg(index + 1));
-        return;
+        return false;
     }
-
-    emit segmentStarted(index);
+    return true;
 }
 
 void CoordEngine::advance()

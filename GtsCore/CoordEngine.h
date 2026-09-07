@@ -24,7 +24,6 @@ public:
     void setCrd(short crd) { m_crd = crd; }
     // 注入插补配置指针, 引擎执行时直接读取 enableSim 决定模拟/实际分支
     void setCoordCfg(CoordCfg* cfg) { m_coordCfg = cfg; }
-    bool simMode() const;
     // 模拟模式下每段的执行时长 (ms)
     void setSimSegmentMs(int ms) { m_simSegmentMs = ms; }
 
@@ -55,10 +54,12 @@ private slots:
 
 private:
     // 运控卡加载插补段
-    void executeSegment(int index);
+    bool executeSegment(int index);
     void advance();
-    // 是否模拟模式 (读配置 enableSim)
+    // 是否模拟模式
     bool sim() const;
+    // 是否静态模式
+    bool staticMode() const;
 
     CoordMgr* m_coord = nullptr;
     CoordCfg* m_coordCfg = nullptr;
