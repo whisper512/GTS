@@ -25,7 +25,7 @@ GtsMgr::GtsMgr(QObject* parent)
     // 注入插补引擎依赖
     m_coordEngine->setCoordMgr(m_coordMgr.get());
     m_coordEngine->setCrd(0);
-    applyCoordCfg();
+    m_coordEngine->setCoordCfg(&m_coordCfg);
 
     // 创建定时器用来刷新实时数据
     m_refreshTimer = new QTimer(this);
@@ -57,8 +57,7 @@ GtsMgr::~GtsMgr()
 
 void GtsMgr::applyCoordCfg()
 {
-    if (!m_coordEngine) return;
-    m_coordEngine->setSimMode(m_coordCfg.enableSim);
+    // 引擎持有 m_coordCfg 指针, 执行时直接读取 enableSim, 无需手动同步
     // CoordMode 静态/动态模式后续在引擎实现静态模式时接入
 }
 

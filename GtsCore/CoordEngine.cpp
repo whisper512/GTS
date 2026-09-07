@@ -1,5 +1,6 @@
 ﻿#include "CoordEngine.h"
 #include "GtsCoordMgr.h"
+#include "ControllerData.h"
 
 CoordEngine::CoordEngine(QObject* parent)
     : QObject(parent)
@@ -14,6 +15,16 @@ CoordEngine::~CoordEngine()
     m_coord = nullptr;
 }
 
+bool CoordEngine::simMode() const
+{
+    return sim();
+}
+
+bool CoordEngine::sim() const
+{
+    return m_coordCfg ? m_coordCfg->enableSim : true;
+}
+
 void CoordEngine::loadTable(const CoordTable& table)
 {
     stop();
@@ -26,7 +37,7 @@ void CoordEngine::start()
     if (m_table.empty()) return;
 
     // 模拟模式: 不调用硬件, 定时器逐段推进
-    if (m_simMode) {
+    if (sim()) {
         m_current = 0;
         m_running = true;
         emit started();
@@ -50,7 +61,7 @@ void CoordEngine::start()
 void CoordEngine::stop()
 {
     m_pollTimer->stop();
-    if (m_running && m_coord && !m_simMode) {
+    if (m_running && m_coord && !sim()) {
         m_coord->stop(m_crd);
     }
     m_running = false;
@@ -69,7 +80,7 @@ void CoordEngine::onPoll()
     if (!m_running || m_current < 0) return;
 
     // 模拟模式: 定时器到点即视为当前段完成
-    if (m_simMode) {
+    if (sim()) {
         emit segmentDone(m_current);
         m_current++;
 

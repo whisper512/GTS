@@ -5,6 +5,7 @@
 #include "CoordData.h"
 
 class CoordMgr;
+struct CoordCfg;
 
 // ============================================================
 // CoordEngine — 插补引擎
@@ -21,9 +22,9 @@ public:
 
     void setCoordMgr(CoordMgr* mgr) { m_coord = mgr; }
     void setCrd(short crd) { m_crd = crd; }
-    // 模拟模式: true 时不调用硬件, 用定时器模拟逐段执行
-    void setSimMode(bool sim) { m_simMode = sim; }
-    bool simMode() const { return m_simMode; }
+    // 注入插补配置指针, 引擎执行时直接读取 enableSim 决定模拟/实际分支
+    void setCoordCfg(CoordCfg* cfg) { m_coordCfg = cfg; }
+    bool simMode() const;
     // 模拟模式下每段的执行时长 (ms)
     void setSimSegmentMs(int ms) { m_simSegmentMs = ms; }
 
@@ -56,13 +57,15 @@ private:
     // 运控卡加载插补段
     void executeSegment(int index);
     void advance();
+    // 是否模拟模式 (读配置 enableSim)
+    bool sim() const;
 
     CoordMgr* m_coord = nullptr;
+    CoordCfg* m_coordCfg = nullptr;
     short m_crd = 0;
     CoordTable m_table;
     int m_current = -1;
     bool m_running = false;
-    bool m_simMode = true;
     int m_simSegmentMs = 300;
     QTimer* m_pollTimer = nullptr;
 };
