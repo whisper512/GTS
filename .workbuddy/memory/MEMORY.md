@@ -16,3 +16,10 @@
 ### 输出偏好
 - 不要生成 HTML 报告文件，用户自己会检查代码结果
 - 审查 / 分析结论直接在对话中用文字和表格给出即可
+
+## 架构决策
+- **Mgr 拆分原则**: 功能有独立数据流/生命周期/可独立测就独立成 mgr，否则集成到现有 mgr
+- **模块归属(按功能域)**: 高速IO+触发→HighSpeedIOMgr(新建)、PID+滤波+补偿→ControlMgr(新建)、龙门→GantryMgr(新建)、坐标变换→CoordMgr、手轮→AxisMgr(暂缓)
+- **功能域划分**: 运动域(MotionMgr)/插补域(CoordMgr+Engine)/IO域(IOMgr+HSIO)/控制调优域(ControlMgr)/结构域(GantryMgr)/反馈域(FeedbackMgr)/配置域(ConfigMgr)
+- **ConfigMgr 定位**: 只做参数读写和持久化，不再当"垃圾桶"，高级功能迁到对应 mgr
+- **插补引擎**: CoordEngine 归 GtsMgr 管理(unique_ptr)，与 UI 解耦，直接读 CoordCfg 配置(单一数据源)

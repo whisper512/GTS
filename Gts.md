@@ -40,6 +40,7 @@
 - [ ] 加速度字段 — CoordSegment 加独立 accel，不再复用 f 当加速度
 - [ ] 圆弧平面路由 — 引擎支持 YZ/ZX 圆弧
 - [ ] 实时位置反馈 — 执行中读 getCrdPosition
+- [ ] 坐标变换 — 正交 / 垂直度 (归 CoordMgr)
 
 # IO
 
@@ -74,6 +75,13 @@
 - [x] 当量计算函数
 - [x] 单位同步
 
+# 控制调优
+- [ ] PID / 滤波器整定 — 归 ControlMgr
+- [ ] 补偿 — 背隙 / 丝杠 / 2D 补偿表 (归 ControlMgr)
+
+# 龙门
+- [ ] 龙门 — GantryMgr：双轴同步
+
 # 其他
 
 - [x] 完成两个 widget，一个是简单轴控 widget，一个是复杂的插补 widget
@@ -84,3 +92,10 @@
 - [x] 耦合在 Manager 层 — MotionMgr::startTrapMotion / startJogMotion 中弹出错误对话框，headless/GUI-less 场景无法使用。方案：emit errorOccurred(int axisId, QString msg) 信号，由上层决定如何处理。(2026-07-03 已修复，移除 QMessageBox 依赖)
 - [x] 循环 Trap 忙轮询阻塞主线程 — MotionMgr::startTrapMotion 中 for + processEvents 忙等，无取消/超时机制。方案：onTrapCycleStep 递归自调度（waitMotionDone + QMetaObject::invokeMethod Qt::QueuedConnection）+ cancelTrapCycle。(2026-07-03 已修复)
 
+
+## 待做 — 按域
+- [ ] 高速 IO HighSpeedIOMgr — PSO 位置比较 + 位置捕获 + 触发 Trigger
+- [ ] 控制调优 ControlMgr — PID + 滤波 + 补偿(背隙/丝杠/2D)
+- [ ] 结构域 GantryMgr — 龙门双轴同步
+- [ ] 闭环编码器 — 闭环回零 + 当量换算
+- [ ] 电子齿轮/Follow — 主轴跟随
