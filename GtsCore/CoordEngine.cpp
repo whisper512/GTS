@@ -23,13 +23,26 @@ void CoordEngine::loadTable(const CoordTable& table)
 
 void CoordEngine::start()
 {
-    if (!m_coord || m_table.empty()) return;
+    if (m_table.empty()) return;
+
+    // 模拟模式: 不调用硬件, 定时器逐段推进
+    if (m_simMode) {
+        m_current = 0;
+        m_running = true;
+        emit started();
+        emit segmentStarted(0);
+        m_pollTimer->start(m_simSegmentMs);
+        return;
+    }
+
+    if (!m_coord) return;
 
     m_coord->clear(m_crd);
     m_current = 0;
     m_running = true;
     executeSegment(m_current);
     m_coord->start(1 << m_crd);
+    // 插补状态轮询定时器
     m_pollTimer->start(50);
     emit started();
 }
@@ -37,7 +50,7 @@ void CoordEngine::start()
 void CoordEngine::stop()
 {
     m_pollTimer->stop();
-    if (m_running && m_coord) {
+    if (m_running && m_coord && !m_simMode) {
         m_coord->stop(m_crd);
     }
     m_running = false;
@@ -53,7 +66,26 @@ void CoordEngine::reset()
 
 void CoordEngine::onPoll()
 {
-    if (!m_running || !m_coord || m_current < 0) return;
+    if (!m_running || m_current < 0) return;
+
+    // 模拟模式: 定时器到点即视为当前段完成
+    if (m_simMode) {
+        emit segmentDone(m_current);
+        m_current++;
+
+        if (m_current >= (int)m_table.size()) {
+            m_pollTimer->stop();
+            m_current = -1;
+            m_running = false;
+            emit allDone();
+            return;
+        }
+
+        emit segmentStarted(m_current);
+        return;
+    }
+
+    if (!m_coord) return;
 
     short running = 0;
     long segment = 0;

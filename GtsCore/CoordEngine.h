@@ -21,6 +21,11 @@ public:
 
     void setCoordMgr(CoordMgr* mgr) { m_coord = mgr; }
     void setCrd(short crd) { m_crd = crd; }
+    // 模拟模式: true 时不调用硬件, 用定时器模拟逐段执行
+    void setSimMode(bool sim) { m_simMode = sim; }
+    bool simMode() const { return m_simMode; }
+    // 模拟模式下每段的执行时长 (ms)
+    void setSimSegmentMs(int ms) { m_simSegmentMs = ms; }
 
     // 加载插补表
     void loadTable(const CoordTable& table);
@@ -48,6 +53,7 @@ private slots:
     void onPoll();
 
 private:
+    // 运控卡加载插补段
     void executeSegment(int index);
     void advance();
 
@@ -56,5 +62,7 @@ private:
     CoordTable m_table;
     int m_current = -1;
     bool m_running = false;
+    bool m_simMode = true;
+    int m_simSegmentMs = 300;
     QTimer* m_pollTimer = nullptr;
 };

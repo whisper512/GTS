@@ -64,11 +64,11 @@ public:
     using QStyledItemDelegate::QStyledItemDelegate;
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem&, const QModelIndex&) const override
     {
-        auto* sb = new QDoubleSpinBox(parent);
-        sb->setRange(-99999.99, 99999.99);
-        sb->setDecimals(2);
-        sb->setSingleStep(10.0);
-        return sb;
+        auto* spainbox = new QDoubleSpinBox(parent);
+        spainbox->setRange(-99999.99, 99999.99);
+        spainbox->setDecimals(2);
+        spainbox->setSingleStep(10.0);
+        return spainbox;
     }
     void setEditorData(QWidget* editor, const QModelIndex& index) const override
     {
@@ -215,22 +215,22 @@ void CoordWidget::clearAll()
 
 void CoordWidget::addDemoStar()
 {
-    auto* tw = ui.tableWidget;
+    auto* tableWidget = ui.tableWidget;
 
     auto add = [&](const QString& type, double x, double y, double z, double f, double r, const QString& dir) {
-        int row = tw->rowCount();
-        tw->insertRow(row);
+        int row = tableWidget->rowCount();
+        tableWidget->insertRow(row);
         auto* no = new QTableWidgetItem(QString::number(row + 1));
         no->setFlags(no->flags() & ~Qt::ItemIsEditable);
         no->setTextAlignment(Qt::AlignCenter);
-        tw->setItem(row, 0, no);
-        tw->setItem(row, 1, new QTableWidgetItem(type));
-        tw->setItem(row, 2, new QTableWidgetItem(QString::number(x, 'f', 2)));
-        tw->setItem(row, 3, new QTableWidgetItem(QString::number(y, 'f', 2)));
-        tw->setItem(row, 4, new QTableWidgetItem(QString::number(z, 'f', 2)));
-        tw->setItem(row, 5, new QTableWidgetItem(QString::number(f, 'f', 2)));
-        tw->setItem(row, 6, new QTableWidgetItem(QString::number(r, 'f', 2)));
-        tw->setItem(row, 7, new QTableWidgetItem(dir));
+        tableWidget->setItem(row, 0, no);
+        tableWidget->setItem(row, 1, new QTableWidgetItem(type));
+        tableWidget->setItem(row, 2, new QTableWidgetItem(QString::number(x, 'f', 2)));
+        tableWidget->setItem(row, 3, new QTableWidgetItem(QString::number(y, 'f', 2)));
+        tableWidget->setItem(row, 4, new QTableWidgetItem(QString::number(z, 'f', 2)));
+        tableWidget->setItem(row, 5, new QTableWidgetItem(QString::number(f, 'f', 2)));
+        tableWidget->setItem(row, 6, new QTableWidgetItem(QString::number(r, 'f', 2)));
+        tableWidget->setItem(row, 7, new QTableWidgetItem(dir));
         updateRowState(row);
     };
 
