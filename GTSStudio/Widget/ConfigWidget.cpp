@@ -1,6 +1,7 @@
 ﻿#include <QTimer>
 #include <QFileDialog>
 #include <QPushButton>
+#include <QCheckBox>
 #include "ConfigWidget.h"
 #include "../../GtsCore/GtsMgr.h"
 
@@ -56,6 +57,11 @@ void ConfigWidget::initUI()
 		QStringLiteral("正常模式"),
 		QStringLiteral("调试模式"),
 		QStringLiteral("无板卡模式")
+		});
+
+	comboAddItems(ui.comboBox_coordMode, {
+		QStringLiteral("静态模式"),
+		QStringLiteral("动态模式")
 		});
 
 	comboAddNumbers(ui.comboBox_axisIdHomeConfig, 4);
@@ -135,6 +141,18 @@ void ConfigWidget::connectSignals()
 		short axis = ui.comboBox_axisId->currentText().toShort();
 		commitAxisNameForAxis(axis);
 	});
+
+	// 插补模式 switch
+	connect(ui.comboBox_coordMode, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]() {
+		if (m_refreshing) return;
+		commitCoordCfg();
+	});
+
+	// 插补模拟 checkbox
+	connect(ui.checkBox_coordSim, &QCheckBox::toggled, this, [this](bool) {
+		if (m_refreshing) return;
+		commitCoordCfg();
+	});
 }
 
 void ConfigWidget::onLoadConfigFile()
@@ -159,6 +177,7 @@ void ConfigWidget::onConfigChanged()
 	refreshAxisLimit();
 	refreshAxisName();
 	refreshSoftPulseScale();
+	refreshCoordCfg();
 }
 
 void ConfigWidget::onApplyAndSave()
@@ -173,6 +192,7 @@ void ConfigWidget::onApplyAndSave()
 	commitAxisNameForAxis(ui.comboBox_axisId->currentText().toShort());
 	commitSoftPulseScaleForAxis(ui.comboBox_axisId->currentText().toShort());
 	commitHomeForAxis(ui.comboBox_axisIdHomeConfig->currentText().toShort());
+	commitCoordCfg();
 	m_gtsMgr->configMgr()->saveAxisConfig();
 }
 
@@ -189,6 +209,7 @@ void ConfigWidget::onApplyToBoard()
 	commitAxisNameForAxis(ui.comboBox_axisId->currentText().toShort());
 	commitSoftPulseScaleForAxis(ui.comboBox_axisId->currentText().toShort());
 	commitHomeForAxis(ui.comboBox_axisIdHomeConfig->currentText().toShort());
+	commitCoordCfg();
 	m_gtsMgr->configMgr()->applyAllAxisConfigToBoard();
 }
 
@@ -298,6 +319,19 @@ void ConfigWidget::refreshSoftPulseScale()
 	m_refreshing = false;
 }
 
+void ConfigWidget::refreshCoordCfg()
+{
+	if (m_refreshing) return;
+	if (!m_gtsMgr) return;
+	m_refreshing = true;
+	auto* cfg = m_gtsMgr->coordCfg();
+	if (cfg) {
+		ui.comboBox_coordMode->setCurrentIndex(static_cast<int>(cfg->mode));
+		ui.checkBox_coordSim->setChecked(cfg->enableSim);
+	}
+	m_refreshing = false;
+}
+
 // ===== commit =====
 
 void ConfigWidget::commitDacForAxis(short dac)
@@ -387,4 +421,14 @@ void ConfigWidget::commitSoftPulseScaleForAxis(short axis)
 		ui.spinBox_pluseAlpha->value(),
 		ui.spinBox_pluseBeta->value());
 	cfg->blockSignals(false);
+}
+
+void ConfigWidget::commitCoordCfg()
+{
+	if (!m_gtsMgr) return;
+	auto* cfg = m_gtsMgr->coordCfg();
+	if (!cfg) return;
+	cfg->mode = static_cast<CoordMode>(ui.comboBox_coordMode->currentIndex());
+	cfg->enableSim = ui.checkBox_coordSim->isChecked();
+	m_gtsMgr->applyCoordCfg();
 }

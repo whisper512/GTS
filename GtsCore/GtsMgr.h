@@ -40,6 +40,8 @@ private:
     DO m_do;
     // 配置
     AxisConfig m_cfg;
+    // 插补配置
+    CoordCfg m_coordCfg;
 
     // 板卡的管理类
     std::unique_ptr<BoardMgr> m_boardMgr;
@@ -75,6 +77,10 @@ public:
     CoordEngine* coordEngine() const { return m_coordEngine.get(); }
     // 轴配置数据
     AxisConfig* axisCfg() { return &m_cfg; }
+    // 插补配置数据
+    CoordCfg* coordCfg() { return &m_coordCfg; }
+    // 应用插补配置到引擎
+    void applyCoordCfg();
     // 板卡模式
     CardMode cardMode() const { return m_cardMode; }
     // 设置板卡模式

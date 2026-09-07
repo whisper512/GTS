@@ -22,9 +22,10 @@ GtsMgr::GtsMgr(QObject* parent)
 
     // 注入依赖
     m_configMgr->injectDependencies(&m_cfg, this, m_axisMgr.get());
-    // 注入依赖
+    // 注入插补引擎依赖
     m_coordEngine->setCoordMgr(m_coordMgr.get());
     m_coordEngine->setCrd(0);
+    applyCoordCfg();
 
     // 创建定时器用来刷新实时数据
     m_refreshTimer = new QTimer(this);
@@ -52,6 +53,13 @@ GtsMgr::~GtsMgr()
 {
     stopRefresh();
     m_refreshTimer = nullptr;
+}
+
+void GtsMgr::applyCoordCfg()
+{
+    if (!m_coordEngine) return;
+    m_coordEngine->setSimMode(m_coordCfg.enableSim);
+    // CoordMode 静态/动态模式后续在引擎实现静态模式时接入
 }
 
 void GtsMgr::startRefresh(int intervalMs)

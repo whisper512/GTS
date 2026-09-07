@@ -27,6 +27,7 @@ private:
 	void refreshAxisLimit();
 	void refreshAxisName();
 	void refreshSoftPulseScale();
+	void refreshCoordCfg();
 	// commit
 	void commitDacForAxis(short dac);
 	void commitFollowErrorForAxis(short ctrl);
@@ -37,6 +38,7 @@ private:
 	void commitAxisLimitForAxis(short axis);
 	void commitAxisNameForAxis(short axis);
 	void commitSoftPulseScaleForAxis(short axis);
+	void commitCoordCfg();
 
 private:
 	Ui::CConfigWidgetClass ui;

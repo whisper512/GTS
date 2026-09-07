@@ -7,6 +7,12 @@ enum class CardMode : short
     NoCard = 2,  // 无板卡模拟模式
 };
 
+enum class CoordMode : short
+{
+    Static = 0,   // 静态模式: 一次性填满缓冲区后启动
+    Dynamic = 1,  // 动态模式: 边跑边补段
+};
+
 // 输入类型
 enum class DIType : short
 { 
@@ -105,15 +111,23 @@ enum class HomeMode : short
 };
 
 // 板卡信息
-struct CardInfo {
+struct CardInfo 
+{
     short cardNum;
     short cardType;
 };
 
 // 驱动版本
-struct DriverVersion {
+struct DriverVersion 
+{
     unsigned short mainVer;
     unsigned short slaveVer;
+};
+
+struct CoordCfg
+{
+    CoordMode mode = CoordMode::Dynamic;
+    bool enableSim = true;
 };
 
 // DI 状态

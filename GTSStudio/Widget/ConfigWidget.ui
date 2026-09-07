@@ -13,9 +13,22 @@
   <property name="windowTitle">
    <string>CConfigWidget</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_8">
+  <layout class="QGridLayout" name="gridLayout_9">
+   <item row="2" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="0" column="1">
-    <layout class="QGridLayout" name="gridLayout_7">
+    <layout class="QGridLayout" name="gridLayout_8">
      <item row="0" column="0">
       <widget class="QGroupBox" name="groupBox_5">
        <property name="title">
@@ -395,7 +408,7 @@
        </layout>
       </widget>
      </item>
-     <item row="2" column="2" rowspan="2">
+     <item row="2" column="2">
       <widget class="QGroupBox" name="groupBox_3">
        <property name="title">
         <string>DAC配置:</string>
@@ -490,6 +503,35 @@
        </layout>
       </widget>
      </item>
+     <item row="3" column="2">
+      <widget class="QGroupBox" name="groupBox_7">
+       <property name="title">
+        <string>插补配置:</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_coordMode">
+          <property name="text">
+           <string>插补模式:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBox_coordMode"/>
+        </item>
+        <item row="3" column="1">
+         <widget class="QCheckBox" name="checkBox_coordSim">
+          <property name="text">
+           <string>插补模拟</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
     </layout>
    </item>
    <item row="1" column="1">
@@ -557,19 +599,6 @@
       <size>
        <width>40</width>
        <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
       </size>
      </property>
     </spacer>

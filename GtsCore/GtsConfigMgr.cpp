@@ -117,6 +117,13 @@ bool ConfigMgr::saveAxisConfig(const QString& filePath)
     root[QStringLiteral("version")] = 2;
     root[QStringLiteral("axisCount")] = static_cast<int>(m_axisCfg->axes.size());
     root[QStringLiteral("cardMode")] = static_cast<int>(m_gtsMgr->cardMode());
+
+    // 插补配置
+    QJsonObject coordObj;
+    coordObj[QStringLiteral("mode")] = static_cast<int>(m_gtsMgr->coordCfg()->mode);
+    coordObj[QStringLiteral("enableSim")] = m_gtsMgr->coordCfg()->enableSim;
+    root[QStringLiteral("coord")] = coordObj;
+
     root[QStringLiteral("axes")] = axesArr;
 
     QDir().mkpath(QFileInfo(path).absolutePath());
@@ -152,6 +159,15 @@ bool ConfigMgr::loadAxisConfig(const QString& filePath)
     QJsonObject root = doc.object();
 
     m_gtsMgr->setCardMode(static_cast<CardMode>(root.value(QStringLiteral("cardMode")).toInt(static_cast<int>(CardMode::Normal))));
+
+    // 插补配置
+    QJsonObject coordObj = root.value(QStringLiteral("coord")).toObject();
+    if (!coordObj.isEmpty()) {
+        auto* coordCfg = m_gtsMgr->coordCfg();
+        coordCfg->mode = static_cast<CoordMode>(coordObj.value(QStringLiteral("mode")).toInt(static_cast<int>(CoordMode::Dynamic)));
+        coordCfg->enableSim = coordObj.value(QStringLiteral("enableSim")).toBool(true);
+        m_gtsMgr->applyCoordCfg();
+    }
 
     // 按 axisCount 初始化所有轴为默认值
     int count = m_gtsMgr->axisCount();
