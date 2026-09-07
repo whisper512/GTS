@@ -62,9 +62,8 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection
         double ex = getX(seg), ey = getY(seg);
 
         QColor color = Qt::cyan;
-        if (executingIndex >= 0) {
-            if (i < executingIndex)       color = Qt::green;
-            else if (i == executingIndex) color = Qt::red;
+        if (executingIndex >= 0 && i <= executingIndex) {
+            color = Qt::red; // 已执行(含当前段)保持红色
         }
 
         QPen pen(color, 2);

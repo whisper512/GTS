@@ -24,7 +24,7 @@ public:
     void setCrd(short crd) { m_crd = crd; }
     // 注入插补配置指针, 引擎执行时直接读取 enableSim 决定模拟/实际分支
     void setCoordCfg(CoordCfg* cfg) { m_coordCfg = cfg; }
-    // 模拟模式下每段的执行时长 (ms)
+    // 模拟模式下每段的兜底执行时长 (ms)，实际时长按 长度/速度 计算
     void setSimSegmentMs(int ms) { m_simSegmentMs = ms; }
 
     // 加载插补表
@@ -60,6 +60,8 @@ private:
     bool sim() const;
     // 是否静态模式
     bool staticMode() const;
+    // 计算某段的模拟执行时长 (ms) = 路径长度 / 速度 F
+    int segmentDurationMs(int index) const;
 
     CoordMgr* m_coord = nullptr;
     CoordCfg* m_coordCfg = nullptr;

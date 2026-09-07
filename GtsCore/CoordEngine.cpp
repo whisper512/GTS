@@ -1,6 +1,7 @@
 ﻿#include "CoordEngine.h"
 #include "GtsCoordMgr.h"
 #include "ControllerData.h"
+#include <cmath>
 
 CoordEngine::CoordEngine(QObject* parent)
     : QObject(parent)
@@ -25,6 +26,46 @@ bool CoordEngine::staticMode() const
     return m_coordCfg && m_coordCfg->mode == CoordMode::Static;
 }
 
+int CoordEngine::segmentDurationMs(int index) const
+{
+    if (index < 0 || index >= (int)m_table.size()) return m_simSegmentMs;
+
+    const auto& seg = m_table[index];
+
+    // 起点 = 上一段终点 (首段为原点)
+    double sx = 0.0, sy = 0.0, sz = 0.0;
+    if (index > 0) {
+        const auto& prev = m_table[index - 1];
+        sx = prev.x; sy = prev.y; sz = prev.z;
+    }
+    double ex = seg.x, ey = seg.y, ez = seg.z;
+
+    double length = 0.0;
+    if (seg.type == SegmentType::Arc && std::fabs(seg.r) > 0.01) {
+        // 圆弧弧长: 弦长 chord, 半径 r, 圆心角 theta=2*asin(chord/2r), 弧长=r*theta
+        double dx = ex - sx, dy = ey - sy;
+        double chord = std::sqrt(dx * dx + dy * dy);
+        double r = std::fabs(seg.r);
+        if (chord > 2.0 * r) chord = 2.0 * r;
+        double theta = 2.0 * std::asin(chord / (2.0 * r));
+        length = r * theta;
+    }
+    else {
+        // 直线长度 (三维)
+        double dx = ex - sx, dy = ey - sy, dz = ez - sz;
+        length = std::sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    double f = seg.f > 0.0 ? seg.f : 200.0;   // 速度 mm/s
+    double ms = length / f * 1000.0;
+
+    // 限幅: 避免过快(闪烁)或过慢
+    if (ms < 50.0) ms = 50.0;
+    if (ms > 5000.0) ms = 5000.0;
+
+    return static_cast<int>(ms);
+}
+
 void CoordEngine::loadTable(const CoordTable& table)
 {
     stop();
@@ -36,18 +77,20 @@ void CoordEngine::start()
 {
     if (m_table.empty()) return;
 
-    // 模拟模式: 不调用硬件, 定时器逐段推进
+    // 模拟模式: 不调用硬件, 定时器按 段长/速度 逐段推进
     if (sim()) {
         m_current = 0;
         m_running = true;
         emit started();
         emit segmentStarted(0);
-        m_pollTimer->start(m_simSegmentMs);
+        m_pollTimer->setSingleShot(true);
+        m_pollTimer->start(segmentDurationMs(0));
         return;
     }
 
     if (!m_coord) return;
 
+    m_pollTimer->setSingleShot(false);
     m_coord->clear(m_crd);
     m_current = 0;
     m_running = true;
@@ -98,7 +141,7 @@ void CoordEngine::onPoll()
 {
     if (!m_running || m_current < 0) return;
 
-    // 模拟模式: 定时器到点即视为当前段完成
+    // 模拟模式: 定时器到点即视为当前段完成, 用下一段时长重新定时
     if (sim()) {
         emit segmentDone(m_current);
         m_current++;
@@ -112,6 +155,7 @@ void CoordEngine::onPoll()
         }
 
         emit segmentStarted(m_current);
+        m_pollTimer->start(segmentDurationMs(m_current));
         return;
     }
 

@@ -120,7 +120,8 @@ void CoordWidget::setGtsTotalMgr(GtsMgr* mgr)
         syncTableToScene();
     });
     connect(m_engine, &CoordEngine::allDone, this, [this] {
-        m_executingIndex = -1;
+        // 全部完成后保持红色 (executingIndex 指向最后一段)
+        m_executingIndex = ui.tableWidget->rowCount() - 1;
         syncTableToScene();
     });
 
