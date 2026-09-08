@@ -16,6 +16,13 @@ CoordEngine::~CoordEngine()
     m_coord = nullptr;
 }
 
+void CoordEngine::injectDependencies(CoordMgr* mgr, short crd, CoordCfg* cfg)
+{
+    m_coord = mgr;
+    m_crd = crd;
+    m_coordCfg = cfg;
+}
+
 bool CoordEngine::sim() const
 {
     return m_coordCfg ? m_coordCfg->enableSim : true;

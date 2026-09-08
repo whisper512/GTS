@@ -22,11 +22,8 @@ GtsMgr::GtsMgr(QObject* parent)
 
     // 注入依赖
     m_configMgr->injectDependencies(&m_cfg, this, m_axisMgr.get());
-    // 注入插补引擎依赖
     m_coordMgr->setGtsMgr(this);
-    m_coordEngine->setCoordMgr(m_coordMgr.get());
-    m_coordEngine->setCrd(0);
-    m_coordEngine->setCoordCfg(&m_coordCfg);
+    m_coordEngine->injectDependencies(m_coordMgr.get(), 0, &m_coordCfg);
 
     // 创建定时器用来刷新实时数据
     m_refreshTimer = new QTimer(this);
