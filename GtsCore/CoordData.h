@@ -20,6 +20,14 @@ enum class ArcDir : short
     CCW = 1,        // 逆时针 G03
 };
 
+// 圆弧平面
+enum class ArcPlane : short
+{
+    XY = 0,         // XY 平面
+    YZ = 1,         // YZ 平面
+    ZX = 2,         // ZX 平面
+};
+
 // 单段插补数据
 struct CoordSegment
 {
@@ -30,6 +38,7 @@ struct CoordSegment
     double      f    = 200.0;              // 进给速度 mm/s
     double      accel = 200.0;             // 加速度 mm/s²
     double      velEnd = 0.0;              // 结束速度 mm/s (0=匀速到终点)
+    ArcPlane    plane = ArcPlane::XY;      // 圆弧平面 (仅 Arc 有效)
     double      r    = 0.0;                // 半径 mm (仅 Arc 有效, Line 时为 0)
     ArcDir      dir  = ArcDir::CW;         // 圆弧方向 (仅 Arc 有效)
 };

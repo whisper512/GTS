@@ -228,12 +228,20 @@ bool CoordEngine::executeSegment(int index)
     bool ok = false;
     if (seg.type == SegmentType::Arc && seg.r != 0.0) {
         short dir = (seg.dir == ArcDir::CW) ? 0 : 1;
-        ok = m_coord->arcXYByRadius(m_crd,
-            seg.x, seg.y, seg.r, dir, seg.f, seg.accel, seg.velEnd);
+        switch (seg.plane) {
+        case ArcPlane::XY:
+            ok = m_coord->arcXYByRadius(m_crd, seg.x, seg.y, seg.r, dir, seg.f, seg.accel, seg.velEnd);
+            break;
+        case ArcPlane::YZ:
+            ok = m_coord->arcYZByRadius(m_crd, seg.y, seg.z, seg.r, dir, seg.f, seg.accel, seg.velEnd);
+            break;
+        case ArcPlane::ZX:
+            ok = m_coord->arcZXByRadius(m_crd, seg.z, seg.x, seg.r, dir, seg.f, seg.accel, seg.velEnd);
+            break;
+        }
     }
     else {
-        ok = m_coord->lineXY(m_crd,
-            seg.x, seg.y, seg.f, seg.accel, seg.velEnd);
+        ok = m_coord->lineXY(m_crd, seg.x, seg.y, seg.f, seg.accel, seg.velEnd);
     }
 
     if (!ok) {

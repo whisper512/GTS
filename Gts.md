@@ -36,10 +36,9 @@
 - [x] 插补模式，一次行多条指令或动态加载执行
 - [x] 模拟模式按 长度/速度 计算段执行时长
 - [x] 插补配置(静态/动态模式 + 模拟开关)持久化到 gtsConfig.json
-- [ ] 单位转换 — executeSegment 里 mm 转 pulse
-- [ ] 加速度字段 — CoordSegment 加独立 accel，不再复用 f 当加速度
-- [ ] 圆弧平面路由 — 引擎支持 YZ/ZX 圆弧
-- [ ] 实时位置反馈 — 执行中读 getCrdPosition
+- [x] 单位转换 — executeSegment 里 mm 转 pulse
+- [x] 加速度字段 — CoordSegment 加独立 accel，不再复用 f 当加速度
+- [x] 圆弧平面路由 — 引擎支持 YZ/ZX 圆弧
 - [ ] 坐标变换 — 正交 / 垂直度 (归 CoordMgr)
 
 # IO

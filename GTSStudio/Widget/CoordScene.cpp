@@ -68,7 +68,8 @@ void GridScene::drawPath(const CoordTable& table, int executingIndex, Projection
 
         QPen pen(color, 2);
 
-        if (seg.type != SegmentType::Arc || std::fabs(seg.r) < 0.01 || proj != Projection::XY) {
+        if (seg.type != SegmentType::Arc || std::fabs(seg.r) < 0.01 ||
+            static_cast<Projection>(seg.plane) != proj) {
             addLine(sx * scale, sy * scale, ex * scale, ey * scale, pen);
         }
         else {
