@@ -229,11 +229,11 @@ bool CoordEngine::executeSegment(int index)
     if (seg.type == SegmentType::Arc && seg.r != 0.0) {
         short dir = (seg.dir == ArcDir::CW) ? 0 : 1;
         ok = m_coord->arcXYByRadius(m_crd,
-            seg.x, seg.y, seg.r, dir, seg.f, seg.f);
+            seg.x, seg.y, seg.r, dir, seg.f, seg.accel, seg.velEnd);
     }
     else {
         ok = m_coord->lineXY(m_crd,
-            seg.x, seg.y, seg.f, seg.f);
+            seg.x, seg.y, seg.f, seg.accel, seg.velEnd);
     }
 
     if (!ok) {

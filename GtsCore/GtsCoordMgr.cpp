@@ -32,6 +32,12 @@ double CoordMgr::velToPulse(AxisName name, double val) const
     return (axis >= 1 && m_gtsMgr) ? m_gtsMgr->mmpsToPulsePerMs(axis, val) : 0.0;
 }
 
+double CoordMgr::accToPulse(AxisName name, double val) const
+{
+    short axis = m_gtsMgr ? m_gtsMgr->axisIndexByName(name) : -1;
+    return (axis >= 1 && m_gtsMgr) ? m_gtsMgr->mmps2ToPulsePerMs2(axis, val) : 0.0;
+}
+
 bool CoordMgr::setCrdParams(short crd, const TCrdPrm& prm) 
 {
     if (!checkCrd(crd)) {
@@ -165,13 +171,13 @@ bool CoordMgr::lineXY(short crd, double x, double y, double synVel, double synAc
         return false;
     }
 
-    long   px  = toPulse(AxisName::X, x);
-    long   py  = toPulse(AxisName::Y, y);
-    double pv  = velToPulse(AxisName::X, synVel);
-    double pve = velToPulse(AxisName::X, velEnd);
-    // 加速度暂不转换 (插补段无独立加速度数据)
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
+    double pve  = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::lnXY(crd, px, py, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::lnXY(crd, px, py, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXY: ") + lastErrorString());
         return false;
@@ -191,13 +197,14 @@ bool CoordMgr::lineXYZ(short crd, double x, double y, double z, double synVel, d
         return false;
     }
 
-    long   px  = toPulse(AxisName::X, x);
-    long   py  = toPulse(AxisName::Y, y);
-    long   pz  = toPulse(AxisName::Z, z);
-    double pv  = velToPulse(AxisName::X, synVel);
-    double pve = velToPulse(AxisName::X, velEnd);
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    long   pz   = toPulse(AxisName::Z, z);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
+    double pve  = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::lnXYZ(crd, px, py, pz, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::lnXYZ(crd, px, py, pz, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZ: ") + lastErrorString());
         return false;
@@ -217,14 +224,15 @@ bool CoordMgr::lineXYZA(short crd, double x, double y, double z, double a,
         return false;
     }
 
-    long   px  = toPulse(AxisName::X, x);
-    long   py  = toPulse(AxisName::Y, y);
-    long   pz  = toPulse(AxisName::Z, z);
-    long   pa  = toPulse(AxisName::A, a);
-    double pv  = velToPulse(AxisName::X, synVel);
-    double pve = velToPulse(AxisName::X, velEnd);
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    long   pz   = toPulse(AxisName::Z, z);
+    long   pa   = toPulse(AxisName::A, a);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
+    double pve  = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::lnXYZA(crd, px, py, pz, pa, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::lnXYZA(crd, px, py, pz, pa, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZA: ") + lastErrorString());
         return false;
@@ -243,11 +251,12 @@ bool CoordMgr::lineXYG0(short crd, double x, double y, double synVel, double syn
         return false;
     }
 
-    long   px = toPulse(AxisName::X, x);
-    long   py = toPulse(AxisName::Y, y);
-    double pv = velToPulse(AxisName::X, synVel);
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
 
-    m_lastError = GtsHal::lnXYG0(crd, px, py, pv, synAcc, fifo);
+    m_lastError = GtsHal::lnXYG0(crd, px, py, pv, pacc, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYG0: ") + lastErrorString());
         return false;
@@ -266,12 +275,13 @@ bool CoordMgr::lineXYZG0(short crd, double x, double y, double z, double synVel,
         return false;
     }
 
-    long   px = toPulse(AxisName::X, x);
-    long   py = toPulse(AxisName::Y, y);
-    long   pz = toPulse(AxisName::Z, z);
-    double pv = velToPulse(AxisName::X, synVel);
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    long   pz   = toPulse(AxisName::Z, z);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
 
-    m_lastError = GtsHal::lnXYZG0(crd, px, py, pz, pv, synAcc, fifo);
+    m_lastError = GtsHal::lnXYZG0(crd, px, py, pz, pv, pacc, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZG0: ") + lastErrorString());
         return false;
@@ -291,13 +301,14 @@ bool CoordMgr::lineXYZAG0(short crd, double x, double y, double z, double a,
         return false;
     }
 
-    long   px = toPulse(AxisName::X, x);
-    long   py = toPulse(AxisName::Y, y);
-    long   pz = toPulse(AxisName::Z, z);
-    long   pa = toPulse(AxisName::A, a);
-    double pv = velToPulse(AxisName::X, synVel);
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    long   pz   = toPulse(AxisName::Z, z);
+    long   pa   = toPulse(AxisName::A, a);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
 
-    m_lastError = GtsHal::lnXYZAG0(crd, px, py, pz, pa, pv, synAcc, fifo);
+    m_lastError = GtsHal::lnXYZAG0(crd, px, py, pz, pa, pv, pacc, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZAG0: ") + lastErrorString());
         return false;
@@ -336,9 +347,10 @@ bool CoordMgr::arcXYByRadius(short crd, double x, double y, double radius, short
     long   py  = toPulse(AxisName::Y, y);
     double pr  = toPulse(AxisName::X, radius);         // 半径也是 mm
     double pv  = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::arcXYR(crd, px, py, pr, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcXYR(crd, px, py, pr, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcXYR: ") + lastErrorString());
         return false;
@@ -364,9 +376,10 @@ bool CoordMgr::arcXYByCenter(short crd, double x, double y, double xCenter, doub
     double pxc  = toPulse(AxisName::X, xCenter);
     double pyc  = toPulse(AxisName::Y, yCenter);
     double pv   = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve  = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::arcXYC(crd, px, py, pxc, pyc, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcXYC(crd, px, py, pxc, pyc, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcXYC: ") + lastErrorString());
         return false;
@@ -390,9 +403,10 @@ bool CoordMgr::arcYZByRadius(short crd, double y, double z, double radius, short
     long   pz  = toPulse(AxisName::Z, z);
     double pr  = toPulse(AxisName::Y, radius);
     double pv  = velToPulse(AxisName::Y, synVel);
+    double pacc = accToPulse(AxisName::Y, synAcc);
     double pve = velToPulse(AxisName::Y, velEnd);
 
-    m_lastError = GtsHal::arcYZR(crd, py, pz, pr, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcYZR(crd, py, pz, pr, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcYZR: ") + lastErrorString());
         return false;
@@ -418,9 +432,10 @@ bool CoordMgr::arcYZByCenter(short crd, double y, double z, double yCenter, doub
     double pyc = toPulse(AxisName::Y, yCenter);
     double pzc = toPulse(AxisName::Z, zCenter);
     double pv  = velToPulse(AxisName::Y, synVel);
+    double pacc = accToPulse(AxisName::Y, synAcc);
     double pve = velToPulse(AxisName::Y, velEnd);
 
-    m_lastError = GtsHal::arcYZC(crd, py, pz, pyc, pzc, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcYZC(crd, py, pz, pyc, pzc, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcYZC: ") + lastErrorString());
         return false;
@@ -444,9 +459,10 @@ bool CoordMgr::arcZXByRadius(short crd, double z, double x, double radius, short
     long   px  = toPulse(AxisName::X, x);
     double pr  = toPulse(AxisName::X, radius);
     double pv  = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::arcZXR(crd, pz, px, pr, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcZXR(crd, pz, px, pr, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcZXR: ") + lastErrorString());
         return false;
@@ -472,9 +488,10 @@ bool CoordMgr::arcZXByCenter(short crd, double z, double x, double zCenter, doub
     double pzc = toPulse(AxisName::Z, zCenter);
     double pxc = toPulse(AxisName::X, xCenter);
     double pv  = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::arcZXC(crd, pz, px, pzc, pxc, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcZXC(crd, pz, px, pzc, pxc, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcZXC: ") + lastErrorString());
         return false;
@@ -502,9 +519,10 @@ bool CoordMgr::arcXYZ(short crd, double x, double y, double z,
     double pyi = toPulse(AxisName::Y, interY);
     double pzi = toPulse(AxisName::Z, interZ);
     double pv  = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::arcXYZ(crd, px, py, pz, pxi, pyi, pzi, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::arcXYZ(crd, px, py, pz, pxi, pyi, pzi, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcXYZ: ") + lastErrorString());
         return false;
@@ -529,9 +547,10 @@ bool CoordMgr::helixXYRZ(short crd, double x, double y, double z, double radius,
     long   pz  = toPulse(AxisName::Z, z);
     double pr  = toPulse(AxisName::X, radius);
     double pv  = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::helixXYRZ(crd, px, py, pz, pr, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::helixXYRZ(crd, px, py, pz, pr, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("helixXYRZ: ") + lastErrorString());
         return false;
@@ -558,9 +577,10 @@ bool CoordMgr::helixXYCZ(short crd, double x, double y, double z, double xCenter
     double pxc = toPulse(AxisName::X, xCenter);
     double pyc = toPulse(AxisName::Y, yCenter);
     double pv  = velToPulse(AxisName::X, synVel);
+    double pacc = accToPulse(AxisName::X, synAcc);
     double pve = velToPulse(AxisName::X, velEnd);
 
-    m_lastError = GtsHal::helixXYCZ(crd, px, py, pz, pxc, pyc, circleDir, pv, synAcc, pve, fifo);
+    m_lastError = GtsHal::helixXYCZ(crd, px, py, pz, pxc, pyc, circleDir, pv, pacc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("helixXYCZ: ") + lastErrorString());
         return false;
@@ -847,16 +867,17 @@ bool CoordMgr::moveToXY(short crd, double x, double y, double vel, double acc)
         return false;
     }
 
-    long   px = toPulse(AxisName::X, x);
-    long   py = toPulse(AxisName::Y, y);
-    double pv = velToPulse(AxisName::X, vel);
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    double pv   = velToPulse(AxisName::X, vel);
+    double pacc = accToPulse(AxisName::X, acc);
 
     // 清除缓冲区
     GtsHal::crdClear(crd, 0);
     GtsHal::crdClear(crd, 1);
 
     // 添加直线插补段
-    m_lastError = GtsHal::lnXY(crd, px, py, pv, acc, 0, 0);
+    m_lastError = GtsHal::lnXY(crd, px, py, pv, pacc, 0, 0);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXY: ") + lastErrorString());
         return false;

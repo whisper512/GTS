@@ -132,15 +132,17 @@ void CoordWidget::setGtsTotalMgr(GtsMgr* mgr)
 void CoordWidget::initTable()
 {
     auto* tw = ui.tableWidget;
-    tw->setColumnCount(8);
+    tw->setColumnCount(10);
     tw->setHorizontalHeaderLabels({
         QStringLiteral("段号"),
         QStringLiteral("类型"),
-        QStringLiteral("X (mm)"),
-        QStringLiteral("Y (mm)"),
-        QStringLiteral("Z (mm)"),
-        QStringLiteral("F (mm/s)"),
-        QStringLiteral("R (mm)"),
+        QStringLiteral("X(mm)"),
+        QStringLiteral("Y(mm)"),
+        QStringLiteral("Z(mm)"),
+        QStringLiteral("Vel(mm/s)"),
+        QStringLiteral("Acc(mm/s^2)"),
+        QStringLiteral("VelEnd(mm/s)"),
+        QStringLiteral("R(mm)"),
         QStringLiteral("方向")
     });
     tw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -158,7 +160,9 @@ void CoordWidget::initTable()
     tw->setItemDelegateForColumn(4, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(5, new DoubleDelegate(tw));
     tw->setItemDelegateForColumn(6, new DoubleDelegate(tw));
-    tw->setItemDelegateForColumn(7, new DirDelegate(tw));
+    tw->setItemDelegateForColumn(7, new DoubleDelegate(tw));
+    tw->setItemDelegateForColumn(8, new DoubleDelegate(tw));
+    tw->setItemDelegateForColumn(9, new DirDelegate(tw));
 
     connect(tw, &QTableWidget::cellChanged, this, &CoordWidget::onCellChanged);
 }
@@ -175,14 +179,16 @@ void CoordWidget::addRowToTable()
     noItem->setTextAlignment(Qt::AlignCenter);
     tw->setItem(row, 0, noItem);
 
-    // 默认值: 直线, (0,0), F=200, R=0, CW
+    // 默认值: 直线, (0,0), F=200, 加速度=200, 结束速度=0, R=0, CW
     tw->setItem(row, 1, new QTableWidgetItem(QStringLiteral("直线")));
     tw->setItem(row, 2, new QTableWidgetItem(QStringLiteral("0")));
     tw->setItem(row, 3, new QTableWidgetItem(QStringLiteral("0")));
     tw->setItem(row, 4, new QTableWidgetItem(QStringLiteral("0")));
     tw->setItem(row, 5, new QTableWidgetItem(QStringLiteral("200")));
-    tw->setItem(row, 6, new QTableWidgetItem(QStringLiteral("0")));
-    tw->setItem(row, 7, new QTableWidgetItem(QStringLiteral("CW")));
+    tw->setItem(row, 6, new QTableWidgetItem(QStringLiteral("200")));
+    tw->setItem(row, 7, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 8, new QTableWidgetItem(QStringLiteral("0")));
+    tw->setItem(row, 9, new QTableWidgetItem(QStringLiteral("CW")));
 
     // 选中新行，打开编辑
     tw->selectRow(row);
@@ -218,7 +224,7 @@ void CoordWidget::addDemoStar()
 {
     auto* tableWidget = ui.tableWidget;
 
-    auto add = [&](const QString& type, double x, double y, double z, double f, double r, const QString& dir) {
+    auto add = [&](const QString& type, double x, double y, double z, double f, double accel, double velEnd, double r, const QString& dir) {
         int row = tableWidget->rowCount();
         tableWidget->insertRow(row);
         auto* no = new QTableWidgetItem(QString::number(row + 1));
@@ -230,8 +236,10 @@ void CoordWidget::addDemoStar()
         tableWidget->setItem(row, 3, new QTableWidgetItem(QString::number(y, 'f', 2)));
         tableWidget->setItem(row, 4, new QTableWidgetItem(QString::number(z, 'f', 2)));
         tableWidget->setItem(row, 5, new QTableWidgetItem(QString::number(f, 'f', 2)));
-        tableWidget->setItem(row, 6, new QTableWidgetItem(QString::number(r, 'f', 2)));
-        tableWidget->setItem(row, 7, new QTableWidgetItem(dir));
+        tableWidget->setItem(row, 6, new QTableWidgetItem(QString::number(accel, 'f', 2)));
+        tableWidget->setItem(row, 7, new QTableWidgetItem(QString::number(velEnd, 'f', 2)));
+        tableWidget->setItem(row, 8, new QTableWidgetItem(QString::number(r, 'f', 2)));
+        tableWidget->setItem(row, 9, new QTableWidgetItem(dir));
         updateRowState(row);
     };
 
@@ -247,14 +255,14 @@ void CoordWidget::addDemoStar()
     std::pair<double,double> p3 = v(3); double x3 = p3.first,  y3 = p3.second;
     std::pair<double,double> p4 = v(4); double x4 = p4.first,  y4 = p4.second;
 
-    add(QStringLiteral("直线"), x0, y0, 0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x2, y2, 0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x4, y4, 0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x1, y1, 0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x3, y3, 0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("直线"), x0, y0, 0, 200, 0, QStringLiteral("CW"));
-    add(QStringLiteral("圆弧"),  0, -R, 0, 200, R, QStringLiteral("CW"));
-    add(QStringLiteral("圆弧"), x0, y0, 0, 200, R, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x0, y0, 0, 200, 200, 0, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x2, y2, 0, 200, 200, 0, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x4, y4, 0, 200, 200, 0, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x1, y1, 0, 200, 200, 0, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x3, y3, 0, 200, 200, 0, 0, QStringLiteral("CW"));
+    add(QStringLiteral("直线"), x0, y0, 0, 200, 200, 0, 0, QStringLiteral("CW"));
+    add(QStringLiteral("圆弧"),  0, -R, 0, 200, 200, 0, R, QStringLiteral("CW"));
+    add(QStringLiteral("圆弧"), x0, y0, 0, 200, 200, 0, R, QStringLiteral("CW"));
 
     syncTableToScene();
 }
@@ -296,8 +304,10 @@ void CoordWidget::onExec()
         seg.y = tw->item(i, 3) ? tw->item(i, 3)->text().toDouble() : 0;
         seg.z = tw->item(i, 4) ? tw->item(i, 4)->text().toDouble() : 0;
         seg.f = tw->item(i, 5) ? tw->item(i, 5)->text().toDouble() : 200;
-        seg.r = tw->item(i, 6) ? tw->item(i, 6)->text().toDouble() : 0;
-        auto* dirItem = tw->item(i, 7);
+        seg.accel = tw->item(i, 6) ? tw->item(i, 6)->text().toDouble() : 200;
+        seg.velEnd = tw->item(i, 7) ? tw->item(i, 7)->text().toDouble() : 0;
+        seg.r = tw->item(i, 8) ? tw->item(i, 8)->text().toDouble() : 0;
+        auto* dirItem = tw->item(i, 9);
         seg.dir = (dirItem && dirItem->text() == QStringLiteral("CCW")) ? ArcDir::CCW : ArcDir::CW;
         table.push_back(seg);
     }
@@ -309,7 +319,7 @@ void CoordWidget::onExec()
 void CoordWidget::onCellChanged(int row, int col)
 {
     if (col == 1) updateRowState(row);
-    if (col == 6) validateArcR(row);
+    if (col == 8) validateArcR(row);
     syncTableToScene();
 }
 
@@ -319,7 +329,7 @@ void CoordWidget::updateRowState(int row)
     auto* typeItem = tw->item(row, 1);
     bool isArc = typeItem && typeItem->text() == QStringLiteral("圆弧");
 
-    for (int col : {6, 7}) {
+    for (int col : {8, 9}) {
         auto* item = tw->item(row, col);
         if (!item) continue;
 
@@ -355,7 +365,7 @@ void CoordWidget::validateArcR(int row)
     double chord = std::sqrt((ex - sx) * (ex - sx) + (ey - sy) * (ey - sy));
     double minR = chord / 2.0;
 
-    auto* rItem = tw->item(row, 6);
+    auto* rItem = tw->item(row, 8);
     if (!rItem) return;
     double r = rItem->text().toDouble();
 
@@ -384,8 +394,10 @@ void CoordWidget::syncTableToScene()
         seg.y = tw->item(i, 3) ? tw->item(i, 3)->text().toDouble() : 0;
         seg.z = tw->item(i, 4) ? tw->item(i, 4)->text().toDouble() : 0;
         seg.f = tw->item(i, 5) ? tw->item(i, 5)->text().toDouble() : 200;
-        seg.r = tw->item(i, 6) ? tw->item(i, 6)->text().toDouble() : 0;
-        auto* dirItem = tw->item(i, 7);
+        seg.accel = tw->item(i, 6) ? tw->item(i, 6)->text().toDouble() : 200;
+        seg.velEnd = tw->item(i, 7) ? tw->item(i, 7)->text().toDouble() : 0;
+        seg.r = tw->item(i, 8) ? tw->item(i, 8)->text().toDouble() : 0;
+        auto* dirItem = tw->item(i, 9);
         seg.dir = (dirItem && dirItem->text() == QStringLiteral("CCW")) ? ArcDir::CCW : ArcDir::CW;
         table.push_back(seg);
     }

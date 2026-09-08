@@ -33,6 +33,8 @@ private:
     long toPulse(AxisName name, double val) const;
     // 速度 用户单位/s → pulse/ms
     double velToPulse(AxisName name, double val) const;
+    // 加速度 用户单位/s² → pulse/ms²
+    double accToPulse(AxisName name, double val) const;
 
 public:
     explicit CoordMgr(QObject* parent = nullptr);
