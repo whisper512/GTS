@@ -55,6 +55,7 @@ private slots:
 private:
     // 运控卡加载插补段
     bool executeSegment(int index);
+    // 前瞻
     void advance();
     // 是否模拟模式
     bool sim() const;

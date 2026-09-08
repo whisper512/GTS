@@ -101,6 +101,8 @@ public:
     void initAfterBoardOpened();
     // 板卡关闭后的清理
     void cleanupAfterBoardClosed();
+    // 根据轴名称查找轴号 (1-based), 找不到返回 -1
+    short axisIndexByName(AxisName name) const;
     // ── 当量换算工具 ──
     double pulsePerMm(short profile) const;          // 脉冲/mm 系数
     double mmPerPulse(short profile) const;          // mm/脉冲 系数

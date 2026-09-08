@@ -222,13 +222,11 @@ bool CoordEngine::executeSegment(int index)
     if (seg.type == SegmentType::Arc && seg.r != 0.0) {
         short dir = (seg.dir == ArcDir::CW) ? 0 : 1;
         ok = m_coord->arcXYByRadius(m_crd,
-            static_cast<long>(seg.x), static_cast<long>(seg.y),
-            seg.r, dir, seg.f, seg.f); // 先复用 f 作为加速度
+            seg.x, seg.y, seg.r, dir, seg.f, seg.f);
     }
     else {
         ok = m_coord->lineXY(m_crd,
-            static_cast<long>(seg.x), static_cast<long>(seg.y),
-            seg.f, seg.f); // 先复用 f 作为加速度
+            seg.x, seg.y, seg.f, seg.f);
     }
 
     if (!ok) {

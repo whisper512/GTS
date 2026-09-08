@@ -23,6 +23,7 @@ GtsMgr::GtsMgr(QObject* parent)
     // 注入依赖
     m_configMgr->injectDependencies(&m_cfg, this, m_axisMgr.get());
     // 注入插补引擎依赖
+    m_coordMgr->setGtsMgr(this);
     m_coordEngine->setCoordMgr(m_coordMgr.get());
     m_coordEngine->setCrd(0);
     m_coordEngine->setCoordCfg(&m_coordCfg);
@@ -153,6 +154,15 @@ double GtsMgr::pulseToMm(short profile, long pulse) const
     double ppm = pulsePerMm(profile);
     if (ppm == 0.0) return 0.0;
     return static_cast<double>(pulse) / ppm;
+}
+
+short GtsMgr::axisIndexByName(AxisName name) const
+{
+    for (size_t i = 0; i < m_cfg.axes.size(); ++i) {
+        if (m_cfg.axes[i].name == name)
+            return static_cast<short>(i + 1);
+    }
+    return -1;
 }
 
 void GtsMgr::onRefreshTimeout()

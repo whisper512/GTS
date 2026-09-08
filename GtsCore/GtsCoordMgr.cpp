@@ -1,4 +1,6 @@
 ﻿#include "GtsCoordMgr.h"
+#include "GtsMgr.h"
+#include "ControllerData.h"
 
 CoordMgr::CoordMgr(QObject* parent)
     : QObject(parent)
@@ -140,14 +142,32 @@ bool CoordMgr::getCrdStopDecel(short crd, double& decSmooth, double& decAbrupt) 
     return m_lastError == 0;
 }
 
-bool CoordMgr::lineXY(short crd, long x, long y, double synVel, double synAcc,
+bool CoordMgr::lineXY(short crd, double x, double y, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::lnXY(crd, x, y, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    short axisX = m_gtsMgr->axisIndexByName(AxisName::X);
+    short axisY = m_gtsMgr->axisIndexByName(AxisName::Y);
+    if (axisX < 1 || axisY < 1) {
+        emit errorOccurred(crd, -1, QStringLiteral("未找到 X/Y 轴配置"));
+        return false;
+    }
+
+    long   px  = m_gtsMgr->mmToPulse(axisX, x);              // mm → pulse
+    long   py  = m_gtsMgr->mmToPulse(axisY, y);
+    double pv  = m_gtsMgr->mmpsToPulsePerMs(axisX, synVel);  // mm/s → pulse/ms
+    double pve = m_gtsMgr->mmpsToPulsePerMs(axisX, velEnd);
+    // 加速度暂不转换 (插补段无独立加速度数据)
+
+    m_lastError = GtsHal::lnXY(crd, px, py, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXY: ") + lastErrorString());
         return false;
@@ -243,14 +263,32 @@ bool CoordMgr::lineXYZACUVW(short crd, long* pPos, short posMask,
     return true;
 }
 
-bool CoordMgr::arcXYByRadius(short crd, long x, long y, double radius, short circleDir,
+bool CoordMgr::arcXYByRadius(short crd, double x, double y, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcXYR(crd, x, y, radius, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    short axisX = m_gtsMgr->axisIndexByName(AxisName::X);
+    short axisY = m_gtsMgr->axisIndexByName(AxisName::Y);
+    if (axisX < 1 || axisY < 1) {
+        emit errorOccurred(crd, -1, QStringLiteral("未找到 X/Y 轴配置"));
+        return false;
+    }
+
+    long   px  = m_gtsMgr->mmToPulse(axisX, x);
+    long   py  = m_gtsMgr->mmToPulse(axisY, y);
+    double pr  = m_gtsMgr->mmToPulse(axisX, radius);         // 半径也是 mm
+    double pv  = m_gtsMgr->mmpsToPulsePerMs(axisX, synVel);
+    double pve = m_gtsMgr->mmpsToPulsePerMs(axisX, velEnd);
+
+    m_lastError = GtsHal::arcXYR(crd, px, py, pr, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcXYR: ") + lastErrorString());
         return false;

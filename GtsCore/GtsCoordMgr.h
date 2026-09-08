@@ -6,6 +6,8 @@
 #include <QColor>
 #include "GtsHal.h"
 
+class GtsMgr;
+
 
 // ============================================================
 // CoordMgr — 多轴坐标系插补运动管理器
@@ -24,11 +26,15 @@ class CoordMgr : public QObject {
 
 private:
     mutable short m_lastError = 0;
+    GtsMgr* m_gtsMgr = nullptr;
     bool checkCrd(short crd) const;
 
 public:
     explicit CoordMgr(QObject* parent = nullptr);
     ~CoordMgr();
+
+    // 注入 GtsMgr 指针 (用于当量换算 mm→pulse)
+    void setGtsMgr(GtsMgr* mgr) { m_gtsMgr = mgr; }
 
 
     // 设置坐标系参数
@@ -53,8 +59,8 @@ public:
     bool setCrdStopDecel(short crd, double decSmooth, double decAbrupt);
     // 获取坐标系停止减速度
     bool getCrdStopDecel(short crd, double& decSmooth, double& decAbrupt) const;
-    // 2D 直线插补 (XY)
-    bool lineXY(short crd, long x, long y, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    // 2D 直线插补 (XY) — 位置 mm, 速度 mm/s, 加速度 mm/s²
+    bool lineXY(short crd, double x, double y, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // 3D 直线插补 (XYZ)
     bool lineXYZ(short crd, long x, long y, long z, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // 4D 直线插补 (XYZA)
@@ -67,8 +73,8 @@ public:
     bool lineXYZAG0(short crd, long x, long y, long z, long a, double synVel, double synAcc, short fifo = 0);
     // 通用多轴直线插补 (XYZACUVW)
     bool lineXYZACUVW(short crd, long* pPos, short posMask, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // XY 平面圆弧 - 半径模式
-    bool arcXYByRadius(short crd, long x, long y, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    // XY 平面圆弧 - 半径模式 — 位置/半径 mm, 速度 mm/s, 加速度 mm/s²
+    bool arcXYByRadius(short crd, double x, double y, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // XY 平面圆弧 - 圆心模式
     bool arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // YZ 平面圆弧 - 半径模式
