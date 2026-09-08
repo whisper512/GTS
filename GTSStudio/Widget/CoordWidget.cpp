@@ -136,15 +136,23 @@ void CoordWidget::initTable()
     tw->setHorizontalHeaderLabels({
         QStringLiteral("段号"),
         QStringLiteral("类型"),
-        QStringLiteral("X(mm)"),
-        QStringLiteral("Y(mm)"),
-        QStringLiteral("Z(mm)"),
-        QStringLiteral("Vel(mm/s)"),
-        QStringLiteral("Acc(mm/s^2)"),
-        QStringLiteral("VelEnd(mm/s)"),
-        QStringLiteral("R(mm)"),
+        QStringLiteral("X"),
+        QStringLiteral("Y"),
+        QStringLiteral("Z"),
+        QStringLiteral("速度"),
+        QStringLiteral("加速度"),
+        QStringLiteral("结束速度"),
+        QStringLiteral("R"),
         QStringLiteral("方向")
     });
+    // 完整单位放到悬停提示
+    tw->horizontalHeaderItem(2)->setToolTip(QStringLiteral("X 坐标 (mm)"));
+    tw->horizontalHeaderItem(3)->setToolTip(QStringLiteral("Y 坐标 (mm)"));
+    tw->horizontalHeaderItem(4)->setToolTip(QStringLiteral("Z 坐标 (mm)"));
+    tw->horizontalHeaderItem(5)->setToolTip(QStringLiteral("进给速度 (mm/s)"));
+    tw->horizontalHeaderItem(6)->setToolTip(QStringLiteral("加速度 (mm/s²)"));
+    tw->horizontalHeaderItem(7)->setToolTip(QStringLiteral("结束速度 (mm/s)"));
+    tw->horizontalHeaderItem(8)->setToolTip(QStringLiteral("圆弧半径 (mm)"));
     tw->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     tw->verticalHeader()->setVisible(false);
     tw->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
