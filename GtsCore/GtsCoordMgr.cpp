@@ -20,6 +20,17 @@ bool CoordMgr::checkCrd(short crd) const
     return (crd >= 0 && crd < CRD_MAX);
 }
 
+long CoordMgr::toPulse(AxisName name, double val) const
+{
+    short axis = m_gtsMgr ? m_gtsMgr->axisIndexByName(name) : -1;
+    return (axis >= 1 && m_gtsMgr) ? m_gtsMgr->mmToPulse(axis, val) : 0;
+}
+
+double CoordMgr::velToPulse(AxisName name, double val) const
+{
+    short axis = m_gtsMgr ? m_gtsMgr->axisIndexByName(name) : -1;
+    return (axis >= 1 && m_gtsMgr) ? m_gtsMgr->mmpsToPulsePerMs(axis, val) : 0.0;
+}
 
 bool CoordMgr::setCrdParams(short crd, const TCrdPrm& prm) 
 {
@@ -154,17 +165,10 @@ bool CoordMgr::lineXY(short crd, double x, double y, double synVel, double synAc
         return false;
     }
 
-    short axisX = m_gtsMgr->axisIndexByName(AxisName::X);
-    short axisY = m_gtsMgr->axisIndexByName(AxisName::Y);
-    if (axisX < 1 || axisY < 1) {
-        emit errorOccurred(crd, -1, QStringLiteral("未找到 X/Y 轴配置"));
-        return false;
-    }
-
-    long   px  = m_gtsMgr->mmToPulse(axisX, x);              // mm → pulse
-    long   py  = m_gtsMgr->mmToPulse(axisY, y);
-    double pv  = m_gtsMgr->mmpsToPulsePerMs(axisX, synVel);  // mm/s → pulse/ms
-    double pve = m_gtsMgr->mmpsToPulsePerMs(axisX, velEnd);
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
     // 加速度暂不转换 (插补段无独立加速度数据)
 
     m_lastError = GtsHal::lnXY(crd, px, py, pv, synAcc, pve, fifo);
@@ -175,14 +179,25 @@ bool CoordMgr::lineXY(short crd, double x, double y, double synVel, double synAc
     return true;
 }
 
-bool CoordMgr::lineXYZ(short crd, long x, long y, long z, double synVel, double synAcc,
+bool CoordMgr::lineXYZ(short crd, double x, double y, double z, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::lnXYZ(crd, x, y, z, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::lnXYZ(crd, px, py, pz, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZ: ") + lastErrorString());
         return false;
@@ -190,14 +205,26 @@ bool CoordMgr::lineXYZ(short crd, long x, long y, long z, double synVel, double 
     return true;
 }
 
-bool CoordMgr::lineXYZA(short crd, long x, long y, long z, long a,
+bool CoordMgr::lineXYZA(short crd, double x, double y, double z, double a,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::lnXYZA(crd, x, y, z, a, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    long   pa  = toPulse(AxisName::A, a);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::lnXYZA(crd, px, py, pz, pa, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZA: ") + lastErrorString());
         return false;
@@ -205,13 +232,22 @@ bool CoordMgr::lineXYZA(short crd, long x, long y, long z, long a,
     return true;
 }
 
-bool CoordMgr::lineXYG0(short crd, long x, long y, double synVel, double synAcc, short fifo) 
+bool CoordMgr::lineXYG0(short crd, double x, double y, double synVel, double synAcc, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::lnXYG0(crd, x, y, synVel, synAcc, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px = toPulse(AxisName::X, x);
+    long   py = toPulse(AxisName::Y, y);
+    double pv = velToPulse(AxisName::X, synVel);
+
+    m_lastError = GtsHal::lnXYG0(crd, px, py, pv, synAcc, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYG0: ") + lastErrorString());
         return false;
@@ -219,13 +255,23 @@ bool CoordMgr::lineXYG0(short crd, long x, long y, double synVel, double synAcc,
     return true;
 }
 
-bool CoordMgr::lineXYZG0(short crd, long x, long y, long z, double synVel, double synAcc, short fifo) 
+bool CoordMgr::lineXYZG0(short crd, double x, double y, double z, double synVel, double synAcc, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::lnXYZG0(crd, x, y, z, synVel, synAcc, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px = toPulse(AxisName::X, x);
+    long   py = toPulse(AxisName::Y, y);
+    long   pz = toPulse(AxisName::Z, z);
+    double pv = velToPulse(AxisName::X, synVel);
+
+    m_lastError = GtsHal::lnXYZG0(crd, px, py, pz, pv, synAcc, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZG0: ") + lastErrorString());
         return false;
@@ -233,14 +279,25 @@ bool CoordMgr::lineXYZG0(short crd, long x, long y, long z, double synVel, doubl
     return true;
 }
 
-bool CoordMgr::lineXYZAG0(short crd, long x, long y, long z, long a,
+bool CoordMgr::lineXYZAG0(short crd, double x, double y, double z, double a,
     double synVel, double synAcc, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::lnXYZAG0(crd, x, y, z, a, synVel, synAcc, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px = toPulse(AxisName::X, x);
+    long   py = toPulse(AxisName::Y, y);
+    long   pz = toPulse(AxisName::Z, z);
+    long   pa = toPulse(AxisName::A, a);
+    double pv = velToPulse(AxisName::X, synVel);
+
+    m_lastError = GtsHal::lnXYZAG0(crd, px, py, pz, pa, pv, synAcc, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXYZAG0: ") + lastErrorString());
         return false;
@@ -275,18 +332,11 @@ bool CoordMgr::arcXYByRadius(short crd, double x, double y, double radius, short
         return false;
     }
 
-    short axisX = m_gtsMgr->axisIndexByName(AxisName::X);
-    short axisY = m_gtsMgr->axisIndexByName(AxisName::Y);
-    if (axisX < 1 || axisY < 1) {
-        emit errorOccurred(crd, -1, QStringLiteral("未找到 X/Y 轴配置"));
-        return false;
-    }
-
-    long   px  = m_gtsMgr->mmToPulse(axisX, x);
-    long   py  = m_gtsMgr->mmToPulse(axisY, y);
-    double pr  = m_gtsMgr->mmToPulse(axisX, radius);         // 半径也是 mm
-    double pv  = m_gtsMgr->mmpsToPulsePerMs(axisX, synVel);
-    double pve = m_gtsMgr->mmpsToPulsePerMs(axisX, velEnd);
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    double pr  = toPulse(AxisName::X, radius);         // 半径也是 mm
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
 
     m_lastError = GtsHal::arcXYR(crd, px, py, pr, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
@@ -296,7 +346,7 @@ bool CoordMgr::arcXYByRadius(short crd, double x, double y, double radius, short
     return true;
 }
 
-bool CoordMgr::arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter,
+bool CoordMgr::arcXYByCenter(short crd, double x, double y, double xCenter, double yCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -304,7 +354,19 @@ bool CoordMgr::arcXYByCenter(short crd, long x, long y, double xCenter, double y
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcXYC(crd, x, y, xCenter, yCenter, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px   = toPulse(AxisName::X, x);
+    long   py   = toPulse(AxisName::Y, y);
+    double pxc  = toPulse(AxisName::X, xCenter);
+    double pyc  = toPulse(AxisName::Y, yCenter);
+    double pv   = velToPulse(AxisName::X, synVel);
+    double pve  = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::arcXYC(crd, px, py, pxc, pyc, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcXYC: ") + lastErrorString());
         return false;
@@ -312,14 +374,25 @@ bool CoordMgr::arcXYByCenter(short crd, long x, long y, double xCenter, double y
     return true;
 }
 
-bool CoordMgr::arcYZByRadius(short crd, long y, long z, double radius, short circleDir,
+bool CoordMgr::arcYZByRadius(short crd, double y, double z, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcYZR(crd, y, z, radius, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    double pr  = toPulse(AxisName::Y, radius);
+    double pv  = velToPulse(AxisName::Y, synVel);
+    double pve = velToPulse(AxisName::Y, velEnd);
+
+    m_lastError = GtsHal::arcYZR(crd, py, pz, pr, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcYZR: ") + lastErrorString());
         return false;
@@ -327,7 +400,7 @@ bool CoordMgr::arcYZByRadius(short crd, long y, long z, double radius, short cir
     return true;
 }
 
-bool CoordMgr::arcYZByCenter(short crd, long y, long z, double yCenter, double zCenter,
+bool CoordMgr::arcYZByCenter(short crd, double y, double z, double yCenter, double zCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -335,7 +408,19 @@ bool CoordMgr::arcYZByCenter(short crd, long y, long z, double yCenter, double z
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcYZC(crd, y, z, yCenter, zCenter, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    double pyc = toPulse(AxisName::Y, yCenter);
+    double pzc = toPulse(AxisName::Z, zCenter);
+    double pv  = velToPulse(AxisName::Y, synVel);
+    double pve = velToPulse(AxisName::Y, velEnd);
+
+    m_lastError = GtsHal::arcYZC(crd, py, pz, pyc, pzc, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcYZC: ") + lastErrorString());
         return false;
@@ -343,14 +428,25 @@ bool CoordMgr::arcYZByCenter(short crd, long y, long z, double yCenter, double z
     return true;
 }
 
-bool CoordMgr::arcZXByRadius(short crd, long z, long x, double radius, short circleDir,
+bool CoordMgr::arcZXByRadius(short crd, double z, double x, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcZXR(crd, z, x, radius, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   pz  = toPulse(AxisName::Z, z);
+    long   px  = toPulse(AxisName::X, x);
+    double pr  = toPulse(AxisName::X, radius);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::arcZXR(crd, pz, px, pr, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcZXR: ") + lastErrorString());
         return false;
@@ -358,7 +454,7 @@ bool CoordMgr::arcZXByRadius(short crd, long z, long x, double radius, short cir
     return true;
 }
 
-bool CoordMgr::arcZXByCenter(short crd, long z, long x, double zCenter, double xCenter,
+bool CoordMgr::arcZXByCenter(short crd, double z, double x, double zCenter, double xCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -366,7 +462,19 @@ bool CoordMgr::arcZXByCenter(short crd, long z, long x, double zCenter, double x
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcZXC(crd, z, x, zCenter, xCenter, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   pz  = toPulse(AxisName::Z, z);
+    long   px  = toPulse(AxisName::X, x);
+    double pzc = toPulse(AxisName::Z, zCenter);
+    double pxc = toPulse(AxisName::X, xCenter);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::arcZXC(crd, pz, px, pzc, pxc, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcZXC: ") + lastErrorString());
         return false;
@@ -374,7 +482,7 @@ bool CoordMgr::arcZXByCenter(short crd, long z, long x, double zCenter, double x
     return true;
 }
 
-bool CoordMgr::arcXYZ(short crd, long x, long y, long z,
+bool CoordMgr::arcXYZ(short crd, double x, double y, double z,
     double interX, double interY, double interZ,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
@@ -382,7 +490,21 @@ bool CoordMgr::arcXYZ(short crd, long x, long y, long z,
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::arcXYZ(crd, x, y, z, interX, interY, interZ, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    double pxi = toPulse(AxisName::X, interX);
+    double pyi = toPulse(AxisName::Y, interY);
+    double pzi = toPulse(AxisName::Z, interZ);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::arcXYZ(crd, px, py, pz, pxi, pyi, pzi, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("arcXYZ: ") + lastErrorString());
         return false;
@@ -390,14 +512,26 @@ bool CoordMgr::arcXYZ(short crd, long x, long y, long z,
     return true;
 }
 
-bool CoordMgr::helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir,
+bool CoordMgr::helixXYRZ(short crd, double x, double y, double z, double radius, short circleDir,
     double synVel, double synAcc, double velEnd, short fifo) 
 {
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::helixXYRZ(crd, x, y, z, radius, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    double pr  = toPulse(AxisName::X, radius);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::helixXYRZ(crd, px, py, pz, pr, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("helixXYRZ: ") + lastErrorString());
         return false;
@@ -405,7 +539,7 @@ bool CoordMgr::helixXYRZ(short crd, long x, long y, long z, double radius, short
     return true;
 }
 
-bool CoordMgr::helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter,
+bool CoordMgr::helixXYCZ(short crd, double x, double y, double z, double xCenter, double yCenter,
     short circleDir, double synVel, double synAcc,
     double velEnd, short fifo) 
 {
@@ -413,7 +547,20 @@ bool CoordMgr::helixXYCZ(short crd, long x, long y, long z, double xCenter, doub
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
-    m_lastError = GtsHal::helixXYCZ(crd, x, y, z, xCenter, yCenter, circleDir, synVel, synAcc, velEnd, fifo);
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px  = toPulse(AxisName::X, x);
+    long   py  = toPulse(AxisName::Y, y);
+    long   pz  = toPulse(AxisName::Z, z);
+    double pxc = toPulse(AxisName::X, xCenter);
+    double pyc = toPulse(AxisName::Y, yCenter);
+    double pv  = velToPulse(AxisName::X, synVel);
+    double pve = velToPulse(AxisName::X, velEnd);
+
+    m_lastError = GtsHal::helixXYCZ(crd, px, py, pz, pxc, pyc, circleDir, pv, synAcc, pve, fifo);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("helixXYCZ: ") + lastErrorString());
         return false;
@@ -688,20 +835,28 @@ short CoordMgr::getBufferMode(short crd, short fifo) const
 }
 
 
-bool CoordMgr::moveToXY(short crd, long x, long y, double vel, double acc) 
+bool CoordMgr::moveToXY(short crd, double x, double y, double vel, double acc) 
 {
     // 快速直线移动：先清空缓冲区，添加直线段，启动
     if (!checkCrd(crd)) {
         emit errorOccurred(crd, -1, QStringLiteral("坐标系号无效: %1").arg(crd));
         return false;
     }
+    if (!m_gtsMgr) {
+        emit errorOccurred(crd, -1, QStringLiteral("未注入 GtsMgr, 无法做当量换算"));
+        return false;
+    }
+
+    long   px = toPulse(AxisName::X, x);
+    long   py = toPulse(AxisName::Y, y);
+    double pv = velToPulse(AxisName::X, vel);
 
     // 清除缓冲区
     GtsHal::crdClear(crd, 0);
     GtsHal::crdClear(crd, 1);
 
     // 添加直线插补段
-    m_lastError = GtsHal::lnXY(crd, x, y, vel, acc, 0, 0);
+    m_lastError = GtsHal::lnXY(crd, px, py, pv, acc, 0, 0);
     if (m_lastError != 0) {
         emit errorOccurred(crd, m_lastError, QStringLiteral("lnXY: ") + lastErrorString());
         return false;

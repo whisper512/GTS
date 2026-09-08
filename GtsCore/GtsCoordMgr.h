@@ -7,6 +7,7 @@
 #include "GtsHal.h"
 
 class GtsMgr;
+enum class AxisName : short;
 
 
 // ============================================================
@@ -28,6 +29,10 @@ private:
     mutable short m_lastError = 0;
     GtsMgr* m_gtsMgr = nullptr;
     bool checkCrd(short crd) const;
+    // 用户单位(位置/半径) → pulse
+    long toPulse(AxisName name, double val) const;
+    // 速度 用户单位/s → pulse/ms
+    double velToPulse(AxisName name, double val) const;
 
 public:
     explicit CoordMgr(QObject* parent = nullptr);
@@ -61,36 +66,36 @@ public:
     bool getCrdStopDecel(short crd, double& decSmooth, double& decAbrupt) const;
     // 2D 直线插补 (XY) — 位置 mm, 速度 mm/s, 加速度 mm/s²
     bool lineXY(short crd, double x, double y, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // 3D 直线插补 (XYZ)
-    bool lineXYZ(short crd, long x, long y, long z, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
-    // 4D 直线插补 (XYZA)
-    bool lineXYZA(short crd, long x, long y, long z, long a, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    // 3D 直线插补 (XYZ) — 位置 mm, 速度 mm/s, 加速度 mm/s²
+    bool lineXYZ(short crd, double x, double y, double z, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    // 4D 直线插补 (XYZA) — 位置 mm, 速度 mm/s, 加速度 mm/s²
+    bool lineXYZA(short crd, double x, double y, double z, double a, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // 2D 直线插补 - G0 快速定位模式
-    bool lineXYG0(short crd, long x, long y, double synVel, double synAcc, short fifo = 0);
+    bool lineXYG0(short crd, double x, double y, double synVel, double synAcc, short fifo = 0);
     // 3D 直线插补 - G0 快速定位模式
-    bool lineXYZG0(short crd, long x, long y, long z, double synVel, double synAcc, short fifo = 0);
+    bool lineXYZG0(short crd, double x, double y, double z, double synVel, double synAcc, short fifo = 0);
     // 4D 直线插补 - G0 快速定位模式
-    bool lineXYZAG0(short crd, long x, long y, long z, long a, double synVel, double synAcc, short fifo = 0);
-    // 通用多轴直线插补 (XYZACUVW)
+    bool lineXYZAG0(short crd, double x, double y, double z, double a, double synVel, double synAcc, short fifo = 0);
+    // 通用多轴直线插补 (XYZACUVW) — pPos 已是 pulse, 不做换算
     bool lineXYZACUVW(short crd, long* pPos, short posMask, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // XY 平面圆弧 - 半径模式 — 位置/半径 mm, 速度 mm/s, 加速度 mm/s²
     bool arcXYByRadius(short crd, double x, double y, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // XY 平面圆弧 - 圆心模式
-    bool arcXYByCenter(short crd, long x, long y, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool arcXYByCenter(short crd, double x, double y, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // YZ 平面圆弧 - 半径模式
-    bool arcYZByRadius(short crd, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool arcYZByRadius(short crd, double y, double z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // YZ 平面圆弧 - 圆心模式
-    bool arcYZByCenter(short crd, long y, long z, double yCenter, double zCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool arcYZByCenter(short crd, double y, double z, double yCenter, double zCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // ZX 平面圆弧 - 半径模式
-    bool arcZXByRadius(short crd, long z, long x, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool arcZXByRadius(short crd, double z, double x, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // ZX 平面圆弧 - 圆心模式
-    bool arcZXByCenter(short crd, long z, long x, double zCenter, double xCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool arcZXByCenter(short crd, double z, double x, double zCenter, double xCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // 3D 空间圆弧 (XYZ)
-    bool arcXYZ(short crd, long x, long y, long z, double interX, double interY, double interZ, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool arcXYZ(short crd, double x, double y, double z, double interX, double interY, double interZ, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // XY 平面圆弧 + Z 轴螺旋 - 半径模式
-    bool helixXYRZ(short crd, long x, long y, long z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool helixXYRZ(short crd, double x, double y, double z, double radius, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // XY 平面圆弧 + Z 轴螺旋 - 圆心模式
-    bool helixXYCZ(short crd, long x, long y, long z, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
+    bool helixXYCZ(short crd, double x, double y, double z, double xCenter, double yCenter, short circleDir, double synVel, double synAcc, double velEnd = 0, short fifo = 0);
     // 缓冲区 IO 操作
     bool bufIO(short crd, unsigned short doType, unsigned short doMask, unsigned short doValue, short fifo = 0);
     // 缓冲区延时
@@ -138,7 +143,7 @@ public:
     // 获取缓冲区模式
     short getBufferMode(short crd, short fifo = 0) const;
     // 快速直线插补 (最常用: XY 移动到指定位置)
-    bool moveToXY(short crd, long x, long y, double vel, double acc);
+    bool moveToXY(short crd, double x, double y, double vel, double acc);
     // 停止插补运动
     bool stop(short crd, long option = 0);
     // 坐标系号是否有效
