@@ -3,6 +3,7 @@
 - [x] 完成HAL抽象层
 - [x] lib改为相对位置
 - [ ] 样式表QssStylesheetEditor
+- [ ] 添加图标
 - [ ] 考虑加入完全的MOCK模拟和8轴支持
 
 # 板卡界面
